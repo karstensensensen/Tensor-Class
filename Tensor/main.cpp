@@ -8,8 +8,6 @@
 using namespace Profiling;
 using namespace TSlib;
 
-// Testing Github
-
 __kernel__ kernel(CUDATensor3D<uint32_t> tensor, int val)
 {
 	if (tensor.in_bounds())

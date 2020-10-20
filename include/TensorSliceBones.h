@@ -38,10 +38,6 @@ namespace TSlib
 			#endif
 		}
 
-		//TSlice(const intmax_t& pos);
-
-
-
 		TSlice();
 
 		bool contains(intmax_t val) const;

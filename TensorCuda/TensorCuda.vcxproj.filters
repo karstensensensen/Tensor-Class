@@ -83,9 +83,4 @@
       <Filter>Header Files\Tensor</Filter>
     </CudaCompile>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="EmptyFile.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
 </Project>

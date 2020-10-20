@@ -21,12 +21,6 @@ namespace TSlib
 		#endif
 	}
 
-	/*TSlice::TSlice(const intmax_t& pos)
-		:from(pos), to(pos)
-	{
-		MEASURE();
-	}*/
-
 	TSlice::TSlice()
 		: from(NULL), to(NULL), from_max(NULL), to_max(NULL)
 	{
