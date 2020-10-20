@@ -221,9 +221,11 @@
     <ClInclude Include="..\Multrix\PerlinNoise.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="empty.cpp" />
     <CudaCompile Include="..\include\PerlinNoise.cpp" />
     <CudaCompile Include="..\Tensor\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="EmptyFile.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

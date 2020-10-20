@@ -84,7 +84,7 @@
     </CudaCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="empty.cpp">
+    <ClCompile Include="EmptyFile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
