@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="BoostProps">
+      <UniqueIdentifier>{e17699e8-5a03-46c6-833a-30dce2603270}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Noise">
+      <UniqueIdentifier>{91dff155-b590-481c-9615-01d5f70a0e6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Tensor">
+      <UniqueIdentifier>{949e74b5-b7d0-4221-84f0-9a9997a52c22}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="boost_x64_release.props">
+      <Filter>BoostProps</Filter>
+    </None>
+    <None Include="boost_x86_debug.props">
+      <Filter>BoostProps</Filter>
+    </None>
+    <None Include="boost_x86_release.props">
+      <Filter>BoostProps</Filter>
+    </None>
+    <None Include="boost_x64_debug.props">
+      <Filter>BoostProps</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Multrix\PerlinNoise.h">
+      <Filter>Header Files\Noise</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Multrix\PerlinKernel.cuh">
+      <Filter>Header Files\Noise</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\TensorCuda.cuh">
+      <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\TensorOperatorKernels.cuh">
+      <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\TensorOperators.h">
+      <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Tensor.h">
+      <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\TensorBones.h">
+      <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\TensorEnums.h">
+      <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\TensorSliceBones.h">
+      <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\TensorSlice.h">
+      <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\TensorExceptions.h">
+      <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="..\Tensor\main.cpp">
+      <Filter>Source Files</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\include\PerlinNoise.cpp">
+      <Filter>Source Files</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\include\TensorCudaBones.cuh">
+      <Filter>Header Files\Tensor</Filter>
+    </CudaCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="empty.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
