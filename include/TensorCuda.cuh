@@ -235,7 +235,7 @@ __device__ bool CUDATensor1D<T>::in_bounds()
 }
 
 template<typename T>
-__device__ bool TSlib::CUDATensor1D<T>::off_bounds(size_t x)
+__device__ bool TSlib::CUDATensor1D<T>::offset_bounds(size_t x)
 {
 	return ((threadIdx.x + blockIdx.x * blockDim.x + x) < m_length);
 }

@@ -116,7 +116,7 @@ namespace TSlib
 
 		__device__ bool in_bounds();
 
-		__device__ bool off_bounds(size_t x);
+		__device__ bool offset_bounds(size_t x);
 	};
 
 
@@ -456,17 +456,17 @@ namespace TSlib
 		}
 	};
 
-	inline CUDALayout<Mode::Cube> Layout3D(double_t X = 1, double_t Y = 1, double_t Z = 1)
+	inline CUDALayout<Mode::Cube>	Layout3D(double_t X = 1, double_t Y = 1, double_t Z = 1)
 	{
 		return CUDALayout<Mode::Cube>(X, Y, Z);
 	}
 
-	inline CUDALayout<Mode::Plane> Layout2D(double_t X = 1, double_t Y = 1, double_t Z = 1)
+	inline CUDALayout<Mode::Plane>	Layout2D(double_t X = 1, double_t Y = 1, double_t Z = 1)
 	{
 		return CUDALayout<Mode::Plane>(X, Y, Z);
 	}
 
-	inline CUDALayout<Mode::Line> Layout1D(double_t X = 1, double_t Y = 1, double_t Z = 1)
+	inline CUDALayout<Mode::Line>	Layout1D(double_t X = 1, double_t Y = 1, double_t Z = 1)
 	{
 		return CUDALayout<Mode::Line>(X, Y, Z);
 	}
