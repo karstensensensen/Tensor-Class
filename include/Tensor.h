@@ -271,7 +271,7 @@ Tensor<T, device>::Tensor(const std::vector<TSlice>& sizes, const T& pad_val, co
 }
 
 template<typename T, Mode device>
-Tensor<T, device>::Tensor(const TensorSlice<T, device>& slice, const T& pad_val, const bool& add_extra_dim)
+Tensor<T, device>::Tensor(const TensorSlice<T, device>& slice, const bool& add_extra_dim)
 	: m_dim_size(slice.DimSizes().size() + 1 * add_extra_dim)
 {
 	MEASURE();
@@ -286,27 +286,31 @@ Tensor<T, device>::Tensor(const TensorSlice<T, device>& slice, const T& pad_val,
 }
 
 template<typename T, Mode device>
+Tensor<T, device>::Tensor(const Tensor<T, device>& other)
+	: m_vector(other.asVector()), m_dim_size(other.DimSizes())
+{
+
+	MEASURE();
+	
+	#ifdef _CUDA
+	
+	if (other.isAllocated())
+	{
+		allocate();
+		cudaMemcpy(gpu_mem, other.gpu_mem, sizeof(T) * size(), cudaMemcpyDeviceToDevice);
+	}
+	
+	#endif
+
+}
+
+template<typename T, Mode device>
 Tensor<T, device>::~Tensor()
 {
 	#ifdef _CUDA
 	if (isAllocated())
 	{
 		deallocate();
-	}
-	#endif
-}
-
-template<typename T, Mode device>
-TSlib::Tensor<T, device>::Tensor(const Tensor<T, device>& other)
-	: m_dim_size(other.DimSizes().size()), m_vector(other.m_vector)
-{
-	MEASURE();
-
-	#ifdef _CUDA
-	if (other.isAllocated())
-	{
-		allocate();
-		CER(cudaMemcpy(gpu_mem, other.getGPU(), sizeof(T) * size(), cudaMemcpyDeviceToDevice));
 	}
 	#endif
 }

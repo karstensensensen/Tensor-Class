@@ -84,7 +84,7 @@ public:
 	Tensor(const int& dims);
 	//Tensor(const std::initializer_list<size_t>& sizes, const T& pad_val = T(), const bool& add_extra_dim = true);
 	Tensor(const std::vector<size_t>& sizes, const T& pad_val = T(), const bool& add_extra_dim = true);
-	Tensor(const TensorSlice<T, device>& slice, const T& pad_val = T(), const bool& add_extra_dim = true);
+	Tensor(const TensorSlice<T, device>& slice, const bool& add_extra_dim = true);
 
 	~Tensor();
 
