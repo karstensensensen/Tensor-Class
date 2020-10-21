@@ -10,6 +10,8 @@
 #include "Tensor.h"
 
 int main(int argc, const char * argv[]) {
-	TSlib::Tensor<int>({});
+	std::cout << "Tensor:\n";
+	TSlib::Tensor<int> tensor({5, 5, 5}, 25);
+	std::cout << tensor + 5;
 	return 0;
 }

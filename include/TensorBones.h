@@ -36,10 +36,10 @@ template<Mode layout>
 class CUDALayout;
 
 #else
-constexpr Mode defualt_device = Mode::CPU;
+constexpr Mode default_device = Mode::CPU;
 #endif
 
-template<typename T, Mode device = defualt_device>
+template<typename T, Mode device = default_device>
 class Tensor
 {
 protected:
@@ -442,79 +442,125 @@ public:
 	template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
 	inline bool operator==(Tensor<OT, o_device>& other)
 	{
+		#ifdef __APPLE__
+		return compare(other).template sum<size_t>() == other.size();
+		#else
 		return compare(other).sum<size_t>() == other.size();
+		#endif
 	}
 
 	template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
 	inline bool operator==(TensorSlice<OT, o_device>& other)
 	{
+		#ifdef __APPLE__
+		return compare(other).template sum<size_t>() == other.size();
+		#else
 		return compare(other).sum<size_t>() == other.size();
+		#endif
 	}
 
 	template<typename OT, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
 	inline bool operator==(const OT& other)
 	{
-		return (bool)compareSingle(other).sum<size_t>() == other.size();
+		#ifdef __APPLE__
+		return compareSingle(other).template sum<size_t>() == other.size();
+		#else
+		return compareSingle(other).sum<size_t>() == other.size();
+		#endif
 	}
 
 	template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
 	inline bool operator!=(Tensor<OT, o_device>& other)
 	{
+		
+		#ifdef __APPLE__
+		return !(bool)compare(other).template sum<size_t>() == other.size();
+		#else
 		return !(bool)compare(other).sum<size_t>() == other.size();
+		#endif
 	}
 
 	template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
 	inline bool operator!=(TensorSlice<OT, o_device>& other)
 	{
+		#ifdef __APPLE__
+		return !(bool)compare(other).template sum<size_t>() == other.size();
+		#else
 		return !(bool)compare(other).sum<size_t>() == other.size();
+		#endif
 	}
 
 
 	template<typename OT, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
 	inline bool operator!=(const OT& other)
 	{
-		return !(bool)compare(other).sum<size_t>() == other.size();
+		#ifdef __APPLE__
+		return !(bool)compareSingle(other).template sum<size_t>() == other.size();
+		#else
+		return !(bool)compareSingle(other).sum<size_t>() == other.size();
+		#endif
 	}
 
 
 	template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
 	inline bool operator<(Tensor<OT, o_device>& other)
 	{
+		#ifdef __APPLE__
+		return (bool)lessThan(other).template sum<size_t>() == other.size();
+		#else
 		return (bool)lessThan(other).sum<size_t>() == other.size();
+		#endif
 	}
 
 	template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
 	inline bool operator<(TensorSlice<OT, o_device>& other)
 	{
+		#ifdef __APPLE__
+		return (bool)lessThan(other).template sum<size_t>() == other.size();
+		#else
 		return (bool)lessThan(other).sum<size_t>() == other.size();
+		#endif
 	}
 
 	template<typename OT, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
 	inline bool operator<(const OT& other)
 	{
+		#ifdef __APPLE__
+		return (bool)lessThanSingle(other).template sum<size_t>() == other.size();
+		#else
 		return (bool)lessThanSingle(other).sum<size_t>() == other.size();
+		#endif
 	}
 
 
 	template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
 	inline bool operator>(Tensor<OT, o_device>& other)
 	{
-		
+		#ifdef __APPLE__
+		return (bool)moreThan(other).template sum<size_t>() == other.size();
+		#else
 		return (bool)moreThan(other).sum<size_t>() == other.size();
+		#endif
 	}
 
 	template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
 	inline bool operator>(TensorSlice<OT, o_device>& other)
 	{
-
+		#ifdef __APPLE__
+		return (bool)moreThan(other).template sum<size_t>() == other.size();
+		#else
 		return (bool)moreThan(other).sum<size_t>() == other.size();
+		#endif
 	}
 
 	template<typename OT, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
 	inline bool operator>(const OT& other)
 	{
-		
+		#ifdef __APPLE__
+		return (bool)moreThanSingle(other).template sum<size_t>() == other.size();
+		#else
 		return (bool)moreThanSingle(other).sum<size_t>() == other.size();
+		#endif
 
 	}
 
@@ -522,46 +568,65 @@ public:
 	inline bool operator<=(Tensor<OT, o_device>& other)
 	{
 		
+		#ifdef __APPLE__
+		return (bool)lessThanEqual(other).template sum<size_t>() == other.size();
+		#else
 		return (bool)lessThanEqual(other).sum<size_t>() == other.size();
+		#endif
 
 	}
 
 	template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
 	inline bool operator<=(TensorSlice<OT, o_device>& other)
 	{
-
+		#ifdef __APPLE__
+		return (bool)lessThanEqual(other).template sum<size_t>() == other.size();
+		#else
 		return (bool)lessThanEqual(other).sum<size_t>() == other.size();
-
+		#endif
 	}
 
 	template<typename OT, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
 	inline bool operator<=(const OT& other)
 	{
-		
+		#ifdef __APPLE__
+		return (bool)lessThanEqualSingle(other).template sum<size_t>() == other.size();
+		#else
 		return (bool)lessThanEqualSingle(other).sum<size_t>() == other.size();
-
+		#endif
 	}
 
 	template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
 	inline bool operator>=(Tensor<OT, o_device>& other)
 	{
 		
+		#ifdef __APPLE__
+		return (bool)moreThanEqual(other).template sum<size_t>() == other.size();
+		#else
 		return (bool)moreThanEqual(other).sum<size_t>() == other.size();
+		#endif
 	}
 
 	template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
 	inline bool operator>=(TensorSlice<OT, o_device>& other)
 	{
 
+		#ifdef __APPLE__
+		return (bool)moreThanEqual(other).template sum<size_t>() == other.size();
+		#else
 		return (bool)moreThanEqual(other).sum<size_t>() == other.size();
+		#endif
 	}
 
 	template<typename OT, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
 	inline bool operator>=(const OT& other)
 	{
 		
+		#ifdef __APPLE__
+		return (bool)moreThanEqualSingle(other).template sum<size_t>() == other.size();
+		#else
 		return (bool)moreThanEqualSingle(other).sum<size_t>() == other.size();
-
+		#endif
 	}
 
 	template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>

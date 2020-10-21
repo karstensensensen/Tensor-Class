@@ -1,7 +1,16 @@
 #pragma once
 
+#ifdef __APPLE__
+typedef double double_t;
+#endif
+
 #include <stdlib.h>
+
+#ifdef TENSOR_PROFILING
 #include <Profiler.h>
+#else
+#define MEASURE()
+#endif
 
 #ifdef _CUDA
 
@@ -33,6 +42,7 @@ template<typename T, Mode device>
 size_t Tensor<T, device>::get_real_size(const size_t& index) const
 {
 	MEASURE();
+	
 	size_t r_size = 1;
 
 	for (size_t i = 0; i <= index; i++)
@@ -49,6 +59,7 @@ template<typename T, Mode device>
 size_t Tensor<T, device>::get_dim_length(const size_t& index) const
 {
 	MEASURE();
+	
 	size_t r_size = 1;
 
 	for (size_t i = index; i < m_dim_size.size(); i++)
@@ -63,6 +74,7 @@ template<typename T, Mode device>
 std::vector<size_t> Tensor<T, device>::FlattenDims(size_t dims) const
 {
 	MEASURE();
+	
 	std::vector<size_t> new_dim(dims, 0);
 
 	size_t i;
@@ -84,6 +96,7 @@ template<typename T, Mode device>
 size_t Tensor<T, device>::FlattenDims() const
 {
 	MEASURE();
+	
 	size_t new_dim = m_dim_size[0];
 
 	for (size_t j = 1; j < m_dim_size.size(); j++)
@@ -98,7 +111,9 @@ size_t Tensor<T, device>::FlattenDims() const
 template<typename T, Mode device>
 size_t  Tensor<T, device>::get_dim_size(const size_t& index) const
 {
+	
 	MEASURE();
+	
 	size_t size = 1;
 	for (size_t i = 0; i <= index; i++)
 	{
