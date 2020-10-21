@@ -68,17 +68,17 @@ namespace TSlib
 		size_t dims = NULL;
 
 		template<typename First>
-		__device__ void get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord);
+		__device__ void get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord) const;
 
 		template<typename First, typename ... Args>
-		__device__ void get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord, Args ... remaining);
+		__device__ void get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord, Args ... remaining) const;
 
 	public:
 
 		CTBase(T* gpu_mem, size_t m_size, size_t* dim_arr, size_t dims);
 		~CTBase();
 
-		__device__ size_t size();
+		__device__ size_t size() const;
 
 		template<typename ... Args>
 		__device__ T& Get(Args ... coords);
@@ -109,14 +109,17 @@ namespace TSlib
 		size_t get_length();
 
 		__device__ T& At(size_t x);
+		__device__ T At(size_t x) const;
 
 		__device__ T& At();
+		__device__ T At() const;
 
 		__device__ T& Offset(size_t x);
+		__device__ T Offset(size_t x) const;
 
-		__device__ bool in_bounds();
+		__device__ bool in_bounds() const;
 
-		__device__ bool offset_bounds(size_t x);
+		__device__ bool offset_bounds(size_t x) const;
 	};
 
 
@@ -142,14 +145,17 @@ namespace TSlib
 		CUDATensor2D(const CUDATensor2D<T>& other);
 
 		__device__ T& At(size_t x, size_t y);
+		__device__ T At(size_t x, size_t y) const;
 
 		__device__ T& At();
+		__device__ T At() const;
 
 		__device__ T& Offset(size_t x, size_t y = 0);
+		__device__ T Offset(size_t x, size_t y = 0) const;
 
-		__device__ bool in_bounds();
+		__device__ bool in_bounds() const;
 
-		__device__ bool off_bounds(size_t x, size_t y = 0);
+		__device__ bool offset_bounds(size_t x, size_t y = 0) const;
 	};
 
 	/// <summary>
@@ -176,14 +182,17 @@ namespace TSlib
 		CUDATensor3D(const CUDATensor3D<T>& other);
 
 		__device__ T& At(size_t x, size_t y);
+		__device__ T At(size_t x, size_t y) const;
 
 		__device__ T& At();
+		__device__ T At() const;
 
 		__device__ T& Offset(size_t x, size_t y = 0, size_t z = 0);
+		__device__ T Offset(size_t x, size_t y = 0, size_t z = 0) const;
 
-		__device__ bool in_bounds();
+		__device__ bool in_bounds() const;
 
-		__device__ bool off_bounds(size_t x, size_t y = 0, size_t z = 0);
+		__device__ bool offset_bounds(size_t x, size_t y = 0, size_t z = 0) const;
 	};
 
 	/// <summary>

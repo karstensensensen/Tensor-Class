@@ -6,13 +6,6 @@
 #include "TensorSliceBones.h"
 #include "TensorExceptions.h"
 
-/*
-	This is a class made to simulate vectors, matrices and TensorBases.
-	Instead of a pointer to pointer to pointer style dynamic array it is instead designed to only use one block of memmory or in other words a large 1D dynamic array that simulates a vector, matrix or TensorBase.
-	Do note that the operator() will sometimes be slower than an actual pointer to pointer array and always use the operator[] if possible.
-	Dont use the operator[] if you convert coordinates to one index because this is what the operator() does for you and also the reason it is slower than the operator[].
-	looping through an array with the operator[] is recommended if you need to change all of the elements in a TensorBase because it will always be faster than both a pointer pointer array and operator().
-*/
 namespace TSlib
 {
 #ifdef _CUDA
@@ -914,7 +907,7 @@ public:
 	inline Tensor<T, device> operator+(const OT& other)
 	{
 		
-		return CaddSingle(other);
+		return CaddSingle<T, OT>(other);
 
 	}
 

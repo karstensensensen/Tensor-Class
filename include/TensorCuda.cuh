@@ -19,7 +19,7 @@ namespace TSlib
 
 template<typename T>
 template<typename First>
-__device__ void CTBase<T>::get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord)
+__device__ void CTBase<T>::get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord) const
 {
 
 	#ifdef _DEBUG
@@ -33,7 +33,7 @@ __device__ void CTBase<T>::get_indx(size_t& indx, size_t& iter, size_t& tmp_mult
 
 template<typename T>
 template<typename First, typename... Args>
-__device__ void CTBase<T>::get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord, Args ... remaining)
+__device__ void CTBase<T>::get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord, Args ... remaining) const
 {
 
 	get_indx(indx, iter, tmp_multiply, coord);
@@ -62,7 +62,7 @@ CTBase<T>::~CTBase()
 /// </summary>
 
 template<typename T>
-__device__ size_t CTBase<T>::size()
+__device__ size_t CTBase<T>::size() const
 {
 	return m_size;
 }
@@ -217,10 +217,23 @@ __device__ T& CUDATensor1D<T>::At(size_t x)
 }
 
 template<typename T>
+__device__ T CUDATensor1D<T>::At(size_t x) const
+{
+	return gpu_mem[x];
+}
+
+template<typename T>
 __device__ T& CUDATensor1D<T>::At()
 {
 	return gpu_mem[threadIdx.x + blockIdx.x * blockDim.x];
 }
+
+template<typename T>
+__device__ T CUDATensor1D<T>::At() const
+{
+	return gpu_mem[threadIdx.x + blockIdx.x * blockDim.x];
+}
+
 
 template<typename T>
 __device__ T& CUDATensor1D<T>::Offset(size_t x)
@@ -229,19 +242,31 @@ __device__ T& CUDATensor1D<T>::Offset(size_t x)
 }
 
 template<typename T>
-__device__ bool CUDATensor1D<T>::in_bounds()
+__device__ T CUDATensor1D<T>::Offset(size_t x) const
+{
+	return gpu_mem[threadIdx.x + blockIdx.x * blockDim.x + x];
+}
+
+template<typename T>
+__device__ bool CUDATensor1D<T>::in_bounds() const
 {
 	return ((threadIdx.x + blockIdx.x * blockDim.x) < m_length);
 }
 
 template<typename T>
-__device__ bool TSlib::CUDATensor1D<T>::offset_bounds(size_t x)
+__device__ bool TSlib::CUDATensor1D<T>::offset_bounds(size_t x) const
 {
 	return ((threadIdx.x + blockIdx.x * blockDim.x + x) < m_length);
 }
 
 template<typename T>
 __device__ T& CUDATensor2D<T>::At(size_t x, size_t y)
+{
+	return gpu_mem[x + y * m_length];
+}
+
+template<typename T>
+__device__ T CUDATensor2D<T>::At(size_t x, size_t y) const
 {
 	return gpu_mem[x + y * m_length];
 }
@@ -254,6 +279,13 @@ __device__ T& CUDATensor2D<T>::At()
 }
 
 template<typename T>
+__device__ T CUDATensor2D<T>::At() const
+{
+	return gpu_mem[(threadIdx.x + blockIdx.x * blockDim.x) +
+		(threadIdx.y + blockIdx.y * blockDim.y) * m_length];
+}
+
+template<typename T>
 __device__ T& CUDATensor2D<T>::Offset(size_t x, size_t y)
 {
 	return gpu_mem[(threadIdx.x + blockIdx.x * blockDim.x + x) +
@@ -261,14 +293,21 @@ __device__ T& CUDATensor2D<T>::Offset(size_t x, size_t y)
 }
 
 template<typename T>
-__device__ bool CUDATensor2D<T>::in_bounds()
+__device__ T CUDATensor2D<T>::Offset(size_t x, size_t y) const
+{
+	return gpu_mem[(threadIdx.x + blockIdx.x * blockDim.x + x) +
+		(threadIdx.y + blockIdx.y * blockDim.y + y) * m_length];
+}
+
+template<typename T>
+__device__ bool CUDATensor2D<T>::in_bounds() const
 {
 	return ((threadIdx.x + blockIdx.x * blockDim.x) < m_length) && 
 			((threadIdx.y + blockIdx.y * blockDim.y) < m_width);
 }
 
 template<typename T>
-__device__ bool TSlib::CUDATensor2D<T>::off_bounds(size_t x, size_t y)
+__device__ bool TSlib::CUDATensor2D<T>::offset_bounds(size_t x, size_t y) const
 {
 	return ((threadIdx.x + blockIdx.x * blockDim.x + x) < m_length) &&
 		   ((threadIdx.y + blockIdx.y * blockDim.y + y) < m_width);
@@ -276,6 +315,12 @@ __device__ bool TSlib::CUDATensor2D<T>::off_bounds(size_t x, size_t y)
 
 template<typename T>
 __device__ T& CUDATensor3D<T>::At(size_t x, size_t y)
+{
+	return gpu_mem[x + y * m_length + z * m_length * m_width];
+}
+
+template<typename T>
+__device__ T CUDATensor3D<T>::At(size_t x, size_t y) const
 {
 	return gpu_mem[x + y * m_length + z * m_length * m_width];
 }
@@ -289,6 +334,14 @@ __device__ T& CUDATensor3D<T>::At()
 }
 
 template<typename T>
+__device__ T CUDATensor3D<T>::At() const
+{
+	return gpu_mem[(threadIdx.x + blockIdx.x * blockDim.x) +
+		(threadIdx.y + blockIdx.y * blockDim.y) * m_length +
+		(threadIdx.z + blockIdx.z * blockDim.z) * m_length * m_width];
+}
+
+template<typename T>
 __device__ T& CUDATensor3D<T>::Offset(size_t x, size_t y, size_t z)
 {
 	return gpu_mem[(threadIdx.x + blockIdx.x * blockDim.x + x) +
@@ -297,7 +350,15 @@ __device__ T& CUDATensor3D<T>::Offset(size_t x, size_t y, size_t z)
 }
 
 template<typename T>
-__device__ bool CUDATensor3D<T>::in_bounds()
+__device__ T CUDATensor3D<T>::Offset(size_t x, size_t y, size_t z) const
+{
+	return gpu_mem[(threadIdx.x + blockIdx.x * blockDim.x + x) +
+		(threadIdx.y + blockIdx.y * blockDim.y + y) * m_length +
+		(threadIdx.z + blockIdx.z * blockDim.z + z) * m_length * m_width];
+}
+
+template<typename T>
+__device__ bool CUDATensor3D<T>::in_bounds() const
 {
 	return ((threadIdx.x + blockIdx.x * blockDim.x) < m_length) &&
 			((threadIdx.y + blockIdx.y * blockDim.y) < m_width) && 
@@ -305,7 +366,7 @@ __device__ bool CUDATensor3D<T>::in_bounds()
 }
 
 template<typename T>
-__device__ bool TSlib::CUDATensor3D<T>::off_bounds(size_t x, size_t y, size_t z)
+__device__ bool TSlib::CUDATensor3D<T>::offset_bounds(size_t x, size_t y, size_t z) const
 {
 	return ((threadIdx.x + blockIdx.x * blockDim.x + x) < m_length) &&
 		   ((threadIdx.y + blockIdx.y * blockDim.y + y) < m_width) &&
@@ -724,8 +785,8 @@ Tensor<RT, device> Tensor<T, device>::CaddSingle(const OT& other)
 	{
 		push();
 	}
-
-	auto result = Kernel2DR<RT>(CudaAddSingle<T, OT, RT>, other);
+	void(*foo)(const CUDATensor3D<T>, CUDATensor3D<RT>, OT) = &CudaAddSingle<T, OT, RT>;
+	auto result = Kernel3DR<Layout3D(), void(*)(const CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>(foo, other);
 
 	if (this_alloc)
 	{
@@ -756,7 +817,7 @@ Tensor<RT, device> Tensor<T, device>::Csubtract(Tensor<OT, o_device>& other)
 		other.push();
 	}
 
-	auto result = Kernel2DR<RT>(CudaSubtract<T, OT, RT>, other);
+	auto result = Kernel3DR<Layout3D(), void(*)(const CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>(CudaSubtract<T, OT, RT>, other);
 
 	if (this_alloc)
 	{

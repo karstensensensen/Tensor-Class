@@ -6,119 +6,101 @@
 namespace TSlib
 {
 	template <typename T, typename OT, typename RT>
-	__global__ void CudaAdd(size_t width, size_t height, const T* a, RT* c, OT* b)
+	__kernel__ CudaAdd(const CUDATensor3D<T> a, CUDATensor3D<RT> c, CUDATensor3D<OT> b)
 	{
-		int row = blockIdx.y * blockDim.y + threadIdx.y;
-		int col = blockIdx.x * blockDim.x + threadIdx.x;
-		int index = row * width + col;
-
-		if ((col < width) && (row < height))
-			c[index] = (RT)a[index] + (RT)b[index];
-
+		if (a.in_bounds())
+		{
+			c.At() = RT(a.At()) + RT(b.At());
+		}
 	}
 	template <typename T, typename OT, typename RT>
-	__global__ void CudaAddSingle(size_t width, size_t height, const T* a, RT* c, const OT b)
+	__kernel__ CudaAddSingle(const CUDATensor3D<T> a, CUDATensor3D<RT> c, OT b)
 	{
-		int row = blockIdx.y * blockDim.y + threadIdx.y;
-		int col = blockIdx.x * blockDim.x + threadIdx.x;
-		int index = row * width + col;
-
-		if ((col < width) && (row < height))
-			c[index] = (RT)a[index] + (RT)b;
-
+		if (a.in_bounds())
+		{
+			c.At() = RT(a.At()) + RT(b);
+		}
 	}
 
 
 	template <typename T, typename OT, typename RT>
-	__global__ void CudaSubtract(size_t width, size_t height, const T* a, RT* c, OT* b)
+	__kernel__ CudaSubtract(const CUDATensor3D<T> a, CUDATensor3D<RT> c, CUDATensor3D<OT> b)
 	{
-		int row = blockIdx.y * blockDim.y + threadIdx.y;
-		int col = blockIdx.x * blockDim.x + threadIdx.x;
-		int index = row * width + col;
-
-		if ((col < width) && (row < height))
-			c[index] = (RT)a[index] - (RT)b[index];
+		if (a.in_bounds())
+		{
+			c.At() = RT(a.At()) - RT(b.At());
+		}
 	}
 	template <typename T, typename OT, typename RT>
-	__global__ void CudaSubtractSingle(size_t width, size_t height, const T* a, RT* c, const OT b)
+	__kernel__ CudaSubtractSingle(const CUDATensor3D<T> a, CUDATensor3D<RT> c, const OT b)
 	{
-		int row = blockIdx.y * blockDim.y + threadIdx.y;
-		int col = blockIdx.x * blockDim.x + threadIdx.x;
-		int index = row * width + col;
-
-		if ((col < width) && (row < height))
-			c[index] = (RT)a[index] - (RT)b;
+		if (a.in_bounds())
+		{
+			c.At() = RT(a.At()) - RT(b);
+		}
 	}
 
 
 	template <typename T, typename OT, typename RT>
-	__global__ void CudaMultiply(size_t width, size_t height, const T* a, RT* c, OT* b)
+	__kernel__ CudaMultiply(const CUDATensor3D<T> a, CUDATensor3D<RT> c, CUDATensor3D<OT> b)
 	{
-		int row = blockIdx.y * blockDim.y + threadIdx.y;
-		int col = blockIdx.x * blockDim.x + threadIdx.x;
-		int index = row * width + col;
-
-		if ((col < width) && (row < height))
-			c[index] = (RT)a[index] * (RT)b[index];
+		if (a.in_bounds())
+		{
+			c.At() = RT(a.At()) * RT(b.At());
+		}
 	}
 	template <typename T, typename OT, typename RT>
-	__global__ void CudaMultiplySingle(size_t width, size_t height, const T* a, RT* c, const OT b)
+	__kernel__ CudaMultiplySingle(const CUDATensor3D<T> a, CUDATensor3D<RT> c, const OT b)
 	{
-		int row = blockIdx.y * blockDim.y + threadIdx.y;
-		int col = blockIdx.x * blockDim.x + threadIdx.x;
-		int index = row * width + col;
-
-		if ((col < width) && (row < height))
-			c[index] = (RT)a[index] * (RT)b;
+		if (a.in_bounds())
+		{
+			c.At() = RT(a.At()) * RT(b);
+		}
 	}
 
 	template <typename T, typename OT, typename RT>
-	__global__ void CudaDot(size_t width, size_t height, const T* a, RT* c, OT* b);
-	template <typename T, typename OT, typename RT>
-	__global__ void CudaDivide(size_t width, size_t height, const T* a, RT* c, OT* b)
-	{
-		int row = blockIdx.y * blockDim.y + threadIdx.y;
-		int col = blockIdx.x * blockDim.x + threadIdx.x;
-		int index = row * width + col;
+	__kernel__ CudaDot(const CUDATensor3D<T> a, CUDATensor3D<RT> c, CUDATensor3D<OT> b);
 
-		if ((col < width) && (row < height))
-			c[index] = (RT)a[index] / (RT)b[index];
+	template <typename T, typename OT, typename RT>
+	__kernel__ CudaDotSingle(const CUDATensor3D<T> a, CUDATensor3D<RT> c, const OT b);
+
+	template <typename T, typename OT, typename RT>
+	__kernel__ CudaDivide(const CUDATensor3D<T> a, CUDATensor3D<RT> c, CUDATensor3D<OT> b)
+	{
+		if (a.in_bounds())
+		{
+			c.At() = RT(a.At()) / RT(b.At());
+		}
 	}
 	template <typename T, typename OT, typename RT>
-	__global__ void CudaDivideSingle(size_t width, size_t height, const T* a, RT* c, const OT b)
+	__kernel__ CudaDivideSingle(const CUDATensor3D<T> a, CUDATensor3D<RT> c, const OT b)
 	{
-		int row = blockIdx.y * blockDim.y + threadIdx.y;
-		int col = blockIdx.x * blockDim.x + threadIdx.x;
-		int index = row * width + col;
-
-		if ((col < width) && (row < height))
-			c[index] = (RT)a[index] / (RT)b;
+		if (a.in_bounds())
+		{
+			c.At() = RT(a.At()) / RT(b);
+		}
 	}
 
 	template <typename T, typename OT, typename RT>
-	__global__ void CudaModulous(size_t width, size_t height, const T* a, RT* c, OT* b)
+	__kernel__ CudaModulous(const CUDATensor3D<T> a, CUDATensor3D<RT> c, CUDATensor3D<OT> b)
 	{
-		int row = blockIdx.y * blockDim.y + threadIdx.y;
-		int col = blockIdx.x * blockDim.x + threadIdx.x;
-		int index = row * width + col;
-
-		if ((col < width) && (row < height))
-			c[index] = (RT)a[index] % (RT)b[index];
+		if (a.in_bounds())
+		{
+			c.At() = RT(a.At()) % RT(b.At());
+		}
 	}
 	template <typename T, typename OT, typename RT>
-	__global__ void CudaModulousSingle(size_t width, size_t height, const T* a, RT* c, const OT b)
+	__kernel__ CudaModulousSingle(const CUDATensor3D<T> a, CUDATensor3D<RT> c, const OT b)
 	{
-		int row = blockIdx.y * blockDim.y + threadIdx.y;
-		int col = blockIdx.x * blockDim.x + threadIdx.x;
-		int index = row * width + col;
-
-		if ((col < width) && (row < height))
-			c[index] = (RT)a[index] % (RT)b;
+		if (a.in_bounds())
+		{
+			c.At() = RT(a.At()) % RT(b);
+		}
 	}
 
 
 	template <typename T, typename OT>
-	__global__ void CudaAdditionAssignment(size_t width, size_t height, T* a, OT* b)
+	__kernel__ CudaAdditionAssignment(size_t width, size_t height, T* a, OT* b)
 	{
 		int row = blockIdx.y * blockDim.y + threadIdx.y;
 		int col = blockIdx.x * blockDim.x + threadIdx.x;
@@ -129,7 +111,7 @@ namespace TSlib
 	}
 
 	template <typename T, typename OT>
-	__global__ void CudaAdditionAssignmentSingle(size_t width, size_t height, T* a, const OT b)
+	__kernel__ CudaAdditionAssignmentSingle(size_t width, size_t height, T* a, const OT b)
 	{
 		int row = blockIdx.y * blockDim.y + threadIdx.y;
 		int col = blockIdx.x * blockDim.x + threadIdx.x;
@@ -139,7 +121,7 @@ namespace TSlib
 			a[index] += (T)b;
 	}
 	template <typename T, typename OT>
-	__global__ void CudaSubtractionAssignment(size_t width, size_t height, T* a, OT* b)
+	__kernel__ CudaSubtractionAssignment(size_t width, size_t height, T* a, OT* b)
 	{
 		int row = blockIdx.y * blockDim.y + threadIdx.y;
 		int col = blockIdx.x * blockDim.x + threadIdx.x;
@@ -149,7 +131,7 @@ namespace TSlib
 			a[index] -= b[index];
 	}
 	template <typename T, typename OT>
-	__global__ void CudaSubtractionAssignmentSingle(size_t width, size_t height, T* a, const OT b)
+	__kernel__ CudaSubtractionAssignmentSingle(size_t width, size_t height, T* a, const OT b)
 	{
 		int row = blockIdx.y * blockDim.y + threadIdx.y;
 		int col = blockIdx.x * blockDim.x + threadIdx.x;
@@ -161,7 +143,7 @@ namespace TSlib
 
 
 	template <typename T, typename OT>
-	__global__ void CudaMultiplicationAssignment(size_t width, size_t height, T* a, OT* b)
+	__kernel__ CudaMultiplicationAssignment(size_t width, size_t height, T* a, OT* b)
 	{
 		int row = blockIdx.y * blockDim.y + threadIdx.y;
 		int col = blockIdx.x * blockDim.x + threadIdx.x;
@@ -171,7 +153,7 @@ namespace TSlib
 			a[index] *= b[index];
 	}
 	template <typename T, typename OT>
-	__global__ void CudaMultiplicationAssignmentSingle(size_t width, size_t height, T* a, const OT b)
+	__kernel__ CudaMultiplicationAssignmentSingle(size_t width, size_t height, T* a, const OT b)
 	{
 		int row = blockIdx.y * blockDim.y + threadIdx.y;
 		int col = blockIdx.x * blockDim.x + threadIdx.x;
@@ -182,9 +164,10 @@ namespace TSlib
 	}
 
 	template <typename T, typename OT>
-	__global__ void CudaDot_assignment(size_t width, size_t height, T* a, OT* b);
+	__kernel__ CudaDotAssignment(size_t width, size_t height, T* a, OT* b);
+
 	template <typename T, typename OT>
-	__global__ void CudaDivisionAssignment(size_t width, size_t height, T* a, OT* b)
+	__kernel__ CudaDivisionAssignment(size_t width, size_t height, T* a, OT* b)
 	{
 		int row = blockIdx.y * blockDim.y + threadIdx.y;
 		int col = blockIdx.x * blockDim.x + threadIdx.x;
@@ -194,7 +177,7 @@ namespace TSlib
 			a[index] /= b[index];
 	}
 	template <typename T, typename OT>
-	__global__ void CudaDivisionAssignmentSingle(size_t width, size_t height, T* a, const OT b)
+	__kernel__ CudaDivisionAssignmentSingle(size_t width, size_t height, T* a, const OT b)
 	{
 		int row = blockIdx.y * blockDim.y + threadIdx.y;
 		int col = blockIdx.x * blockDim.x + threadIdx.x;
@@ -204,7 +187,7 @@ namespace TSlib
 			a[index] /= (T)b;
 	}
 	template <typename T, typename OT>
-	__global__ void CudaModulouAssignment(size_t width, size_t height, T* a, OT* b)
+	__kernel__ CudaModulouAssignment(size_t width, size_t height, T* a, OT* b)
 	{
 		int row = blockIdx.y * blockDim.y + threadIdx.y;
 		int col = blockIdx.x * blockDim.x + threadIdx.x;
@@ -214,7 +197,7 @@ namespace TSlib
 			a[index] %= b[index];
 	}
 	template <typename T, typename OT>
-	__global__ void CudaModulouAssignmentSingle(size_t width, size_t height, T* a, const OT b)
+	__kernel__ CudaModulouAssignmentSingle(size_t width, size_t height, T* a, const OT b)
 	{
 		int row = blockIdx.y * blockDim.y + threadIdx.y;
 		int col = blockIdx.x * blockDim.x + threadIdx.x;
@@ -226,7 +209,7 @@ namespace TSlib
 
 
 	template <typename T, typename OT, typename RT>
-	__global__ void CudaCompare(size_t width, size_t height, const T* a, RT* c, OT* b)
+	__kernel__ CudaCompare(size_t width, size_t height, const T* a, RT* c, OT* b)
 	{
 		int row = blockIdx.y * blockDim.y + threadIdx.y;
 		int col = blockIdx.x * blockDim.x + threadIdx.x;
@@ -236,7 +219,7 @@ namespace TSlib
 			c[index] = a[index] == b[index];
 	}
 	template <typename T, typename OT, typename RT>
-	__global__ void CudaCompareSingle(size_t width, size_t height, const T* a, RT* c, const OT b)
+	__kernel__ CudaCompareSingle(size_t width, size_t height, const T* a, RT* c, const OT b)
 	{
 		int row = blockIdx.y * blockDim.y + threadIdx.y;
 		int col = blockIdx.x * blockDim.x + threadIdx.x;
@@ -246,7 +229,7 @@ namespace TSlib
 			c[index] = a[index] == (T)b;
 	}
 	template <typename T, typename OT, typename RT>
-	__global__ void CudaLessThan(size_t width, size_t height, const T* a, RT* c, OT* b)
+	__kernel__ CudaLessThan(size_t width, size_t height, const T* a, RT* c, OT* b)
 	{
 		int row = blockIdx.y * blockDim.y + threadIdx.y;
 		int col = blockIdx.x * blockDim.x + threadIdx.x;
@@ -256,7 +239,7 @@ namespace TSlib
 			c[index] = a[index] < b[index];
 	}
 	template <typename T, typename OT, typename RT>
-	__global__ void CudaLessThanSingle(size_t width, size_t height, const T* a, RT* c, const OT b)
+	__kernel__ CudaLessThanSingle(size_t width, size_t height, const T* a, RT* c, const OT b)
 	{
 		int row = blockIdx.y * blockDim.y + threadIdx.y;
 		int col = blockIdx.x * blockDim.x + threadIdx.x;
@@ -266,7 +249,7 @@ namespace TSlib
 			c[index] = a[index] < (T)b;
 	}
 	template <typename T, typename OT, typename RT>
-	__global__ void CudaMoreThan(size_t width, size_t height, const T* a, RT* c, OT* b)
+	__kernel__ CudaMoreThan(size_t width, size_t height, const T* a, RT* c, OT* b)
 	{
 		int row = blockIdx.y * blockDim.y + threadIdx.y;
 		int col = blockIdx.x * blockDim.x + threadIdx.x;
@@ -276,7 +259,7 @@ namespace TSlib
 			c[index] = a[index] > b[index];
 	}
 	template <typename T, typename OT, typename RT>
-	__global__ void CudaMoreThanSingle(size_t width, size_t height, const T* a, RT* c, const OT b)
+	__kernel__ CudaMoreThanSingle(size_t width, size_t height, const T* a, RT* c, const OT b)
 	{
 		int row = blockIdx.y * blockDim.y + threadIdx.y;
 		int col = blockIdx.x * blockDim.x + threadIdx.x;
@@ -286,7 +269,7 @@ namespace TSlib
 			c[index] = a[index] > (T)b;
 	}
 	template <typename T, typename OT, typename RT>
-	__global__ void CudaLessThanEqual(size_t width, size_t height, const T* a, RT* c, OT* b)
+	__kernel__ CudaLessThanEqual(size_t width, size_t height, const T* a, RT* c, OT* b)
 	{
 		int row = blockIdx.y * blockDim.y + threadIdx.y;
 		int col = blockIdx.x * blockDim.x + threadIdx.x;
@@ -296,7 +279,7 @@ namespace TSlib
 			c[index] = a[index] <= b[index];
 	}
 	template <typename T, typename OT, typename RT>
-	__global__ void CudaLessThanEqualSingle(size_t width, size_t height, const T* a, RT* c, const OT b)
+	__kernel__ CudaLessThanEqualSingle(size_t width, size_t height, const T* a, RT* c, const OT b)
 	{
 		int row = blockIdx.y * blockDim.y + threadIdx.y;
 		int col = blockIdx.x * blockDim.x + threadIdx.x;
@@ -306,7 +289,7 @@ namespace TSlib
 			c[index] = a[index] <= (T)b;
 	}
 	template <typename T, typename OT, typename RT>
-	__global__ void CudaMoreThanEqual(size_t width, size_t height, const T* a, RT* c, OT* b)
+	__kernel__ CudaMoreThanEqual(size_t width, size_t height, const T* a, RT* c, OT* b)
 	{
 		int row = blockIdx.y * blockDim.y + threadIdx.y;
 		int col = blockIdx.x * blockDim.x + threadIdx.x;
@@ -316,7 +299,7 @@ namespace TSlib
 			c[index] = a[index] >= b[index];
 	}
 	template <typename T, typename OT, typename RT>
-	__global__ void CudaMoreThanEqualSingle(size_t width, size_t height, const T* a, RT* c, const OT b)
+	__kernel__ CudaMoreThanEqualSingle(size_t width, size_t height, const T* a, RT* c, const OT b)
 	{
 		int row = blockIdx.y * blockDim.y + threadIdx.y;
 		int col = blockIdx.x * blockDim.x + threadIdx.x;

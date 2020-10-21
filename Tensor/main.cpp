@@ -17,7 +17,7 @@ __kernel__ kernel(CUDATensor3D<uint32_t> tensor, int val)
 			tensor.At() += val;
 		}
 		
-		if (tensor.off_bounds(2))
+		if (tensor.offset_bounds(2))
 		{
 			for (int i = 0; i < 10000; i++)
 			{
@@ -37,16 +37,14 @@ int main()
 	
 	TSlib::CUDAInitialize();
 
-	Tensor<uint32_t> tensor({ 1024, 1024, 1024 }, 25);
+	Tensor<uint32_t> tensor({ 5, 5, 3 }, 25);
 
 	try
 	{
 
-		tensor.push();
+		void(*foo)(const CUDATensor3D<int>, const CUDATensor3D<int>, int) = &CudaAddSingle;
 
-		tensor.Kernel3D(Layout3D(1, 2, 0.5), kernel, 25);
-
-		tensor.pull();
+		tensor = tensor + 5;
 
 		std::cout << tensor;
 	}
