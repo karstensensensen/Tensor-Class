@@ -285,6 +285,8 @@ Tensor<T, device>::Tensor(const TensorSlice<T, device>& slice, const bool& add_e
 	}
 }
 
+
+
 template<typename T, Mode device>
 Tensor<T, device>::Tensor(const Tensor<T, device>& other)
 	: m_vector(other.asVector()), m_dim_size(other.DimSizes())
