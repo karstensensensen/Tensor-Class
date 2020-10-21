@@ -642,7 +642,7 @@ void Tensor<T, device>::Reshape(const std::initializer_list<size_t>& shape, bool
 	}
 	
 	if (size() != new_shape_size)
-		throw BadShape(*this, shape);
+		throw BadShape(this, "New shape does not fit the current tensor's dimensions", shape);
 	#endif
 
 	m_dim_size.erase(m_dim_size.begin(), m_dim_size.end());
