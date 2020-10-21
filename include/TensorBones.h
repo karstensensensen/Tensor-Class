@@ -14,7 +14,7 @@ namespace TSlib
 #define DEVICE_MAX_THREADS 1024
 #endif
 
-constexpr Mode defualt_device = Mode::GPU;
+constexpr Mode default_device = Mode::GPU;
 
 template<typename T>
 class CUDATensor1D;

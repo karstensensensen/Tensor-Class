@@ -88,9 +88,9 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_CUDA;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>TENSOR_PROFILING;_CUDA;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Dev\cpp\libs\Performance\include;..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Dev\cpp\libs\Performance\include;..\include;..\CUDAinclude;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -115,9 +115,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_CUDA;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>TENSOR_PROFILING;_CUDA;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Dev\cpp\libs\Performance\include;..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Dev\cpp\libs\Performance\include;..\include;..\CUDAinclude;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -142,9 +142,9 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_CUDA;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>TENSOR_PROFILING;_CUDA;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Dev\cpp\libs\Performance\include;..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Dev\cpp\libs\Performance\include;..\include;..\CUDAinclude;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/WL /showIncludes %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
@@ -174,9 +174,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_CUDA;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>TENSOR_PROFILING;_CUDA;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Dev\cpp\libs\Performance\include;..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Dev\cpp\libs\Performance\include;..\include;..\CUDAinclude;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/WL /showIncludes %(AdditionalOptions)</AdditionalOptions>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -207,13 +207,13 @@
     <None Include="boost_x86_release.props" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\CUDAInclude\TensorCuda.cuh" />
+    <ClInclude Include="..\CUDAInclude\TensorCudaBones.cuh" />
+    <ClInclude Include="..\CUDAInclude\TensorOperatorKernels.cuh" />
     <ClInclude Include="..\include\Tensor.h" />
     <ClInclude Include="..\include\TensorBones.h" />
-    <ClInclude Include="..\include\TensorCuda.cuh" />
-    <CudaCompile Include="..\include\TensorCudaBones.cuh" />
     <ClInclude Include="..\include\TensorEnums.h" />
     <ClInclude Include="..\include\TensorExceptions.h" />
-    <ClInclude Include="..\include\TensorOperatorKernels.cuh" />
     <ClInclude Include="..\include\TensorOperators.h" />
     <ClInclude Include="..\include\TensorSlice.h" />
     <ClInclude Include="..\include\TensorSliceBones.h" />
@@ -223,6 +223,9 @@
   <ItemGroup>
     <CudaCompile Include="..\include\PerlinNoise.cpp" />
     <CudaCompile Include="..\Tensor\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="empty.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

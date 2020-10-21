@@ -43,7 +43,7 @@ int main()
 	{
 
 		void(*foo)(const CUDATensor3D<int>, const CUDATensor3D<int>, int) = &CudaAddSingle;
-
+		
 		tensor = tensor + 5;
 
 		std::cout << tensor;

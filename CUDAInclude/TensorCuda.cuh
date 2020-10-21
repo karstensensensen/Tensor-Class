@@ -760,7 +760,9 @@ Tensor<RT, device> Tensor<T, device>::Cadd(Tensor<OT, o_device>& other)
 		other.push();
 	}
 
-	auto result = Kernel2DR<RT>(CudaAdd<T, OT, RT>, other);
+	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
+								(Layout3D(), CudaAdd<T, OT, RT>, other);
+
 
 	if (this_alloc)
 	{
@@ -785,8 +787,9 @@ Tensor<RT, device> Tensor<T, device>::CaddSingle(const OT& other)
 	{
 		push();
 	}
-	void(*foo)(const CUDATensor3D<T>, CUDATensor3D<RT>, OT) = &CudaAddSingle<T, OT, RT>;
-	auto result = Kernel3DR<Layout3D(), void(*)(const CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>(foo, other);
+	
+	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
+								(Layout3D(), CudaAddSingle<T, OT, RT>, other);
 
 	if (this_alloc)
 	{
@@ -817,7 +820,8 @@ Tensor<RT, device> Tensor<T, device>::Csubtract(Tensor<OT, o_device>& other)
 		other.push();
 	}
 
-	auto result = Kernel3DR<Layout3D(), void(*)(const CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>(CudaSubtract<T, OT, RT>, other);
+	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
+								(Layout3D(), CudaSubtract<T, OT, RT>, other);
 
 	if (this_alloc)
 	{
@@ -843,7 +847,8 @@ Tensor<RT, device> Tensor<T, device>::CsubtractSingle(const OT& other)
 		push();
 	}
 
-	auto result = Kernel2DR<RT>(CudaSubtractSingle<T, OT, RT>, other);
+	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
+								(Layout3D(), CudaSubtractSingle<T, OT, RT>, other);
 
 	if (this_alloc)
 	{
@@ -874,7 +879,8 @@ Tensor<RT, device> Tensor<T, device>::Cmultiply(Tensor<OT, o_device>& other)
 		other.push();
 	}
 
-	auto result = Kernel2DR<RT>(CudaMultiply<T, OT, RT>, other);
+	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
+								(Layout3D(), CudaMultiply<T, OT, RT>, other);
 
 	if (this_alloc)
 	{
@@ -900,7 +906,8 @@ Tensor<RT, device> Tensor<T, device>::CmultiplySingle(const OT& other)
 		push();
 	}
 
-	auto result = Kernel2DR<RT>(CudaMultiplySingle<T, OT, RT>, other);
+	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
+								(Layout3D(), CudaMultiplySingle<T, OT, RT>, other);
 
 	if (this_alloc)
 	{
@@ -931,7 +938,8 @@ Tensor<RT, device> Tensor<T, device>::Cdivide(Tensor<OT, o_device>& other)
 		other.push();
 	}
 
-	auto result = Kernel2DR<RT>(CudaDivide<T, OT, RT>, other);
+	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
+								(Layout3D(), CudaDivide<T, OT, RT>, other);
 
 	if (this_alloc)
 	{
@@ -957,7 +965,8 @@ Tensor<RT, device> Tensor<T, device>::CdivideSingle(const OT& other)
 		push();
 	}
 
-	auto result = Kernel2DR<RT>(CudaDivideSingle<T, OT, RT>, other);
+	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
+								(Layout3D(), CudaDivideSingle<T, OT, RT>, other);
 
 	if (this_alloc)
 	{
@@ -988,7 +997,8 @@ Tensor<RT, device> Tensor<T, device>::Cmodulous(Tensor<OT, o_device>& other)
 		other.push();
 	}
 
-	auto result = Kernel2DR<RT>(CudaModulous<T, OT, RT>, other);
+	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
+								(Layout3D(), CudaModulous<T, OT, RT>, other);
 
 	if (this_alloc)
 	{
@@ -1014,7 +1024,8 @@ Tensor<RT, device> Tensor<T, device>::CmodulousSingle(const OT& other)
 		push();
 	}
 
-	auto result = Kernel2DR<RT>(CudaModulousSingle<T, OT, RT>, other);
+	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
+								(Layout3D(), CudaModulousSingle<T, OT, RT>, other);
 
 	if (this_alloc)
 	{
@@ -1045,7 +1056,8 @@ void Tensor<T, device>::CadditionAssignment(Tensor<OT, o_device>& other)
 		other.push();
 	}
 
-	Kernel2D(CudaAdditionAssignment<T, OT>, other);
+	Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
+								(Layout3D(), CudaAdditionAssignment<T, OT>, other);
 
 	if (this_alloc)
 	{
@@ -1069,7 +1081,8 @@ void Tensor<T, device>::CadditionAssignmentSingle(const OT& other)
 		push();
 	}
 
-	Kernel2D(CudaAdditionAssignmentSingle<T, OT>, other);
+	Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, OT)>
+								(Layout3D(), CudaAdditionAssignmentSingle<T, OT>, other);
 
 	if (this_alloc)
 	{
@@ -1098,7 +1111,8 @@ void Tensor<T, device>::CsubtractionAssignment(Tensor<OT, o_device>& other)
 		other.push();
 	}
 
-	Kernel2D(CudaSubtractionAssignment<T, OT>, other);
+	Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
+								(Layout3D(), CudaSubtractionAssignment<T, OT>, other);
 
 	if (this_alloc)
 	{
@@ -1122,7 +1136,8 @@ void Tensor<T, device>::CsubtractionAssignmentSingle(const OT& other)
 		push();
 	}
 
-	Kernel2D(CudaSubtractionAssignmentSingle<T, OT>, other);
+	Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
+								(Layout3D(), CudaSubtractionAssignmentSingle<T, OT>, other);
 
 	if (this_alloc)
 	{
@@ -1151,7 +1166,8 @@ void Tensor<T, device>::CmultiplicationAssignment(Tensor<OT, o_device>& other)
 		other.push();
 	}
 
-	Kernel2D(CudaMultiplicationAssignment<T, OT>, other);
+	Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
+								(Layout3D(), CudaMultiplicationAssignment<T, OT>, other);
 
 	if (this_alloc)
 	{
@@ -1175,7 +1191,8 @@ void Tensor<T, device>::CmultiplicationAssignmentSingle(const OT& other)
 		push();
 	}
 
-	Kernel2D(CudaMultiplicationAssignmentSingle<T, OT>, other);
+	Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
+								(Layout3D(), CudaMultiplicationAssignmentSingle<T, OT>, other);
 
 	if (this_alloc)
 	{
@@ -1204,7 +1221,8 @@ void Tensor<T, device>::CdivisionAssignment(Tensor<OT, o_device>& other)
 		other.push();
 	}
 
-	Kernel2D(CudaDivisionAssignment<T, OT>, other);
+	Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
+								(Layout3D(), CudaDivisionAssignment<T, OT>, other);
 
 	if (this_alloc)
 	{
@@ -1228,7 +1246,8 @@ void Tensor<T, device>::CdivisionAssignmentSingle(const OT& other)
 		push();
 	}
 
-	Kernel2D(CudaDivisionAssignmentSingle<T, OT>, other);
+	Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
+								(Layout3D(), CudaDivisionAssignmentSingle<T, OT>, other);
 
 	if (this_alloc)
 	{
@@ -1257,7 +1276,8 @@ void Tensor<T, device>::CmodulouAssignment(Tensor<OT, o_device>& other)
 		other.push();
 	}
 
-	Kernel2D(CudaModulouAssignment<T, OT>, other);
+	Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
+								(Layout3D(), CudaModulouAssignment<T, OT>, other);
 
 	if (this_alloc)
 	{
@@ -1281,7 +1301,8 @@ void Tensor<T, device>::CmodulouAssignmentSingle(const OT& other)
 		push();
 	}
 
-	Kernel2D(CudaModulouAssignmentSingle<T, OT>, other);
+	Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
+								(Layout3D(), CudaModulouAssignmentSingle<T, OT>, other);
 
 	if (this_alloc)
 	{
@@ -1310,7 +1331,8 @@ Tensor<RT, device> Tensor<T, device>::Ccompare(Tensor<OT, o_device>& other)
 		other.push();
 	}
 
-	auto result = Kernel2DR<RT>(CudaCompare<T, OT, RT>, other);
+	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
+								(Layout3D(), CudaCompare<T, OT, RT>, other);
 
 	if (this_alloc)
 	{
@@ -1336,7 +1358,8 @@ Tensor<RT, device> Tensor<T, device>::CcompareSingle(const OT& other)
 		push();
 	}
 
-	auto result = Kernel2DR<RT>(CudaCompareSingle<T, OT, RT>, other);
+	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
+								(Layout3D(), CudaCompareSingle<T, OT, RT>, other);
 
 	if (this_alloc)
 	{
@@ -1367,7 +1390,8 @@ Tensor<RT, device> Tensor<T, device>::ClessThan(Tensor<OT, o_device>& other)
 		other.push();
 	}
 
-	auto result = Kernel2DR<RT>(CudaLessThan<T, OT, RT>, other);
+	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
+								(Layout3D(), CudaLessThan<T, OT, RT>, other);
 
 	if (this_alloc)
 	{
@@ -1393,7 +1417,8 @@ Tensor<RT, device> Tensor<T, device>::ClessThanSingle(const OT& other)
 		push();
 	}
 
-	auto result = Kernel2DR<RT>(CudaLessThanSingle<T, OT, RT>, other);
+	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
+								(Layout3D(), CudaLessThanSingle<T, OT, RT>, other);
 
 	if (this_alloc)
 	{
@@ -1424,7 +1449,8 @@ Tensor<RT, device> Tensor<T, device>::CmoreThan(Tensor<OT, o_device>& other)
 		other.push();
 	}
 
-	auto result = Kernel2DR<RT>(other, CudaMoreThan<T, OT, RT>);
+	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
+								(Layout3D(), CudaMoreThan<T, OT, RT>, other);
 
 	if (this_alloc)
 	{
@@ -1450,7 +1476,8 @@ Tensor<RT, device> Tensor<T, device>::CmoreThanSingle(const OT& other)
 		push();
 	}
 
-	auto result = Kernel2DR<RT>(other, CudaMoreThanSingle<T, OT, RT>);
+	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
+								(Layout3D(), CudaMoreThanSingle<T, OT, RT>, other);
 
 	if (this_alloc)
 	{
@@ -1481,7 +1508,8 @@ Tensor<RT, device> Tensor<T, device>::ClessThanEqual(Tensor<OT, o_device>& other
 		other.push();
 	}
 
-	auto result = Kernel2DR<RT>(CudaLessThanEqual<T, OT, RT>, other);
+	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
+								(Layout3D(), CudaLessThanEqual<T, OT, RT>, other);
 
 	if (this_alloc)
 	{
@@ -1507,7 +1535,8 @@ Tensor<RT, device> Tensor<T, device>::ClessThanEqualSingle(const OT& other)
 		push();
 	}
 
-	auto result = Kernel2DR<RT>(CudaLessThanEqualSingle<T, OT, RT>, other);
+	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
+								(Layout3D(), CudaLessThanEqualSingle<T, OT, RT>, other);
 
 	if (this_alloc)
 	{
@@ -1538,7 +1567,8 @@ Tensor<RT, device> Tensor<T, device>::CmoreThanEqual(Tensor<OT, o_device>& other
 		other.push();
 	}
 
-	auto result = Kernel2DR<RT>(CudaMoreThanEqual<T, OT, RT>, other);
+	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
+								(Layout3D(), CudaMoreThanEqual<T, OT, RT>, other);
 
 	if (this_alloc)
 	{
@@ -1564,7 +1594,8 @@ Tensor<RT, device> Tensor<T, device>::CmoreThanEqualSingle(const OT& other)
 		push();
 	}
 
-	auto result = Kernel2DR<RT>(CudaMoreThanEqualSingle<T, OT, RT>, other);
+	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
+								(Layout3D(), CudaMoreThanEqualSingle<T, OT, RT>, other);
 
 	if (this_alloc)
 	{

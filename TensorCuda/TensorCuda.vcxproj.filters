@@ -44,12 +44,6 @@
     <ClInclude Include="..\Multrix\PerlinKernel.cuh">
       <Filter>Header Files\Noise</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\TensorCuda.cuh">
-      <Filter>Header Files\Tensor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\TensorOperatorKernels.cuh">
-      <Filter>Header Files\Tensor</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\TensorOperators.h">
       <Filter>Header Files\Tensor</Filter>
     </ClInclude>
@@ -71,6 +65,15 @@
     <ClInclude Include="..\include\TensorExceptions.h">
       <Filter>Header Files\Tensor</Filter>
     </ClInclude>
+    <ClInclude Include="..\CUDAInclude\TensorCuda.cuh">
+      <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CUDAInclude\TensorCudaBones.cuh">
+      <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CUDAInclude\TensorOperatorKernels.cuh">
+      <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="..\Tensor\main.cpp">
@@ -79,8 +82,10 @@
     <CudaCompile Include="..\include\PerlinNoise.cpp">
       <Filter>Source Files</Filter>
     </CudaCompile>
-    <CudaCompile Include="..\include\TensorCudaBones.cuh">
-      <Filter>Header Files\Tensor</Filter>
-    </CudaCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="empty.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

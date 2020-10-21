@@ -14,7 +14,7 @@ namespace TSlib
 		}
 	}
 	template <typename T, typename OT, typename RT>
-	__kernel__ CudaAddSingle(const CUDATensor3D<T> a, CUDATensor3D<RT> c, OT b)
+	__kernel__ CudaAddSingle(CUDATensor3D<T> a, CUDATensor3D<RT> c, OT b)
 	{
 		if (a.in_bounds())
 		{
