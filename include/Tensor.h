@@ -1,16 +1,19 @@
 #pragma once
 
-/*
-	This is a class made to simulate vectors, matrices and tensors.
-	Instead of a pointer to pointer to pointer style dynamic array, it instead uses only one block of memmory.
-	Do note that the operator() will sometimes be slightly slower than an actual pointer to pointer array
-	Always use the operator[] if possible.
-	Dont use the operator[] if you convert coordinates to one index because this is what the operator() does for you and also the reason it is slower than the operator[].
-	looping through an array with the operator[] is recommended if you need to change all of the elements in a tensor, because it will always be faster than both a pointer pointer array and operator().
-*/
+#ifdef __APPLE__
+typedef double double_t;
+#ifdef DEBUG
+#define _DEBUG
+#endif
+#endif
 
 #include <stdlib.h>
+
+#ifdef TENSOR_PROFILING
 #include <Profiler.h>
+#else
+#define MEASURE()
+#endif
 
 #ifdef _CUDA
 
@@ -32,13 +35,17 @@
 
 namespace TSlib
 {
-
+/// <summary>
 /// Tensor private functions
-
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="index"></param>
+/// <returns></returns>
 template<typename T, Mode device>
 size_t Tensor<T, device>::get_real_size(const size_t& index) const
 {
 	MEASURE();
+	
 	size_t r_size = 1;
 
 	for (size_t i = 0; i <= index; i++)
@@ -55,6 +62,7 @@ template<typename T, Mode device>
 size_t Tensor<T, device>::get_dim_length(const size_t& index) const
 {
 	MEASURE();
+	
 	size_t r_size = 1;
 
 	for (size_t i = index; i < m_dim_size.size(); i++)
@@ -69,6 +77,7 @@ template<typename T, Mode device>
 std::vector<size_t> Tensor<T, device>::FlattenDims(size_t dims) const
 {
 	MEASURE();
+	
 	std::vector<size_t> new_dim(dims, 0);
 
 	size_t i;
@@ -90,6 +99,7 @@ template<typename T, Mode device>
 size_t Tensor<T, device>::FlattenDims() const
 {
 	MEASURE();
+	
 	size_t new_dim = m_dim_size[0];
 
 	for (size_t j = 1; j < m_dim_size.size(); j++)
@@ -104,7 +114,9 @@ size_t Tensor<T, device>::FlattenDims() const
 template<typename T, Mode device>
 size_t  Tensor<T, device>::get_dim_size(const size_t& index) const
 {
+	
 	MEASURE();
+	
 	size_t size = 1;
 	for (size_t i = 0; i <= index; i++)
 	{
@@ -168,9 +180,13 @@ void Tensor<T, device>::to_vector(std::vector<TSlice>& vec, const std::initializ
 {
 
 	#ifdef _DEBUG
-	if(std::is_integral<First>::value);
+	if(std::is_integral<First>::value)
 	{
+		#ifdef __APPLE__
+		throw BadType("Integral", typeid(First).name());
+		#else
 		throw BadType::BadType("Integral", typeid(First).name());
+		#endif
 	}
 	#endif
 
@@ -210,9 +226,11 @@ std::vector<size_t> Tensor<T, device>::based_sort(const std::vector<size_t>& tar
 }
 
 
-
+/// <summary>
 /// Tensor constructors
-
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="dims"></param>
 template<typename T, Mode device>
 Tensor<T, device>::Tensor(const int& dims)
 	: m_dim_size(dims + 1)
@@ -293,9 +311,11 @@ TSlib::Tensor<T, device>::Tensor(const Tensor<T, device>& other)
 	#endif
 }
 
-
+/// <summary>
 //// Tensor public functions
-
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="val"></param>
 
 template<typename T, Mode device>
 void Tensor<T, device>::Fill(const T& val)
@@ -621,8 +641,8 @@ void Tensor<T, device>::Reshape(const std::initializer_list<size_t>& shape, bool
 		new_shape_size *= elem;
 	}
 	
-	if (size() != new_shape_size);
-		throw BadShape(*this, shape);
+	if (size() != new_shape_size)
+		throw BadShape(this, "New shape does not fit the current tensor's dimensions", shape);
 	#endif
 
 	m_dim_size.erase(m_dim_size.begin(), m_dim_size.end());
@@ -647,8 +667,10 @@ void Tensor<T, device>::Reshape(const std::vector<size_t>& shape, bool add_extra
 		new_shape_size *= elem;
 	}
 
-	if (size() != new_shape_size);
+	if (size() != new_shape_size)
+	{
 		throw BadShape(*this, shape);
+	}
 	#endif
 
 	m_dim_size.erase(m_dim_size.begin(), m_dim_size.end());
@@ -721,9 +743,10 @@ TensorSlice<T, device> Tensor<T, device>::Slice(const std::initializer_list<Args
 }
 
 
-
+/// <summary>
 /// Element access functions
-
+/// </summary>
+/// <typeparam name="T"></typeparam>
 #ifdef _CUDA
 template<typename T, Mode device>
 Tensor<T, device>::operator T* ()
@@ -834,7 +857,12 @@ inline const std::vector<T>& Tensor<T, device>::asVector() const
 	return m_vector;
 }
 
+/// <summary>
 /// Tensor access operators
+/// </summary>
+/// <typeparam name="T"></typeparam>
+/// <param name="...coords"></param>
+/// <returns></returns>
 
 template<typename T, Mode device>
 template<typename ... Args>
@@ -1647,3 +1675,9 @@ Tensor<RT, device> Tensor<T, device>::moreThanEqualSingle(const OT& other) const
 	return result;
 }
 }
+
+#ifdef __APPLE__
+#ifdef DEBUG
+#undef _DEBUG
+#endif
+#endif
