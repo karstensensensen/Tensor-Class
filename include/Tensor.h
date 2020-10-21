@@ -2,6 +2,9 @@
 
 #ifdef __APPLE__
 typedef double double_t;
+#ifdef DEBUG
+#define _DEBUG
+#endif
 #endif
 
 #include <stdlib.h>
@@ -177,9 +180,13 @@ void Tensor<T, device>::to_vector(std::vector<TSlice>& vec, const std::initializ
 {
 
 	#ifdef _DEBUG
-	if(std::is_integral<First>::value);
+	if(std::is_integral<First>::value)
 	{
+		#ifdef __APPLE__
+		throw BadType("Integral", typeid(First).name());
+		#else
 		throw BadType::BadType("Integral", typeid(First).name());
+		#endif
 	}
 	#endif
 
@@ -634,7 +641,7 @@ void Tensor<T, device>::Reshape(const std::initializer_list<size_t>& shape, bool
 		new_shape_size *= elem;
 	}
 	
-	if (size() != new_shape_size);
+	if (size() != new_shape_size)
 		throw BadShape(*this, shape);
 	#endif
 
@@ -660,8 +667,10 @@ void Tensor<T, device>::Reshape(const std::vector<size_t>& shape, bool add_extra
 		new_shape_size *= elem;
 	}
 
-	if (size() != new_shape_size);
+	if (size() != new_shape_size)
+	{
 		throw BadShape(*this, shape);
+	}
 	#endif
 
 	m_dim_size.erase(m_dim_size.begin(), m_dim_size.end());
@@ -1666,3 +1675,9 @@ Tensor<RT, device> Tensor<T, device>::moreThanEqualSingle(const OT& other) const
 	return result;
 }
 }
+
+#ifdef __APPLE__
+#ifdef DEBUG
+#undef _DEBUG
+#endif
+#endif
