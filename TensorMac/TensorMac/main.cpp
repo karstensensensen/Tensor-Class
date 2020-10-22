@@ -11,6 +11,6 @@ int main(int argc, const char * argv[]) {
 	
 	tensor2.MultiResize(tensor.DimSizes(), 3);
 	
-	std::cout << tensor2+tensor.sum();
+	std::cout << (tensor+tensor2).sum();
 	return 0;
 }
