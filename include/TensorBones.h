@@ -39,7 +39,7 @@ protected:
 
 
 	std::vector<T> m_vector;
-	std::vector<size_t> m_dim_size;
+	std::vector<size_t> m_shape;
 	
 
 	#ifdef _CUDA
@@ -97,8 +97,8 @@ public:
 	size_t FlattenDims() const;
 
 	//void MultiResize(std::initializer_list<size_t> sizes, const T& pad_val = T());
-	void MultiResize(const std::vector<size_t>& sizes, const T& pad_val = T());
-	void MultiResize(const std::vector<TSlice>& sizes, const T& pad_val = T());
+	void Resize(const std::vector<size_t>& sizes, const T& pad_val = T());
+	void Resize(const std::vector<TSlice>& sizes, const T& pad_val = T());
 
 	void Reshape(const std::initializer_list<size_t>& shape, bool add_extra_dim = true);
 	void Reshape(const std::vector<size_t>& shape, bool add_extra_dim = true);
@@ -152,7 +152,7 @@ public:
 	size_t get_dim_offset(const size_t& index) const;
 
 	size_t Dims() const;
-	const std::vector<size_t>& DimSizes() const;
+	const std::vector<size_t>& Shape() const;
 
 	//Iterator setup
 	typename std::vector<T>::const_iterator begin() const;

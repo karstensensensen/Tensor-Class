@@ -50,7 +50,7 @@ size_t Tensor<T, device>::get_real_size(const size_t& index) const
 
 	for (size_t i = 0; i <= index; i++)
 	{
-		r_size *= m_dim_size[i];
+		r_size *= m_shape[i];
 	}
 
 
@@ -65,9 +65,9 @@ size_t Tensor<T, device>::get_dim_length(const size_t& index) const
 	
 	size_t r_size = 1;
 
-	for (size_t i = index; i < m_dim_size.size(); i++)
+	for (size_t i = index; i < m_shape.size(); i++)
 	{
-		r_size *= m_dim_size[i];
+		r_size *= m_shape[i];
 	}
 
 	return r_size;
@@ -83,13 +83,13 @@ std::vector<size_t> Tensor<T, device>::FlattenDims(size_t dims) const
 	size_t i;
 	for (i = 0; i < std::min(dims, Dims()); i++)
 	{
-		new_dim[i] = m_dim_size[i];
+		new_dim[i] = m_shape[i];
 	}
 	i--;
 
-	for (size_t j = i+1; j < m_dim_size.size(); j++)
+	for (size_t j = i+1; j < m_shape.size(); j++)
 	{
-		new_dim[i] *= m_dim_size[j];
+		new_dim[i] *= m_shape[j];
 	}
 
 	return new_dim;
@@ -100,11 +100,11 @@ size_t Tensor<T, device>::FlattenDims() const
 {
 	MEASURE();
 	
-	size_t new_dim = m_dim_size[0];
+	size_t new_dim = m_shape[0];
 
-	for (size_t j = 1; j < m_dim_size.size(); j++)
+	for (size_t j = 1; j < m_shape.size(); j++)
 	{
-		new_dim *= m_dim_size[j];
+		new_dim *= m_shape[j];
 	}
 
 	return new_dim;
@@ -120,7 +120,7 @@ size_t  Tensor<T, device>::get_dim_size(const size_t& index) const
 	size_t size = 1;
 	for (size_t i = 0; i <= index; i++)
 	{
-		size *= m_dim_size[i];
+		size *= m_shape[i];
 	}
 
 	return size;
@@ -133,7 +133,7 @@ size_t Tensor<T, device>::get_dim_offset(const size_t& index) const
 	size_t result = 0;
 	for (size_t i = 0; i < index; i++)
 	{
-		result += m_dim_size[i];
+		result += m_shape[i];
 	}
 
 	return result;
@@ -146,12 +146,12 @@ void Tensor<T, device>::get_indx(size_t& indx, size_t& iter, size_t& tmp_multipl
 	MEASURE();
 
 	#ifdef _DEBUG
-	if (m_dim_size[iter] <= coord)
+	if (m_shape[iter] <= coord)
 		throw OutOfBounds(*this, "Exception was thrown, because an element outside the Tensor bounds was accsessed", iter, coord);
 	#endif
 
 	indx += coord * tmp_multiply;
-	tmp_multiply *= m_dim_size[iter];
+	tmp_multiply *= m_shape[iter];
 	iter++;
 }
 
@@ -233,51 +233,51 @@ std::vector<size_t> Tensor<T, device>::based_sort(const std::vector<size_t>& tar
 /// <param name="dims"></param>
 template<typename T, Mode device>
 Tensor<T, device>::Tensor(const int& dims)
-	: m_dim_size(dims + 1)
+	: m_shape(dims + 1)
 {
 	MEASURE();
-	m_dim_size[dims] = 1;
+	m_shape[dims] = 1;
 }
 
 //template<typename T, Mode device>
 //Tensor<T, device>::Tensor(const std::initializer_list<size_t>& sizes, const T& pad_val, const bool& add_extra_dim)
-//	: m_dim_size(sizes.size() + 1 * add_extra_dim)
+//	: m_shape(sizes.size() + 1 * add_extra_dim)
 //{
 //	MEASURE();
 //
 //	if(add_extra_dim)
-//		m_dim_size[sizes.size()] = 1;
-//	MultiResize(sizes, pad_val);
+//		m_shape[sizes.size()] = 1;
+//	Resize(sizes, pad_val);
 //}
 
 template<typename T, Mode device>
 Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, const T& pad_val, const bool& add_extra_dim)
-	: m_dim_size(sizes.size() + 1 * add_extra_dim)
+	: m_shape(sizes.size() + 1 * add_extra_dim)
 {
 	MEASURE();
 	if(add_extra_dim)
-		m_dim_size[sizes.size()] = 1;
-	MultiResize(sizes, pad_val);
+		m_shape[sizes.size()] = 1;
+	Resize(sizes, pad_val);
 }
 
 template<typename T, Mode device>
 Tensor<T, device>::Tensor(const std::vector<TSlice>& sizes, const T& pad_val, const bool& add_extra_dim)
-	: m_dim_size(sizes.size() + 1 * add_extra_dim)
+	: m_shape(sizes.size() + 1 * add_extra_dim)
 {
 	MEASURE();
 	if (add_extra_dim)
-		m_dim_size[sizes.size()] = 1;
-	MultiResize(sizes, pad_val);
+		m_shape[sizes.size()] = 1;
+	Resize(sizes, pad_val);
 }
 
 template<typename T, Mode device>
 Tensor<T, device>::Tensor(const TensorSlice<T, device>& slice, const bool& add_extra_dim)
-	: m_dim_size(slice.DimSizes().size() + 1 * add_extra_dim)
+	: m_shape(slice.Shape().size() + 1 * add_extra_dim)
 {
 	MEASURE();
 	if (add_extra_dim)
-		m_dim_size[slice.DimSizes().size()] = 1;
-	MultiResize(slice.DimSizes(), pad_val);
+		m_shape[slice.Shape().size()] = 1;
+	Resize(slice.Shape());
 
 	for (size_t i = 0; i < slice.size(); i++)
 	{
@@ -289,7 +289,7 @@ Tensor<T, device>::Tensor(const TensorSlice<T, device>& slice, const bool& add_e
 
 template<typename T, Mode device>
 Tensor<T, device>::Tensor(const Tensor<T, device>& other)
-	: m_vector(other.asVector()), m_dim_size(other.DimSizes())
+	: m_vector(other.asVector()), m_shape(other.Shape())
 {
 
 	MEASURE();
@@ -403,7 +403,7 @@ void Tensor<T, device>::ResizeDim(const size_t& index, const size_t& amount, con
 	size_t tmp_row_size = get_real_size(index);
 
 
-	m_dim_size[index] = amount;
+	m_shape[index] = amount;
 
 	if (index != 0)
 		new_amount = get_real_size(index - 1) * get_dim_length(index);
@@ -437,8 +437,8 @@ inline size_t Tensor<T, device>::calc_new_size(const std::initializer_list<size_
 	size_t index = 0;
 	for (const size_t& size : sizes)
 	{
-		new_size *= size * (size >= m_dim_size[index]) +
-					m_dim_size[index] * (size < m_dim_size[index]);
+		new_size *= size * (size >= m_shape[index]) +
+					m_shape[index] * (size < m_shape[index]);
 		index++;
 	}
 	return new_size;
@@ -472,7 +472,7 @@ inline size_t Tensor<T, device>::calc_new_size(const std::vector<TSlice>& sizes)
 
 #if 0
 template<typename T, Mode device>
-void Tensor<T, device>::MultiResize(const std::initializer_list<size_t>& sizes, const T& pad_val)
+void Tensor<T, device>::Resize(const std::initializer_list<size_t>& sizes, const T& pad_val)
 {
 	MEASURE();
 	#ifdef _CUDA
@@ -485,7 +485,7 @@ void Tensor<T, device>::MultiResize(const std::initializer_list<size_t>& sizes, 
 	assert(sizes.size() != 0);
 	#endif
 
-	size_t current_size = get_real_size(m_dim_size.size() - 1);
+	size_t current_size = get_real_size(m_shape.size() - 1);
 	size_t new_size = calc_new_size(sizes);
 
 	if(current_size < new_size)
@@ -497,7 +497,7 @@ void Tensor<T, device>::MultiResize(const std::initializer_list<size_t>& sizes, 
 		size_t tmp_size = m_vector.size();
 		size_t tmp_row_size = get_real_size(index);
 
-		m_dim_size[index] = size;
+		m_shape[index] = size;
 
 		if (index != 0)
 			new_amount = get_real_size(index - 1) * get_dim_length(index);
@@ -524,7 +524,7 @@ void Tensor<T, device>::MultiResize(const std::initializer_list<size_t>& sizes, 
 #endif
 
 template<typename T, Mode device>
-void Tensor<T, device>::MultiResize(const std::vector<size_t>& sizes, const T& pad_val)
+void Tensor<T, device>::Resize(const std::vector<size_t>& sizes, const T& pad_val)
 {
 	MEASURE();
 	#ifdef _CUDA
@@ -537,7 +537,7 @@ void Tensor<T, device>::MultiResize(const std::vector<size_t>& sizes, const T& p
 	assert(sizes.size() != 0);
 	#endif
 
-	size_t current_size = get_real_size(m_dim_size.size() - 1);
+	size_t current_size = get_real_size(m_shape.size() - 1);
 	size_t new_size = calc_new_size(sizes);
 
 	if (current_size < new_size)
@@ -552,7 +552,7 @@ void Tensor<T, device>::MultiResize(const std::vector<size_t>& sizes, const T& p
 		size_t tmp_size = m_vector.size();
 		size_t tmp_row_size = get_real_size(indexes[iteration]);
 
-		m_dim_size[indexes[iteration]] = sizes[indexes[iteration]];
+		m_shape[indexes[iteration]] = sizes[indexes[iteration]];
 
 		if (indexes[iteration] != 0)
 			new_amount = get_real_size(indexes[iteration] - 1) * get_dim_length(indexes[iteration]);
@@ -580,7 +580,7 @@ void Tensor<T, device>::MultiResize(const std::vector<size_t>& sizes, const T& p
 }
 
 template<typename T, Mode device>
-void Tensor<T, device>::MultiResize(const std::vector<TSlice>& sizes, const T& pad_val)
+void Tensor<T, device>::Resize(const std::vector<TSlice>& sizes, const T& pad_val)
 {
 	MEASURE();
 	#ifdef _CUDA
@@ -593,7 +593,7 @@ void Tensor<T, device>::MultiResize(const std::vector<TSlice>& sizes, const T& p
 	assert(sizes.size() != 0);
 	#endif
 
-	size_t current_size = get_real_size(m_dim_size.size() - 1);
+	size_t current_size = get_real_size(m_shape.size() - 1);
 	size_t new_size = calc_new_size(sizes);
 
 	if (current_size < new_size)
@@ -608,7 +608,7 @@ void Tensor<T, device>::MultiResize(const std::vector<TSlice>& sizes, const T& p
 		size_t tmp_size = m_vector.size();
 		size_t tmp_row_size = get_real_size(indexes[iteration]);
 
-		m_dim_size[indexes[iteration]] = sizes[indexes[iteration]].width();
+		m_shape[indexes[iteration]] = sizes[indexes[iteration]].width();
 
 		if (indexes[iteration] != 0)
 			new_amount = get_real_size(indexes[iteration] - 1) * get_dim_length(indexes[iteration]);
@@ -634,7 +634,6 @@ void Tensor<T, device>::MultiResize(const std::vector<TSlice>& sizes, const T& p
 
 	m_vector.shrink_to_fit();
 }
-
 
 template<typename T, Mode device>
 void Tensor<T, device>::Reshape(const std::initializer_list<size_t>& shape, bool add_extra_dim)
@@ -651,15 +650,15 @@ void Tensor<T, device>::Reshape(const std::initializer_list<size_t>& shape, bool
 		throw BadShape(this, "New shape does not fit the current tensor's dimensions", shape);
 	#endif
 
-	m_dim_size.erase(m_dim_size.begin(), m_dim_size.end());
+	m_shape.erase(m_shape.begin(), m_shape.end());
 
 	for (const size_t& elem : shape)
 	{
-		m_dim_size.push_back(elem);
+		m_shape.push_back(elem);
 	}
 
 	if (add_extra_dim)
-		m_dim_size.push_back(1);
+		m_shape.push_back(1);
 }
 
 template<typename T, Mode device>
@@ -679,15 +678,15 @@ void Tensor<T, device>::Reshape(const std::vector<size_t>& shape, bool add_extra
 	}
 	#endif
 
-	m_dim_size.erase(m_dim_size.begin(), m_dim_size.end());
+	m_shape.erase(m_shape.begin(), m_shape.end());
 
 	for (const size_t& elem : shape)
 	{
-		m_dim_size.push_back(elem);
+		m_shape.push_back(elem);
 	}
 
 	if (add_extra_dim)
-		m_dim_size.push_back(1);
+		m_shape.push_back(1);
 }
 
 template<typename T, Mode device>
@@ -701,7 +700,7 @@ void Tensor<T, device>::AddDims(const size_t& dims)
 		deallocate();
 	#endif
 
-	m_dim_size.resize(m_dim_size.size() + dims, 1);
+	m_shape.resize(m_shape.size() + dims, 1);
 }
 
 template<typename T, Mode device>
@@ -717,13 +716,12 @@ void Tensor<T, device>::RemoveDims(const size_t& dims)
 	
 	#ifdef _DEBUG
 	
-	assert("Cannot Remove more dims than the amount of dims in TensorBase" && dims < m_dim_size.size() - 1);
+	assert("Cannot Remove more dims than the amount of dims in TensorBase" && dims < m_shape.size() - 1);
 	#endif
 
-	m_dim_size.resize(m_dim_size.size() - dims);
-	m_dim_size[m_dim_size.size() - 1] = 1;
+	m_shape.resize(m_shape.size() - dims);
+	m_shape[m_shape.size() - 1] = 1;
 }
-
 
 template<typename T, Mode device>
 inline TensorSlice<T, device> Tensor<T, device>::Slice(const std::vector<TSlice>& slices)
@@ -749,10 +747,8 @@ TensorSlice<T, device> Tensor<T, device>::Slice(const std::initializer_list<Args
 }
 
 
-/// <summary>
 /// Element access functions
-/// </summary>
-/// <typeparam name="T"></typeparam>
+
 #ifdef _CUDA
 template<typename T, Mode device>
 Tensor<T, device>::operator T* ()
@@ -809,13 +805,13 @@ inline T* Tensor<T, device>::Data()
 template<typename T, Mode device>
 inline size_t Tensor<T, device>::Dims() const
 {
-	return m_dim_size.size();
+	return m_shape.size();
 }
 
 template<typename T, Mode device>
-inline const std::vector<size_t>& Tensor<T, device>::DimSizes() const
+inline const std::vector<size_t>& Tensor<T, device>::Shape() const
 {
-	return m_dim_size;
+	return m_shape;
 }
 
 template<typename T, Mode device>
@@ -925,11 +921,11 @@ inline Tensor<RT, device> Tensor<T, device>::add(const Tensor<OT, o_device>& oth
 	assert("Must have the same number of dimensions in each TensorBase" && this->Dims() == other.Dims());
 	for (size_t i = 0; i < this->Dims(); i++)
 	{
-		assert("Must have same dimension length in each TensorBase" && this->DimSizes()[i] == other.DimSizes()[i]);
+		assert("Must have same dimension length in each TensorBase" && this->Shape()[i] == other.Shape()[i]);
 	}
 	#endif
 
-	Tensor<RT, device> result(this->DimSizes(), RT(), false);
+	Tensor<RT, device> result(this->Shape(), RT(), false);
 
 	for (size_t i = 0; i < this->size(); i++)
 	{
@@ -948,7 +944,7 @@ inline Tensor<RT, device> Tensor<T, device>::add(const TensorSlice<OT, o_device>
 	assert("Slice must have less or the same amount of dimensions as target tensor" && Dims() >= other.Dims());
 	for (size_t i = 0; i < Dims()-1; i++)
 	{
-		assert((DimSizes()[i] == other.DimSizes()[i].get_to(), "Slice dimension must be less or the same length of the target dimension"));
+		assert((Shape()[i] == other.Shape()[i].get_to(), "Slice dimension must be less or the same length of the target dimension"));
 	}
 	#endif
 
@@ -967,7 +963,7 @@ template<typename RT, typename OT>
 inline Tensor<RT, device> Tensor<T, device>::addSingle(const OT& other) const
 {
 	MEASURE();
-	Tensor<RT, device> result(this->DimSizes(), RT(), false);
+	Tensor<RT, device> result(this->Shape(), RT(), false);
 
 	for (size_t i = 0; i < size(); i++)
 	{
@@ -986,11 +982,11 @@ inline Tensor<RT, device> Tensor<T, device>::subtract(const Tensor<OT, o_device>
 	assert("Must have the same number of dimensions in each TensorBase" && this->Dims() == other.Dims());
 	for (size_t i = 0; i < this->Dims(); i++)
 	{
-		assert("Must have same dimension length in each TensorBase" && this->DimSizes()[i] == other.DimSizes()[i]);
+		assert("Must have same dimension length in each TensorBase" && this->Shape()[i] == other.Shape()[i]);
 	}
 	#endif
 
-	Tensor<RT, device> result(this->DimSizes(), RT(), false);
+	Tensor<RT, device> result(this->Shape(), RT(), false);
 
 	for (size_t i = 0; i < this->size(); i++)
 	{
@@ -1011,7 +1007,7 @@ inline Tensor<RT, device> Tensor<T, device>::subtract(const TensorSlice<OT, o_de
 	assert("Slice must have less or the same amount of dimensions as target tensor" && Dims() >= other.Dims());
 	for (size_t i = 0; i < Dims() - 1; i++)
 	{
-		assert((DimSizes()[i] == other.DimSizes()[i].get_to(), "Slice dimension must be less or the same length of the target dimension"));
+		assert((Shape()[i] == other.Shape()[i].get_to(), "Slice dimension must be less or the same length of the target dimension"));
 	}
 	#endif
 
@@ -1030,7 +1026,7 @@ template<typename RT, typename OT>
 inline Tensor<RT, device> Tensor<T, device>::subtractSingle(const OT& other) const
 {
 	MEASURE();
-	Tensor<RT, device> result(this->DimSizes(), RT(), false);
+	Tensor<RT, device> result(this->Shape(), RT(), false);
 
 	for (size_t i = 0; i < this->size(); i++)
 	{
@@ -1050,11 +1046,11 @@ inline Tensor<RT, device> Tensor<T, device>::multiply(const Tensor<OT, o_device>
 	assert("Must have the same number of dimensions in each TensorBase" && this->Dims() == other.Dims());
 	for (size_t i = 0; i < this->Dims(); i++)
 	{
-		assert("Must have same dimension length in each TensorBase" && this->DimSizes()[i] == other.DimSizes()[i]);
+		assert("Must have same dimension length in each TensorBase" && this->Shape()[i] == other.Shape()[i]);
 	}
 	#endif
 
-	Tensor<RT, device> result(this->DimSizes(), RT(), false);
+	Tensor<RT, device> result(this->Shape(), RT(), false);
 
 	for (size_t i = 0; i < this->size(); i++)
 	{
@@ -1073,7 +1069,7 @@ inline Tensor<RT, device> Tensor<T, device>::multiply(const TensorSlice<OT, o_de
 	assert("Slice must have less or the same amount of dimensions as target tensor" && Dims() >= other.Dims());
 	for (size_t i = 0; i < Dims() - 1; i++)
 	{
-		assert((DimSizes()[i] == other.DimSizes()[i].get_to(), "Slice dimension must be less or the same length of the target dimension"));
+		assert((Shape()[i] == other.Shape()[i].get_to(), "Slice dimension must be less or the same length of the target dimension"));
 	}
 	#endif
 
@@ -1092,7 +1088,7 @@ template<typename RT, typename OT>
 inline Tensor<RT, device> Tensor<T, device>::multiplySingle(const OT& other) const
 {
 	MEASURE();
-	Tensor<RT, device> result(this->DimSizes(), RT(), false);
+	Tensor<RT, device> result(this->Shape(), RT(), false);
 
 	for (size_t i = 0; i < this->size(); i++)
 	{
@@ -1111,11 +1107,11 @@ inline Tensor<RT, device> Tensor<T, device>::divide(const Tensor<OT, o_device>& 
 	assert("Must have the same number of dimensions in each TensorBase" && this->Dims() == other.Dims());
 	for (size_t i = 0; i < this->Dims(); i++)
 	{
-		assert("Must have same dimension length in each TensorBase" && this->DimSizes()[i] == other.DimSizes()[i]);
+		assert("Must have same dimension length in each TensorBase" && this->Shape()[i] == other.Shape()[i]);
 	}
 	#endif
 
-	Tensor<RT, device> result(this->DimSizes(), RT(), false);
+	Tensor<RT, device> result(this->Shape(), RT(), false);
 
 	for (size_t i = 0; i < this->size(); i++)
 	{
@@ -1134,7 +1130,7 @@ inline Tensor<RT, device> Tensor<T, device>::divide(const TensorSlice<OT, o_devi
 	assert("Slice must have less or the same amount of dimensions as target tensor" && Dims() >= other.Dims());
 	for (size_t i = 0; i < Dims() - 1; i++)
 	{
-		assert((DimSizes()[i] == other.DimSizes()[i].get_to(), "Slice dimension must be less or the same length of the target dimension"));
+		assert((Shape()[i] == other.Shape()[i].get_to(), "Slice dimension must be less or the same length of the target dimension"));
 	}
 	#endif
 
@@ -1153,7 +1149,7 @@ template<typename RT, typename OT>
 inline Tensor<RT, device> Tensor<T, device>::divideSingle(const OT& other) const
 {
 	MEASURE();
-	Tensor<RT, device> result(this->DimSizes(), RT(), false);
+	Tensor<RT, device> result(this->Shape(), RT(), false);
 
 	for (size_t i = 0; i < this->size(); i++)
 	{
@@ -1172,11 +1168,11 @@ inline Tensor<RT, device> Tensor<T, device>::modulous(const Tensor<OT, o_device>
 	assert("Must have the same number of dimensions in each TensorBase" && this->Dims() == other.Dims());
 	for (size_t i = 0; i < this->Dims(); i++)
 	{
-		assert("Must have same dimension length in each TensorBase" && this->DimSizes()[i] == other.DimSizes()[i]);
+		assert("Must have same dimension length in each TensorBase" && this->Shape()[i] == other.Shape()[i]);
 	}
 	#endif
 
-	Tensor<RT, device> result(this->DimSizes(), RT(), false);
+	Tensor<RT, device> result(this->Shape(), RT(), false);
 
 	for (size_t i = 0; i < this->size(); i++)
 	{
@@ -1195,7 +1191,7 @@ inline Tensor<RT, device> Tensor<T, device>::modulous(const TensorSlice<OT, o_de
 	assert("Slice must have less or the same amount of dimensions as target tensor" && Dims() >= other.Dims());
 	for (size_t i = 0; i < Dims() - 1; i++)
 	{
-		assert((DimSizes()[i] == other.DimSizes()[i].get_to(), "Slice dimension must be less or the same length of the target dimension"));
+		assert((Shape()[i] == other.Shape()[i].get_to(), "Slice dimension must be less or the same length of the target dimension"));
 	}
 	#endif
 
@@ -1214,7 +1210,7 @@ template<typename RT, typename OT>
 inline Tensor<RT, device> Tensor<T, device>::modulousSingle(const OT& other) const
 {
 	MEASURE();
-	Tensor<RT, device> result(this->DimSizes(), RT(), false);
+	Tensor<RT, device> result(this->Shape(), RT(), false);
 
 	for (size_t i = 0; i < this->size(); i++)
 	{
@@ -1233,7 +1229,7 @@ inline void Tensor<T, device>::additionAssignment(const Tensor<OT, o_device>& ot
 	assert("Must have the same number of dimensions in each TensorBase" && this->Dims() == other.Dims());
 	for (size_t i = 0; i < this->Dims(); i++)
 	{
-		assert("Must have same dimension length in each TensorBase" && this->DimSizes()[i] == other.DimSizes()[i]);
+		assert("Must have same dimension length in each TensorBase" && this->Shape()[i] == other.Shape()[i]);
 	}
 	#endif
 
@@ -1252,7 +1248,7 @@ inline void Tensor<T, device>::additionAssignment(const TensorSlice<OT, o_device
 	assert("Slice must have less or the same amount of dimensions as target tensor" && Dims() >= other.Dims());
 	for (size_t i = 0; i < Dims() - 1; i++)
 	{
-		assert((DimSizes()[i] == other.DimSizes()[i].get_to(), "Slice dimension must be less or the same length of the target dimension"));
+		assert((Shape()[i] == other.Shape()[i].get_to(), "Slice dimension must be less or the same length of the target dimension"));
 	}
 	#endif
 
@@ -1282,7 +1278,7 @@ inline void Tensor<T, device>::subtractionAssignment(const Tensor<OT, o_device>&
 	assert("Must have the same number of dimensions in each TensorBase" && this->Dims() == other.Dims());
 	for (size_t i = 0; i < this->Dims(); i++)
 	{
-		assert("Must have same dimension length in each TensorBase" && this->DimSizes()[i] == other.DimSizes()[i]);
+		assert("Must have same dimension length in each TensorBase" && this->Shape()[i] == other.Shape()[i]);
 	}
 	#endif
 
@@ -1301,7 +1297,7 @@ inline void Tensor<T, device>::subtractionAssignment(const TensorSlice<OT, o_dev
 	assert("Slice must have less or the same amount of dimensions as target tensor" && Dims() >= other.Dims());
 	for (size_t i = 0; i < Dims() - 1; i++)
 	{
-		assert((DimSizes()[i] == other.DimSizes()[i].get_to(), "Slice dimension must be less or the same length of the target dimension"));
+		assert((Shape()[i] == other.Shape()[i].get_to(), "Slice dimension must be less or the same length of the target dimension"));
 	}
 	#endif
 
@@ -1331,7 +1327,7 @@ inline void Tensor<T, device>::multiplicationAssignment(const Tensor<OT, o_devic
 	assert("Must have the same number of dimensions in each TensorBase" && this->Dims() == other.Dims());
 	for (size_t i = 0; i < this->Dims(); i++)
 	{
-		assert("Must have same dimension length in each TensorBase" && this->DimSizes()[i] == other.DimSizes()[i]);
+		assert("Must have same dimension length in each TensorBase" && this->Shape()[i] == other.Shape()[i]);
 	}
 	#endif
 
@@ -1350,7 +1346,7 @@ inline void Tensor<T, device>::multiplicationAssignment(const TensorSlice<OT, o_
 	assert("Slice must have less or the same amount of dimensions as target tensor" && Dims() >= other.Dims());
 	for (size_t i = 0; i < Dims() - 1; i++)
 	{
-		assert((DimSizes()[i] == other.DimSizes()[i].get_to(), "Slice dimension must be less or the same length of the target dimension"));
+		assert((Shape()[i] == other.Shape()[i].get_to(), "Slice dimension must be less or the same length of the target dimension"));
 	}
 	#endif
 
@@ -1380,7 +1376,7 @@ inline void Tensor<T, device>::divisionAssignment(const Tensor<OT, o_device>& ot
 	assert("Must have the same number of dimensions in each TensorBase" && this->Dims() == other.Dims());
 	for (size_t i = 0; i < this->Dims(); i++)
 	{
-		assert("Must have same dimension length in each TensorBase" && this->DimSizes()[i] == other.DimSizes()[i]);
+		assert("Must have same dimension length in each TensorBase" && this->Shape()[i] == other.Shape()[i]);
 	}
 	#endif
 
@@ -1399,7 +1395,7 @@ inline void Tensor<T, device>::divisionAssignment(const TensorSlice<OT, o_device
 	assert("Slice must have less or the same amount of dimensions as target tensor" && Dims() >= other.Dims());
 	for (size_t i = 0; i < Dims() - 1; i++)
 	{
-		assert((DimSizes()[i] == other.DimSizes()[i].get_to(), "Slice dimension must be less or the same length of the target dimension"));
+		assert((Shape()[i] == other.Shape()[i].get_to(), "Slice dimension must be less or the same length of the target dimension"));
 	}
 	#endif
 
@@ -1429,7 +1425,7 @@ inline void Tensor<T, device>::modulouAssignment(const Tensor<OT, o_device>& oth
 	assert("Must have the same number of dimensions in each TensorBase" && this->Dims() == other.Dims());
 	for (size_t i = 0; i < this->Dims(); i++)
 	{
-		assert("Must have same dimension length in each TensorBase" && this->DimSizes()[i] == other.DimSizes()[i]);
+		assert("Must have same dimension length in each TensorBase" && this->Shape()[i] == other.Shape()[i]);
 	}
 	#endif
 
@@ -1448,7 +1444,7 @@ inline void Tensor<T, device>::modulouAssignment(const TensorSlice<OT, o_device>
 	assert("Slice must have less or the same amount of dimensions as target tensor" && Dims() >= other.Dims());
 	for (size_t i = 0; i < Dims() - 1; i++)
 	{
-		assert((DimSizes()[i] == other.DimSizes()[i].get_to(), "Slice dimension must be less or the same length of the target dimension"));
+		assert((Shape()[i] == other.Shape()[i].get_to(), "Slice dimension must be less or the same length of the target dimension"));
 	}
 	#endif
 
@@ -1478,11 +1474,11 @@ Tensor<RT, device> Tensor<T, device>::compare(const Tensor<OT, o_device>& other)
 	assert("Must have the same number of dimensions in each TensorBase" && this->Dims() == other.Dims());
 	for (size_t i = 0; i < this->Dims(); i++)
 	{
-		assert("Must have same dimension length in each TensorBase" && this->DimSizes()[i] == other.DimSizes()[i]);
+		assert("Must have same dimension length in each TensorBase" && this->Shape()[i] == other.Shape()[i]);
 	}
 	#endif
 
-	Tensor<RT, device> result(this->DimSizes());
+	Tensor<RT, device> result(this->Shape());
 
 	for (size_t i = 0; i < this->size(); i++)
 	{
@@ -1500,11 +1496,11 @@ Tensor<RT, device> Tensor<T, device>::compare(const TensorSlice<OT, o_device>& o
 	#ifdef _DEBUG
 	for (size_t i = 0; i < other.Dims(); i++)
 	{
-		assert("Must have less than or equal dimension length in each Tensor and TensorSlice" && DimSizes()[i] >= other.DimSizes()[i].get_to());
+		assert("Must have less than or equal dimension length in each Tensor and TensorSlice" && Shape()[i] >= other.Shape()[i].get_to());
 	}
 	#endif
 
-	Tensor<RT, device> result(DimSizes(), false, false);
+	Tensor<RT, device> result(Shape(), false, false);
 
 	for (size_t i = 0; i < other.size(); i++)
 	{
@@ -1519,7 +1515,7 @@ template<typename RT, typename OT>
 Tensor<RT, device> Tensor<T, device>::compareSingle(const OT& other) const
 {
 	MEASURE();
-	Tensor<RT, device> result(this->DimSizes());
+	Tensor<RT, device> result(this->Shape());
 
 	for (size_t i = 0; i < this->size(); i++)
 	{
@@ -1538,11 +1534,11 @@ Tensor<RT, device> Tensor<T, device>::lessThan(const Tensor<OT, o_device>& other
 	assert("Must have the same number of dimensions in each TensorBase" && this->Dims() == other.Dims());
 	for (size_t i = 0; i < this->Dims(); i++)
 	{
-		assert("Must have same dimension length in each TensorBase" && this->DimSizes()[i] == other.DimSizes()[i]);
+		assert("Must have same dimension length in each TensorBase" && this->Shape()[i] == other.Shape()[i]);
 	}
 	#endif
 
-	Tensor<RT, device> result(this->DimSizes());
+	Tensor<RT, device> result(this->Shape());
 
 	for (size_t i = 0; i < this->size(); i++)
 	{
@@ -1557,7 +1553,7 @@ template<typename RT, typename OT>
 Tensor<RT, device> Tensor<T, device>::lessThanSingle(const OT& other) const
 {
 	MEASURE();
-	Tensor<RT, device> result(this->DimSizes());
+	Tensor<RT, device> result(this->Shape());
 
 	for (size_t i = 0; i < this->size(); i++)
 	{
@@ -1576,11 +1572,11 @@ Tensor<RT, device> Tensor<T, device>::moreThan(const Tensor<OT, o_device>& other
 	assert("Must have the same number of dimensions in each TensorBase" && this->Dims() == other.Dims());
 	for (size_t i = 0; i < this->Dims(); i++)
 	{
-		assert("Must have same dimension length in each TensorBase" && this->DimSizes()[i] == other.DimSizes()[i]);
+		assert("Must have same dimension length in each TensorBase" && this->Shape()[i] == other.Shape()[i]);
 	}
 	#endif
 
-	Tensor<RT, device> result(this->DimSizes());
+	Tensor<RT, device> result(this->Shape());
 
 	for (size_t i = 0; i < this->size(); i++)
 	{
@@ -1595,7 +1591,7 @@ template<typename RT, typename OT>
 Tensor<RT, device> Tensor<T, device>::moreThanSingle(const OT& other) const
 {
 	MEASURE();
-	Tensor<RT, device> result(this->DimSizes());
+	Tensor<RT, device> result(this->Shape());
 
 	for (size_t i = 0; i < this->size(); i++)
 	{
@@ -1614,11 +1610,11 @@ Tensor<RT, device> Tensor<T, device>::lessThanEqual(const Tensor<OT, o_device>& 
 	assert("Must have the same number of dimensions in each TensorBase" && this->Dims() == other.Dims());
 	for (size_t i = 0; i < this->Dims(); i++)
 	{
-		assert("Must have same dimension length in each TensorBase" && this->DimSizes()[i] == other.DimSizes()[i]);
+		assert("Must have same dimension length in each TensorBase" && this->Shape()[i] == other.Shape()[i]);
 	}
 	#endif
 
-	Tensor<RT, device> result(this->DimSizes());
+	Tensor<RT, device> result(this->Shape());
 
 	for (size_t i = 0; i < this->size(); i++)
 	{
@@ -1633,7 +1629,7 @@ template<typename RT, typename OT>
 Tensor<RT, device> Tensor<T, device>::lessThanEqualSingle(const OT& other) const
 {
 	MEASURE();
-	Tensor<RT, device> result(this->DimSizes());
+	Tensor<RT, device> result(this->Shape());
 
 	for (size_t i = 0; i < this->size(); i++)
 	{
@@ -1652,11 +1648,11 @@ Tensor<RT, device> Tensor<T, device>::moreThanEqual(const Tensor<OT, o_device>& 
 	assert("Must have the same number of dimensions in each TensorBase" && this->Dims() == other.Dims());
 	for (size_t i = 0; i < this->Dims(); i++)
 	{
-		assert("Must have same dimension length in each TensorBase" && this->DimSizes()[i] == other.DimSizes()[i]);
+		assert("Must have same dimension length in each TensorBase" && this->Shape()[i] == other.Shape()[i]);
 	}
 	#endif
 
-	Tensor<RT, device> result(this->DimSizes());
+	Tensor<RT, device> result(this->Shape());
 
 	for (size_t i = 0; i < this->size(); i++)
 	{
@@ -1671,7 +1667,7 @@ template<typename RT, typename OT>
 Tensor<RT, device> Tensor<T, device>::moreThanEqualSingle(const OT& other) const
 {
 	MEASURE();
-	Tensor<RT, device> result(this->DimSizes());
+	Tensor<RT, device> result(this->Shape());
 
 	for (size_t i = 0; i < this->size(); i++)
 	{

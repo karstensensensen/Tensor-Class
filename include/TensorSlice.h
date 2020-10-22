@@ -132,7 +132,7 @@ namespace TSlib
 	inline void TensorSlice<T, device>::bounds_check(size_t& i, First first)
 	{
 		MEASURE();
-		assert(m_slice_dims[i].contains(first));
+		assert(m_slice_shape[i].contains(first));
 
 		i++;
 	}
@@ -145,18 +145,18 @@ namespace TSlib
 		size_t tmp_multiply = source->size();
 		m_offset = 0;
 
-		for (size_t i = m_slice_dims.size() - 1; i != SIZE_MAX; i--)
+		for (size_t i = m_slice_shape.size() - 1; i != SIZE_MAX; i--)
 		{
 
-			tmp_multiply /= m_slice_dims[i].to_max;
+			tmp_multiply /= m_slice_shape[i].to_max;
 
-			m_offset += m_slice_dims[i].get_from() * tmp_multiply;
+			m_offset += m_slice_shape[i].get_from() * tmp_multiply;
 		}
 	}
 
 	template<typename T, Mode device>
 	TensorSlice<T, device>::TensorSlice(Tensor<T, device>* source, const std::vector<TSlice>& slices)
-		: source(source), m_slice_dims(slices)
+		: source(source), m_slice_shape(slices)
 	{
 		MEASURE();
 		#ifdef _DEBUG
@@ -219,12 +219,12 @@ namespace TSlib
 	{
 		MEASURE();
 		#ifdef _DEBUG
-		assert((m_slice_dims.size() <= source->Dims() - 1, "There must be the same amount or less slices as dimensions in the tensor"));
+		assert((m_slice_shape.size() <= source->Dims() - 1, "There must be the same amount or less slices as dimensions in the tensor"));
 		#endif
 
 		for (size_t i = 0; i < source->Dims() - 1; i++)
 		{
-			m_slice_dims[i].to_max = (uint32_t)source->DimSizes()[i];
+			m_slice_shape[i].to_max = (uint32_t)source->DimSizes()[i];
 		}
 
 		calc_offset();
@@ -234,10 +234,10 @@ namespace TSlib
 	size_t TensorSlice<T, device>::size() const
 	{
 		MEASURE();
-		size_t size = m_slice_dims[0].get_to() - m_slice_dims[0].get_from();
-		for (size_t i = 1; i < m_slice_dims.size(); i++)
+		size_t size = m_slice_shape[0].get_to() - m_slice_shape[0].get_from();
+		for (size_t i = 1; i < m_slice_shape.size(); i++)
 		{
-			size *= (m_slice_dims[i].get_to() - m_slice_dims[i].get_from());
+			size *= (m_slice_shape[i].get_to() - m_slice_shape[i].get_from());
 		}
 
 		return size;
@@ -247,18 +247,18 @@ namespace TSlib
 	inline size_t TensorSlice<T, device>::Dims() const
 	{
 		MEASURE();
-		return m_slice_dims.size();
+		return m_slice_shape.size();
 	}
 
 	template<typename T, Mode device>
 	inline size_t TensorSlice<T, device>::get_dim_size(const size_t& index) const
 	{
 		MEASURE();
-		size_t size = m_slice_dims[0].get_to() - m_slice_dims[0].get_from();
+		size_t size = m_slice_shape[0].get_to() - m_slice_shape[0].get_from();
 
 		for (size_t i = 1; i <= index; i++)
 		{
-			size *= m_slice_dims[i].get_to() - m_slice_dims[i].get_from();
+			size *= m_slice_shape[i].get_to() - m_slice_shape[i].get_from();
 		}
 
 		return size;
@@ -268,7 +268,7 @@ namespace TSlib
 	const std::vector<TSlice>& TensorSlice<T, device>::DimSizes() const
 	{
 		MEASURE();
-		return m_slice_dims;
+		return m_slice_shape;
 	}
 
 	template<typename T, Mode device>
@@ -278,12 +278,12 @@ namespace TSlib
 		size_t tmp_multiply = size();
 		size_t new_index = 0;
 
-		for (size_t i = m_slice_dims.size() - 1; i != SIZE_MAX; i--)
+		for (size_t i = m_slice_shape.size() - 1; i != SIZE_MAX; i--)
 		{
 			size_t rows = index / tmp_multiply;
 			index -= tmp_multiply * rows;
 
-			tmp_multiply /= m_slice_dims[i].width();
+			tmp_multiply /= m_slice_shape[i].width();
 
 			new_index += rows * source->get_dim_size(i);
 

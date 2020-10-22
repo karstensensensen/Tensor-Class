@@ -25,6 +25,7 @@
 /* Begin PBXFileReference section */
 		E24EB1EE254016D500E7999E /* TensorMac */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TensorMac; sourceTree = BUILT_PRODUCTS_DIR; };
 		E24EB1F1254016D500E7999E /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		E24EB1F9254168F200E7999E /* include */ = {isa = PBXFileReference; lastKnownFileType = folder; name = include; path = ../../include; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,6 +58,7 @@
 		E24EB1F0254016D500E7999E /* TensorMac */ = {
 			isa = PBXGroup;
 			children = (
+				E24EB1F9254168F200E7999E /* include */,
 				E24EB1F1254016D500E7999E /* main.cpp */,
 			);
 			path = TensorMac;

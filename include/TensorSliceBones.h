@@ -64,7 +64,7 @@ namespace TSlib
 	class TensorSlice
 	{
 		Tensor<T, device>* source;
-		std::vector<TSlice> m_slice_dims;
+		std::vector<TSlice> m_slice_shape;
 		size_t m_offset;
 
 		#ifdef _DEBUG
