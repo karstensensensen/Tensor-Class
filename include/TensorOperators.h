@@ -14,7 +14,7 @@ std::ostream& operator<< (std::ostream& stream, const TSlib::TensorSlice<T, devi
 	for (size_t i = 0; i < slice.get_dim_size(0); i++)
 	{
 		stream << slice[i] << ',';
-		if (i % slice.DimSizes()[0].width() == slice.DimSizes()[0].width() - 1)
+		if (i % slice.Shape()[0].width() == slice.Shape()[0].width() - 1)
 		{
 			stream << '\n';
 		}
@@ -26,7 +26,7 @@ std::ostream& operator<< (std::ostream& stream, const TSlib::TensorSlice<T, devi
 		for (size_t i = slice.get_dim_size(dim - 1); i < slice.get_dim_size(dim); i++)
 		{
 			stream << slice[i] << ',';
-			if (i % slice.DimSizes()[0].width() == slice.DimSizes()[0].width() - 1)
+			if (i % slice.Shape()[0].width() == slice.Shape()[0].width() - 1)
 			{
 				stream << '\n';
 			}
@@ -58,7 +58,7 @@ std::ostream& operator<< (std::ostream& stream, const TSlib::Tensor<T, device>& 
 			std::cout << ' ';
 		}
 
-		if (i % Tensor.DimSizes()[0] == Tensor.DimSizes()[0] - 1)
+		if (i % Tensor.Shape()[0] == Tensor.Shape()[0] - 1)
 		{
 			stream << '\n';
 		}
@@ -78,7 +78,7 @@ std::ostream& operator<< (std::ostream& stream, const TSlib::Tensor<T, device>& 
 				std::cout << ' ';
 			}
 
-			if (i % Tensor.DimSizes()[0] == Tensor.DimSizes()[0] - 1)
+			if (i % Tensor.Shape()[0] == Tensor.Shape()[0] - 1)
 			{
 				stream << '\n';
 			}

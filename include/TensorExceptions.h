@@ -29,9 +29,9 @@ namespace TSlib
 
 			err_msg += "\nTensor bounds was: ";
 
-			for (size_t i = 0; i < target->DimSizes().size()-1; i++)
+			for (size_t i = 0; i < target->Shape().size()-1; i++)
 			{
-				err_msg += std::to_string(target->DimSizes()[i]) + ' ';
+				err_msg += std::to_string(target->Shape()[i]) + ' ';
 			}
 		}
 
@@ -66,7 +66,7 @@ namespace TSlib
 
 			err_msg += "\nTensor shape was: ";
 
-			for (const size_t& shape_elem : tensor->DimSizes())
+			for (const size_t& shape_elem : tensor->Shape())
 			{
 				err_msg += std::to_string(shape_elem) + ' ';
 			}
