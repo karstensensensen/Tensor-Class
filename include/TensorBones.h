@@ -84,6 +84,9 @@ public:
 	Tensor(const int& dims);
 	//Tensor(const std::initializer_list<size_t>& sizes, const T& pad_val = T(), const bool& add_extra_dim = true);
 	Tensor(const std::vector<size_t>& sizes, const T& pad_val = T(), const bool& add_extra_dim = true);
+	Tensor(const std::vector<size_t>& sizes, T(*generator)(const size_t&), const bool& add_extra_dim = true);
+	Tensor(const std::vector<size_t>& sizes, T(*generator)(const std::vector<size_t>&), const bool& add_extra_dim = true);
+	Tensor(const std::vector<size_t>& sizes, T(*generator)(const std::vector<size_t>&, const size_t&), const bool& add_extra_dim = true);
 	Tensor(const TensorSlice<T, device>& slice, const bool& add_extra_dim = true);
 
 	~Tensor();
@@ -1130,7 +1133,7 @@ public:
 	template<typename CT, Mode o_device>
 	operator Tensor<CT, o_device>() const
 	{
-		Tensor<CT, device> new_Tensor(this->DimSizes(), CT(), false);
+		Tensor<CT, device> new_Tensor(this->Shape(), CT(), false);
 
 		for (size_t i = 0; i < this->size(); i++)
 		{
@@ -1143,7 +1146,7 @@ public:
 	template<typename CT, Mode o_device>
 	operator Tensor<CT, o_device>()
 	{
-		Tensor<CT, device> new_Tensor(this->DimSizes(), CT(), false);
+		Tensor<CT, device> new_Tensor(this->Shape(), CT(), false);
 
 		for (size_t i = 0; i < this->size(); i++)
 		{

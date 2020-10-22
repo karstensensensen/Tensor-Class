@@ -149,7 +149,7 @@ CUDATensor1D<T>::CUDATensor1D(Tensor<T, device>& tensor)
 {
 
 	CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
-	CER(cudaMemcpy(dim_arr, tensor.DimSizes().data(), sizeof(size_t) * dims, cudaMemcpyHostToDevice));
+	CER(cudaMemcpy(dim_arr, tensor.Shape().data(), sizeof(size_t) * dims, cudaMemcpyHostToDevice));
 
 	m_length = tensor.FlattenDims();
 }
@@ -168,7 +168,7 @@ CUDATensor2D<T>::CUDATensor2D(Tensor<T, device>& tensor)
 	: CTBase(tensor.getGPU(), tensor.size(), nullptr, tensor.Dims())
 {
 	CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
-	CER(cudaMemcpy(dim_arr, tensor.DimSizes().data(), sizeof(size_t) * dims, cudaMemcpyHostToDevice));
+	CER(cudaMemcpy(dim_arr, tensor.Shape().data(), sizeof(size_t) * dims, cudaMemcpyHostToDevice));
 
 	auto new_dims = tensor.FlattenDims(2);
 	m_length = new_dims[0];
@@ -190,7 +190,7 @@ CUDATensor3D<T>::CUDATensor3D(Tensor<T, device>& tensor)
 	:CTBase(tensor.getGPU(), tensor.size(), nullptr, tensor.Dims())
 {
 	CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
-	CER(cudaMemcpy(dim_arr, tensor.DimSizes().data(), sizeof(size_t) * dims, cudaMemcpyHostToDevice));
+	CER(cudaMemcpy(dim_arr, tensor.Shape().data(), sizeof(size_t) * dims, cudaMemcpyHostToDevice));
 
 	auto new_dims = tensor.FlattenDims(3);
 	m_length = new_dims[0];
@@ -546,7 +546,7 @@ Tensor<RT, device> Tensor<T, device>::Kernel1DR(CUDALayout<layout> layout, FT(ke
 	#endif
 
 	//create result Tensor: This will hold all of the return values
-	Tensor<RT, device> result(DimSizes(), RT(), false);
+	Tensor<RT, device> result(Shape(), RT(), false);
 
 	result.allocate();
 
@@ -611,7 +611,7 @@ Tensor<RT, device> Tensor<T, device>::Kernel2DR(CUDALayout<layout> layout, FT(ke
 
 
 	//create result TensorBase: This will hold all of the return values
-	Tensor<RT, device> result(DimSizes(), RT(), false);
+	Tensor<RT, device> result(Shape(), RT(), false);
 	result.allocate();
 
 	//Get flattended version of TensorBase so it can fit in the desired dimensions
@@ -678,7 +678,7 @@ Tensor<RT, device> Tensor<T, device>::Kernel3DR(CUDALayout<layout> layout, FT(ke
 	#endif
 
 	//create result TensorBase: This will hold all of the return values
-	Tensor<RT, device> result(DimSizes(), RT(), false);
+	Tensor<RT, device> result(Shape(), RT(), false);
 
 	result.allocate();
 

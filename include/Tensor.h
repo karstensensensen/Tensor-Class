@@ -261,6 +261,64 @@ Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, const T& pad_val, co
 }
 
 template<typename T, Mode device>
+inline Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, T(*generator)(const size_t&), const bool& add_extra_dim)
+	: m_shape(sizes.size() + 1 * add_extra_dim)
+{
+	
+	if (add_extra_dim)
+		m_shape[sizes.size()] = 1;
+	Resize(sizes);
+
+	for (size_t i = 0; i < size(); i++)
+	{
+		At(i) = generator({ i });
+	}
+	
+}
+
+template<typename T, Mode device>
+inline Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, T(*generator)(const std::vector<size_t>&), const bool& add_extra_dim)
+	: m_shape(sizes.size() + 1 * add_extra_dim)
+{
+	if (add_extra_dim)
+		m_shape[sizes.size()] = 1;
+	Resize(sizes);
+
+	std::vector<size_t> indexes(Dims());
+
+	for (size_t i = 0; i < size(); i++)
+	{
+		indexes[0] = (i % get_real_size(0));
+		for (size_t j = 1; j < Dims(); j++)
+		{
+			indexes[j] = (i/get_real_size(j-1)) % get_real_size(j-1);
+		}
+		At(i) = generator(indexes);
+	}
+}
+
+template<typename T, Mode device>
+inline Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, T(*generator)(const std::vector<size_t>&, const size_t&), const bool& add_extra_dim)
+	: m_shape(sizes.size() + 1 * add_extra_dim)
+{
+	if (add_extra_dim)
+		m_shape[sizes.size()] = 1;
+	Resize(sizes);
+
+	std::vector<size_t> indexes(Dims());
+
+	for (size_t i = 0; i < size(); i++)
+	{
+		indexes[0] = (i % get_real_size(0));
+		for (size_t j = 1; j < Dims(); j++)
+		{
+			indexes[j] = (i / get_real_size(j - 1)) % get_real_size(j - 1);
+		}
+		At(i) = generator(indexes, i);
+	}
+}
+
+template<typename T, Mode device>
 Tensor<T, device>::Tensor(const std::vector<TSlice>& sizes, const T& pad_val, const bool& add_extra_dim)
 	: m_shape(sizes.size() + 1 * add_extra_dim)
 {

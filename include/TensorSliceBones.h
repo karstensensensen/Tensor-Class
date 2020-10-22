@@ -97,7 +97,7 @@ namespace TSlib
 
 		size_t map_index(size_t index) const;
 
-		const std::vector<TSlice>& DimSizes() const;
+		const std::vector<TSlice>& Shape() const;
 
 		template<typename ... Args>
 		T& Get(Args ... coords);

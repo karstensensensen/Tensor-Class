@@ -224,7 +224,7 @@ namespace TSlib
 
 		for (size_t i = 0; i < source->Dims() - 1; i++)
 		{
-			m_slice_shape[i].to_max = (uint32_t)source->DimSizes()[i];
+			m_slice_shape[i].to_max = (uint32_t)source->Shape()[i];
 		}
 
 		calc_offset();
@@ -265,7 +265,7 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	const std::vector<TSlice>& TensorSlice<T, device>::DimSizes() const
+	const std::vector<TSlice>& TensorSlice<T, device>::Shape() const
 	{
 		MEASURE();
 		return m_slice_shape;
