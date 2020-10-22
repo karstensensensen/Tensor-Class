@@ -97,6 +97,11 @@ namespace TSlib
 			err_msg += '\n';
 		}
 
+		BadShape(std::string message)
+		{
+			err_msg = message;
+		}
+
 		virtual const char* what() const throw()
 		{
 			return err_msg.c_str();

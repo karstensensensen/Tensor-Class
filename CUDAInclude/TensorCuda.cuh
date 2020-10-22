@@ -402,7 +402,7 @@ template<typename T, Mode device>
 inline __host__ void Tensor<T, device>::allocate()
 {
 	//Allocate the cpu memory on the gpu
-	//this will have to be done every time the TensorBase gets resized or deallocated
+	//this will have to be done every time the Tensor gets resized or deallocated
 
 
 	//assert if trying to allocate already allocated memory FIX: deallocate before allocating
@@ -544,7 +544,7 @@ Tensor<RT, device> Tensor<T, device>::Kernel1DR(CUDALayout<layout> layout, FT(ke
 
 	result.allocate();
 
-	//Get flattended version of TensorBase so it can fit in the desired dimensions
+	//Get flattended version of Tensor so it can fit in the desired dimensions
 	size_t dims = FlattenDims();
 
 	//calculate block sizes from thread size
@@ -576,7 +576,7 @@ void Tensor<T, device>::Kernel1D(CUDALayout<layout> layout, FT(kernel_p), Args &
 		std::cout << "warning: No gpu memory is allocated, illegal memory access may occur\n";
 	#endif
 
-	//Get flattended version of TensorBase so it can fit in the desired dimensions
+	//Get flattended version of Tensor so it can fit in the desired dimensions
 	size_t dims = FlattenDims();
 
 	//calculate block sizes from thread size
@@ -604,11 +604,11 @@ Tensor<RT, device> Tensor<T, device>::Kernel2DR(CUDALayout<layout> layout, FT(ke
 	#endif
 
 
-	//create result TensorBase: This will hold all of the return values
+	//create result Tensor: This will hold all of the return values
 	Tensor<RT, device> result(Shape(), RT(), false);
 	result.allocate();
 
-	//Get flattended version of TensorBase so it can fit in the desired dimensions
+	//Get flattended version of Tensor so it can fit in the desired dimensions
 
 	std::vector<size_t> dims = FlattenDims(2);
 
@@ -642,7 +642,7 @@ void Tensor<T, device>::Kernel2D(CUDALayout<layout> layout, FT(kernel_p), Args &
 		std::cout << "warning: No gpu memory is allocated, illegal memory access may occur\n";
 	#endif
 
-	//Get flattended version of TensorBase so it can fit in the desired dimensions
+	//Get flattended version of Tensor so it can fit in the desired dimensions
 	std::vector<size_t> dims = FlattenDims(2);
 
 	//calculate block sizes from thread size
@@ -671,12 +671,12 @@ Tensor<RT, device> Tensor<T, device>::Kernel3DR(CUDALayout<layout> layout, FT(ke
 		std::cout << "warning: No gpu memory is allocated, illegal memory access may occur\n";
 	#endif
 
-	//create result TensorBase: This will hold all of the return values
+	//create result Tensor: This will hold all of the return values
 	Tensor<RT, device> result(Shape(), RT(), false);
 
 	result.allocate();
 
-	//Get flattended version of TensorBase so it can fit in the desired dimensions
+	//Get flattended version of Tensor so it can fit in the desired dimensions
 	std::vector<size_t> dims = FlattenDims(3);
 
 	//calculate block sizes from thread size
@@ -710,7 +710,7 @@ void Tensor<T, device>::Kernel3D(CUDALayout<layout> layout, FT(kernel_p), Args &
 		std::cout << "warning: No gpu memory is allocated, illegal memory access may occur\n";
 	#endif
 
-	//Get flattended version of TensorBase so it can fit in the desired dimensions
+	//Get flattended version of Tensor so it can fit in the desired dimensions
 	std::vector<size_t> dims = FlattenDims(3);
 
 	//calculate block sizes from thread size
@@ -738,7 +738,7 @@ template<typename RT, typename OT, Mode o_device>
 Tensor<RT, device> Tensor<T, device>::Cadd(Tensor<OT, o_device>& other)
 {
 	#ifdef _DEBUG
-	assert("Unable to fit the TensorBases" && size() == other.size());
+	assert("Unable to fit the Tensors" && size() == other.size());
 	#endif
 
 	bool this_alloc = isDeallocated();
@@ -798,7 +798,7 @@ template<typename RT, typename OT, Mode o_device>
 Tensor<RT, device> Tensor<T, device>::Csubtract(Tensor<OT, o_device>& other)
 {
 	#ifdef _DEBUG
-	assert("Unable to fit the TensorBases" && size() == other.size());
+	assert("Unable to fit the Tensors" && size() == other.size());
 	#endif
 
 	bool this_alloc = isDeallocated();
@@ -857,7 +857,7 @@ template<typename RT, typename OT, Mode o_device>
 Tensor<RT, device> Tensor<T, device>::Cmultiply(Tensor<OT, o_device>& other)
 {
 	#ifdef _DEBUG
-	assert("Unable to fit the TensorBases" && size() == other.size());
+	assert("Unable to fit the Tensors" && size() == other.size());
 	#endif
 
 	bool this_alloc = isDeallocated();
@@ -916,7 +916,7 @@ template<typename RT, typename OT, Mode o_device>
 Tensor<RT, device> Tensor<T, device>::Cdivide(Tensor<OT, o_device>& other)
 {
 	#ifdef _DEBUG
-	assert("Unable to fit the TensorBases" && size() == other.size());
+	assert("Unable to fit the Tensors" && size() == other.size());
 	#endif
 
 	bool this_alloc = isDeallocated();
@@ -975,7 +975,7 @@ template<typename RT, typename OT, Mode o_device>
 Tensor<RT, device> Tensor<T, device>::Cmodulous(Tensor<OT, o_device>& other)
 {
 	#ifdef _DEBUG
-	assert("Unable to fit the TensorBases" && size() == other.size());
+	assert("Unable to fit the Tensors" && size() == other.size());
 	#endif
 
 	bool this_alloc = isDeallocated();
@@ -1034,7 +1034,7 @@ template<typename OT, Mode o_device>
 void Tensor<T, device>::CadditionAssignment(Tensor<OT, o_device>& other)
 {
 	#ifdef _DEBUG
-	assert("Unable to fit the TensorBases" && size() == other.size());
+	assert("Unable to fit the Tensors" && size() == other.size());
 	#endif
 
 	bool this_alloc = isDeallocated();
@@ -1089,7 +1089,7 @@ template<typename OT, Mode o_device>
 void Tensor<T, device>::CsubtractionAssignment(Tensor<OT, o_device>& other)
 {
 	#ifdef _DEBUG
-	assert("Unable to fit the TensorBases" && size() == other.size());
+	assert("Unable to fit the Tensors" && size() == other.size());
 	#endif
 
 	bool this_alloc = isDeallocated();
@@ -1144,7 +1144,7 @@ template<typename OT, Mode o_device>
 void Tensor<T, device>::CmultiplicationAssignment(Tensor<OT, o_device>& other)
 {
 	#ifdef _DEBUG
-	assert("Unable to fit the TensorBases" && size() == other.size());
+	assert("Unable to fit the Tensors" && size() == other.size());
 	#endif
 
 	bool this_alloc = isDeallocated();
@@ -1199,7 +1199,7 @@ template<typename OT, Mode o_device>
 void Tensor<T, device>::CdivisionAssignment(Tensor<OT, o_device>& other)
 {
 	#ifdef _DEBUG
-	assert("Unable to fit the TensorBases" && size() == other.size());
+	assert("Unable to fit the Tensors" && size() == other.size());
 	#endif
 
 	bool this_alloc = isDeallocated();
@@ -1254,7 +1254,7 @@ template<typename OT, Mode o_device>
 void Tensor<T, device>::CmodulouAssignment(Tensor<OT, o_device>& other)
 {
 	#ifdef _DEBUG
-	assert("Unable to fit the TensorBases" && size() == other.size());
+	assert("Unable to fit the Tensors" && size() == other.size());
 	#endif
 
 	bool this_alloc = isDeallocated();
@@ -1309,7 +1309,7 @@ template<typename RT, typename OT, Mode o_device>
 Tensor<RT, device> Tensor<T, device>::Ccompare(Tensor<OT, o_device>& other)
 {
 	#ifdef _DEBUG
-	assert("Unable to fit the TensorBases" && size() == other.size());
+	assert("Unable to fit the Tensors" && size() == other.size());
 	#endif
 
 	bool this_alloc = isDeallocated();
@@ -1368,7 +1368,7 @@ template<typename RT, typename OT, Mode o_device>
 Tensor<RT, device> Tensor<T, device>::ClessThan(Tensor<OT, o_device>& other)
 {
 	#ifdef _DEBUG
-	assert("Unable to fit the TensorBases" && size() == other.size());
+	assert("Unable to fit the Tensors" && size() == other.size());
 	#endif
 
 	bool this_alloc = isDeallocated();
@@ -1427,7 +1427,7 @@ template<typename RT, typename OT, Mode o_device>
 Tensor<RT, device> Tensor<T, device>::CmoreThan(Tensor<OT, o_device>& other)
 {
 	#ifdef _DEBUG
-	assert("Unable to fit the TensorBases" && size() == other.size());
+	assert("Unable to fit the Tensors" && size() == other.size());
 	#endif
 
 	bool this_alloc = isDeallocated();
@@ -1486,7 +1486,7 @@ template<typename RT, typename OT, Mode o_device>
 Tensor<RT, device> Tensor<T, device>::ClessThanEqual(Tensor<OT, o_device>& other)
 {
 	#ifdef _DEBUG
-	assert("Unable to fit the TensorBases" && size() == other.size());
+	assert("Unable to fit the Tensors" && size() == other.size());
 	#endif
 
 	bool this_alloc = isDeallocated();
@@ -1545,7 +1545,7 @@ template<typename RT, typename OT, Mode o_device>
 Tensor<RT, device> Tensor<T, device>::CmoreThanEqual(Tensor<OT, o_device>& other)
 {
 	#ifdef _DEBUG
-	assert("Unable to fit the TensorBases" && size() == other.size());
+	assert("Unable to fit the Tensors" && size() == other.size());
 	#endif
 
 	bool this_alloc = isDeallocated();

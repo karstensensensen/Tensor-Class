@@ -223,7 +223,7 @@ std::vector<size_t> Tensor<T, device>::based_sort(const std::vector<size_t>& tar
 }
 
 /// Tensor constructors
-
+/// 
 template<typename T, Mode device>
 Tensor<T, device>::Tensor(const int& dims)
 	: m_shape(dims + 1)
@@ -511,7 +511,11 @@ void Tensor<T, device>::Resize(const std::vector<size_t>& sizes, const T& pad_va
 	#endif
 
 	#ifdef _DEBUG
-	assert(sizes.size() != 0);
+	if (sizes.size() == 0)
+	{
+		throw BadShape("New shape must not be of length 0");
+	}
+	//assert(sizes.size() != 0);
 	#endif
 
 	size_t current_size = get_real_size(m_shape.size() - 1);
@@ -567,7 +571,10 @@ void Tensor<T, device>::Resize(const std::vector<TSlice>& sizes, const T& pad_va
 	#endif
 
 	#ifdef _DEBUG
-	assert(sizes.size() != 0);
+	if (sizes.size() == 0)
+	{
+		throw BadShape("New shape must not be of length 0");
+	}
 	#endif
 
 	size_t current_size = get_real_size(m_shape.size() - 1);
@@ -651,7 +658,7 @@ void Tensor<T, device>::Reshape(const std::vector<size_t>& shape, bool add_extra
 
 	if (size() != new_shape_size)
 	{
-		throw BadShape(*this, shape);
+		throw BadShape(this, "New shape does not fit the current tensor's dimensions", shape);
 	}
 	#endif
 
@@ -693,7 +700,11 @@ void Tensor<T, device>::RemoveDims(const size_t& dims)
 	
 	#ifdef _DEBUG
 	
-	assert("Cannot Remove more dims than the amount of dims in TensorBase" && dims < m_shape.size() - 1);
+	if (dims > m_shape_size() - 1)
+	{
+		throw BadValue("Cannot Remove more dims than the amount of dims in Tensor", dims);
+	}
+
 	#endif
 
 	m_shape.resize(m_shape.size() - dims);
@@ -717,7 +728,11 @@ TensorSlice<T, device> Tensor<T, device>::Slice(const std::initializer_list<Args
 	to_vector(slice_vec, slices...);
 
 	#ifdef _DEBUG
-	assert((slice_vec.size() <= Dims(), "There cannot be passed more TSlices than dimensions"));
+
+	if (slice_vec.size() > Dims())
+	{
+		throw BadValue("There cannot be passed more TSlices than dimensions", slice_vec.size(), size());
+	}
 	#endif
 
 	return TensorSlice<T, device>(this, slice_vec);
@@ -880,10 +895,18 @@ inline Tensor<RT, device> Tensor<T, device>::add(const Tensor<OT, o_device>& oth
 {
 	MEASURE();
 	#ifdef _DEBUG
-	assert("Must have the same number of dimensions in each TensorBase" && this->Dims() == other.Dims());
+
+	if (Dims() != other.Dims())
+	{
+		throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+	}
+
 	for (size_t i = 0; i < this->Dims(); i++)
 	{
-		assert("Must have same dimension length in each TensorBase" && this->Shape()[i] == other.Shape()[i]);
+		if (Shape()[i] != other.Shape()[i])
+		{
+			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+		}
 	}
 	#endif
 
@@ -903,10 +926,17 @@ inline Tensor<RT, device> Tensor<T, device>::add(const TensorSlice<OT, o_device>
 {
 	MEASURE();
 	#ifdef _DEBUG
-	assert("Slice must have less or the same amount of dimensions as target tensor" && Dims() >= other.Dims());
-	for (size_t i = 0; i < Dims()-1; i++)
+	if (Dims() < other.Dims())
 	{
-		assert((Shape()[i] == other.Shape()[i].get_to(), "Slice dimension must be less or the same length of the target dimension"));
+		throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
+	}
+
+	for (size_t i = 0; i < this->Dims(); i++)
+	{
+		if (Shape()[i] != other.Shape()[i])
+		{
+			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+		}
 	}
 	#endif
 
@@ -941,10 +971,17 @@ inline Tensor<RT, device> Tensor<T, device>::subtract(const Tensor<OT, o_device>
 {
 	MEASURE();
 	#ifdef _DEBUG
-	assert("Must have the same number of dimensions in each TensorBase" && this->Dims() == other.Dims());
+	if (Dims() != other.Dims())
+	{
+		throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+	}
+
 	for (size_t i = 0; i < this->Dims(); i++)
 	{
-		assert("Must have same dimension length in each TensorBase" && this->Shape()[i] == other.Shape()[i]);
+		if (Shape()[i] != other.Shape()[i])
+		{
+			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+		}
 	}
 	#endif
 
@@ -966,10 +1003,17 @@ inline Tensor<RT, device> Tensor<T, device>::subtract(const TensorSlice<OT, o_de
 {
 	MEASURE();
 	#ifdef _DEBUG
-	assert("Slice must have less or the same amount of dimensions as target tensor" && Dims() >= other.Dims());
-	for (size_t i = 0; i < Dims() - 1; i++)
+	if (Dims() < other.Dims())
 	{
-		assert((Shape()[i] == other.Shape()[i].get_to(), "Slice dimension must be less or the same length of the target dimension"));
+		throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
+	}
+
+	for (size_t i = 0; i < this->Dims(); i++)
+	{
+		if (Shape()[i] != other.Shape()[i])
+		{
+			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+		}
 	}
 	#endif
 
@@ -1005,10 +1049,17 @@ inline Tensor<RT, device> Tensor<T, device>::multiply(const Tensor<OT, o_device>
 {
 	MEASURE();
 	#ifdef _DEBUG
-	assert("Must have the same number of dimensions in each TensorBase" && this->Dims() == other.Dims());
+	if (Dims() != other.Dims())
+	{
+		throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+	}
+
 	for (size_t i = 0; i < this->Dims(); i++)
 	{
-		assert("Must have same dimension length in each TensorBase" && this->Shape()[i] == other.Shape()[i]);
+		if (Shape()[i] != other.Shape()[i])
+		{
+			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+		}
 	}
 	#endif
 
@@ -1028,10 +1079,17 @@ inline Tensor<RT, device> Tensor<T, device>::multiply(const TensorSlice<OT, o_de
 {
 	MEASURE();
 	#ifdef _DEBUG
-	assert("Slice must have less or the same amount of dimensions as target tensor" && Dims() >= other.Dims());
-	for (size_t i = 0; i < Dims() - 1; i++)
+	if (Dims() < other.Dims())
 	{
-		assert((Shape()[i] == other.Shape()[i].get_to(), "Slice dimension must be less or the same length of the target dimension"));
+		throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
+	}
+
+	for (size_t i = 0; i < this->Dims(); i++)
+	{
+		if (Shape()[i] != other.Shape()[i])
+		{
+			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+		}
 	}
 	#endif
 
@@ -1066,10 +1124,17 @@ inline Tensor<RT, device> Tensor<T, device>::divide(const Tensor<OT, o_device>& 
 {
 	MEASURE();
 	#ifdef _DEBUG
-	assert("Must have the same number of dimensions in each TensorBase" && this->Dims() == other.Dims());
+	if (Dims() != other.Dims())
+	{
+		throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+	}
+
 	for (size_t i = 0; i < this->Dims(); i++)
 	{
-		assert("Must have same dimension length in each TensorBase" && this->Shape()[i] == other.Shape()[i]);
+		if (Shape()[i] != other.Shape()[i])
+		{
+			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+		}
 	}
 	#endif
 
@@ -1089,10 +1154,17 @@ inline Tensor<RT, device> Tensor<T, device>::divide(const TensorSlice<OT, o_devi
 {
 	MEASURE();
 	#ifdef _DEBUG
-	assert("Slice must have less or the same amount of dimensions as target tensor" && Dims() >= other.Dims());
-	for (size_t i = 0; i < Dims() - 1; i++)
+	if (Dims() < other.Dims())
 	{
-		assert((Shape()[i] == other.Shape()[i].get_to(), "Slice dimension must be less or the same length of the target dimension"));
+		throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
+	}
+
+	for (size_t i = 0; i < this->Dims(); i++)
+	{
+		if (Shape()[i] != other.Shape()[i])
+		{
+			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+		}
 	}
 	#endif
 
@@ -1127,10 +1199,17 @@ inline Tensor<RT, device> Tensor<T, device>::modulous(const Tensor<OT, o_device>
 {
 	MEASURE();
 	#ifdef _DEBUG
-	assert("Must have the same number of dimensions in each TensorBase" && this->Dims() == other.Dims());
+	if (Dims() != other.Dims())
+	{
+		throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+	}
+
 	for (size_t i = 0; i < this->Dims(); i++)
 	{
-		assert("Must have same dimension length in each TensorBase" && this->Shape()[i] == other.Shape()[i]);
+		if (Shape()[i] != other.Shape()[i])
+		{
+			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+		}
 	}
 	#endif
 
@@ -1150,10 +1229,17 @@ inline Tensor<RT, device> Tensor<T, device>::modulous(const TensorSlice<OT, o_de
 {
 	MEASURE();
 	#ifdef _DEBUG
-	assert("Slice must have less or the same amount of dimensions as target tensor" && Dims() >= other.Dims());
-	for (size_t i = 0; i < Dims() - 1; i++)
+	if (Dims() < other.Dims())
 	{
-		assert((Shape()[i] == other.Shape()[i].get_to(), "Slice dimension must be less or the same length of the target dimension"));
+		throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
+	}
+
+	for (size_t i = 0; i < this->Dims(); i++)
+	{
+		if (Shape()[i] != other.Shape()[i])
+		{
+			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+		}
 	}
 	#endif
 
@@ -1188,10 +1274,17 @@ inline void Tensor<T, device>::additionAssignment(const Tensor<OT, o_device>& ot
 {
 	MEASURE();
 	#ifdef _DEBUG
-	assert("Must have the same number of dimensions in each TensorBase" && this->Dims() == other.Dims());
+	if (Dims() != other.Dims())
+	{
+		throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+	}
+
 	for (size_t i = 0; i < this->Dims(); i++)
 	{
-		assert("Must have same dimension length in each TensorBase" && this->Shape()[i] == other.Shape()[i]);
+		if (Shape()[i] != other.Shape()[i])
+		{
+			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+		}
 	}
 	#endif
 
@@ -1207,10 +1300,17 @@ inline void Tensor<T, device>::additionAssignment(const TensorSlice<OT, o_device
 {
 	MEASURE();
 	#ifdef _DEBUG
-	assert("Slice must have less or the same amount of dimensions as target tensor" && Dims() >= other.Dims());
-	for (size_t i = 0; i < Dims() - 1; i++)
+	if (Dims() < other.Dims())
 	{
-		assert((Shape()[i] == other.Shape()[i].get_to(), "Slice dimension must be less or the same length of the target dimension"));
+		throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
+	}
+
+	for (size_t i = 0; i < this->Dims(); i++)
+	{
+		if (Shape()[i] != other.Shape()[i])
+		{
+			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+		}
 	}
 	#endif
 
@@ -1237,10 +1337,17 @@ inline void Tensor<T, device>::subtractionAssignment(const Tensor<OT, o_device>&
 {
 	MEASURE();
 	#ifdef _DEBUG
-	assert("Must have the same number of dimensions in each TensorBase" && this->Dims() == other.Dims());
+	if (Dims() != other.Dims())
+	{
+		throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+	}
+
 	for (size_t i = 0; i < this->Dims(); i++)
 	{
-		assert("Must have same dimension length in each TensorBase" && this->Shape()[i] == other.Shape()[i]);
+		if (Shape()[i] != other.Shape()[i])
+		{
+			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+		}
 	}
 	#endif
 
@@ -1256,10 +1363,17 @@ inline void Tensor<T, device>::subtractionAssignment(const TensorSlice<OT, o_dev
 {
 	MEASURE();
 	#ifdef _DEBUG
-	assert("Slice must have less or the same amount of dimensions as target tensor" && Dims() >= other.Dims());
-	for (size_t i = 0; i < Dims() - 1; i++)
+	if (Dims() < other.Dims())
 	{
-		assert((Shape()[i] == other.Shape()[i].get_to(), "Slice dimension must be less or the same length of the target dimension"));
+		throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
+	}
+
+	for (size_t i = 0; i < this->Dims(); i++)
+	{
+		if (Shape()[i] != other.Shape()[i])
+		{
+			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+		}
 	}
 	#endif
 
@@ -1286,10 +1400,17 @@ inline void Tensor<T, device>::multiplicationAssignment(const Tensor<OT, o_devic
 {
 	MEASURE();
 	#ifdef _DEBUG
-	assert("Must have the same number of dimensions in each TensorBase" && this->Dims() == other.Dims());
+	if (Dims() != other.Dims())
+	{
+		throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+	}
+
 	for (size_t i = 0; i < this->Dims(); i++)
 	{
-		assert("Must have same dimension length in each TensorBase" && this->Shape()[i] == other.Shape()[i]);
+		if (Shape()[i] != other.Shape()[i])
+		{
+			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+		}
 	}
 	#endif
 
@@ -1305,10 +1426,17 @@ inline void Tensor<T, device>::multiplicationAssignment(const TensorSlice<OT, o_
 {
 	MEASURE();
 	#ifdef _DEBUG
-	assert("Slice must have less or the same amount of dimensions as target tensor" && Dims() >= other.Dims());
-	for (size_t i = 0; i < Dims() - 1; i++)
+	if (Dims() < other.Dims())
 	{
-		assert((Shape()[i] == other.Shape()[i].get_to(), "Slice dimension must be less or the same length of the target dimension"));
+		throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
+	}
+
+	for (size_t i = 0; i < this->Dims(); i++)
+	{
+		if (Shape()[i] != other.Shape()[i])
+		{
+			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+		}
 	}
 	#endif
 
@@ -1335,10 +1463,17 @@ inline void Tensor<T, device>::divisionAssignment(const Tensor<OT, o_device>& ot
 {
 	MEASURE();
 	#ifdef _DEBUG
-	assert("Must have the same number of dimensions in each TensorBase" && this->Dims() == other.Dims());
+	if (Dims() != other.Dims())
+	{
+		throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+	}
+
 	for (size_t i = 0; i < this->Dims(); i++)
 	{
-		assert("Must have same dimension length in each TensorBase" && this->Shape()[i] == other.Shape()[i]);
+		if (Shape()[i] != other.Shape()[i])
+		{
+			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+		}
 	}
 	#endif
 
@@ -1354,10 +1489,17 @@ inline void Tensor<T, device>::divisionAssignment(const TensorSlice<OT, o_device
 {
 	MEASURE();
 	#ifdef _DEBUG
-	assert("Slice must have less or the same amount of dimensions as target tensor" && Dims() >= other.Dims());
-	for (size_t i = 0; i < Dims() - 1; i++)
+	if (Dims() < other.Dims())
 	{
-		assert((Shape()[i] == other.Shape()[i].get_to(), "Slice dimension must be less or the same length of the target dimension"));
+		throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
+	}
+
+	for (size_t i = 0; i < this->Dims(); i++)
+	{
+		if (Shape()[i] != other.Shape()[i])
+		{
+			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+		}
 	}
 	#endif
 
@@ -1384,10 +1526,17 @@ inline void Tensor<T, device>::modulouAssignment(const Tensor<OT, o_device>& oth
 {
 	MEASURE();
 	#ifdef _DEBUG
-	assert("Must have the same number of dimensions in each TensorBase" && this->Dims() == other.Dims());
+	if (Dims() != other.Dims())
+	{
+		throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+	}
+
 	for (size_t i = 0; i < this->Dims(); i++)
 	{
-		assert("Must have same dimension length in each TensorBase" && this->Shape()[i] == other.Shape()[i]);
+		if (Shape()[i] != other.Shape()[i])
+		{
+			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+		}
 	}
 	#endif
 
@@ -1403,10 +1552,17 @@ inline void Tensor<T, device>::modulouAssignment(const TensorSlice<OT, o_device>
 {
 	MEASURE();
 	#ifdef _DEBUG
-	assert("Slice must have less or the same amount of dimensions as target tensor" && Dims() >= other.Dims());
-	for (size_t i = 0; i < Dims() - 1; i++)
+	if (Dims() < other.Dims())
 	{
-		assert((Shape()[i] == other.Shape()[i].get_to(), "Slice dimension must be less or the same length of the target dimension"));
+		throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
+	}
+
+	for (size_t i = 0; i < this->Dims(); i++)
+	{
+		if (Shape()[i] != other.Shape()[i])
+		{
+			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+		}
 	}
 	#endif
 
@@ -1433,10 +1589,17 @@ Tensor<RT, device> Tensor<T, device>::compare(const Tensor<OT, o_device>& other)
 {
 	MEASURE();
 	#ifdef _DEBUG
-	assert("Must have the same number of dimensions in each TensorBase" && this->Dims() == other.Dims());
+	if (Dims() != other.Dims())
+	{
+		throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+	}
+
 	for (size_t i = 0; i < this->Dims(); i++)
 	{
-		assert("Must have same dimension length in each TensorBase" && this->Shape()[i] == other.Shape()[i]);
+		if (Shape()[i] != other.Shape()[i])
+		{
+			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+		}
 	}
 	#endif
 
@@ -1456,9 +1619,17 @@ Tensor<RT, device> Tensor<T, device>::compare(const TensorSlice<OT, o_device>& o
 {
 	MEASURE();
 	#ifdef _DEBUG
-	for (size_t i = 0; i < other.Dims(); i++)
+	if (Dims() < other.Dims())
 	{
-		assert("Must have less than or equal dimension length in each Tensor and TensorSlice" && Shape()[i] >= other.Shape()[i].get_to());
+		throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
+	}
+
+	for (size_t i = 0; i < this->Dims(); i++)
+	{
+		if (Shape()[i] != other.Shape()[i])
+		{
+			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+		}
 	}
 	#endif
 
@@ -1493,10 +1664,17 @@ Tensor<RT, device> Tensor<T, device>::lessThan(const Tensor<OT, o_device>& other
 {
 	MEASURE();
 	#ifdef _DEBUG
-	assert("Must have the same number of dimensions in each TensorBase" && this->Dims() == other.Dims());
+	if (Dims() != other.Dims())
+	{
+		throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+	}
+
 	for (size_t i = 0; i < this->Dims(); i++)
 	{
-		assert("Must have same dimension length in each TensorBase" && this->Shape()[i] == other.Shape()[i]);
+		if (Shape()[i] != other.Shape()[i])
+		{
+			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+		}
 	}
 	#endif
 
@@ -1531,10 +1709,17 @@ Tensor<RT, device> Tensor<T, device>::moreThan(const Tensor<OT, o_device>& other
 {
 	MEASURE();
 	#ifdef _DEBUG
-	assert("Must have the same number of dimensions in each TensorBase" && this->Dims() == other.Dims());
+	if (Dims() != other.Dims())
+	{
+		throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+	}
+
 	for (size_t i = 0; i < this->Dims(); i++)
 	{
-		assert("Must have same dimension length in each TensorBase" && this->Shape()[i] == other.Shape()[i]);
+		if (Shape()[i] != other.Shape()[i])
+		{
+			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+		}
 	}
 	#endif
 
@@ -1569,10 +1754,17 @@ Tensor<RT, device> Tensor<T, device>::lessThanEqual(const Tensor<OT, o_device>& 
 {
 	MEASURE();
 	#ifdef _DEBUG
-	assert("Must have the same number of dimensions in each TensorBase" && this->Dims() == other.Dims());
+	if (Dims() != other.Dims())
+	{
+		throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+	}
+
 	for (size_t i = 0; i < this->Dims(); i++)
 	{
-		assert("Must have same dimension length in each TensorBase" && this->Shape()[i] == other.Shape()[i]);
+		if (Shape()[i] != other.Shape()[i])
+		{
+			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+		}
 	}
 	#endif
 
@@ -1607,10 +1799,17 @@ Tensor<RT, device> Tensor<T, device>::moreThanEqual(const Tensor<OT, o_device>& 
 {
 	MEASURE();
 	#ifdef _DEBUG
-	assert("Must have the same number of dimensions in each TensorBase" && this->Dims() == other.Dims());
+	if (Dims() != other.Dims())
+	{
+		throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+	}
+
 	for (size_t i = 0; i < this->Dims(); i++)
 	{
-		assert("Must have same dimension length in each TensorBase" && this->Shape()[i] == other.Shape()[i]);
+		if (Shape()[i] != other.Shape()[i])
+		{
+			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+		}
 	}
 	#endif
 
