@@ -97,7 +97,6 @@ public:
 	std::vector<size_t> FlattenDims(size_t dims) const;
 	size_t FlattenDims() const;
 
-	//void MultiResize(std::initializer_list<size_t> sizes, const T& pad_val = T());
 	void Resize(const std::vector<size_t>& sizes, const T& pad_val = T());
 	void Resize(const std::vector<TSlice>& sizes, const T& pad_val = T());
 

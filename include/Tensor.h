@@ -192,7 +192,7 @@ void Tensor<T, device>::to_vector(std::vector<TSlice>& vec, const std::initializ
 }
 
 
-/// This is a helper struct that acts as the sort function for the std::sort function in Tensor::based_sort function.
+/// This is a helper struct, that acts as the sort function, for the std::sort function in Tensor::based_sort function.
 
 namespace
 {
@@ -499,61 +499,6 @@ inline size_t Tensor<T, device>::calc_new_size(const std::vector<TSlice>& sizes)
 	}
 	return new_size;
 }
-
-
-
-#if 0
-template<typename T, Mode device>
-void Tensor<T, device>::Resize(const std::initializer_list<size_t>& sizes, const T& pad_val)
-{
-	MEASURE();
-	#ifdef _CUDA
-	//deallocate gpu memory if allocated to make sure there isnt accidentally copied too much or little memory to cpu or gpu
-	if (isAllocated())
-		deallocate();
-	#endif
-
-	#ifdef _DEBUG
-	assert(sizes.size() != 0);
-	#endif
-
-	size_t current_size = get_real_size(m_shape.size() - 1);
-	size_t new_size = calc_new_size(sizes);
-
-	if(current_size < new_size)
-		m_vector.reserve(new_size - current_size);
-	size_t index = 0;
-	for (const size_t& size : sizes)
-	{
-		size_t new_amount = size;
-		size_t tmp_size = m_vector.size();
-		size_t tmp_row_size = get_real_size(index);
-
-		m_shape[index] = size;
-
-		if (index != 0)
-			new_amount = get_real_size(index - 1) * get_dim_length(index);
-		else
-			new_amount = get_dim_length(index);
-
-		if (new_amount > tmp_size)
-		{
-			new_amount -= tmp_size;
-
-			//Resize dimention
-			upscale_dim(index, tmp_row_size, new_amount, pad_val);
-		}
-		else
-		{
-			new_amount = tmp_size - new_amount;
-
-			downscale_dim(index, tmp_row_size, new_amount);
-		}
-
-		index++;
-	}
-}
-#endif
 
 template<typename T, Mode device>
 void Tensor<T, device>::Resize(const std::vector<size_t>& sizes, const T& pad_val)
@@ -883,13 +828,9 @@ inline const std::vector<T>& Tensor<T, device>::asVector() const
 	return m_vector;
 }
 
-/// <summary>
-/// Tensor access operators
-/// </summary>
-/// <typeparam name="T"></typeparam>
-/// <param name="...coords"></param>
-/// <returns></returns>
 
+/// Tensor access operators
+ 
 template<typename T, Mode device>
 template<typename ... Args>
 inline T& Tensor<T, device>::operator()(Args ... coords)

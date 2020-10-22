@@ -373,9 +373,7 @@ __device__ bool TSlib::CUDATensor3D<T>::offset_bounds(size_t x, size_t y, size_t
 		   ((threadIdx.z + blockIdx.z * blockDim.z + z) < m_height);
 }
 
-/// <summary>
 /// Tensor class CUDATensor cast operators
-/// </summary>
 
 #if 1
 
@@ -398,9 +396,7 @@ Tensor<T, device>::operator CUDATensor3D<T>()
 }
 #endif
 
-/// <summary>
 /// Tensor class cuda specific functions
-/// </summary>
 
 template<typename T, Mode device>
 inline __host__ void Tensor<T, device>::allocate()
@@ -514,7 +510,6 @@ short Tensor<T, device>::getTargetThreads() const
 	m_threads = value;
 }
 
-/// <summary>
 /// Tensor class kernel functions
 /// Ways of calculating kernel dimsions:
 /// 
@@ -530,8 +525,7 @@ short Tensor<T, device>::getTargetThreads() const
 /// 
 /// NOTE: block layout is not affected by these options
 /// NOTE: lower dimension kernels can use higher dimension thread layouts
-/// 
-/// </summary>
+
 
 template<typename T, Mode device>
 template<Mode layout, typename FT, typename RT, typename ...Args>
