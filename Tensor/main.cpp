@@ -28,9 +28,10 @@ __kernel__ kernel(CUDATensor3D<uint32_t> tensor, int val)
 	}
 }
 
-uint32_t generator(const std::vector<size_t>& index)
+size_t generator(const std::vector<size_t>& index, const size_t& i)
 {
-	return index[0] * index[1] * index[2];
+	size_t res = rand();
+	return res;
 }
 
 int main()
@@ -41,7 +42,7 @@ int main()
 	
 	TSlib::CUDAInitialize();
 
-	Tensor<uint32_t> tensor({ 3, 3, 3 }, generator);
+	Tensor<size_t> tensor({ 5, 5, 5 }, generator);
 
 	try
 	{

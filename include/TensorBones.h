@@ -82,19 +82,17 @@ protected:
 public:
 
 	Tensor(const int& dims);
-	//Tensor(const std::initializer_list<size_t>& sizes, const T& pad_val = T(), const bool& add_extra_dim = true);
 	Tensor(const std::vector<size_t>& sizes, const T& pad_val = T(), const bool& add_extra_dim = true);
 	Tensor(const std::vector<size_t>& sizes, T(*generator)(const size_t&), const bool& add_extra_dim = true);
 	Tensor(const std::vector<size_t>& sizes, T(*generator)(const std::vector<size_t>&), const bool& add_extra_dim = true);
 	Tensor(const std::vector<size_t>& sizes, T(*generator)(const std::vector<size_t>&, const size_t&), const bool& add_extra_dim = true);
 	Tensor(const TensorSlice<T, device>& slice, const bool& add_extra_dim = true);
+	
+	Tensor(const Tensor<T, device>& other);
 
 	~Tensor();
 
-	Tensor(const Tensor<T, device>& other);
-
 	void ResizeDim(const size_t& index, const size_t& amount, const T& pad_val = T());
-	
 
 	std::vector<size_t> FlattenDims(size_t dims) const;
 	size_t FlattenDims() const;

@@ -35,12 +35,9 @@ typedef double double_t;
 
 namespace TSlib
 {
-/// <summary>
+
 /// Tensor private functions
-/// </summary>
-/// <typeparam name="T"></typeparam>
-/// <param name="index"></param>
-/// <returns></returns>
+
 template<typename T, Mode device>
 size_t Tensor<T, device>::get_real_size(const size_t& index) const
 {
@@ -194,9 +191,9 @@ void Tensor<T, device>::to_vector(std::vector<TSlice>& vec, const std::initializ
 	to_vector(vec, args...);
 }
 
-/// <summary>
+
 /// This is a helper struct that acts as the sort function for the std::sort function in Tensor::based_sort function.
-/// </summary>
+
 namespace
 {
 	struct sorter
@@ -225,12 +222,8 @@ std::vector<size_t> Tensor<T, device>::based_sort(const std::vector<size_t>& tar
 	return new_indexes;
 }
 
-
-/// <summary>
 /// Tensor constructors
-/// </summary>
-/// <typeparam name="T"></typeparam>
-/// <param name="dims"></param>
+
 template<typename T, Mode device>
 Tensor<T, device>::Tensor(const int& dims)
 	: m_shape(dims + 1)
@@ -238,17 +231,6 @@ Tensor<T, device>::Tensor(const int& dims)
 	MEASURE();
 	m_shape[dims] = 1;
 }
-
-//template<typename T, Mode device>
-//Tensor<T, device>::Tensor(const std::initializer_list<size_t>& sizes, const T& pad_val, const bool& add_extra_dim)
-//	: m_shape(sizes.size() + 1 * add_extra_dim)
-//{
-//	MEASURE();
-//
-//	if(add_extra_dim)
-//		m_shape[sizes.size()] = 1;
-//	Resize(sizes, pad_val);
-//}
 
 template<typename T, Mode device>
 Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, const T& pad_val, const bool& add_extra_dim)
@@ -259,6 +241,8 @@ Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, const T& pad_val, co
 		m_shape[sizes.size()] = 1;
 	Resize(sizes, pad_val);
 }
+
+//generator functions take an index / coordinate as parameters and returns a value with the containter type
 
 template<typename T, Mode device>
 inline Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, T(*generator)(const size_t&), const bool& add_extra_dim)
@@ -375,11 +359,7 @@ Tensor<T, device>::~Tensor()
 	#endif
 }
 
-/// <summary>
-//// Tensor public functions
-/// </summary>
-/// <typeparam name="T"></typeparam>
-/// <param name="val"></param>
+/// Tensor public functions
 
 template<typename T, Mode device>
 void Tensor<T, device>::Fill(const T& val)
@@ -401,14 +381,8 @@ void Tensor<T, device>::Fill(const size_t& dim, const T& val, const size_t& inde
 	}
 }
 
-/// <summary>
 /// resize functions
-/// </summary>
-/// <typeparam name="T"></typeparam>
-/// <param name="index"></param>
-/// <param name="row_size"></param>
-/// <param name="amount"></param>
-/// <param name="pad_val"></param>
+
 
 template<typename T, Mode device>
 void Tensor<T, device>::upscale_dim(const size_t& index, const size_t& row_size, const size_t& amount, const T& pad_val)
@@ -854,11 +828,7 @@ inline T* Tensor<T, device>::Data()
 	return m_vector.data();
 }
 
-/// <summary>
 /// Tensor info / get functions
-/// </summary>
-/// <typeparam name="T"></typeparam>
-/// <returns></returns>
 
 template<typename T, Mode device>
 inline size_t Tensor<T, device>::Dims() const
@@ -878,11 +848,7 @@ inline size_t Tensor<T, device>::size() const
 	return m_vector.size();
 }
 
-/// <summary>
 /// Tensor iterator funtions
-/// </summary>
-/// <typeparam name="T"></typeparam>
-/// <returns></returns>
 
 template<typename T, Mode device>
 inline typename std::vector<T>::const_iterator Tensor<T, device>::begin() const
@@ -950,11 +916,8 @@ inline T Tensor<T, device>::operator[](size_t indx) const
 	#pragma message("warning: Cannot use both cuda and amp at the same time defaulting to cuda")
 #endif
 
-/// <summary>
 /// Tensor math functions
-/// </summary>
-/// <typeparam name="T"></typeparam>
-/// <returns></returns>
+
 template<typename T, Mode device>
 template<typename RT>
 RT Tensor<T, device>::sum()
