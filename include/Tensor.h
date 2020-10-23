@@ -700,7 +700,7 @@ void Tensor<T, device>::RemoveDims(const size_t& dims)
 	
 	#ifdef _DEBUG
 	
-	if (dims > m_shape_size() - 1)
+	if (dims > Dims() - 1)
 	{
 		throw BadValue("Cannot Remove more dims than the amount of dims in Tensor", dims);
 	}
