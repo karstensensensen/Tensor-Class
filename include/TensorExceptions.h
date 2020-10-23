@@ -10,6 +10,18 @@ namespace TSlib
 	* NOTE: Exceptions will only be thrown in DEBUG mode
 	*/
 
+	template<typename T>
+	struct ExceptValue
+	{
+		std::string msg;
+		T val;
+
+		ExceptValue(std::string msg, T val)
+			: msg(msg), val(val)
+		{}
+	};
+
+
 	/// <summary>
 	/// All Tensor function exceptions
 	/// </summary>
@@ -35,6 +47,21 @@ namespace TSlib
 			}
 		}
 
+		#ifdef _CUDA
+		template<typename T, Mode device, typename ... Args>
+		OutOfBounds(CTBase<T>* target, std::string message, size_t dim, size_t index)
+		{
+			err_msg += message + "\nTarget dimension: " + std::to_string(dim + 1) + " Target Index: " + std::to_string(index);
+
+			err_msg += "\nTensor bounds was: ";
+
+			for (size_t i = 0; i < target->Shape().size() - 1; i++)
+			{
+				err_msg += std::to_string(target->Shape()[i]) + ' ';
+			}
+		}
+		#endif
+
 		virtual const char* what() const throw()
 		{
 			return err_msg.c_str();
@@ -53,7 +80,7 @@ namespace TSlib
 		}
 
 		template<typename T, Mode device>
-		BadShape(Tensor<T, device>* tensor, std::string message, const std::initializer_list<size_t>& shape)
+		BadShape(Tensor<T, device>* tensor, std::string message, const std::vector<size_t>& shape)
 		{
 			err_msg = message + "\nTarget shape was: ";
 			size_t target_shape_sum = 1;
@@ -73,6 +100,77 @@ namespace TSlib
 
 			err_msg += "\nTarget shape sum was: " + std::to_string(target_shape_sum);
 			err_msg += "\nTensor shape sum was: " + std::to_string(tensor->size());
+		}
+
+		template<typename T, Mode device>
+		BadShape(Tensor<T, device>* tensor, std::string message, const std::vector<TSlice>& shape)
+		{
+			err_msg = message + "\nTarget shape was: ";
+			size_t target_shape_sum = 1;
+
+			for (const TSlice& shape_elem : shape)
+			{
+				err_msg += std::to_string(shape_elem.width()) + ' ';
+				target_shape_sum *= shape_elem.width();
+			}
+
+			err_msg += "\nTensor shape was: ";
+
+			for (const size_t& shape_elem : tensor->Shape())
+			{
+				err_msg += std::to_string(shape_elem) + ' ';
+			}
+
+			err_msg += "\nTarget shape sum was: " + std::to_string(target_shape_sum);
+			err_msg += "\nTensor shape sum was: " + std::to_string(tensor->size());
+		}
+
+		BadShape(std::string message, const std::vector<size_t>& target, const std::vector<size_t>& expected)
+		{
+			err_msg = message + "\nGotten shape was: ";
+			size_t target_shape_sum = 1;
+			size_t expected_shape_sum = 1;
+
+			for (const size_t& shape_elem : target)
+			{
+				err_msg += std::to_string(shape_elem) + ' ';
+				target_shape_sum *= shape_elem;
+			}
+
+			err_msg += "\nExpected shape was: ";
+
+			for (const size_t& shape_elem : expected)
+			{
+				err_msg += std::to_string(shape_elem) + ' ';
+				expected_shape_sum *= shape_elem;
+			}
+
+			err_msg += "\nGotten shape sum was: " + std::to_string(target_shape_sum);
+			err_msg += "\nExpected shape sum was: " + std::to_string(expected_shape_sum);
+		}
+
+		BadShape(std::string message, const std::vector<TSlice>& target, const std::vector<size_t>& expected)
+		{
+			err_msg = message + "\nGotten shape was: ";
+			size_t target_shape_sum = 1;
+			size_t expected_shape_sum = 1;
+
+			for (const TSlice& shape_elem : target)
+			{
+				err_msg += std::to_string(shape_elem.width()) + ' ';
+				target_shape_sum *= shape_elem.width();
+			}
+
+			err_msg += "\nExpected shape was: ";
+
+			for (const size_t& shape_elem : expected)
+			{
+				err_msg += std::to_string(shape_elem) + ' ';
+				expected_shape_sum *= shape_elem;
+			}
+
+			err_msg += "\nGotten shape sum was: " + std::to_string(target_shape_sum);
+			err_msg += "\nExpected shape sum was: " + std::to_string(expected_shape_sum);
 		}
 
 		BadShape(std::string message, const std::initializer_list<size_t>& shape)
@@ -139,22 +237,22 @@ namespace TSlib
 		std::string err_msg;
 
 		template<typename First, typename ... Args>
-		void append_info(std::pair<std::string, First> first, std::pair<std::string, Args> ... rest)
+		void append_info(ExceptValue<First> first, ExceptValue<Args> ... rest)
 		{
 			append_info(first);
 			append_info(rest...);
 		}
 
-		template<typename First, typename ... Args>
-		void append_info(std::pair<std::string, First> first)
+		template<typename First>
+		void append_info(ExceptValue<First> first)
 		{
-			err_msg +=  std::string("\n") + first.first + ": " + std::to_string(first.second);
+			err_msg +=  std::string("\n") + first.msg + ": " + std::to_string(first.val);
 		}
 
 	public:
 		
 		template<typename ... Args>
-		BadValue(std::string message, std::pair<std::string, Args> ... args)
+		BadValue(std::string message, ExceptValue<Args> ... args)
 			: err_msg(message)
 		{
 			append_info(args...);

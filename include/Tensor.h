@@ -515,7 +515,6 @@ void Tensor<T, device>::Resize(const std::vector<size_t>& sizes, const T& pad_va
 	{
 		throw BadShape("New shape must not be of length 0");
 	}
-	//assert(sizes.size() != 0);
 	#endif
 
 	size_t current_size = get_real_size(m_shape.size() - 1);
@@ -731,7 +730,7 @@ TensorSlice<T, device> Tensor<T, device>::Slice(const std::initializer_list<Args
 
 	if (slice_vec.size() > Dims())
 	{
-		throw BadValue("There cannot be passed more TSlices than dimensions", slice_vec.size(), size());
+		throw BadValue("There cannot be passed more TSlices than dimensions", ExceptValue<size_t>("Got", slice_vec.size()), ExceptValue<size_t>("Expected", size()));
 	}
 	#endif
 
@@ -777,13 +776,13 @@ inline T Tensor<T, device>::At(size_t indx) const
 }
 
 template<typename T, Mode device>
-inline const T* const Tensor<T, device>::Data() const
+inline const T* Tensor<T, device>::Data() const
 {
 	return m_vector.data();
 }
 
 template<typename T, Mode device>
-inline T* const Tensor<T, device>::Data()
+inline T* Tensor<T, device>::Data()
 {
 	return m_vector.data();
 }

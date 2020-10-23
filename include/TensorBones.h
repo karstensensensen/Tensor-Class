@@ -17,6 +17,9 @@ namespace TSlib
 constexpr Mode default_device = Mode::GPU;
 
 template<typename T>
+class CTBase;
+
+template<typename T>
 class CUDATensor1D;
 
 template<typename T>
@@ -165,8 +168,8 @@ public:
 
 	const std::vector<T>& asVector() const;
 
-	const T* const Data() const;
-	T* const Data();
+	const T* Data() const;
+	T* Data();
 
 	template<typename ... Args>
 	T& operator()(Args ... coords);

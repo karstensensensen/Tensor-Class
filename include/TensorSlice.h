@@ -1,6 +1,7 @@
 #pragma once
 
 #include "TensorSliceBones.h"
+#include "TensorExceptions.h"
 
 namespace TSlib
 {
@@ -12,18 +13,18 @@ namespace TSlib
 		
 		if (from < 0 && to < 0 && to <= from)
 		{
-			throw BadValue("negative from value must be larger than negative to value", std::pair<std::string, size_t>{"from:", from }, std::pair<std::string, size_t>{"to", to } );
+			throw BadValue("negative from value must be larger than negative to value", ExceptValue<intmax_t>("from", from), ExceptValue<intmax_t>("to", to) );
 		}
 		else if (to >= from)
 		{
-			throw BadValue("from value must be less than to value", std::pair<std::string, size_t>{"from:", from }, std::pair<std::string, size_t>{"to", to });
+			throw BadValue("from value must be less than to value", ExceptValue<intmax_t>("from", from), ExceptValue<intmax_t>("to", to));
 		}
 		#endif
 	}
 	
 	template<typename T>
 	TSlice::TSlice(const std::initializer_list<T>& val)
-	:from(0), to(0), from_max(0), to_max(0)
+		: from(0), to(0), from_max(0), to_max(0)
 		{
 			MEASURE();
 
@@ -34,11 +35,11 @@ namespace TSlib
 
 			if (from < 0 && to < 0 && to <= from)
 			{
-				throw BadValue("negative from value must be more than negative to value", std::pair<std::string, size_t>("from:", from), std::pair<std::string, size_t>("to:", to));
+				throw BadValue("negative from value must be more than negative to value", ExceptValue<intmax_t>{ "from:", from }, ExceptValue<intmax_t>{ "to:", to });
 			}
 			else if(to >= from)
 			{
-				throw BadValue("from value must be less than to value", std::pair<std::string, size_t>("from:", from), std::pair<std::string, size_t>("to:", to));
+				throw BadValue("from value must be less than to value", ExceptValue<intmax_t>{ "from:", from }, ExceptValue<intmax_t>{ "to:", to });
 			}
 			#endif
 		}
@@ -155,7 +156,10 @@ namespace TSlib
 	{
 		MEASURE();
 
-		assert(m_slice_shape[i].contains(first));
+		if (!m_slice_shape[i].contains(first))
+		{
+			throw OutOfBounds(tensor, "Index was out of bounds", i, first);
+		}
 
 		i++;
 	}
@@ -187,9 +191,8 @@ namespace TSlib
 		
 		if (slices.size() < source->Dims() - 1)
 		{
-			throw BadShape("There must be the same amount or less slices as dimensions in the tensor", source->Shape());
+			throw BadShape(source, "There must be the same amount or less slices as dimensions in the tensor", slices);
 		}
-		//assert((slices.size() <= source->Dims() - 1, "There must be the same amount or less slices as dimensions in the tensor"));
 		#endif
 
 		update();
@@ -248,11 +251,10 @@ namespace TSlib
 	{
 		MEASURE();
 		#ifdef _DEBUG
-		//assert((m_slice_shape.size() <= source->Dims() - 1, "There must be the same amount or less slices as dimensions in the tensor"));
 
 		if (m_slice_shape.size() < source->Dims() - 1)
 		{
-			throw BadShape("There must be the same amount or less slices as dimensions in the tensor", source->Shape());
+			throw BadShape(source, "There must be the same amount or less slices as dimensions in the tensor", Shape());
 		}
 		#endif
 

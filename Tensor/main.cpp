@@ -46,6 +46,7 @@ int main()
 
 	try
 	{
+		tensor.Slice({ 1, -1 });
 		std::cout << tensor;
 	}
 	catch (std::exception& e)
