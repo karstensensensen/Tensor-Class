@@ -17,26 +17,7 @@ namespace TSlib
 		TSlice(const intmax_t& from, const intmax_t& to, const uint32_t& from_max = 0, const uint32_t& to_max = 0);
 
 		template<typename T>
-		TSlice(const std::initializer_list<T>& val)
-			:from(0), to(0), from_max(0), to_max(0)
-		{
-			MEASURE();
-
-			from = *val.begin();
-			to = *(val.begin() + 1);
-
-			#ifdef _DEBUG
-
-			if (from < 0 && to < 0)
-			{
-				assert((to > from, "negative from value must be more than negative to value"));
-			}
-			else
-			{
-				assert((to < from, "from value must be less than to value"));
-			}
-			#endif
-		}
+		TSlice(const std::initializer_list<T>& val);
 
 		TSlice();
 

@@ -26,7 +26,35 @@ namespace TSlib
 		}
 		#endif
 	}
+	
+	template<typename T>
+	TSlice::TSlice(const std::initializer_list<T>& val)
+	:from(0), to(0), from_max(0), to_max(0)
+		{
+			MEASURE();
 
+			from = *val.begin();
+			to = *(val.begin() + 1);
+
+			#ifdef _DEBUG
+
+			if (from < 0 && to < 0)
+			{
+				if(to <= from)
+				{
+					throw BadValue("negative from value must be more than negative to value", std::pair<std::string, size_t>("from:", from), std::pair<std::string, size_t>("to:", to));
+				}
+			}
+			else
+			{
+				if(to >= from)
+				{
+					throw BadValue("from value must be less than to value", std::pair<std::string, size_t>("from:", from), std::pair<std::string, size_t>("to:", to));
+				}
+			}
+			#endif
+		}
+	
 	TSlice::TSlice()
 		: from(NULL), to(NULL), from_max(NULL), to_max(NULL)
 	{
