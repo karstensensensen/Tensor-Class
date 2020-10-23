@@ -3,11 +3,13 @@
 #include <iostream>
 #include <vector>
 #include <assert.h>
+#include "TensorEnums.h"
 #include "TensorSliceBones.h"
 #include "TensorExceptions.h"
 
 namespace TSlib
 {
+
 #ifdef _CUDA
 
 #ifndef DEVICE_MAX_THREADS
@@ -79,6 +81,8 @@ protected:
 	void to_vector(std::vector<TSlice>& vec, const std::initializer_list<First>& first, const std::initializer_list<Args>& ... args);
 
 	std::vector<size_t> based_sort(const std::vector<size_t>& target);
+
+	std::vector<size_t> based_sort(const std::vector<TSlice>& target);
 
 	Tensor(const std::vector<TSlice>& sizes, const T& pad_val = T(), const bool& add_extra_dim = true);
 

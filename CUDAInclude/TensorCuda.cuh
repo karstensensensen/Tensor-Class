@@ -23,11 +23,12 @@ __device__ void CTBase<T>::get_indx(size_t& indx, size_t& iter, size_t& tmp_mult
 {
 
 	#ifdef _DEBUG
+
 	if (dim_arr[iter] <= coord)
 	{
-		throw OutOfBounds(this, )
+		throw OutOfBounds(this, "Index is out of bounds", iter, coord);
 	}
-	assert("Index is out of bounds" && dim_arr[iter] > coord);
+
 	#endif
 
 	indx += coord * tmp_multiply;

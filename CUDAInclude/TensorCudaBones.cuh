@@ -238,7 +238,7 @@ namespace TSlib
 			}
 
 			#ifdef _DEBUG
-			assert((NT != NULL, "Value for NT was not found"));
+			assert(NT != NULL && "Value for NT was not found");
 			#endif
 
 			return NT;
@@ -338,7 +338,7 @@ namespace TSlib
 			}
 
 			#ifdef _DEBUG
-			assert((NT != NULL, "Value for NT was not found"));
+			assert(NT != NULL && "Value for NT was not found");
 			#endif
 
 			return NT;

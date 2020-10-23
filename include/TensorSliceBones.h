@@ -1,7 +1,6 @@
 #pragma once
 
 #include <stdint.h>
-#include "TensorEnums.h"
 
 namespace TSlib
 {
@@ -62,6 +61,8 @@ namespace TSlib
 
 		class iterator;
 
+		T copy_generator(const size_t& index);
+
 	public:
 
 
@@ -101,4 +102,5 @@ namespace TSlib
 
 		iterator end();
 	};
+
 }

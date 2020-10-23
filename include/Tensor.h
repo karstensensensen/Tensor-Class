@@ -177,7 +177,8 @@ void Tensor<T, device>::to_vector(std::vector<TSlice>& vec, const std::initializ
 {
 
 	#ifdef _DEBUG
-	if(std::is_integral<First>::value)
+	std::cout << std::is_integral<First>::value << '\n' << !std::is_integral<First>::value << '\n';
+	if(!std::is_integral<First>::value)
 	{
 		#ifdef __clang__
 		throw BadType("Integral", typeid(First).name());
@@ -209,6 +210,20 @@ namespace
 			return vec[a] < vec[b];
 		}
 	};
+
+	struct sorterSlice
+	{
+		const std::vector<TSlice>& vec;
+
+		sorterSlice(const std::vector<TSlice>& vec)
+			:vec(vec)
+		{}
+
+		bool operator()(size_t a, size_t b)
+		{
+			return vec[a].width() < vec[b].width();
+		}
+	};
 }
 
 template<typename T, Mode device>
@@ -218,6 +233,17 @@ std::vector<size_t> Tensor<T, device>::based_sort(const std::vector<size_t>& tar
 	std::iota(new_indexes.begin(), new_indexes.end(), 0);
 
 	std::sort(new_indexes.begin(), new_indexes.end(), sorter(target));
+
+	return new_indexes;
+}
+
+template<typename T, Mode device>
+std::vector<size_t> Tensor<T, device>::based_sort(const std::vector<TSlice>& target)
+{
+	std::vector<size_t> new_indexes(target.size());
+	std::iota(new_indexes.begin(), new_indexes.end(), 0);
+
+	std::sort(new_indexes.begin(), new_indexes.end(), sorterSlice(target));
 
 	return new_indexes;
 }

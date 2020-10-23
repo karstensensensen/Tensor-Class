@@ -158,7 +158,7 @@ namespace TSlib
 
 		if (!m_slice_shape[i].contains(first))
 		{
-			throw OutOfBounds(tensor, "Index was out of bounds", i, first);
+			throw OutOfBounds(Shape(), "Index was out of bounds", i, first);
 		}
 
 		i++;
@@ -189,9 +189,11 @@ namespace TSlib
 
 		#ifdef _DEBUG
 		
-		if (slices.size() < source->Dims() - 1)
+		std::cout << (slices.size() > (source->Dims() - 1));
+
+		if (slices.size() > (source->Dims() - 1))
 		{
-			throw BadShape(source, "There must be the same amount or less slices as dimensions in the tensor", slices);
+			throw BadShape(source, "There must be the same amount or less slices as dimensions in the slice", slices);
 		}
 		#endif
 
@@ -252,13 +254,13 @@ namespace TSlib
 		MEASURE();
 		#ifdef _DEBUG
 
-		if (m_slice_shape.size() < source->Dims() - 1)
+		if (m_slice_shape.size() > source->Dims() - 1)
 		{
 			throw BadShape(source, "There must be the same amount or less slices as dimensions in the tensor", Shape());
 		}
 		#endif
 
-		for (size_t i = 0; i < source->Dims() - 1; i++)
+		for (size_t i = 0; i < Dims(); i++)
 		{
 			m_slice_shape[i].to_max = (uint32_t)source->Shape()[i];
 		}
@@ -375,6 +377,19 @@ namespace TSlib
 		using refrence = const intmax_t&;
 		using iterator_category = std::forward_iterator_tag;
 	};
+
+	template<typename T, Mode device>
+	T TSlib::TensorSlice<T, device>::copy_generator(const size_t& index)
+	{
+		return At(index);
+	}
+
+	template<typename T, Mode device>
+	template<typename RT, Mode return_device>
+	inline TensorSlice<T, device>::operator Tensor<RT, return_device>()
+	{
+		Tensor<T, device> tensor(Shape(), &TensorSlice<T, device>::copy_generator);
+	}
 
 	template<typename T, Mode device>
 	typename TensorSlice<T, device>::iterator TensorSlice<T, device>::begin()

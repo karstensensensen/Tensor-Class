@@ -34,33 +34,19 @@ namespace TSlib
 
 		OutOfBounds()
 		{}
-		template<typename T, Mode device, typename ... Args>
-		OutOfBounds(Tensor<T, device>* target, std::string message, size_t dim, size_t index)
-		{
-			err_msg += message + "\nTarget dimension: "+ std::to_string(dim+1) + " Target Index: " + std::to_string(index);
 
-			err_msg += "\nTensor bounds was: ";
-
-			for (size_t i = 0; i < target->Shape().size()-1; i++)
-			{
-				err_msg += std::to_string(target->Shape()[i]) + ' ';
-			}
-		}
-
-		#ifdef _CUDA
-		template<typename T, Mode device, typename ... Args>
-		OutOfBounds(CTBase<T>* target, std::string message, size_t dim, size_t index)
+		OutOfBounds(std::vector<size_t> shape, std::string message, size_t dim, size_t index)
 		{
 			err_msg += message + "\nTarget dimension: " + std::to_string(dim + 1) + " Target Index: " + std::to_string(index);
 
 			err_msg += "\nTensor bounds was: ";
 
-			for (size_t i = 0; i < target->Shape().size() - 1; i++)
+			for (size_t i = 0; i < shape.size() - 1; i++)
 			{
-				err_msg += std::to_string(target->Shape()[i]) + ' ';
+				err_msg += std::to_string(shape[i]) + ' ';
 			}
 		}
-		#endif
+
 
 		virtual const char* what() const throw()
 		{

@@ -40,14 +40,16 @@ int main()
 	Profiler::Get().BeginSession("CUDA_SESSION", "CUDA_PROFILE.json");
 	Profiler::Get().margin = 50;
 	
-	TSlib::CUDAInitialize();
+	CUDAInitialize();
 
 	Tensor<size_t> tensor({ 5, 5, 5 }, generator);
 
 	try
 	{
-		tensor.Slice({ 1, -1 });
-		std::cout << tensor;
+		TensorSlice<size_t, Mode::GPU> slice = tensor.Slice({ 1, -1 }, {1, -1});
+		Tensor<size_t> tensor2 = slice;
+		std::cout << slice << "\n\n\n";
+		std::cout << tensor2;
 	}
 	catch (std::exception& e)
 	{
