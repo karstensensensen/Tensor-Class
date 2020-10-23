@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef __APPLE__
+#ifdef __clang__
 typedef double double_t;
 #ifdef DEBUG
 #define _DEBUG
@@ -179,7 +179,7 @@ void Tensor<T, device>::to_vector(std::vector<TSlice>& vec, const std::initializ
 	#ifdef _DEBUG
 	if(std::is_integral<First>::value)
 	{
-		#ifdef __APPLE__
+		#ifdef __clang__
 		throw BadType("Integral", typeid(First).name());
 		#else
 		throw BadType::BadType("Integral", typeid(First).name());
@@ -1839,7 +1839,7 @@ Tensor<RT, device> Tensor<T, device>::moreThanEqualSingle(const OT& other) const
 }
 }
 
-#ifdef __APPLE__
+#ifdef __clang__
 #ifdef DEBUG
 #undef _DEBUG
 #endif
