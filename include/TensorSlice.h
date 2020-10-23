@@ -10,19 +10,13 @@ namespace TSlib
 		MEASURE();
 		#ifdef _DEBUG
 		
-		if (from < 0 && to < 0)
+		if (from < 0 && to < 0 && to <= from)
 		{
-			if (to <= from)
-			{
-				throw BadValue("negative from value must be larger than negative to value", std::pair<std::string, size_t>{"from:", from }, std::pair<std::string, size_t>{"to", to } );
-			}
+			throw BadValue("negative from value must be larger than negative to value", std::pair<std::string, size_t>{"from:", from }, std::pair<std::string, size_t>{"to", to } );
 		}
-		else
+		else if (to >= from)
 		{
-			if (to >= from)
-			{
-				throw BadValue("from value must be less than to value", std::pair<std::string, size_t>{"from:", from }, std::pair<std::string, size_t>{"to", to });
-			}
+			throw BadValue("from value must be less than to value", std::pair<std::string, size_t>{"from:", from }, std::pair<std::string, size_t>{"to", to });
 		}
 		#endif
 	}
@@ -38,19 +32,13 @@ namespace TSlib
 
 			#ifdef _DEBUG
 
-			if (from < 0 && to < 0)
+			if (from < 0 && to < 0 && to <= from)
 			{
-				if(to <= from)
-				{
-					throw BadValue("negative from value must be more than negative to value", std::pair<std::string, size_t>("from:", from), std::pair<std::string, size_t>("to:", to));
-				}
+				throw BadValue("negative from value must be more than negative to value", std::pair<std::string, size_t>("from:", from), std::pair<std::string, size_t>("to:", to));
 			}
-			else
+			else if(to >= from)
 			{
-				if(to >= from)
-				{
-					throw BadValue("from value must be less than to value", std::pair<std::string, size_t>("from:", from), std::pair<std::string, size_t>("to:", to));
-				}
+				throw BadValue("from value must be less than to value", std::pair<std::string, size_t>("from:", from), std::pair<std::string, size_t>("to:", to));
 			}
 			#endif
 		}
