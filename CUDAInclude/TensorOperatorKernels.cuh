@@ -245,7 +245,7 @@ namespace TSlib
 		}
 	}
 	template <typename T, typename OT, typename RT>
-	__kernel__ CudaLessThanEqualSingleconst CUDATensor3D<T> a, CUDATensor3D<RT> c, const OT b)
+	__kernel__ CudaLessThanEqualSingle(const CUDATensor3D<T> a, CUDATensor3D<RT> c, const OT b)
 	{
 		if (a.in_bounds())
 		{

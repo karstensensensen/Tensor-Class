@@ -35,7 +35,7 @@ size_t generator(const size_t& i)
 
 size_t generator2(const size_t& i)
 {
-	return i % 20;
+	return i % 10;
 }
 
 int main()
@@ -46,13 +46,13 @@ int main()
 	
 	CUDAInitialize();
 
-	Tensor<size_t> tensor({ 1024, 1024, 128 }, generator);
-	Tensor<size_t> tensor2({ 1024, 1024, 128 }, generator2);
+	Tensor<size_t> tensor({ 5, 5, 5 }, generator);
+	Tensor<size_t> tensor2({ 5, 5, 5 }, generator);
 
 	try
 	{
-		tensor += tensor2;
-		std::cout << tensor;
+		auto tensor_result = tensor == tensor2;
+		std::cout << tensor_result;
 		
 	}
 	catch (std::exception& e)
