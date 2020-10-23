@@ -273,7 +273,7 @@ namespace TSlib
 			#ifdef _DEBUG
 			if (double_t(length) * X_ratio != std::floor(double_t(length) * X_ratio))
 			{
-				throw BadValue("Length ratio does not divide cleanly into thread length", std::pair<std::string, double_t>("ratio", X_ratio), std::pair<std::string, double_t>("cubed threads", threads_cubed));
+				throw BadValue("Length ratio does not divide cleanly into thread length", ExceptValue<double_t>("ratio", X_ratio), ExceptValue<double_t>("cubed threads", threads_cubed));
 			}
 			#endif
 
@@ -282,7 +282,7 @@ namespace TSlib
 			#ifdef _DEBUG
 			if (double_t(width) * Y_ratio != std::floor(double_t(width) * Y_ratio))
 			{
-				throw BadValue("Width ratio does not divide cleanly into thread width", std::pair<std::string, double_t>("ratio", Y_ratio), std::pair<std::string, double_t>("cubed threads", threads_cubed));
+				throw BadValue("Width ratio does not divide cleanly into thread width", ExceptValue<double_t>("ratio", Y_ratio), ExceptValue<double_t>("cubed threads", threads_cubed));
 			}
 			#endif
 
@@ -291,7 +291,7 @@ namespace TSlib
 			#ifdef _DEBUG
 			if (double_t(height) * Z_ratio != std::floor(double_t(height) * Z_ratio))
 			{
-				throw BadValue("Height ratio does not divide cleanly into thread height", std::pair<std::string, double_t>("ratio", Z_ratio), std::pair<std::string, double_t>("cubed threads", threads_cubed));
+				throw BadValue("Height ratio does not divide cleanly into thread height", ExceptValue<double_t>("ratio", Z_ratio), ExceptValue<double_t>("cubed threads", threads_cubed));
 			}
 			#endif
 			

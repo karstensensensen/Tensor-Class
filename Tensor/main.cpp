@@ -28,10 +28,14 @@ __kernel__ kernel(CUDATensor3D<uint32_t> tensor, int val)
 	}
 }
 
-size_t generator(const std::vector<size_t>& index, const size_t& i)
+size_t generator(const size_t& i)
 {
-	size_t res = rand();
-	return res;
+	return i % 10;
+}
+
+size_t generator2(const size_t& i)
+{
+	return i % 20;
 }
 
 int main()
@@ -42,14 +46,14 @@ int main()
 	
 	CUDAInitialize();
 
-	Tensor<size_t> tensor({ 5, 5, 5 }, generator);
+	Tensor<size_t> tensor({ 1024, 1024, 128 }, generator);
+	Tensor<size_t> tensor2({ 1024, 1024, 128 }, generator2);
 
 	try
 	{
-		TensorSlice<size_t, Mode::GPU> slice = tensor.Slice({ 1, -1 }, {1, -1});
-		Tensor<size_t> tensor2 = slice;
-		std::cout << slice << "\n\n\n";
-		std::cout << tensor2;
+		tensor += tensor2;
+		std::cout << tensor;
+		
 	}
 	catch (std::exception& e)
 	{
