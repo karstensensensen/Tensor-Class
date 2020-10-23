@@ -165,8 +165,8 @@ public:
 
 	const std::vector<T>& asVector() const;
 
-	const T* Data() const;
-	T* Data();
+	const T* const Data() const;
+	T* const Data();
 
 	template<typename ... Args>
 	T& operator()(Args ... coords);

@@ -777,13 +777,13 @@ inline T Tensor<T, device>::At(size_t indx) const
 }
 
 template<typename T, Mode device>
-inline const T* Tensor<T, device>::Data() const
+inline const T* const Tensor<T, device>::Data() const
 {
 	return m_vector.data();
 }
 
 template<typename T, Mode device>
-inline T* Tensor<T, device>::Data()
+inline T* const Tensor<T, device>::Data()
 {
 	return m_vector.data();
 }
