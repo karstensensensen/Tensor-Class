@@ -38,6 +38,9 @@ size_t generator2(const size_t& i)
 	return i % 10;
 }
 
+__kernel__ k3D(CUDATensor3D<uint32_t> tensor, CUDATensor3D<uint32_t> other)
+{}
+
 int main()
 {
 
@@ -46,13 +49,14 @@ int main()
 	
 	CUDAInitialize();
 
-	Tensor<size_t> tensor({ 5, 5, 5 }, generator);
-	Tensor<size_t> tensor2({ 5, 5, 5 }, generator);
+	
 
 	try
 	{
-		auto tensor_result = tensor == tensor2;
-		std::cout << tensor_result;
+		Tensor<uint32_t> tensor({ 25 });
+		Tensor<uint32_t> tensor2({ 25 });
+		
+		tensor.Kernel3D(Layout3D(), k3D, tensor2);
 		
 	}
 	catch (std::exception& e)
