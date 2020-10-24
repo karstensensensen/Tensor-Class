@@ -59,7 +59,6 @@ protected:
 
 	size_t calc_new_size(const std::initializer_list<size_t>& sizes);
 	size_t calc_new_size(const std::vector<size_t>& sizes);
-	size_t calc_new_size(const std::vector<TSlice>& sizes);
 
 	size_t get_real_size(const size_t& index) const;
 	size_t get_dim_length(const size_t& index) const;
@@ -84,8 +83,6 @@ protected:
 
 	std::vector<size_t> based_sort(const std::vector<TSlice>& target);
 
-	Tensor(const std::vector<TSlice>& sizes, const T& pad_val = T(), const bool& add_extra_dim = true);
-
 public:
 
 	Tensor(const int& dims);
@@ -105,7 +102,6 @@ public:
 	size_t FlattenDims() const;
 
 	void Resize(const std::vector<size_t>& sizes, const T& pad_val = T());
-	void Resize(const std::vector<TSlice>& sizes, const T& pad_val = T());
 
 	void Reshape(const std::initializer_list<size_t>& shape, bool add_extra_dim = true);
 	void Reshape(const std::vector<size_t>& shape, bool add_extra_dim = true);

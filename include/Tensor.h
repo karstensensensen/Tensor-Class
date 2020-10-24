@@ -75,7 +75,7 @@ std::vector<size_t> Tensor<T, device>::FlattenDims(size_t dims) const
 {
 	MEASURE();
 	
-	std::vector<size_t> new_dim(dims, 0);
+	std::vector<size_t> new_dim(dims, 1);
 
 	size_t i;
 	for (i = 0; i < std::min(dims, Dims()); i++)
@@ -329,16 +329,6 @@ inline Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, T(*generator)
 }
 
 template<typename T, Mode device>
-Tensor<T, device>::Tensor(const std::vector<TSlice>& sizes, const T& pad_val, const bool& add_extra_dim)
-	: m_shape(sizes.size() + 1 * add_extra_dim)
-{
-	MEASURE();
-	if (add_extra_dim)
-		m_shape[sizes.size()] = 1;
-	Resize(sizes, pad_val);
-}
-
-template<typename T, Mode device>
 Tensor<T, device>::Tensor(const TensorSlice<T, device>& slice, const bool& add_extra_dim)
 	: m_shape(slice.Shape().size() + 1 * add_extra_dim)
 {
@@ -515,18 +505,6 @@ inline size_t Tensor<T, device>::calc_new_size(const std::vector<size_t>& sizes)
 }
 
 template<typename T, Mode device>
-inline size_t Tensor<T, device>::calc_new_size(const std::vector<TSlice>& sizes)
-{
-	MEASURE();
-	size_t new_size = 1;
-	for (const TSlice& elem_size : sizes)
-	{
-		new_size *= elem_size.width();
-	}
-	return new_size;
-}
-
-template<typename T, Mode device>
 void Tensor<T, device>::Resize(const std::vector<size_t>& sizes, const T& pad_val)
 {
 	MEASURE();
@@ -582,65 +560,6 @@ void Tensor<T, device>::Resize(const std::vector<size_t>& sizes, const T& pad_va
 		iteration++;
 	}
 	
-	m_vector.shrink_to_fit();
-}
-
-template<typename T, Mode device>
-void Tensor<T, device>::Resize(const std::vector<TSlice>& sizes, const T& pad_val)
-{
-	MEASURE();
-	#ifdef _CUDA
-	//deallocate gpu memory if allocated to make sure there isnt accidentally copied too much or little memory to cpu or gpu
-	if (isAllocated())
-		deallocate();
-	#endif
-
-	#ifdef _DEBUG
-	if (sizes.size() == 0)
-	{
-		throw BadShape("New shape must not be of length 0");
-	}
-	#endif
-
-	size_t current_size = get_real_size(m_shape.size() - 1);
-	size_t new_size = calc_new_size(sizes);
-
-	if (current_size < new_size)
-		m_vector.reserve(new_size - current_size);
-	size_t iteration = 0;
-	std::vector<size_t> indexes = based_sort(sizes);
-
-
-	for (size_t i = 0; i < sizes.size(); i++)
-	{
-		size_t new_amount = sizes[indexes[iteration]].width();
-		size_t tmp_size = m_vector.size();
-		size_t tmp_row_size = get_real_size(indexes[iteration]);
-
-		m_shape[indexes[iteration]] = sizes[indexes[iteration]].width();
-
-		if (indexes[iteration] != 0)
-			new_amount = get_real_size(indexes[iteration] - 1) * get_dim_length(indexes[iteration]);
-		else
-			new_amount = get_dim_length(indexes[iteration]);
-
-		if (new_amount > tmp_size)
-		{
-			new_amount -= tmp_size;
-
-			//Resize dimention
-			upscale_dim(indexes[iteration], tmp_row_size, new_amount, pad_val);
-		}
-		else
-		{
-			new_amount = tmp_size - new_amount;
-
-			downscale_dim(indexes[iteration], tmp_row_size, new_amount);
-		}
-
-		iteration++;
-	}
-
 	m_vector.shrink_to_fit();
 }
 

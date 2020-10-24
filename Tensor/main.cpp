@@ -53,8 +53,8 @@ int main()
 
 	try
 	{
-		Tensor<uint32_t> tensor({ 25 });
-		Tensor<uint32_t> tensor2({ 25 });
+		Tensor<uint32_t> tensor({ 25, }, 1);
+		Tensor<uint32_t> tensor2({ 25, }, 1);
 		
 		tensor.Kernel3D(Layout3D(), k3D, tensor2);
 		

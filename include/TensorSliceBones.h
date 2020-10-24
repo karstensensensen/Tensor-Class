@@ -45,6 +45,7 @@ namespace TSlib
 	{
 		Tensor<T, device>* source;
 		std::vector<TSlice> m_slice_shape;
+		std::vector<size_t> m_real_shape;
 		size_t m_offset;
 
 		#ifdef _DEBUG
@@ -79,7 +80,7 @@ namespace TSlib
 
 		size_t map_index(size_t index) const;
 
-		const std::vector<TSlice>& Shape() const;
+		const std::vector<size_t>& Shape() const;
 
 		template<typename ... Args>
 		T& Get(Args ... coords);

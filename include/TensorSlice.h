@@ -183,7 +183,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	TensorSlice<T, device>::TensorSlice(Tensor<T, device>* source, const std::vector<TSlice>& slices)
-		: source(source), m_slice_shape(slices)
+		: source(source), m_slice_shape(slices), m_real_shape(m_slice_shape.size())
 	{
 		MEASURE();
 
@@ -263,9 +263,12 @@ namespace TSlib
 		for (size_t i = 0; i < Dims(); i++)
 		{
 			m_slice_shape[i].to_max = (uint32_t)source->Shape()[i];
+			m_real_shape[i] = m_slice_shape[i].width();
 		}
 
 		calc_offset();
+
+
 	}
 
 	template<typename T, Mode device>
@@ -303,10 +306,10 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	const std::vector<TSlice>& TensorSlice<T, device>::Shape() const
+	const std::vector<size_t>& TensorSlice<T, device>::Shape() const
 	{
 		MEASURE();
-		return m_slice_shape;
+		return m_real_shape;
 	}
 
 	template<typename T, Mode device>
