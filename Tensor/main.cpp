@@ -43,21 +43,14 @@ __kernel__ k3D(CUDATensor3D<uint32_t> tensor, CUDATensor3D<uint32_t> other)
 
 int main()
 {
-
 	Profiler::Get().BeginSession("CUDA_SESSION", "CUDA_PROFILE.json");
 	Profiler::Get().margin = 50;
 	
 	CUDAInitialize();
 
-	
-
 	try
 	{
-		Tensor<uint32_t> tensor({ 25, }, 1);
-		Tensor<uint32_t> tensor2({ 25, }, 1);
-		
-		tensor.Kernel3D(Layout3D(), k3D, tensor2);
-		
+
 	}
 	catch (std::exception& e)
 	{
