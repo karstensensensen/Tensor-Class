@@ -74,6 +74,9 @@
     <ClInclude Include="..\CUDAInclude\TensorOperatorKernels.cuh">
       <Filter>Header Files\Tensor</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\TSliceWrapper.h">
+      <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="..\Tensor\main.cpp">
@@ -85,6 +88,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="empty.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\TSliceWrapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

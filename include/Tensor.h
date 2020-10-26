@@ -29,6 +29,7 @@ typedef double double_t;
 
 #include "TensorOperators.h"
 #include "TensorSlice.h"
+#include <algorithm>
 #include <cstdarg>
 #include <numeric>
 #include <tuple>
@@ -662,25 +663,25 @@ inline TensorSlice<T, device> Tensor<T, device>::Slice(const std::vector<TSlice>
 	return TensorSlice<T, device>(this, slices);
 }
 
-template<typename T, Mode device>
-template<typename ... Args>
-TensorSlice<T, device> Tensor<T, device>::Slice(const std::initializer_list<Args>& ... slices)
-{
-	std::vector<TSlice> slice_vec;
-	slice_vec.reserve(Dims());
-
-	to_vector(slice_vec, slices...);
-
-	#ifdef _DEBUG
-
-	if (slice_vec.size() > Dims())
-	{
-		throw BadValue("There cannot be passed more TSlices than dimensions", ExceptValue<size_t>("Got", slice_vec.size()), ExceptValue<size_t>("Expected", size()));
-	}
-	#endif
-
-	return TensorSlice<T, device>(this, slice_vec);
-}
+//template<typename T, Mode device>
+//template<typename ... Args>
+//TensorSlice<T, device> Tensor<T, device>::Slice(const std::initializer_list<Args>& ... slices)
+//{
+//	std::vector<TSlice> slice_vec;
+//	slice_vec.reserve(Dims());
+//
+//	to_vector(slice_vec, slices...);
+//
+//	#ifdef _DEBUG
+//
+//	if (slice_vec.size() > Dims())
+//	{
+//		throw BadValue("There cannot be passed more TSlices than dimensions", ExceptValue<size_t>("Got", slice_vec.size()), ExceptValue<size_t>("Expected", size()));
+//	}
+//	#endif
+//
+//	return TensorSlice<T, device>(this, slice_vec);
+//}
 
 
 /// Element access functions

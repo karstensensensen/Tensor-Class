@@ -62,12 +62,18 @@
     <ClInclude Include="..\include\TensorExceptions.h">
       <Filter>Header Files\Tensor</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\TSliceWrapper.h">
+      <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\include\PerlinNoise.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\TSliceWrapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

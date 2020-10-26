@@ -73,18 +73,22 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <ReferencePath>$(VC_ReferencesPath_x86);;"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.1\bin"</ReferencePath>
+    <OutDir>$(SolutionDir)lib\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <ReferencePath>$(VC_ReferencesPath_x86);;"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.1\bin"</ReferencePath>
+    <OutDir>$(SolutionDir)lib\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <ReferencePath>$(VC_ReferencesPath_x64);;"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.1\bin"</ReferencePath>
+    <OutDir>$(SolutionDir)lib\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <ReferencePath>$(VC_ReferencesPath_x64);;"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.1\bin"</ReferencePath>
+    <OutDir>$(SolutionDir)lib\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -189,9 +193,11 @@
     <ClInclude Include="..\include\TensorOperators.h" />
     <ClInclude Include="..\include\TensorSlice.h" />
     <ClInclude Include="..\include\TensorSliceBones.h" />
+    <ClInclude Include="..\include\TSliceWrapper.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\include\PerlinNoise.cpp" />
+    <ClCompile Include="..\src\TSliceWrapper.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

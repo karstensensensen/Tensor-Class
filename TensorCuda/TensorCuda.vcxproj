@@ -75,18 +75,22 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <ReferencePath>$(VC_ReferencesPath_x86);</ReferencePath>
+    <OutDir>$(SolutionDir)lib\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <ReferencePath>$(VC_ReferencesPath_x86)</ReferencePath>
+    <OutDir>$(SolutionDir)lib\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <ReferencePath>$(VC_ReferencesPath_x64);</ReferencePath>
+    <OutDir>$(SolutionDir)lib\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <ReferencePath>$(VC_ReferencesPath_x64);</ReferencePath>
+    <OutDir>$(SolutionDir)lib\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -223,6 +227,7 @@
     <ClInclude Include="..\include\TensorOperators.h" />
     <ClInclude Include="..\include\TensorSlice.h" />
     <ClInclude Include="..\include\TensorSliceBones.h" />
+    <ClInclude Include="..\include\TSliceWrapper.h" />
     <ClInclude Include="..\Multrix\PerlinKernel.cuh" />
     <ClInclude Include="..\Multrix\PerlinNoise.h" />
   </ItemGroup>
@@ -231,6 +236,7 @@
     <CudaCompile Include="..\Tensor\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <CudaCompile Include="..\src\TSliceWrapper.cpp" />
     <ClCompile Include="empty.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

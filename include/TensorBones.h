@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <assert.h>
+#include <intrin.h>
 #include "TensorEnums.h"
 #include "TensorSliceBones.h"
 #include "TensorExceptions.h"
@@ -118,8 +119,8 @@ public:
 
 	TensorSlice<T, device> Slice(const std::vector<TSlice>& slices);
 
-	template<typename ... Args>
-	TensorSlice<T, device> Slice(const std::initializer_list<Args>& ... slices);
+	/*template<typename ... Args>
+	TensorSlice<T, device> Slice(const std::initializer_list<Args>& ... slices);*/
 
 	T& At(size_t indx);
 	T At(size_t indx) const;
