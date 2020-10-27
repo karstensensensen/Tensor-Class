@@ -53,8 +53,6 @@ namespace TSlib
 		MEASURE();
 
 		#ifdef _DEBUG
-		
-		std::cout << (slices.size() > (source->Dims() - 1));
 
 		if (slices.size() > (source->Dims() - 1))
 		{
@@ -254,9 +252,9 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename RT, Mode return_device>
-	inline TensorSlice<T, device>::operator Tensor<RT, return_device>()
+	TensorSlice<T, device>::operator Tensor<RT, return_device>()
 	{
-		Tensor<T, device> tensor(Shape(), &TensorSlice<T, device>::copy_generator);
+		return Tensor<T, device>(*this, false);
 	}
 
 	template<typename T, Mode device>

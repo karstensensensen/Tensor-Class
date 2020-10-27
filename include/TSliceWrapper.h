@@ -15,8 +15,10 @@ namespace TSlib
 
 		TSlice(const intmax_t& from, const intmax_t& to, const uint32_t& from_max = 0, const uint32_t& to_max = 0);
 
-		template<typename T>
-		TSlice(const std::initializer_list<T>& val);
+		/*template<typename T>
+		TSlice(const std::initializer_list<T>& val);*/
+
+		TSlice(const size_t& val);
 
 		TSlice();
 

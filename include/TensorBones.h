@@ -372,10 +372,10 @@ public:
 	Tensor<RT, device> ClessThanSingle(const OT& other);
 
 	template<typename RT = char, typename OT, Mode o_device>
-	Tensor<RT, device> CmoreThan(Tensor<OT, o_device>& other);
+	Tensor<RT, device> CgreaterThan(Tensor<OT, o_device>& other);
 
 	template<typename RT = char, typename OT>
-	Tensor<RT, device> CmoreThanSingle(const OT& other);
+	Tensor<RT, device> CgreaterThanSingle(const OT& other);
 
 	template<typename RT = char, typename OT, Mode o_device>
 	Tensor<RT, device> ClessThanEqual(Tensor<OT, o_device>& other);
@@ -384,10 +384,10 @@ public:
 	Tensor<RT, device> ClessThanEqualSingle(const OT& other);
 
 	template<typename RT = char, typename OT, Mode o_device>
-	Tensor<RT, device> CmoreThanEqual(Tensor<OT, o_device>& other);
+	Tensor<RT, device> CgreaterThanEqual(Tensor<OT, o_device>& other);
 
 	template<typename RT = char, typename OT>
-	Tensor<RT, device> CmoreThanEqualSingle(const OT& other);
+	Tensor<RT, device> CgreaterThanEqualSingle(const OT& other);
 
 	#endif
 
@@ -410,13 +410,13 @@ public:
 	Tensor<RT, device> lessThanSingle(const OT& other) const;
 
 	template<typename RT = char, typename OT, Mode o_device>
-	Tensor<RT, device> moreThan(const Tensor<OT, o_device>& other) const;
+	Tensor<RT, device> greaterThan(const Tensor<OT, o_device>& other) const;
 
 	template<typename RT = char, typename OT, Mode o_device>
-	Tensor<RT, device> moreThan(const TensorSlice<OT, o_device>& other) const;
+	Tensor<RT, device> greaterThan(const TensorSlice<OT, o_device>& other) const;
 
 	template<typename RT = char, typename OT>
-	Tensor<RT, device> moreThanSingle(const OT& other) const;
+	Tensor<RT, device> greaterThanSingle(const OT& other) const;
 
 	template<typename RT = char, typename OT, Mode o_device>
 	Tensor<RT, device> lessThanEqual(const Tensor<OT, o_device>& other) const;
@@ -428,13 +428,13 @@ public:
 	Tensor<RT, device> lessThanEqualSingle(const OT& other) const;
 
 	template<typename RT = char, typename OT, Mode o_device>
-	Tensor<RT, device> moreThanEqual(const Tensor<OT, o_device>& other) const;
+	Tensor<RT, device> greaterThanEqual(const Tensor<OT, o_device>& other) const;
 
 	template<typename RT = char, typename OT, Mode o_device>
-	Tensor<RT, device> moreThanEqual(const TensorSlice<OT, o_device>& other) const;
+	Tensor<RT, device> greaterThanEqual(const TensorSlice<OT, o_device>& other) const;
 
 	template<typename RT = char, typename OT>
-	Tensor<RT, device> moreThanEqualSingle(const OT& other) const;
+	Tensor<RT, device> greaterThanEqualSingle(const OT& other) const;
 
 	template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
 	inline bool operator==(Tensor<OT, o_device>& other)

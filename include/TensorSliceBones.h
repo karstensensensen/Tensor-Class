@@ -35,9 +35,6 @@ namespace TSlib
 		T copy_generator(const size_t& index);
 
 	public:
-
-
-
 		TensorSlice(Tensor<T, device>* source, const std::vector<TSlice>& slices);
 
 		void update();
@@ -72,6 +69,76 @@ namespace TSlib
 		iterator begin();
 
 		iterator end();
+
+		template<typename T, Mode device>
+		void add(const Tensor<T, device>& other);
+		template<typename T, Mode device>
+		void add(const TensorSlice<T, device>& other);
+		template<typename T>
+		void add(const T& other);
+
+		template<typename T, Mode device>
+		void subtract(const Tensor<T, device>& other);
+		template<typename T, Mode device>
+		void subtract(const TensorSlice<T, device>& other);
+		template<typename T>
+		void subtract(const T& other);
+
+		template<typename T, Mode device>
+		void multiply(const Tensor<T, device>& other);
+		template<typename T, Mode device>
+		void multiply(const TensorSlice<T, device>& other);
+		template<typename T>
+		void multiply(const T& other);
+
+		template<typename T, Mode device>
+		void dot(const Tensor<T, device>& other);
+		template<typename T, Mode device>
+		void dot(const TensorSlice<T, device>& other);
+		template<typename T>
+		void dot(const T& other);
+
+		template<typename T, Mode device>
+		void divide(const Tensor<T, device>& other);
+		template<typename T, Mode device>
+		void divide(const TensorSlice<T, device>& other);
+		template<typename T>
+		void divide(const T& other);
+
+		template<typename T, Mode device>
+		void compare(const Tensor<T, device>& other);
+		template<typename T, Mode device>
+		void compare(const TensorSlice<T, device>& other);
+		template<typename T>
+		void compare(const T& other);
+
+		template<typename T, Mode device>
+		void lessThan(const Tensor<T, device>& other);
+		template<typename T, Mode device>
+		void lessThan(const TensorSlice<T, device>& other);
+		template<typename T>
+		void lessThan(const T& other);
+
+		template<typename T, Mode device>
+		void greaterThan(const Tensor<T, device>& other);
+		template<typename T, Mode device>
+		void greaterThan(const TensorSlice<T, device>& other);
+		template<typename T>
+		void greaterThan(const T& other);
+
+		template<typename T, Mode device>
+		void lessThanEqual(const Tensor<T, device>& other);
+		template<typename T, Mode device>
+		void lessThanEqual(const TensorSlice<T, device>& other);
+		template<typename T>
+		void lessThanEqual(const T& other);
+
+		template<typename T, Mode device>
+		void greaterThanEqual(const Tensor<T, device>& other);
+		template<typename T, Mode device>
+		void greaterThanEqual(const TensorSlice<T, device>& other);
+		template<typename T>
+		void greaterThanEqual(const T& other);
 	};
 
 }

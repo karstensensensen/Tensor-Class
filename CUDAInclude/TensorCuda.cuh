@@ -1429,7 +1429,7 @@ Tensor<RT, device> Tensor<T, device>::ClessThanSingle(const OT& other)
 
 template<typename T, Mode device>
 template<typename RT, typename OT, Mode o_device>
-Tensor<RT, device> Tensor<T, device>::CmoreThan(Tensor<OT, o_device>& other)
+Tensor<RT, device> Tensor<T, device>::CgreaterThan(Tensor<OT, o_device>& other)
 {
 	#ifdef _DEBUG
 	assert("Unable to fit the Tensors" && size() == other.size());
@@ -1449,7 +1449,7 @@ Tensor<RT, device> Tensor<T, device>::CmoreThan(Tensor<OT, o_device>& other)
 	}
 
 	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
-								(Layout3D(), CudaMoreThan<T, OT, RT>, other);
+								(Layout3D(), CudaGreaterThan<T, OT, RT>, other);
 
 	if (this_alloc)
 	{
@@ -1466,7 +1466,7 @@ Tensor<RT, device> Tensor<T, device>::CmoreThan(Tensor<OT, o_device>& other)
 
 template<typename T, Mode device>
 template<typename RT, typename OT>
-Tensor<RT, device> Tensor<T, device>::CmoreThanSingle(const OT& other)
+Tensor<RT, device> Tensor<T, device>::CgreaterThanSingle(const OT& other)
 {
 	bool this_alloc = isDeallocated();
 
@@ -1476,7 +1476,7 @@ Tensor<RT, device> Tensor<T, device>::CmoreThanSingle(const OT& other)
 	}
 
 	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
-								(Layout3D(), CudaMoreThanSingle<T, OT, RT>, other);
+								(Layout3D(), CudaGreaterThanSingle<T, OT, RT>, other);
 
 	if (this_alloc)
 	{
@@ -1547,7 +1547,7 @@ Tensor<RT, device> Tensor<T, device>::ClessThanEqualSingle(const OT& other)
 
 template<typename T, Mode device>
 template<typename RT, typename OT, Mode o_device>
-Tensor<RT, device> Tensor<T, device>::CmoreThanEqual(Tensor<OT, o_device>& other)
+Tensor<RT, device> Tensor<T, device>::CgreaterThanEqual(Tensor<OT, o_device>& other)
 {
 	#ifdef _DEBUG
 	assert("Unable to fit the Tensors" && size() == other.size());
@@ -1567,7 +1567,7 @@ Tensor<RT, device> Tensor<T, device>::CmoreThanEqual(Tensor<OT, o_device>& other
 	}
 
 	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
-								(Layout3D(), CudaMoreThanEqual<T, OT, RT>, other);
+								(Layout3D(), CudaGreaterThanEqual<T, OT, RT>, other);
 
 	if (this_alloc)
 	{
@@ -1584,7 +1584,7 @@ Tensor<RT, device> Tensor<T, device>::CmoreThanEqual(Tensor<OT, o_device>& other
 
 template<typename T, Mode device>
 template<typename RT, typename OT>
-Tensor<RT, device> Tensor<T, device>::CmoreThanEqualSingle(const OT& other)
+Tensor<RT, device> Tensor<T, device>::CgreaterThanEqualSingle(const OT& other)
 {
 	bool this_alloc = isDeallocated();
 
@@ -1594,7 +1594,7 @@ Tensor<RT, device> Tensor<T, device>::CmoreThanEqualSingle(const OT& other)
 	}
 
 	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
-								(Layout3D(), CudaMoreThanEqualSingle<T, OT, RT>, other);
+								(Layout3D(), CudaGreaterThanEqualSingle<T, OT, RT>, other);
 
 	if (this_alloc)
 	{

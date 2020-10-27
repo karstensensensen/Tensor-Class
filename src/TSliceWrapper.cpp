@@ -15,18 +15,24 @@ namespace TSlib
 		MEASURE();
 		#ifdef _DEBUG
 
-		if (from < 0 && to < 0 && to <= from)
+		if (from < 0 && to < 0 && to >= from)
 		{
 			throw BadValue("negative from value must be larger than negative to value", ExceptValue<intmax_t>("from", from), ExceptValue<intmax_t>("to", to));
 		}
-		else if (to >= from)
+		else if (from > 0 && to > 0 && to <= from)
 		{
 			throw BadValue("from value must be less than to value", ExceptValue<intmax_t>("from", from), ExceptValue<intmax_t>("to", to));
 		}
 		#endif
 	}
 
-	template<typename T>
+	TSlice::TSlice(const size_t& val)
+		: from(val), to(val+1), from_max(0), to_max(0)
+	{
+		MEASURE();
+	}
+
+	/*template<typename T>
 	TSlice::TSlice(const std::initializer_list<T>& val)
 		: from(0), to(0), from_max(0), to_max(0)
 	{
@@ -41,12 +47,12 @@ namespace TSlib
 		{
 			throw BadValue("negative from value must be more than negative to value", ExceptValue<intmax_t>{ "from:", from }, ExceptValue<intmax_t>{ "to:", to });
 		}
-		else if (to >= from)
+		else if (to <= from)
 		{
 			throw BadValue("from value must be less than to value", ExceptValue<intmax_t>{ "from:", from }, ExceptValue<intmax_t>{ "to:", to });
 		}
 		#endif
-	}
+	}*/
 
 	TSlice::TSlice()
 		: from(NULL), to(NULL), from_max(NULL), to_max(NULL)
@@ -73,7 +79,7 @@ namespace TSlib
 		return (uint32_t)std::abs(int((to < 0) * (to_max + 1) + to));
 	}
 
-	inline uint32_t TSlice::width() const
+	uint32_t TSlice::width() const
 	{
 		MEASURE();
 		return get_to() - get_from();

@@ -221,7 +221,7 @@ namespace TSlib
 		}
 	}
 	template <typename T, typename OT, typename RT>
-	__kernel__ CudaMoreThan(const CUDATensor3D<T> a, CUDATensor3D<RT> c, const CUDATensor3D<OT> b)
+	__kernel__ CudaGreaterThan(const CUDATensor3D<T> a, CUDATensor3D<RT> c, const CUDATensor3D<OT> b)
 	{
 		if (a.in_bounds())
 		{
@@ -229,7 +229,7 @@ namespace TSlib
 		}
 	}
 	template <typename T, typename OT, typename RT>
-	__kernel__ CudaMoreThanSingle(const CUDATensor3D<T> a, CUDATensor3D<RT> c, const OT b)
+	__kernel__ CudaGreaterThanSingle(const CUDATensor3D<T> a, CUDATensor3D<RT> c, const OT b)
 	{
 		if (a.in_bounds())
 		{
@@ -253,7 +253,7 @@ namespace TSlib
 		}
 	}
 	template <typename T, typename OT, typename RT>
-	__kernel__ CudaMoreThanEqual(const CUDATensor3D<T> a, CUDATensor3D<RT> c, const CUDATensor3D<OT> b)
+	__kernel__ CudaGreaterThanEqual(const CUDATensor3D<T> a, CUDATensor3D<RT> c, const CUDATensor3D<OT> b)
 	{
 		if (a.in_bounds())
 		{
@@ -261,7 +261,7 @@ namespace TSlib
 		}
 	}
 	template <typename T, typename OT, typename RT>
-	__kernel__ CudaMoreThanEqualSingle(const CUDATensor3D<T> a, CUDATensor3D<RT> c, const OT b)
+	__kernel__ CudaGreaterThanEqualSingle(const CUDATensor3D<T> a, CUDATensor3D<RT> c, const OT b)
 	{
 		if (a.in_bounds())
 		{
