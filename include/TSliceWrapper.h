@@ -18,7 +18,7 @@ namespace TSlib
 		/*template<typename T>
 		TSlice(const std::initializer_list<T>& val);*/
 
-		TSlice(const size_t& val);
+		TSlice(const intmax_t& val);
 
 		TSlice();
 

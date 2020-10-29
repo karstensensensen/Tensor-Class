@@ -26,7 +26,7 @@ namespace TSlib
 		#endif
 	}
 
-	TSlice::TSlice(const size_t& val)
+	TSlice::TSlice(const intmax_t& val)
 		: from(val), to(val+1), from_max(0), to_max(0)
 	{
 		MEASURE();

@@ -1650,7 +1650,7 @@ Tensor<RT, device> Tensor<T, device>::lessThanSingle(const OT& other) const
 
 template<typename T, Mode device>
 template<typename RT, typename OT, Mode o_device>
-Tensor<RT, device> Tensor<T, device>::moreThan(const Tensor<OT, o_device>& other) const
+Tensor<RT, device> Tensor<T, device>::greaterThan(const Tensor<OT, o_device>& other) const
 {
 	MEASURE();
 	#ifdef _DEBUG
@@ -1680,7 +1680,7 @@ Tensor<RT, device> Tensor<T, device>::moreThan(const Tensor<OT, o_device>& other
 
 template<typename T, Mode device>
 template<typename RT, typename OT>
-Tensor<RT, device> Tensor<T, device>::moreThanSingle(const OT& other) const
+Tensor<RT, device> Tensor<T, device>::greaterThanSingle(const OT& other) const
 {
 	MEASURE();
 	Tensor<RT, device> result(this->Shape());
@@ -1740,7 +1740,7 @@ Tensor<RT, device> Tensor<T, device>::lessThanEqualSingle(const OT& other) const
 
 template<typename T, Mode device>
 template<typename RT, typename OT, Mode o_device>
-Tensor<RT, device> Tensor<T, device>::moreThanEqual(const Tensor<OT, o_device>& other) const
+Tensor<RT, device> Tensor<T, device>::greaterThanEqual(const Tensor<OT, o_device>& other) const
 {
 	MEASURE();
 	#ifdef _DEBUG
@@ -1770,7 +1770,7 @@ Tensor<RT, device> Tensor<T, device>::moreThanEqual(const Tensor<OT, o_device>& 
 
 template<typename T, Mode device>
 template<typename RT, typename OT>
-Tensor<RT, device> Tensor<T, device>::moreThanEqualSingle(const OT& other) const
+Tensor<RT, device> Tensor<T, device>::greaterThanEqualSingle(const OT& other) const
 {
 	MEASURE();
 	Tensor<RT, device> result(this->Shape());
