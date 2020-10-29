@@ -155,6 +155,20 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
+	template<typename RT>
+	inline RT TSlib::TensorSlice<T, device>::sum()
+	{
+		RT sum = At(0);
+
+		for (size_t i = 1; i < size(); i++)
+		{
+			sum += At(i);
+		}
+
+		return sum;
+	}
+
+	template<typename T, Mode device>
 	inline size_t TensorSlice<T, device>::get_dim_size(const size_t& index) const
 	{
 		MEASURE();
@@ -319,6 +333,8 @@ namespace TSlib
 	template<typename OT, Mode other_device>
 	void TensorSlice<T, device>::addAsgmt(const Tensor<OT, other_device>& other)
 	{
+		Tensor<T, device> r_val(*this);
+		
 		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) += other[i];
@@ -331,6 +347,8 @@ namespace TSlib
 	template<typename OT, Mode other_device>
 	void TensorSlice<T, device>::addAsgmt(const TensorSlice<OT, other_device>& other)
 	{
+		Tensor<T, device> r_val(*this);
+		
 		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) += other[i];
@@ -343,6 +361,8 @@ namespace TSlib
 	template<typename OT>
 	void TensorSlice<T, device>::addAsgmt(const OT& other)
 	{
+		Tensor<T, device> r_val(*this);
+		
 		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) += other;
@@ -397,6 +417,8 @@ namespace TSlib
 	template<typename OT, Mode other_device>
 	void TensorSlice<T, device>::subtractAsgmt(const Tensor<OT, other_device>& other)
 	{
+		Tensor<T, device> r_val(*this);
+		
 		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) -= other[i];
@@ -409,6 +431,8 @@ namespace TSlib
 	template<typename OT, Mode other_device>
 	void TensorSlice<T, device>::subtractAsgmt(const TensorSlice<OT, other_device>& other)
 	{
+		Tensor<T, device> r_val(*this);
+		
 		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) -= other[i];
@@ -421,6 +445,8 @@ namespace TSlib
 	template<typename OT>
 	void TensorSlice<T, device>::subtractAsgmt(const OT& other)
 	{
+		Tensor<T, device> r_val(*this);
+
 		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) -= other;
@@ -475,6 +501,8 @@ namespace TSlib
 	template<typename OT, Mode other_device>
 	void TensorSlice<T, device>::multiplyAsgmt(const Tensor<OT, other_device>& other)
 	{
+		Tensor<T, device> r_val(*this);
+
 		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) *= other[i];
@@ -487,6 +515,8 @@ namespace TSlib
 	template<typename OT, Mode other_device>
 	void TensorSlice<T, device>::multiplyAsgmt(const TensorSlice<OT, other_device>& other)
 	{
+		Tensor<T, device> r_val(*this);
+
 		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) *= other[i];
@@ -499,6 +529,8 @@ namespace TSlib
 	template<typename OT>
 	void TensorSlice<T, device>::multiplyAsgmt(const OT& other)
 	{
+		Tensor<T, device> r_val(*this);
+
 		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) *= other;
@@ -553,6 +585,8 @@ namespace TSlib
 	template<typename OT, Mode other_device>
 	void TensorSlice<T, device>::divideAsgmt(const Tensor<OT, other_device>& other)
 	{
+		Tensor<T, device> r_val(*this);
+
 		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) /= other[i];
@@ -565,6 +599,8 @@ namespace TSlib
 	template<typename OT, Mode other_device>
 	void TensorSlice<T, device>::divideAsgmt(const TensorSlice<OT, other_device>& other)
 	{
+		Tensor<T, device> r_val(*this);
+
 		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) /= other[i];
@@ -577,6 +613,8 @@ namespace TSlib
 	template<typename OT>
 	void TensorSlice<T, device>::divideAsgmt(const OT& other)
 	{
+		Tensor<T, device> r_val(*this);
+
 		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) /= other;
@@ -631,6 +669,8 @@ namespace TSlib
 	template<typename OT, Mode other_device>
 	void TensorSlice<T, device>::modulouAsgmt(const Tensor<OT, other_device>& other)
 	{
+		Tensor<T, device> r_val(*this);
+
 		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) %= other[i];
@@ -643,6 +683,8 @@ namespace TSlib
 	template<typename OT, Mode other_device>
 	void TensorSlice<T, device>::modulouAsgmt(const TensorSlice<OT, other_device>& other)
 	{
+		Tensor<T, device> r_val(*this);
+
 		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) %= other[i];
@@ -655,6 +697,8 @@ namespace TSlib
 	template<typename OT>
 	void TensorSlice<T, device>::modulouAsgmt(const OT& other)
 	{
+		Tensor<T, device> r_val(*this);
+
 		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) %= other;
@@ -990,14 +1034,119 @@ namespace TSlib
 	template<typename OT, Mode other_device>
 	inline bool TensorSlice<T, device>::operator==(const TensorSlice<OT, other_device>& other)
 	{
-		return add(other);
+		return  compare(other).sum<size_t>();
 	}
 
 	template<typename T, Mode device>
 	template<typename OT>
 	inline bool TensorSlice<T, device>::operator==(const OT& other)
 	{
-		return add(other);
+		return  compare(other).sum<size_t>();
+	}
+
+	template<typename T, Mode device>
+	template<typename OT, Mode other_device>
+	inline bool TensorSlice<T, device>::operator!=(const Tensor<OT, other_device>& other)
+	{
+		return !compare(other).sum<size_t>();
+	}
+
+	template<typename T, Mode device>
+	template<typename OT, Mode other_device>
+	inline bool TensorSlice<T, device>::operator!=(const TensorSlice<OT, other_device>& other)
+	{
+		return  !compare(other).sum<size_t>();
+	}
+
+	template<typename T, Mode device>
+	template<typename OT>
+	inline bool TensorSlice<T, device>::operator!=(const OT& other)
+	{
+		return  !compare(other).sum<size_t>();
+	}
+
+	template<typename T, Mode device>
+	template<typename OT, Mode other_device>
+	inline bool TensorSlice<T, device>::operator<(const Tensor<OT, other_device>& other)
+	{
+		return lessThan(other).sum<size_t>();
+	}
+
+	template<typename T, Mode device>
+	template<typename OT, Mode other_device>
+	inline bool TensorSlice<T, device>::operator<(const TensorSlice<OT, other_device>& other)
+	{
+		return  lessThan(other).sum<size_t>();
+	}
+
+	template<typename T, Mode device>
+	template<typename OT>
+	inline bool TensorSlice<T, device>::operator<(const OT& other)
+	{
+		return  lessThan(other).sum<size_t>();
+	}
+
+	template<typename T, Mode device>
+	template<typename OT, Mode other_device>
+	inline bool TensorSlice<T, device>::operator>(const Tensor<OT, other_device>& other)
+	{
+		return greaterThan(other).sum<size_t>();
+	}
+
+	template<typename T, Mode device>
+	template<typename OT, Mode other_device>
+	inline bool TensorSlice<T, device>::operator>(const TensorSlice<OT, other_device>& other)
+	{
+		return  greaterThan(other).sum<size_t>();
+	}
+
+	template<typename T, Mode device>
+	template<typename OT>
+	inline bool TensorSlice<T, device>::operator>(const OT& other)
+	{
+		return  greaterThan(other).sum<size_t>();
+	}
+
+	template<typename T, Mode device>
+	template<typename OT, Mode other_device>
+	inline bool TensorSlice<T, device>::operator<=(const Tensor<OT, other_device>& other)
+	{
+		return lessThanEqual(other).sum<size_t>();
+	}
+
+	template<typename T, Mode device>
+	template<typename OT, Mode other_device>
+	inline bool TensorSlice<T, device>::operator<=(const TensorSlice<OT, other_device>& other)
+	{
+		return  lessThanEqual(other).sum<size_t>();
+	}
+
+	template<typename T, Mode device>
+	template<typename OT>
+	inline bool TensorSlice<T, device>::operator<=(const OT& other)
+	{
+		return  lessThanEqual(other).sum<size_t>();
+	}
+
+	template<typename T, Mode device>
+	template<typename OT, Mode other_device>
+	inline bool TensorSlice<T, device>::operator>=(const Tensor<OT, other_device>& other)
+	{
+		return greaterThanEqual(other).sum<size_t>();
+	}
+
+	template<typename T, Mode device>
+	template<typename OT, Mode other_device>
+	inline bool TensorSlice<T, device>::operator>=(const TensorSlice<OT, other_device>& other)
+	{
+		return  greaterThanEqual(other).sum<size_t>();
+	}
+
+	template<typename T, Mode device>
+	template<typename OT>
+	inline bool TensorSlice<T, device>::operator>=(const OT& other)
+	{
+		return  greaterThanEqual(other).sum<size_t>();
 	}
 
 	template<typename T, Mode device>

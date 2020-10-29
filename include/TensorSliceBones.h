@@ -44,6 +44,9 @@ namespace TSlib
 
 		size_t Dims() const;
 
+		template<typename RT = T>
+		RT sum();
+
 		size_t get_dim_size(const size_t& index) const;
 
 		size_t map_index(size_t index) const;
@@ -193,79 +196,79 @@ namespace TSlib
 		template<typename OT>
 		Tensor<char, device> greaterThanEqual(const OT& other);
 
-		template<typename OT, Mode other_devices>
+		template<typename OT, Mode other_device>
 		Tensor<T, device> operator+ (const Tensor<OT, other_device>& other);
-		template<typename OT, Mode other_devices>
+		template<typename OT, Mode other_device>
 		Tensor<T, device> operator+ (const TensorSlice<OT, other_device>& other);
 		template<typename OT>
 		Tensor<T, device> operator+ (const OT& other);
 
-		template<typename OT, Mode other_devices>
+		template<typename OT, Mode other_device>
 		Tensor<T, device> operator- (const Tensor<OT, other_device>& other);
-		template<typename OT, Mode other_devices>
+		template<typename OT, Mode other_device>
 		Tensor<T, device> operator- (const TensorSlice<OT, other_device>& other);
 		template<typename OT>
 		Tensor<T, device> operator- (const OT& other);
 
-		template<typename OT, Mode other_devices>
+		template<typename OT, Mode other_device>
 		Tensor<T, device> operator* (const Tensor<OT, other_device>& other);
-		template<typename OT, Mode other_devices>
+		template<typename OT, Mode other_device>
 		Tensor<T, device> operator* (const TensorSlice<OT, other_device>& other);
 		template<typename OT>
 		Tensor<T, device> operator* (const OT& other);
 
-		template<typename OT, Mode other_devices>
+		template<typename OT, Mode other_device>
 		Tensor<T, device> operator/ (const Tensor<OT, other_device>& other);
-		template<typename OT, Mode other_devices>
+		template<typename OT, Mode other_device>
 		Tensor<T, device> operator/ (const TensorSlice<OT, other_device>& other);
 		template<typename OT>
 		Tensor<T, device> operator/ (const OT& other);
 
-		template<typename OT, Mode other_devices>
+		template<typename OT, Mode other_device>
 		Tensor<T, device> operator% (const Tensor<OT, other_device>& other);
-		template<typename OT, Mode other_devices>
+		template<typename OT, Mode other_device>
 		Tensor<T, device> operator% (const TensorSlice<OT, other_device>& other);
 		template<typename OT>
 		Tensor<T, device> operator% (const OT& other);
 
-		template<typename OT, Mode other_devices>
+		template<typename OT, Mode other_device>
 		bool operator== (const Tensor<OT, other_device>& other);
-		template<typename OT, Mode other_devices>
+		template<typename OT, Mode other_device>
 		bool operator== (const TensorSlice<OT, other_device>& other);
 		template<typename OT>
 		bool operator== (const OT& other);
 
-		template<typename OT, Mode other_devices>
+		template<typename OT, Mode other_device>
 		bool operator!= (const Tensor<OT, other_device>& other);
-		template<typename OT, Mode other_devices>
+		template<typename OT, Mode other_device>
 		bool operator!= (const TensorSlice<OT, other_device>& other);
 		template<typename OT>
 		bool operator!= (const OT& other);
 
-		template<typename OT, Mode other_devices>
+		template<typename OT, Mode other_device>
 		bool operator< (const Tensor<OT, other_device>& other);
-		template<typename OT, Mode other_devices>
+		template<typename OT, Mode other_device>
 		bool operator< (const TensorSlice<OT, other_device>& other);
 		template<typename OT>
 		bool operator< (const OT& other);
 
-		template<typename OT, Mode other_devices>
+		template<typename OT, Mode other_device>
 		bool operator> (const Tensor<OT, other_device>& other);
-		template<typename OT, Mode other_devices>
+		template<typename OT, Mode other_device>
 		bool operator> (const TensorSlice<OT, other_device>& other);
 		template<typename OT>
 		bool operator> (const OT& other);
 
-		template<typename OT, Mode other_devices>
+		template<typename OT, Mode other_device>
 		bool operator<= (const Tensor<OT, other_device>& other);
-		template<typename OT, Mode other_devices>
+		template<typename OT, Mode other_device>
 		bool operator<= (const TensorSlice<OT, other_device>& other);
 		template<typename OT>
 		bool operator<= (const OT& other);
 
-		template<typename OT, Mode other_devices>
+		template<typename OT, Mode other_device>
 		bool operator>= (const Tensor<OT, other_device>& other);
-		template<typename OT, Mode other_devices>
+		template<typename OT, Mode other_device>
 		bool operator>= (const TensorSlice<OT, other_device>& other);
 		template<typename OT>
 		bool operator>= (const OT& other);
