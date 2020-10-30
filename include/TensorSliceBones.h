@@ -40,6 +40,13 @@ namespace TSlib
 
 		void update();
 
+		template<typename OT, Mode device_other>
+		void fill(const Tensor<OT, device_other>& other);
+		template<typename OT, Mode device_other>
+		void fill(const TensorSlice<OT, device_other>& other);
+		template<typename OT>
+		void fill(const OT& other);
+
 		size_t size() const;
 
 		size_t Dims() const;
@@ -272,7 +279,6 @@ namespace TSlib
 		bool operator>= (const TensorSlice<OT, other_device>& other);
 		template<typename OT>
 		bool operator>= (const OT& other);
-
 	};
 
 }

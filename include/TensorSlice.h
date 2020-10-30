@@ -135,6 +135,68 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
+	template<typename OT, Mode device_other>
+	void TSlib::TensorSlice<T, device>::fill(const Tensor<OT, device_other>& other)
+	{
+		#ifdef DEBUG
+		
+		if (Dims() != other.Dims())
+		{
+			throw BadShape(Shape(), "There must be the same amount dimensions", other.Shape());
+		}
+
+		for(size_t i = 0; i < Dims(); i++)
+		{
+			if(Shape()[i] != other.Shape()[i])
+			{
+				throw BadShape(Shape(), "The shapes passed must be the same", other.Shape());
+			{
+		}
+		#endif
+
+		for (size_t i = 0; i < Size(); i++)
+		{
+			At(i) = other[i];
+		}
+	}
+
+	template<typename T, Mode device>
+	template<typename OT, Mode device_other>
+	void TSlib::TensorSlice<T, device>::fill(const TensorSlice<OT, device_other>& other)
+	{
+		#ifdef DEBUG
+
+		if (Dims() != other.Dims())
+		{
+			throw BadShape(Shape(), "There must be the same amount dimensions", other.Shape());
+		}
+
+		for (size_t i = 0; i < Dims(); i++)
+		{
+			if (Shape()[i] != other.Shape()[i])
+			{
+				throw BadShape(Shape(), "The shapes passed must be the same", other.Shape());
+			}
+		}
+		#endif
+
+		for (size_t i = 0; i < Size(); i++)
+		{
+			At(i) = other[i];
+		}
+	}
+
+	template<typename T, Mode device>
+	template<typename OT>
+	void TSlib::TensorSlice<T, device>::fill(const OT& other)
+	{
+		for (size_t i = 0; i < Size(); i++)
+		{
+			At(i) = other;
+		}
+	}
+
+	template<typename T, Mode device>
 	size_t TensorSlice<T, device>::size() const
 	{
 		MEASURE();
