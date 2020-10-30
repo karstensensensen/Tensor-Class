@@ -154,7 +154,7 @@ namespace TSlib
 		}
 		#endif
 
-		for (size_t i = 0; i < Size(); i++)
+		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) = other[i];
 		}
@@ -180,7 +180,7 @@ namespace TSlib
 		}
 		#endif
 
-		for (size_t i = 0; i < Size(); i++)
+		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) = other[i];
 		}
@@ -190,7 +190,7 @@ namespace TSlib
 	template<typename OT>
 	void TSlib::TensorSlice<T, device>::fill(const OT& other)
 	{
-		for (size_t i = 0; i < Size(); i++)
+		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) = other;
 		}
@@ -1126,7 +1126,7 @@ namespace TSlib
 		#ifdef __clang__
 		return !compare(other).template sum<size_t>();
 		#else
-		return c!ompare(other).sum<size_t>();
+		return !compare(other).sum<size_t>();
 		#endif
 	}
 
@@ -1137,7 +1137,7 @@ namespace TSlib
 		#ifdef __clang__
 		return !compare(other).template sum<size_t>();
 		#else
-		return c!ompare(other).sum<size_t>();
+		return !compare(other).sum<size_t>();
 		#endif
 	}
 
@@ -1148,7 +1148,7 @@ namespace TSlib
 		#ifdef __clang__
 		return !compare(other).template sum<size_t>();
 		#else
-		return c!ompare(other).sum<size_t>();
+		return !compare(other).sum<size_t>();
 		#endif
 	}
 
