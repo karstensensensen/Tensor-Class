@@ -3,7 +3,6 @@
 #include <iostream>
 #include <vector>
 #include <assert.h>
-#include <intrin.h>
 #include "TensorEnums.h"
 #include "TensorSliceBones.h"
 #include "TensorExceptions.h"
