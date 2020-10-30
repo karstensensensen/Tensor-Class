@@ -1027,126 +1027,199 @@ namespace TSlib
 	template<typename OT, Mode other_device>
 	inline bool TensorSlice<T, device>::operator==(const Tensor<OT, other_device>& other)
 	{
+		#ifdef __clang__
+		return compare(other).template sum<size_t>();
+		#else
 		return compare(other).sum<size_t>();
+		#endif
 	}
 
 	template<typename T, Mode device>
 	template<typename OT, Mode other_device>
 	inline bool TensorSlice<T, device>::operator==(const TensorSlice<OT, other_device>& other)
 	{
-		return  compare(other).sum<size_t>();
+		#ifdef __clang__
+		return compare(other).template sum<size_t>();
+		#else
+		return compare(other).sum<size_t>();
+		#endif
 	}
 
 	template<typename T, Mode device>
 	template<typename OT>
 	inline bool TensorSlice<T, device>::operator==(const OT& other)
 	{
-		return  compare(other).sum<size_t>();
+		#ifdef __clang__
+		return compare(other).template sum<size_t>();
+		#else
+		return compare(other).sum<size_t>();
+		#endif
+		
 	}
 
 	template<typename T, Mode device>
 	template<typename OT, Mode other_device>
 	inline bool TensorSlice<T, device>::operator!=(const Tensor<OT, other_device>& other)
 	{
-		return !compare(other).sum<size_t>();
+		#ifdef __clang__
+		return !compare(other).template sum<size_t>();
+		#else
+		return c!ompare(other).sum<size_t>();
+		#endif
 	}
 
 	template<typename T, Mode device>
 	template<typename OT, Mode other_device>
 	inline bool TensorSlice<T, device>::operator!=(const TensorSlice<OT, other_device>& other)
 	{
-		return  !compare(other).sum<size_t>();
+		#ifdef __clang__
+		return !compare(other).template sum<size_t>();
+		#else
+		return c!ompare(other).sum<size_t>();
+		#endif
 	}
 
 	template<typename T, Mode device>
 	template<typename OT>
 	inline bool TensorSlice<T, device>::operator!=(const OT& other)
 	{
-		return  !compare(other).sum<size_t>();
+		#ifdef __clang__
+		return !compare(other).template sum<size_t>();
+		#else
+		return c!ompare(other).sum<size_t>();
+		#endif
 	}
 
 	template<typename T, Mode device>
 	template<typename OT, Mode other_device>
 	inline bool TensorSlice<T, device>::operator<(const Tensor<OT, other_device>& other)
 	{
+		#ifdef __clang__
+		return lessThan(other).template sum<size_t>();
+		#else
 		return lessThan(other).sum<size_t>();
+		#endif
 	}
 
 	template<typename T, Mode device>
 	template<typename OT, Mode other_device>
 	inline bool TensorSlice<T, device>::operator<(const TensorSlice<OT, other_device>& other)
 	{
-		return  lessThan(other).sum<size_t>();
+		#ifdef __clang__
+		return lessThan(other).template sum<size_t>();
+		#else
+		return lessThan(other).sum<size_t>();
+		#endif
 	}
 
 	template<typename T, Mode device>
 	template<typename OT>
 	inline bool TensorSlice<T, device>::operator<(const OT& other)
 	{
-		return  lessThan(other).sum<size_t>();
+		#ifdef __clang__
+		return lessThan(other).template sum<size_t>();
+		#else
+		return lessThan(other).sum<size_t>();
+		#endif
 	}
 
 	template<typename T, Mode device>
 	template<typename OT, Mode other_device>
 	inline bool TensorSlice<T, device>::operator>(const Tensor<OT, other_device>& other)
 	{
+		#ifdef __clang__
+		return greaterThan(other).template sum<size_t>();
+		#else
 		return greaterThan(other).sum<size_t>();
+		#endif
 	}
 
 	template<typename T, Mode device>
 	template<typename OT, Mode other_device>
 	inline bool TensorSlice<T, device>::operator>(const TensorSlice<OT, other_device>& other)
 	{
-		return  greaterThan(other).sum<size_t>();
+		#ifdef __clang__
+		return greaterThan(other).template sum<size_t>();
+		#else
+		return greaterThan(other).sum<size_t>();
+		#endif
 	}
 
 	template<typename T, Mode device>
 	template<typename OT>
 	inline bool TensorSlice<T, device>::operator>(const OT& other)
 	{
-		return  greaterThan(other).sum<size_t>();
+		#ifdef __clang__
+		return greaterThan(other).template sum<size_t>();
+		#else
+		return greaterThan(other).sum<size_t>();
+		#endif
 	}
 
 	template<typename T, Mode device>
 	template<typename OT, Mode other_device>
 	inline bool TensorSlice<T, device>::operator<=(const Tensor<OT, other_device>& other)
 	{
+		#ifdef __clang__
+		return lessThanEqual(other).template sum<size_t>();
+		#else
 		return lessThanEqual(other).sum<size_t>();
+		#endif
 	}
 
 	template<typename T, Mode device>
 	template<typename OT, Mode other_device>
 	inline bool TensorSlice<T, device>::operator<=(const TensorSlice<OT, other_device>& other)
 	{
-		return  lessThanEqual(other).sum<size_t>();
+		#ifdef __clang__
+		return lessThanEqual(other).template sum<size_t>();
+		#else
+		return lessThanEqual(other).sum<size_t>();
+		#endif
 	}
 
 	template<typename T, Mode device>
 	template<typename OT>
 	inline bool TensorSlice<T, device>::operator<=(const OT& other)
 	{
-		return  lessThanEqual(other).sum<size_t>();
+		#ifdef __clang__
+		return lessThanEqual(other).template sum<size_t>();
+		#else
+		return lessThanEqual(other).sum<size_t>();
+		#endif
 	}
 
 	template<typename T, Mode device>
 	template<typename OT, Mode other_device>
 	inline bool TensorSlice<T, device>::operator>=(const Tensor<OT, other_device>& other)
 	{
+		#ifdef __clang__
+		return greaterThanEqual(other).template sum<size_t>();
+		#else
 		return greaterThanEqual(other).sum<size_t>();
+		#endif
 	}
 
 	template<typename T, Mode device>
 	template<typename OT, Mode other_device>
 	inline bool TensorSlice<T, device>::operator>=(const TensorSlice<OT, other_device>& other)
 	{
-		return  greaterThanEqual(other).sum<size_t>();
+		#ifdef __clang__
+		return greaterThanEqual(other).template sum<size_t>();
+		#else
+		return greaterThanEqual(other).sum<size_t>();
+		#endif
 	}
 
 	template<typename T, Mode device>
 	template<typename OT>
 	inline bool TensorSlice<T, device>::operator>=(const OT& other)
 	{
-		return  greaterThanEqual(other).sum<size_t>();
+		#ifdef __clang__
+		return greaterThanEqual(other).template sum<size_t>();
+		#else
+		return greaterThanEqual(other).sum<size_t>();
+		#endif
 	}
 
 	template<typename T, Mode device>
