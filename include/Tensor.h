@@ -145,7 +145,7 @@ void Tensor<T, device>::get_indx(size_t& indx, size_t& iter, size_t& tmp_multipl
 
 	#ifdef _DEBUG
 	if (m_shape[iter] <= coord)
-		throw OutOfBounds(this, "Exception was thrown, because an element outside the Tensor bounds was accsessed", iter, coord);
+		throw OutOfBounds(Shape(), "Exception was thrown, because an element outside the Tensor bounds was accsessed", iter, coord);
 	#endif
 
 	indx += coord * tmp_multiply;
