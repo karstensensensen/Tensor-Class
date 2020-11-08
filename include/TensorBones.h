@@ -118,6 +118,8 @@ public:
 
 	TensorSlice<T, device> Slice(const std::vector<TSlice>& slices);
 
+	std::string printable();
+
 	/*template<typename ... Args>
 	TensorSlice<T, device> Slice(const std::initializer_list<Args>& ... slices);*/
 

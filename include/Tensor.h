@@ -30,6 +30,7 @@ typedef double double_t;
 #include "TensorOperators.h"
 #include "TensorSlice.h"
 #include <algorithm>
+#include <math.h>
 #include <cstdarg>
 #include <numeric>
 #include <tuple>
@@ -193,6 +194,59 @@ void Tensor<T, device>::to_vector(std::vector<TSlice>& vec, const std::initializ
 	to_vector(vec, args...);
 }
 
+
+template<typename T, Mode device>
+std::string Tensor<T, device>::printable()
+{
+
+	size_t max_length = 0;
+	std::stringstream printable;
+
+	for (const T& elem : *this)
+	{
+		max_length = std::max(std::to_string(elem).size(), max_length);
+	}
+
+	for (size_t i = 0; i < get_dim_size(0); i++)
+	{
+		printable << At(i) << ',';
+
+		size_t str_len = std::to_string(At(i)).size();
+
+		for (size_t j = 0; j < max_length - str_len; j++)
+		{
+			printable << ' ';
+		}
+
+		if (i % Shape()[0] == Shape()[0] - 1)
+		{
+			printable << '\n';
+		}
+	}
+
+	for (unsigned int dim = 1; dim < Dims(); dim++)
+	{
+		printable << "\n";
+		for (size_t i = get_dim_size(dim - 1); i < get_dim_size(dim); i++)
+		{
+			printable << At(i) << ',';
+
+			size_t str_len = std::to_string(At(i)).size();
+
+			for (size_t j = 0; j < max_length - str_len; j++)
+			{
+				printable << ' ';
+			}
+
+			if (i % Shape()[0] == Shape()[0] - 1)
+			{
+				printable << '\n';
+			}
+		}
+	}
+
+	return printable.str();
+}
 
 /// This is a helper struct, that acts as the sort function, for the std::sort function in Tensor::based_sort function.
 
