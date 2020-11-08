@@ -200,7 +200,7 @@ std::string Tensor<T, device>::printable() const
 {
 
 	size_t max_length = 0;
-	std::stringstream printable;
+	std::stringstream stream;
 
 	for (const T& elem : *this)
 	{
@@ -209,43 +209,43 @@ std::string Tensor<T, device>::printable() const
 
 	for (size_t i = 0; i < get_dim_size(0); i++)
 	{
-		printable << At(i) << ',';
+		stream << At(i) << ',';
 
 		size_t str_len = std::to_string(At(i)).size();
 
 		for (size_t j = 0; j < max_length - str_len; j++)
 		{
-			printable << ' ';
+			stream << ' ';
 		}
 
 		if (i % Shape()[0] == Shape()[0] - 1)
 		{
-			printable << '\n';
+			stream << '\n';
 		}
 	}
 
 	for (unsigned int dim = 1; dim < Dims(); dim++)
 	{
-		printable << "\n";
+		stream << "\n";
 		for (size_t i = get_dim_size(dim - 1); i < get_dim_size(dim); i++)
 		{
-			printable << At(i) << ',';
+			stream << At(i) << ',';
 
 			size_t str_len = std::to_string(At(i)).size();
 
 			for (size_t j = 0; j < max_length - str_len; j++)
 			{
-				printable << ' ';
+				stream << ' ';
 			}
 
 			if (i % Shape()[0] == Shape()[0] - 1)
 			{
-				printable << '\n';
+				stream << '\n';
 			}
 		}
 	}
 
-	return printable.str();
+	return stream.str();
 }
 
 /// This is a helper struct, that acts as the sort function, for the std::sort function in Tensor::based_sort function.
