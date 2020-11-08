@@ -22,10 +22,10 @@ typedef double double_t;
 #else
 
 #include "TensorBones.h"
-#include <sstream>
 
 #endif
 
+#include <sstream>
 
 #include "TensorOperators.h"
 #include "TensorSlice.h"
@@ -196,7 +196,7 @@ void Tensor<T, device>::to_vector(std::vector<TSlice>& vec, const std::initializ
 
 
 template<typename T, Mode device>
-std::string Tensor<T, device>::printable()
+std::string Tensor<T, device>::printable() const
 {
 
 	size_t max_length = 0;

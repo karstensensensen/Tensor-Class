@@ -1,13 +1,13 @@
 //#define PROFILING 2
-//#include <iostream>
-//#include "Tensor.h"
-//#include <Profiler.h>
-//#include <fstream>
-//#include <intrin.h>
-//
-//using namespace Profiling;
-//using namespace TSlib;
-//
+#include <iostream>
+#include "Tensor.h"
+#include <Profiler.h>
+#include <fstream>
+#include <intrin.h>
+
+using namespace Profiling;
+using namespace TSlib;
+
 //__kernel__ kernel(CUDATensor3D<uint32_t> tensor, int val)
 //{
 //	if (tensor.in_bounds())
@@ -46,22 +46,23 @@
 //	tensor.At() += tensor.Offset(1);
 //}
 //
-//int main()
-//{
-//	Profiler::Get().BeginSession("CUDA_SESSION", "CUDA_PROFILE.json");
-//	Profiler::Get().margin = 50;
-//	
-//	CUDAInitialize();
-//
-//	try
-//	{
-//		Tensor<char> tensor({ 1024, 1024, 1024, 8 });
-//		tensor.Kernel3D(Layout3D(), k3D);
-//	}
-//	catch (std::exception& e)
-//	{
-//		std::cout << e.what();
-//	}
-//
-//	Profiler::Get().EndSession();
-//}
+int main()
+{
+	Profiler::Get().BeginSession("CUDA_SESSION", "CUDA_PROFILE.json");
+	Profiler::Get().margin = 50;
+	
+	//CUDAInitialize();
+
+	try
+	{
+		Tensor<char> tensor({ 1024, 1024, 1024, 8 });
+		std::cout << tensor;
+		//tensor.Kernel3D(Layout3D(), k3D);
+	}
+	catch (std::exception& e)
+	{
+		std::cout << e.what();
+	}
+
+	Profiler::Get().EndSession();
+}

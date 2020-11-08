@@ -85,12 +85,12 @@
     <CudaCompile Include="..\include\PerlinNoise.cpp">
       <Filter>Source Files</Filter>
     </CudaCompile>
+    <CudaCompile Include="..\src\TSliceWrapper.cpp">
+      <Filter>Source Files</Filter>
+    </CudaCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="empty.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\TSliceWrapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
