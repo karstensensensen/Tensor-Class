@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <assert.h>
+#include <functional>
 #include "TensorEnums.h"
 #include "TensorSliceBones.h"
 #include "TensorExceptions.h"
@@ -87,9 +88,9 @@ public:
 
 	Tensor(const int& dims);
 	Tensor(const std::vector<size_t>& sizes, const T& pad_val = T(), const bool& add_extra_dim = true);
-	Tensor(const std::vector<size_t>& sizes, T(*generator)(const size_t&), const bool& add_extra_dim = true);
-	Tensor(const std::vector<size_t>& sizes, T(*generator)(const std::vector<size_t>&), const bool& add_extra_dim = true);
-	Tensor(const std::vector<size_t>& sizes, T(*generator)(const std::vector<size_t>&, const size_t&), const bool& add_extra_dim = true);
+	Tensor(const std::vector<size_t>& sizes, std::function<T(const size_t&)> generator, const bool& add_extra_dim = true);
+	Tensor(const std::vector<size_t>& sizes, std::function<T(const std::vector<size_t>&)> generator, const bool& add_extra_dim = true);
+	Tensor(const std::vector<size_t>& sizes, std::function<T(const std::vector<size_t>&, const size_t&)> generator, const bool& add_extra_dim = true);
 	Tensor(const TensorSlice<T, device>& slice, const bool& add_extra_dim = true);
 	
 	Tensor(const Tensor<T, device>& other);

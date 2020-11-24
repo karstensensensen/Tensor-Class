@@ -326,7 +326,8 @@ Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, const T& pad_val, co
 //generator functions take an index / coordinate as parameters and returns a value with the containter type
 
 template<typename T, Mode device>
-inline Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, T(*generator)(const size_t&), const bool& add_extra_dim)
+Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(const size_t&)> generator, const bool& add_extra_dim)
+
 	: m_shape(sizes.size() + 1 * add_extra_dim)
 {
 	
@@ -342,7 +343,7 @@ inline Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, T(*generator)
 }
 
 template<typename T, Mode device>
-inline Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, T(*generator)(const std::vector<size_t>&), const bool& add_extra_dim)
+Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(const std::vector<size_t>&)> generator, const bool& add_extra_dim)
 	: m_shape(sizes.size() + 1 * add_extra_dim)
 {
 	if (add_extra_dim)
@@ -362,8 +363,11 @@ inline Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, T(*generator)
 	}
 }
 
+{
+}
+
 template<typename T, Mode device>
-inline Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, T(*generator)(const std::vector<size_t>&, const size_t&), const bool& add_extra_dim)
+Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(const std::vector<size_t>&, const size_t&)> generator, const bool& add_extra_dim)
 	: m_shape(sizes.size() + 1 * add_extra_dim)
 {
 	if (add_extra_dim)
