@@ -233,11 +233,13 @@
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="..\include\PerlinNoise.cpp" />
-    <CudaCompile Include="..\Tensor\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="..\src\TSliceWrapper.cpp" />
-    <ClCompile Include="empty.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\empty.cpp" />
+    <ClCompile Include="..\src\main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
