@@ -113,6 +113,9 @@ public:
 
 	void Fill(const T& val = NULL);
 	void Fill(const size_t& dim, const T& val = NULL, const size_t& index = 0);
+	void Fill(std::function<T(const size_t&)> generator);
+	void Fill(std::function<T(const std::vector<size_t>&)> generator);
+	void Fill(std::function<T(const std::vector<size_t>& , const size_t&)> generator);
 
 	template<typename ... Args>
 	T& Get(const Args& ... coords);

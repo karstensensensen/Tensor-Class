@@ -456,6 +456,51 @@ void Tensor<T, device>::Fill(const size_t& dim, const T& val, const size_t& inde
 	}
 }
 
+template<typename T, Mode device>
+inline void TSlib::Tensor<T, device>::Fill(std::function<T(const size_t&)> generator)
+{
+	MEASURE();
+	for (size_t i = 0; i < size(); i++)
+	{
+		At(i) = generator(i);
+	}
+}
+
+template<typename T, Mode device>
+inline void TSlib::Tensor<T, device>::Fill(std::function<T(const std::vector<size_t>&)> generator)
+{
+	MEASURE();
+	std::vector<size_t> indexes(Dims());
+
+	for (size_t i = 0; i < size(); i++)
+	{
+		indexes[0] = (i % get_real_size(0));
+		for (size_t j = 1; j < Dims(); j++)
+		{
+			indexes[j] = (i / get_real_size(j - 1)) % get_real_size(j - 1);
+		}
+		At(i) = generator(indexes);
+	}
+}
+
+template<typename T, Mode device>
+inline void TSlib::Tensor<T, device>::Fill(std::function<T(const std::vector<size_t>&, const size_t&)> generator)
+{
+	MEASURE();
+	std::vector<size_t> indexes(Dims());
+
+	for (size_t i = 0; i < size(); i++)
+	{
+		indexes[0] = (i % get_real_size(0));
+		for (size_t j = 1; j < Dims(); j++)
+		{
+			indexes[j] = (i / get_real_size(j - 1)) % get_real_size(j - 1);
+		}
+		At(i) = generator(indexes, i);
+	}
+}
+
+
 /// resize functions
 
 
