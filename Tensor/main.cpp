@@ -1,6 +1,8 @@
+#include <functional>
+#include <iostream>
 ////#define PROFILING 2
 //#include <iostream>
-//#include "Tensor.h"
+#include "Tensor.h"
 //#include <Profiler.h>
 //#include <fstream>
 //#include <intrin.h>
@@ -66,3 +68,11 @@
 //
 //	Profiler::Get().EndSession();
 //}
+
+
+
+int main()
+{
+	std::function<void(int)> func([](int a) {std::cout << a; });
+	func(25);
+}
