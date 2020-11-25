@@ -5,6 +5,7 @@
 
 namespace TSlib
 {
+
 	#ifdef _DEBUG
 	template<typename T, Mode device>
 	template<typename First, typename ...Args>
@@ -136,7 +137,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename OT, Mode device_other>
-	void TSlib::TensorSlice<T, device>::fill(const Tensor<OT, device_other>& other)
+	void TensorSlice<T, device>::Fill(const Tensor<OT, device_other>& other)
 	{
 		#ifdef DEBUG
 		
@@ -162,7 +163,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename OT, Mode device_other>
-	void TSlib::TensorSlice<T, device>::fill(const TensorSlice<OT, device_other>& other)
+	void TSlib::TensorSlice<T, device>::Fill(const TensorSlice<OT, device_other>& other)
 	{
 		#ifdef DEBUG
 
@@ -187,14 +188,58 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	template<typename OT>
-	void TSlib::TensorSlice<T, device>::fill(const OT& other)
+	void TensorSlice<T, device>::Fill(const T& other)
 	{
 		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) = other;
 		}
 	}
+
+	template<typename T, Mode device>
+	inline void TensorSlice<T, device>::Fill(std::function<T(const size_t&)> generator)
+	{
+		MEASURE();
+		for (size_t i = 0; i < size(); i++)
+		{
+			At(i) = generator(i);
+		}
+	}
+
+	template<typename T, Mode device>
+	inline void TensorSlice<T, device>::Fill(std::function<T(const std::vector<size_t>&)> generator)
+	{
+		MEASURE();
+		std::vector<size_t> indexes(Dims());
+
+		for (size_t i = 0; i < size(); i++)
+		{
+			indexes[0] = (i % get_real_size(0));
+			for (size_t j = 1; j < Dims(); j++)
+			{
+				indexes[j] = (i / get_real_size(j - 1)) % get_real_size(j - 1);
+			}
+			At(i) = generator(indexes);
+		}
+	}
+
+	template<typename T, Mode device>
+	inline void TensorSlice<T, device>::Fill(std::function<T(const std::vector<size_t>&, const size_t&)> generator)
+	{
+		MEASURE();
+		std::vector<size_t> indexes(Dims());
+
+		for (size_t i = 0; i < size(); i++)
+		{
+			indexes[0] = (i % get_real_size(0));
+			for (size_t j = 1; j < Dims(); j++)
+			{
+				indexes[j] = (i / get_real_size(j - 1)) % get_real_size(j - 1);
+			}
+			At(i) = generator(indexes, i);
+		}
+	}
+
 
 	template<typename T, Mode device>
 	size_t TensorSlice<T, device>::size() const

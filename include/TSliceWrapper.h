@@ -38,5 +38,22 @@ namespace TSlib
 
 		iterator end();
 	};
+
+	inline TSlice To(const size_t& pos)
+	{
+		return TSlice(0, pos);
+	}
+
+	inline TSlice From(const size_t& pos)
+	{
+		return TSlice(pos, -1);
+	}
+
+	inline TSlice Center(const size_t& pos)
+	{
+		return TSlice(pos, -pos - 2);
+	}
+
+	static const TSlice All = TSlice(0, -1);
 }
 

@@ -41,11 +41,13 @@ namespace TSlib
 		void update();
 
 		template<typename OT, Mode device_other>
-		void fill(const Tensor<OT, device_other>& other);
+		void Fill(const Tensor<OT, device_other>& other);
 		template<typename OT, Mode device_other>
-		void fill(const TensorSlice<OT, device_other>& other);
-		template<typename OT>
-		void fill(const OT& other);
+		void Fill(const TensorSlice<OT, device_other>& other);
+		void Fill(const T& other);
+		void Fill(std::function<T(const size_t&)> generator);
+		void Fill(std::function<T(const std::vector<size_t>&)> generator);
+		void Fill(std::function<T(const std::vector<size_t>&, const size_t&)> generator);
 
 		size_t size() const;
 
