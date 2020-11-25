@@ -467,7 +467,7 @@ inline void TSlib::Tensor<T, device>::Fill(std::function<T(const size_t&)> gener
 }
 
 template<typename T, Mode device>
-inline void TSlib::Tensor<T, device>::Fill(std::function<T(const std::vector<size_t>&)> generator)
+inline void Tensor<T, device>::Fill(std::function<T(const std::vector<size_t>&)> generator)
 {
 	MEASURE();
 	std::vector<size_t> indexes(Dims());
@@ -484,7 +484,7 @@ inline void TSlib::Tensor<T, device>::Fill(std::function<T(const std::vector<siz
 }
 
 template<typename T, Mode device>
-inline void TSlib::Tensor<T, device>::Fill(std::function<T(const std::vector<size_t>&, const size_t&)> generator)
+inline void Tensor<T, device>::Fill(std::function<T(const std::vector<size_t>&, const size_t&)> generator)
 {
 	MEASURE();
 	std::vector<size_t> indexes(Dims());
