@@ -497,6 +497,14 @@ inline void Tensor<T, device>::Fill(std::function<T(const std::vector<size_t>&, 
 	}
 }
 
+template<typename T, Mode device>
+inline void Tensor<T, device>::Replace(const T& target, const T& value)
+{
+	for (size_t i = 0; i < size(); i++)
+	{
+		At(i) = At(i) * (target != At(i)) + value * (target == At(i));
+	}
+}
 
 /// resize functions
 

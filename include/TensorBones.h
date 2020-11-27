@@ -118,6 +118,8 @@ public:
 	void Fill(std::function<T(const std::vector<size_t>&)> generator);
 	void Fill(std::function<T(const std::vector<size_t>& , const size_t&)> generator);
 
+	void Replace(const T& target, const T& value);
+
 	template<typename ... Args>
 	T& Get(const Args& ... coords);
 
