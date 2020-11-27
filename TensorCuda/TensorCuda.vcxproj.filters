@@ -77,6 +77,9 @@
     <ClInclude Include="..\include\TSliceWrapper.h">
       <Filter>Header Files\Tensor</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\TensorCompareOperators.h">
+      <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="..\include\PerlinNoise.cpp">
@@ -85,12 +88,12 @@
     <CudaCompile Include="..\src\TSliceWrapper.cpp">
       <Filter>Source Files</Filter>
     </CudaCompile>
+    <CudaCompile Include="..\src\main.cpp">
+      <Filter>Source Files</Filter>
+    </CudaCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\empty.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

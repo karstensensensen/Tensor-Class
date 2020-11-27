@@ -7,6 +7,7 @@
 #include "TensorEnums.h"
 #include "TensorSliceBones.h"
 #include "TensorExceptions.h"
+#include "TensorCompareOperators.h"
 
 namespace TSlib
 {
@@ -397,49 +398,13 @@ public:
 	#endif
 
 	template<typename RT = char, typename OT, Mode o_device>
-	Tensor<RT, device> compare(const Tensor<OT, o_device>& other) const;
+	Tensor<RT, device> compare(const Tensor<OT, o_device>& other, bool(*comp_func)(const T&, const OT&) = Equal);
 
 	template<typename RT = char, typename OT, Mode o_device>
-	Tensor<RT, device> compare(const TensorSlice<OT, o_device>& other) const;
+	Tensor<RT, device> compare(const TensorSlice<OT, o_device>& other, bool(*comp_func)(const T&, const OT&) = Equal);
 
 	template<typename RT = char, typename OT>
-	Tensor<RT, device> compareSingle(const OT& other) const;
-
-	template<typename RT = char, typename OT, Mode o_device>
-	Tensor<RT, device> lessThan(const Tensor<OT, o_device>& other) const;
-
-	template<typename RT = char, typename OT, Mode o_device>
-	Tensor<RT, device> lessThan(const TensorSlice<OT, o_device>& other) const;
-
-	template<typename RT = char, typename OT>
-	Tensor<RT, device> lessThanSingle(const OT& other) const;
-
-	template<typename RT = char, typename OT, Mode o_device>
-	Tensor<RT, device> greaterThan(const Tensor<OT, o_device>& other) const;
-
-	template<typename RT = char, typename OT, Mode o_device>
-	Tensor<RT, device> greaterThan(const TensorSlice<OT, o_device>& other) const;
-
-	template<typename RT = char, typename OT>
-	Tensor<RT, device> greaterThanSingle(const OT& other) const;
-
-	template<typename RT = char, typename OT, Mode o_device>
-	Tensor<RT, device> lessThanEqual(const Tensor<OT, o_device>& other) const;
-
-	template<typename RT = char, typename OT, Mode o_device>
-	Tensor<RT, device> lessThanEqual(const TensorSlice<OT, o_device>& other) const;
-
-	template<typename RT = char, typename OT>
-	Tensor<RT, device> lessThanEqualSingle(const OT& other) const;
-
-	template<typename RT = char, typename OT, Mode o_device>
-	Tensor<RT, device> greaterThanEqual(const Tensor<OT, o_device>& other) const;
-
-	template<typename RT = char, typename OT, Mode o_device>
-	Tensor<RT, device> greaterThanEqual(const TensorSlice<OT, o_device>& other) const;
-
-	template<typename RT = char, typename OT>
-	Tensor<RT, device> greaterThanEqualSingle(const OT& other) const;
+	Tensor<RT, device> compareSingle(const OT& other, bool(*comp_func)(const T&, const OT&) = Equal);
 
 	template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
 	inline bool operator==(Tensor<OT, o_device>& other)
@@ -476,9 +441,9 @@ public:
 	{
 		
 		#ifdef __clang__
-		return !(bool)compare(other).template sum<size_t>() == other.size();
+		return compare(other, NotEqual).template sum<size_t>() == other.size();
 		#else
-		return !(bool)compare(other).sum<size_t>() == other.size();
+		return compare(other, NotEqual).sum<size_t>() == other.size();
 		#endif
 	}
 
@@ -486,9 +451,9 @@ public:
 	inline bool operator!=(TensorSlice<OT, o_device>& other)
 	{
 		#ifdef __clang__
-		return !(bool)compare(other).template sum<size_t>() == other.size();
+		return !(bool)compare(other, NotEqual).template sum<size_t>() == other.size();
 		#else
-		return !(bool)compare(other).sum<size_t>() == other.size();
+		return !(bool)compare(other, NotEqual).sum<size_t>() == other.size();
 		#endif
 	}
 
@@ -497,9 +462,9 @@ public:
 	inline bool operator!=(const OT& other)
 	{
 		#ifdef __clang__
-		return !(bool)compareSingle(other).template sum<size_t>() == other.size();
+		return !(bool)compareSingle(other, NotEqual).template sum<size_t>() == other.size();
 		#else
-		return !(bool)compareSingle(other).sum<size_t>() == other.size();
+		return !(bool)compareSingle(other, NotEqual).sum<size_t>() == other.size();
 		#endif
 	}
 
@@ -508,9 +473,9 @@ public:
 	inline bool operator<(Tensor<OT, o_device>& other)
 	{
 		#ifdef __clang__
-		return (bool)lessThan(other).template sum<size_t>() == other.size();
+		return (bool)compare(other, LessThan).template sum<size_t>() == other.size();
 		#else
-		return (bool)lessThan(other).sum<size_t>() == other.size();
+		return (bool)compare(other, LessThan).sum<size_t>() == other.size();
 		#endif
 	}
 
@@ -518,9 +483,9 @@ public:
 	inline bool operator<(TensorSlice<OT, o_device>& other)
 	{
 		#ifdef __clang__
-		return (bool)lessThan(other).template sum<size_t>() == other.size();
+		return (bool)compare(other, LessThan).template sum<size_t>() == other.size();
 		#else
-		return (bool)lessThan(other).sum<size_t>() == other.size();
+		return (bool)compare(other, LessThan).sum<size_t>() == other.size();
 		#endif
 	}
 
@@ -528,9 +493,9 @@ public:
 	inline bool operator<(const OT& other)
 	{
 		#ifdef __clang__
-		return (bool)lessThanSingle(other).template sum<size_t>() == other.size();
+		return (bool)compareSingle(other, LessThan).template sum<size_t>() == other.size();
 		#else
-		return (bool)lessThanSingle(other).sum<size_t>() == other.size();
+		return (bool)compareSingle(other, LessThan).sum<size_t>() == other.size();
 		#endif
 	}
 
@@ -539,9 +504,9 @@ public:
 	inline bool operator>(Tensor<OT, o_device>& other)
 	{
 		#ifdef __clang__
-		return (bool)moreThan(other).template sum<size_t>() == other.size();
+		return (bool)compare(other, GreaterThan).template sum<size_t>() == other.size();
 		#else
-		return (bool)moreThan(other).sum<size_t>() == other.size();
+		return (bool)compare(other, GreaterThan).sum<size_t>() == other.size();
 		#endif
 	}
 
@@ -549,9 +514,9 @@ public:
 	inline bool operator>(TensorSlice<OT, o_device>& other)
 	{
 		#ifdef __clang__
-		return (bool)moreThan(other).template sum<size_t>() == other.size();
+		return (bool)compare(other, GreaterThan).template sum<size_t>() == other.size();
 		#else
-		return (bool)moreThan(other).sum<size_t>() == other.size();
+		return (bool)compare(other, GreaterThan).sum<size_t>() == other.size();
 		#endif
 	}
 
@@ -559,11 +524,10 @@ public:
 	inline bool operator>(const OT& other)
 	{
 		#ifdef __clang__
-		return (bool)moreThanSingle(other).template sum<size_t>() == other.size();
+		return (bool)compareSingle(other, GreaterThan).template sum<size_t>() == other.size();
 		#else
-		return (bool)moreThanSingle(other).sum<size_t>() == other.size();
+		return (bool)compareSingle(other, GreaterThan).sum<size_t>() == other.size();
 		#endif
-
 	}
 
 	template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
@@ -571,20 +535,19 @@ public:
 	{
 		
 		#ifdef __clang__
-		return (bool)lessThanEqual(other).template sum<size_t>() == other.size();
+		return (bool)compare(other, LessThanEqual).template sum<size_t>() == other.size();
 		#else
-		return (bool)lessThanEqual(other).sum<size_t>() == other.size();
+		return (bool)compare(other, LessThanEqual).sum<size_t>() == other.size();
 		#endif
-
 	}
 
 	template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
 	inline bool operator<=(TensorSlice<OT, o_device>& other)
 	{
 		#ifdef __clang__
-		return (bool)lessThanEqual(other).template sum<size_t>() == other.size();
+		return (bool)compare(other, LessThanEqual).template sum<size_t>() == other.size();
 		#else
-		return (bool)lessThanEqual(other).sum<size_t>() == other.size();
+		return (bool)compare(other, LessThanEqual).sum<size_t>() == other.size();
 		#endif
 	}
 
@@ -592,42 +555,39 @@ public:
 	inline bool operator<=(const OT& other)
 	{
 		#ifdef __clang__
-		return (bool)lessThanEqualSingle(other).template sum<size_t>() == other.size();
+		return (bool)compareSingle(other, LessThanEqual).template sum<size_t>() == other.size();
 		#else
-		return (bool)lessThanEqualSingle(other).sum<size_t>() == other.size();
+		return (bool)compareSingle(other, LessThanEqual).sum<size_t>() == other.size();
 		#endif
 	}
 
 	template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
 	inline bool operator>=(Tensor<OT, o_device>& other)
 	{
-		
 		#ifdef __clang__
-		return (bool)moreThanEqual(other).template sum<size_t>() == other.size();
+		return (bool)compare(other, GreaterThanEqual).template sum<size_t>() == other.size();
 		#else
-		return (bool)moreThanEqual(other).sum<size_t>() == other.size();
+		return (bool)compare(other, GreaterThanEqual).sum<size_t>() == other.size();
 		#endif
 	}
 
 	template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
 	inline bool operator>=(TensorSlice<OT, o_device>& other)
 	{
-
 		#ifdef __clang__
-		return (bool)moreThanEqual(other).template sum<size_t>() == other.size();
+		return (bool)compare(other, GreaterThanEqual).template sum<size_t>() == other.size();
 		#else
-		return (bool)moreThanEqual(other).sum<size_t>() == other.size();
+		return (bool)compare(other, GreaterThanEqual).sum<size_t>() == other.size();
 		#endif
 	}
 
 	template<typename OT, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
 	inline bool operator>=(const OT& other)
 	{
-		
 		#ifdef __clang__
-		return (bool)moreThanEqualSingle(other).template sum<size_t>() == other.size();
+		return (bool)compareSingle(other, GreaterThanEqual).template sum<size_t>() == other.size();
 		#else
-		return (bool)moreThanEqualSingle(other).sum<size_t>() == other.size();
+		return (bool)compareSingle(other, GreaterThanEqual).sum<size_t>() == other.size();
 		#endif
 	}
 
@@ -1152,7 +1112,7 @@ public:
 	template<typename CT, Mode o_device>
 	operator Tensor<CT, o_device>()
 	{
-		Tensor<CT, device> new_Tensor(this->Shape(), CT(), false);
+		Tensor<CT, o_device> new_Tensor(this->Shape(), CT(), false);
 
 		for (size_t i = 0; i < this->size(); i++)
 		{

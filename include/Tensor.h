@@ -363,9 +363,6 @@ Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(cons
 	}
 }
 
-{
-}
-
 template<typename T, Mode device>
 Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(const std::vector<size_t>&, const size_t&)> generator, const bool& add_extra_dim)
 	: m_shape(sizes.size() + 1 * add_extra_dim)
@@ -1633,7 +1630,7 @@ inline void Tensor<T, device>::modulouAssignmentSingle(const OT& other)
 
 template<typename T, Mode device>
 template<typename RT, typename OT, Mode o_device>
-Tensor<RT, device> Tensor<T, device>::compare(const Tensor<OT, o_device>& other) const
+inline Tensor<RT, device> TSlib::Tensor<T, device>::compare(const Tensor<OT, o_device>& other, bool(*comp_func)(const T&, const OT&))
 {
 	MEASURE();
 	#ifdef _DEBUG
@@ -1655,7 +1652,7 @@ Tensor<RT, device> Tensor<T, device>::compare(const Tensor<OT, o_device>& other)
 
 	for (size_t i = 0; i < this->size(); i++)
 	{
-		result[i] = this->At(i) == other[i];
+		result[i] = comp_func(At(i), other[i]);
 	}
 
 	return result;
@@ -1663,52 +1660,7 @@ Tensor<RT, device> Tensor<T, device>::compare(const Tensor<OT, o_device>& other)
 
 template<typename T, Mode device>
 template<typename RT, typename OT, Mode o_device>
-Tensor<RT, device> Tensor<T, device>::compare(const TensorSlice<OT, o_device>& other) const
-{
-	MEASURE();
-	#ifdef _DEBUG
-	if (Dims() < other.Dims())
-	{
-		throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
-	}
-
-	for (size_t i = 0; i < this->Dims(); i++)
-	{
-		if (Shape()[i] != other.Shape()[i])
-		{
-			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
-		}
-	}
-	#endif
-
-	Tensor<RT, device> result(Shape(), false, false);
-
-	for (size_t i = 0; i < other.size(); i++)
-	{
-		result[other.map_index(i)] = At(other.map_index(i)) == other[i];
-	}
-
-	return result;
-}
-
-template<typename T, Mode device>
-template<typename RT, typename OT>
-Tensor<RT, device> Tensor<T, device>::compareSingle(const OT& other) const
-{
-	MEASURE();
-	Tensor<RT, device> result(this->Shape());
-
-	for (size_t i = 0; i < this->size(); i++)
-	{
-		result[i] = this->At(i) == other;
-	}
-
-	return result;
-}
-
-template<typename T, Mode device>
-template<typename RT, typename OT, Mode o_device>
-Tensor<RT, device> Tensor<T, device>::lessThan(const Tensor<OT, o_device>& other) const
+inline Tensor<RT, device> TSlib::Tensor<T, device>::compare(const TensorSlice<OT, o_device>& other, bool(*comp_func)(const T&, const OT&))
 {
 	MEASURE();
 	#ifdef _DEBUG
@@ -1730,7 +1682,7 @@ Tensor<RT, device> Tensor<T, device>::lessThan(const Tensor<OT, o_device>& other
 
 	for (size_t i = 0; i < this->size(); i++)
 	{
-		result[i] = this->At(i) < other[i];
+		result[i] = comp_func(At(i), other[i]);
 	}
 
 	return result;
@@ -1738,157 +1690,17 @@ Tensor<RT, device> Tensor<T, device>::lessThan(const Tensor<OT, o_device>& other
 
 template<typename T, Mode device>
 template<typename RT, typename OT>
-Tensor<RT, device> Tensor<T, device>::lessThanSingle(const OT& other) const
+inline Tensor<RT, device> TSlib::Tensor<T, device>::compareSingle(const OT& other, bool(*comp_func)(const T&, const OT&))
 {
 	MEASURE();
-	Tensor<RT, device> result(this->Shape());
-
-	for (size_t i = 0; i < this->size(); i++)
-	{
-		result[i] = this->At(i) < other;
-	}
-
-	return result;
-}
-
-template<typename T, Mode device>
-template<typename RT, typename OT, Mode o_device>
-Tensor<RT, device> Tensor<T, device>::greaterThan(const Tensor<OT, o_device>& other) const
-{
-	MEASURE();
-	#ifdef _DEBUG
-	if (Dims() != other.Dims())
-	{
-		throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
-	}
-
-	for (size_t i = 0; i < this->Dims(); i++)
-	{
-		if (Shape()[i] != other.Shape()[i])
-		{
-			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
-		}
-	}
-	#endif
 
 	Tensor<RT, device> result(this->Shape());
 
 	for (size_t i = 0; i < this->size(); i++)
 	{
-		result[i] = this->At(i) > other[i];
-	}
-
-	return result;
-}
-
-template<typename T, Mode device>
-template<typename RT, typename OT>
-Tensor<RT, device> Tensor<T, device>::greaterThanSingle(const OT& other) const
-{
-	MEASURE();
-	Tensor<RT, device> result(this->Shape());
-
-	for (size_t i = 0; i < this->size(); i++)
-	{
-		result[i] = this->At(i) > other;
-	}
-
-	return result;
-}
-
-template<typename T, Mode device>
-template<typename RT, typename OT, Mode o_device>
-Tensor<RT, device> Tensor<T, device>::lessThanEqual(const Tensor<OT, o_device>& other) const
-{
-	MEASURE();
-	#ifdef _DEBUG
-	if (Dims() != other.Dims())
-	{
-		throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
-	}
-
-	for (size_t i = 0; i < this->Dims(); i++)
-	{
-		if (Shape()[i] != other.Shape()[i])
-		{
-			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
-		}
-	}
-	#endif
-
-	Tensor<RT, device> result(this->Shape());
-
-	for (size_t i = 0; i < this->size(); i++)
-	{
-		result[i] = this->At(i) <= other[i];
-	}
-
-	return result;
-}
-
-template<typename T, Mode device>
-template<typename RT, typename OT>
-Tensor<RT, device> Tensor<T, device>::lessThanEqualSingle(const OT& other) const
-{
-	MEASURE();
-	Tensor<RT, device> result(this->Shape());
-
-	for (size_t i = 0; i < this->size(); i++)
-	{
-		result[i] = this->At(i) <= other;
-	}
-
-	return result;
-}
-
-template<typename T, Mode device>
-template<typename RT, typename OT, Mode o_device>
-Tensor<RT, device> Tensor<T, device>::greaterThanEqual(const Tensor<OT, o_device>& other) const
-{
-	MEASURE();
-	#ifdef _DEBUG
-	if (Dims() != other.Dims())
-	{
-		throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
-	}
-
-	for (size_t i = 0; i < this->Dims(); i++)
-	{
-		if (Shape()[i] != other.Shape()[i])
-		{
-			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
-		}
-	}
-	#endif
-
-	Tensor<RT, device> result(this->Shape());
-
-	for (size_t i = 0; i < this->size(); i++)
-	{
-		result[i] = this->At(i) >= other[i];
-	}
-
-	return result;
-}
-
-template<typename T, Mode device>
-template<typename RT, typename OT>
-Tensor<RT, device> Tensor<T, device>::greaterThanEqualSingle(const OT& other) const
-{
-	MEASURE();
-	Tensor<RT, device> result(this->Shape());
-
-	for (size_t i = 0; i < this->size(); i++)
-	{
-		result[i] = this->At(i) >= other;
+		result[i] = comp_func(At(i), other);
 	}
 
 	return result;
 }
 }
-
-#ifdef __clang__
-#ifdef DEBUG
-#undef _DEBUG
-#endif
-#endif

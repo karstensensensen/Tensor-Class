@@ -188,6 +188,7 @@
     <ClInclude Include="..\include\PerlinNoise.h" />
     <ClInclude Include="..\include\Tensor.h" />
     <ClInclude Include="..\include\TensorBones.h" />
+    <ClInclude Include="..\include\TensorCompareOperators.h" />
     <ClInclude Include="..\include\TensorEnums.h" />
     <ClInclude Include="..\include\TensorExceptions.h" />
     <ClInclude Include="..\include\TensorOperators.h" />
