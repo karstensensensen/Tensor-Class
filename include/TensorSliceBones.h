@@ -3,11 +3,10 @@
 #include <stdint.h>
 #include "TSliceWrapper.h"
 #include "TensorBones.h"
+#include "TensorCompareOperators.h"
 
 namespace TSlib
 {
-	
-
 	template<typename T, Mode device>
 	class Tensor;
 
@@ -170,12 +169,14 @@ namespace TSlib
 		template<typename OT>
 		void modulouAsgmt(const OT& other);
 
-		template<typename OT, Mode other_device>
-		Tensor<char, device> compare(const Tensor<OT, other_device>& other);
-		template<typename OT, Mode other_device>
-		Tensor<char, device> compare(const TensorSlice<OT, other_device>& other);
-		template<typename OT>
-		Tensor<char, device> compare(const OT& other);
+		template<typename RT = char, typename OT, Mode o_device>
+		Tensor<RT, device> compare(const Tensor<OT, o_device>& other, bool(*comp_func)(const T&, const OT&) = Equal);
+
+		template<typename RT = char, typename OT, Mode o_device>
+		Tensor<RT, device> compare(const TensorSlice<OT, o_device>& other, bool(*comp_func)(const T&, const OT&) = Equal);
+
+		template<typename RT = char, typename OT>
+		Tensor<RT, device> compareSingle(const OT& other, bool(*comp_func)(const T&, const OT&) = Equal);
 
 		template<typename OT, Mode other_device>
 		Tensor<char, device> lessThan(const Tensor<OT, other_device>& other);
