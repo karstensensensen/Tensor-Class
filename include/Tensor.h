@@ -502,7 +502,10 @@ inline void Tensor<T, device>::Replace(const T& target, const T& value)
 {
 	for (size_t i = 0; i < size(); i++)
 	{
-		At(i) = At(i) * (target != At(i)) + value * (target == At(i));
+		if (target == At(i))
+		{
+			At(i) = value;
+		}
 	}
 }
 
