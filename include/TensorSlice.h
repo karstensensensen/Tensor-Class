@@ -214,10 +214,10 @@ namespace TSlib
 
 		for (size_t i = 0; i < size(); i++)
 		{
-			indexes[0] = (i % get_real_size(0));
+			indexes[0] = (i % source->get_real_size(0));
 			for (size_t j = 1; j < Dims(); j++)
 			{
-				indexes[j] = (i / get_real_size(j - 1)) % get_real_size(j - 1);
+				indexes[j] = (i / source->get_real_size(j - 1)) % source->get_real_size(j - 1);
 			}
 			At(i) = generator(indexes);
 		}
@@ -231,10 +231,10 @@ namespace TSlib
 
 		for (size_t i = 0; i < size(); i++)
 		{
-			indexes[0] = (i % get_real_size(0));
+			indexes[0] = (i % source->get_real_size(0));
 			for (size_t j = 1; j < Dims(); j++)
 			{
-				indexes[j] = (i / get_real_size(j - 1)) % get_real_size(j - 1);
+				indexes[j] = (i / source->get_real_size(j - 1)) % source->get_real_size(j - 1);
 			}
 			At(i) = generator(indexes, i);
 		}
