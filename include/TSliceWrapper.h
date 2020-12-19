@@ -9,7 +9,6 @@ namespace TSlib
 		intmax_t from;
 		intmax_t to;
 
-
 		uint32_t from_max = 0;
 		uint32_t to_max = 0;
 
@@ -51,9 +50,8 @@ namespace TSlib
 
 	inline TSlice Center(const intmax_t& pos)
 	{
-		return TSlice(pos, -pos-1);
+		return TSlice(pos, -pos - 1);
 	}
 
 	static const TSlice All = TSlice(0, -1);
 }
-

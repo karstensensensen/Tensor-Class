@@ -21,7 +21,6 @@ namespace TSlib
 		{}
 	};
 
-
 	/// <summary>
 	/// All Tensor function exceptions
 	/// </summary>
@@ -47,12 +46,10 @@ namespace TSlib
 			}
 		}
 
-
 		virtual const char* what() const throw()
 		{
 			return err_msg.c_str();
 		}
-
 	};
 
 	class BadShape : public std::exception
@@ -218,7 +215,7 @@ namespace TSlib
 		}
 	};
 
-	class BadValue: public std::exception
+	class BadValue : public std::exception
 	{
 		std::string err_msg;
 
@@ -232,11 +229,11 @@ namespace TSlib
 		template<typename First>
 		void append_info(ExceptValue<First> first)
 		{
-			err_msg +=  std::string("\n") + first.msg + ": " + std::to_string(first.val);
+			err_msg += std::string("\n") + first.msg + ": " + std::to_string(first.val);
 		}
 
 	public:
-		
+
 		template<typename ... Args>
 		BadValue(std::string message, ExceptValue<Args> ... args)
 			: err_msg(message)
@@ -275,7 +272,7 @@ namespace TSlib
 		BadThreadTarget(unsigned int threads)
 			:threads(threads)
 		{
-			err_msg = "Tensor target was set to a value larger than 1024 or the value was not a multiple of 32 (" +std::to_string(threads) + ')';
+			err_msg = "Tensor target was set to a value larger than 1024 or the value was not a multiple of 32 (" + std::to_string(threads) + ')';
 		}
 
 		BadThreadTarget(std::string message, unsigned int threads)
@@ -285,7 +282,7 @@ namespace TSlib
 		}
 
 		virtual const char* what() const throw()
-		{		
+		{
 			return err_msg.c_str();
 		}
 	};

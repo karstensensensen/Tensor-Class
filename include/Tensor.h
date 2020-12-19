@@ -37,197 +37,167 @@ typedef double double_t;
 
 namespace TSlib
 {
+	/// Tensor private functions
 
-/// Tensor private functions
-
-template<typename T, Mode device>
-size_t Tensor<T, device>::get_real_size(const size_t& index) const
-{
-	MEASURE();
-	
-	size_t r_size = 1;
-
-	for (size_t i = 0; i <= index; i++)
+	template<typename T, Mode device>
+	size_t Tensor<T, device>::get_real_size(const size_t& index) const
 	{
-		r_size *= m_shape[i];
+		MEASURE();
+
+		size_t r_size = 1;
+
+		for (size_t i = 0; i <= index; i++)
+		{
+			r_size *= m_shape[i];
+		}
+
+		return r_size;
 	}
 
-
-
-	return r_size;
-}
-
-template<typename T, Mode device>
-size_t Tensor<T, device>::get_dim_length(const size_t& index) const
-{
-	MEASURE();
-	
-	size_t r_size = 1;
-
-	for (size_t i = index; i < m_shape.size(); i++)
+	template<typename T, Mode device>
+	size_t Tensor<T, device>::get_dim_length(const size_t& index) const
 	{
-		r_size *= m_shape[i];
+		MEASURE();
+
+		size_t r_size = 1;
+
+		for (size_t i = index; i < m_shape.size(); i++)
+		{
+			r_size *= m_shape[i];
+		}
+
+		return r_size;
 	}
 
-	return r_size;
-}
-
-template<typename T, Mode device>
-std::vector<size_t> Tensor<T, device>::FlattenDims(size_t dims) const
-{
-	MEASURE();
-	
-	std::vector<size_t> new_dim(dims, 1);
-
-	size_t i;
-	for (i = 0; i < std::min(dims, Dims()); i++)
+	template<typename T, Mode device>
+	std::vector<size_t> Tensor<T, device>::FlattenDims(size_t dims) const
 	{
-		new_dim[i] = m_shape[i];
-	}
-	i--;
+		MEASURE();
 
-	for (size_t j = i+1; j < m_shape.size(); j++)
-	{
-		new_dim[i] *= m_shape[j];
-	}
+		std::vector<size_t> new_dim(dims, 1);
 
-	return new_dim;
-}
+		size_t i;
+		for (i = 0; i < std::min(dims, Dims()); i++)
+		{
+			new_dim[i] = m_shape[i];
+		}
+		i--;
 
-template<typename T, Mode device>
-size_t Tensor<T, device>::FlattenDims() const
-{
-	MEASURE();
-	
-	size_t new_dim = m_shape[0];
+		for (size_t j = i + 1; j < m_shape.size(); j++)
+		{
+			new_dim[i] *= m_shape[j];
+		}
 
-	for (size_t j = 1; j < m_shape.size(); j++)
-	{
-		new_dim *= m_shape[j];
+		return new_dim;
 	}
 
-	return new_dim;
-}
-
-
-template<typename T, Mode device>
-size_t  Tensor<T, device>::get_dim_size(const size_t& index) const
-{
-	
-	MEASURE();
-	
-	size_t size = 1;
-	for (size_t i = 0; i <= index; i++)
+	template<typename T, Mode device>
+	size_t Tensor<T, device>::FlattenDims() const
 	{
-		size *= m_shape[i];
+		MEASURE();
+
+		size_t new_dim = m_shape[0];
+
+		for (size_t j = 1; j < m_shape.size(); j++)
+		{
+			new_dim *= m_shape[j];
+		}
+
+		return new_dim;
 	}
 
-	return size;
-}
-
-template<typename T, Mode device>
-size_t Tensor<T, device>::get_dim_offset(const size_t& index) const
-{
-	MEASURE();
-	size_t result = 0;
-	for (size_t i = 0; i < index; i++)
+	template<typename T, Mode device>
+	size_t  Tensor<T, device>::get_dim_size(const size_t& index) const
 	{
-		result += m_shape[i];
+		MEASURE();
+
+		size_t size = 1;
+		for (size_t i = 0; i <= index; i++)
+		{
+			size *= m_shape[i];
+		}
+
+		return size;
 	}
 
-	return result;
-}
-
-template<typename T, Mode device>
-template<typename First>
-void Tensor<T, device>::get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord)
-{
-	MEASURE();
-
-	#ifdef _DEBUG
-	if (m_shape[iter] <= coord)
-		throw OutOfBounds(Shape(), "Exception was thrown, because an element outside the Tensor bounds was accsessed", iter, coord);
-	#endif
-
-	indx += coord * tmp_multiply;
-	tmp_multiply *= m_shape[iter];
-	iter++;
-}
-
-template<typename T, Mode device>
-template<typename First, typename... Args>
-void Tensor<T, device>::get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord, Args ... remaining)
-{
-	MEASURE();
-
-	get_indx(indx, iter, tmp_multiply, coord);
-	get_indx(indx, iter, tmp_multiply, remaining...);
-
-}
-
-
-template<typename T, Mode device>
-template<typename First>
-void Tensor<T, device>::to_vector(std::vector<TSlice>& vec, const std::initializer_list<First>& first)
-{
-	vec.push_back(TSlice(first));
-}
-
-template<typename T, Mode device>
-template<typename ... Args, typename First>
-void Tensor<T, device>::to_vector(std::vector<TSlice>& vec, const std::initializer_list<First>& first, const std::initializer_list<Args>& ... args)
-{
-
-	#ifdef _DEBUG
-	std::cout << std::is_integral<First>::value << '\n' << !std::is_integral<First>::value << '\n';
-	if(!std::is_integral<First>::value)
+	template<typename T, Mode device>
+	size_t Tensor<T, device>::get_dim_offset(const size_t& index) const
 	{
-		#ifdef __clang__
-		throw BadType("Integral", typeid(First).name());
-		#else
-		throw BadType::BadType("Integral", typeid(First).name());
+		MEASURE();
+		size_t result = 0;
+		for (size_t i = 0; i < index; i++)
+		{
+			result += m_shape[i];
+		}
+
+		return result;
+	}
+
+	template<typename T, Mode device>
+	template<typename First>
+	void Tensor<T, device>::get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord)
+	{
+		MEASURE();
+
+		#ifdef _DEBUG
+		if (m_shape[iter] <= coord)
+			throw OutOfBounds(Shape(), "Exception was thrown, because an element outside the Tensor bounds was accsessed", iter, coord);
 		#endif
-	}
-	#endif
 
-	to_vector(vec, first);
-	to_vector(vec, args...);
-}
-
-
-template<typename T, Mode device>
-std::string Tensor<T, device>::printable() const
-{
-
-	size_t max_length = 0;
-	std::stringstream stream;
-
-	for (const T& elem : *this)
-	{
-		max_length = std::max(std::to_string(elem).size(), max_length);
+		indx += coord * tmp_multiply;
+		tmp_multiply *= m_shape[iter];
+		iter++;
 	}
 
-	for (size_t i = 0; i < get_dim_size(0); i++)
+	template<typename T, Mode device>
+	template<typename First, typename... Args>
+	void Tensor<T, device>::get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord, Args ... remaining)
 	{
-		stream << At(i) << ',';
+		MEASURE();
 
-		size_t str_len = std::to_string(At(i)).size();
+		get_indx(indx, iter, tmp_multiply, coord);
+		get_indx(indx, iter, tmp_multiply, remaining...);
+	}
 
-		for (size_t j = 0; j < max_length - str_len; j++)
+	template<typename T, Mode device>
+	template<typename First>
+	void Tensor<T, device>::to_vector(std::vector<TSlice>& vec, const std::initializer_list<First>& first)
+	{
+		vec.push_back(TSlice(first));
+	}
+
+	template<typename T, Mode device>
+	template<typename ... Args, typename First>
+	void Tensor<T, device>::to_vector(std::vector<TSlice>& vec, const std::initializer_list<First>& first, const std::initializer_list<Args>& ... args)
+	{
+		#ifdef _DEBUG
+		std::cout << std::is_integral<First>::value << '\n' << !std::is_integral<First>::value << '\n';
+		if (!std::is_integral<First>::value)
 		{
-			stream << ' ';
+			#ifdef __clang__
+			throw BadType("Integral", typeid(First).name());
+			#else
+			throw BadType::BadType("Integral", typeid(First).name());
+			#endif
+		}
+		#endif
+
+		to_vector(vec, first);
+		to_vector(vec, args...);
+	}
+
+	template<typename T, Mode device>
+	std::string Tensor<T, device>::printable() const
+	{
+		size_t max_length = 0;
+		std::stringstream stream;
+
+		for (const T& elem : *this)
+		{
+			max_length = std::max(std::to_string(elem).size(), max_length);
 		}
 
-		if (i % Shape()[0] == Shape()[0] - 1)
-		{
-			stream << '\n';
-		}
-	}
-
-	for (unsigned int dim = 1; dim < Dims(); dim++)
-	{
-		stream << "\n";
-		for (size_t i = get_dim_size(dim - 1); i < get_dim_size(dim); i++)
+		for (size_t i = 0; i < get_dim_size(0); i++)
 		{
 			stream << At(i) << ',';
 
@@ -243,1475 +213,1472 @@ std::string Tensor<T, device>::printable() const
 				stream << '\n';
 			}
 		}
-	}
 
-	return stream.str();
-}
-
-/// This is a helper struct, that acts as the sort function, for the std::sort function in Tensor::based_sort function.
-
-namespace
-{
-	struct sorter
-	{
-		const std::vector<size_t>& vec;
-
-		sorter(const std::vector<size_t>& vec)
-			:vec(vec)
-		{}
-
-		bool operator()(size_t a, size_t b)
+		for (unsigned int dim = 1; dim < Dims(); dim++)
 		{
-			return vec[a] < vec[b];
+			stream << "\n";
+			for (size_t i = get_dim_size(dim - 1); i < get_dim_size(dim); i++)
+			{
+				stream << At(i) << ',';
+
+				size_t str_len = std::to_string(At(i)).size();
+
+				for (size_t j = 0; j < max_length - str_len; j++)
+				{
+					stream << ' ';
+				}
+
+				if (i % Shape()[0] == Shape()[0] - 1)
+				{
+					stream << '\n';
+				}
+			}
 		}
-	};
 
-	struct sorterSlice
+		return stream.str();
+	}
+
+	/// This is a helper struct, that acts as the sort function, for the std::sort function in Tensor::based_sort function.
+
+	namespace
 	{
-		const std::vector<TSlice>& vec;
-
-		sorterSlice(const std::vector<TSlice>& vec)
-			:vec(vec)
-		{}
-
-		bool operator()(size_t a, size_t b)
+		struct sorter
 		{
-			return vec[a].width() < vec[b].width();
-		}
-	};
-}
+			const std::vector<size_t>& vec;
 
-template<typename T, Mode device>
-std::vector<size_t> Tensor<T, device>::based_sort(const std::vector<size_t>& target)
-{
-	std::vector<size_t> new_indexes(target.size());
-	std::iota(new_indexes.begin(), new_indexes.end(), 0);
+			sorter(const std::vector<size_t>& vec)
+				:vec(vec)
+			{}
 
-	std::sort(new_indexes.begin(), new_indexes.end(), sorter(target));
+			bool operator()(size_t a, size_t b)
+			{
+				return vec[a] < vec[b];
+			}
+		};
 
-	return new_indexes;
-}
-
-template<typename T, Mode device>
-std::vector<size_t> Tensor<T, device>::based_sort(const std::vector<TSlice>& target)
-{
-	std::vector<size_t> new_indexes(target.size());
-	std::iota(new_indexes.begin(), new_indexes.end(), 0);
-
-	std::sort(new_indexes.begin(), new_indexes.end(), sorterSlice(target));
-
-	return new_indexes;
-}
-
-/// Tensor constructors
-/// 
-template<typename T, Mode device>
-Tensor<T, device>::Tensor(const int& dims)
-	: m_shape(dims + 1)
-{
-	MEASURE();
-	m_shape[dims] = 1;
-}
-
-template<typename T, Mode device>
-Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, const T& pad_val, const bool& add_extra_dim)
-	: m_shape(sizes.size() + 1 * add_extra_dim)
-{
-	MEASURE();
-	if(add_extra_dim)
-		m_shape[sizes.size()] = 1;
-	Resize(sizes, pad_val);
-}
-
-//generator functions take an index / coordinate as parameters and returns a value with the containter type
-
-template<typename T, Mode device>
-Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(const size_t&)> generator, const bool& add_extra_dim)
-
-	: m_shape(sizes.size() + 1 * add_extra_dim)
-{
-	
-	if (add_extra_dim)
-		m_shape[sizes.size()] = 1;
-	Resize(sizes);
-
-	for (size_t i = 0; i < size(); i++)
-	{
-		At(i) = generator({ i });
-	}
-	
-}
-
-template<typename T, Mode device>
-Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(const std::vector<size_t>&)> generator, const bool& add_extra_dim)
-	: m_shape(sizes.size() + 1 * add_extra_dim)
-{
-	if (add_extra_dim)
-		m_shape[sizes.size()] = 1;
-	Resize(sizes);
-
-	std::vector<size_t> indexes(Dims());
-
-	for (size_t i = 0; i < size(); i++)
-	{
-		indexes[0] = (i % get_real_size(0));
-		for (size_t j = 1; j < Dims(); j++)
+		struct sorterSlice
 		{
-			indexes[j] = (i/get_real_size(j-1)) % get_real_size(j-1);
-		}
-		At(i) = generator(indexes);
+			const std::vector<TSlice>& vec;
+
+			sorterSlice(const std::vector<TSlice>& vec)
+				:vec(vec)
+			{}
+
+			bool operator()(size_t a, size_t b)
+			{
+				return vec[a].width() < vec[b].width();
+			}
+		};
 	}
-}
 
-template<typename T, Mode device>
-Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(const std::vector<size_t>&, const size_t&)> generator, const bool& add_extra_dim)
-	: m_shape(sizes.size() + 1 * add_extra_dim)
-{
-	if (add_extra_dim)
-		m_shape[sizes.size()] = 1;
-	Resize(sizes);
-
-	std::vector<size_t> indexes(Dims());
-
-	for (size_t i = 0; i < size(); i++)
+	template<typename T, Mode device>
+	std::vector<size_t> Tensor<T, device>::based_sort(const std::vector<size_t>& target)
 	{
-		indexes[0] = (i % get_real_size(0));
-		for (size_t j = 1; j < Dims(); j++)
+		std::vector<size_t> new_indexes(target.size());
+		std::iota(new_indexes.begin(), new_indexes.end(), 0);
+
+		std::sort(new_indexes.begin(), new_indexes.end(), sorter(target));
+
+		return new_indexes;
+	}
+
+	template<typename T, Mode device>
+	std::vector<size_t> Tensor<T, device>::based_sort(const std::vector<TSlice>& target)
+	{
+		std::vector<size_t> new_indexes(target.size());
+		std::iota(new_indexes.begin(), new_indexes.end(), 0);
+
+		std::sort(new_indexes.begin(), new_indexes.end(), sorterSlice(target));
+
+		return new_indexes;
+	}
+
+	/// Tensor constructors
+	///
+	template<typename T, Mode device>
+	Tensor<T, device>::Tensor(const int& dims)
+		: m_shape(dims + 1)
+	{
+		MEASURE();
+		m_shape[dims] = 1;
+	}
+
+	template<typename T, Mode device>
+	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, const T& pad_val, const bool& add_extra_dim)
+		: m_shape(sizes.size() + 1 * add_extra_dim)
+	{
+		MEASURE();
+		if (add_extra_dim)
+			m_shape[sizes.size()] = 1;
+		Resize(sizes, pad_val);
+	}
+
+	//generator functions take an index / coordinate as parameters and returns a value with the containter type
+
+	template<typename T, Mode device>
+	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(const size_t&)> generator, const bool& add_extra_dim)
+
+		: m_shape(sizes.size() + 1 * add_extra_dim)
+	{
+		if (add_extra_dim)
+			m_shape[sizes.size()] = 1;
+		Resize(sizes);
+
+		for (size_t i = 0; i < size(); i++)
 		{
-			indexes[j] = (i / get_real_size(j - 1)) % get_real_size(j - 1);
-		}
-		At(i) = generator(indexes, i);
-	}
-}
-
-template<typename T, Mode device>
-Tensor<T, device>::Tensor(const TensorSlice<T, device>& slice, const bool& add_extra_dim)
-	: m_shape(slice.Shape().size() + 1 * add_extra_dim)
-{
-	MEASURE();
-	if (add_extra_dim)
-		m_shape[slice.Shape().size()] = 1;
-	Resize(slice.Shape());
-
-	for (size_t i = 0; i < slice.size(); i++)
-	{
-		At(i) = slice[i];
-	}
-}
-
-
-
-template<typename T, Mode device>
-Tensor<T, device>::Tensor(const Tensor<T, device>& other)
-	: m_vector(other.asVector()), m_shape(other.Shape())
-{
-
-	MEASURE();
-	
-	#ifdef _CUDA
-	
-	if (other.isAllocated())
-	{
-		allocate();
-		cudaMemcpy(gpu_mem, other.gpu_mem, sizeof(T) * size(), cudaMemcpyDeviceToDevice);
-	}
-	
-	#endif
-
-}
-
-template<typename T, Mode device>
-Tensor<T, device>::~Tensor()
-{
-	#ifdef _CUDA
-	if (isAllocated())
-	{
-		deallocate();
-	}
-	#endif
-}
-
-/// Tensor public functions
-
-template<typename T, Mode device>
-void Tensor<T, device>::Fill(const T& val)
-{
-	MEASURE();
-	for (T& elem : *this)
-	{
-		elem = val;
-	}
-}
-
-template<typename T, Mode device>
-void Tensor<T, device>::Fill(const size_t& dim, const T& val, const size_t& index)
-{
-	MEASURE();
-	for (size_t i = 0; i < get_dim_size(dim); i++)
-	{
-		At(i + get_dim_offset(dim) * index) = val;
-	}
-}
-
-template<typename T, Mode device>
-inline void TSlib::Tensor<T, device>::Fill(std::function<T(const size_t&)> generator)
-{
-	MEASURE();
-	for (size_t i = 0; i < size(); i++)
-	{
-		At(i) = generator(i);
-	}
-}
-
-template<typename T, Mode device>
-inline void Tensor<T, device>::Fill(std::function<T(const std::vector<size_t>&)> generator)
-{
-	MEASURE();
-	std::vector<size_t> indexes(Dims());
-
-	for (size_t i = 0; i < size(); i++)
-	{
-		indexes[0] = (i % get_real_size(0));
-		for (size_t j = 1; j < Dims(); j++)
-		{
-			indexes[j] = (i / get_real_size(j - 1)) % get_real_size(j - 1);
-		}
-		At(i) = generator(indexes);
-	}
-}
-
-template<typename T, Mode device>
-inline void Tensor<T, device>::Fill(std::function<T(const std::vector<size_t>&, const size_t&)> generator)
-{
-	MEASURE();
-	std::vector<size_t> indexes(Dims());
-
-	for (size_t i = 0; i < size(); i++)
-	{
-		indexes[0] = (i % get_real_size(0));
-		for (size_t j = 1; j < Dims(); j++)
-		{
-			indexes[j] = (i / get_real_size(j - 1)) % get_real_size(j - 1);
-		}
-		At(i) = generator(indexes, i);
-	}
-}
-
-template<typename T, Mode device>
-inline void Tensor<T, device>::Replace(const T& target, const T& value)
-{
-	for (size_t i = 0; i < size(); i++)
-	{
-		if (target == At(i))
-		{
-			At(i) = value;
-		}
-	}
-}
-
-/// resize functions
-
-
-template<typename T, Mode device>
-void Tensor<T, device>::upscale_dim(const size_t& index, const size_t& row_size, const size_t& amount, const T& pad_val)
-{
-	MEASURE();
-	if (0 < get_dim_length(index + 1))
-	{
-		size_t insert_length = amount / get_dim_length(index + 1);
-		if (!insert_length)
-			return;
-		for (size_t j = 0; j < get_dim_length(index + 1); j++)
-		{
-			m_vector.insert(begin() + (row_size + get_real_size(index) * j), insert_length, pad_val);
-		}
-	}
-}
-
-template<typename T, Mode device>
-void Tensor<T, device>::downscale_dim(const size_t& index, const size_t& row_size, const size_t& amount)
-{
-	MEASURE();
-	if (0 < get_dim_length(index + 1))
-	{
-		size_t erase_length = amount / get_dim_length(index + 1);
-		if (!erase_length)
-			return;
-		for (size_t j = 0; j < get_dim_length(index + 1); j++)
-		{
-			size_t offset = row_size + get_real_size(index) * j;
-			m_vector.erase(begin() + offset - erase_length, begin() + offset);
+			At(i) = generator({ i });
 		}
 	}
 
-}
-
-template<typename T, Mode device>
-void Tensor<T, device>::ResizeDim(const size_t& index, const size_t& amount, const T& pad_val)
-{	
-	MEASURE();
-	#ifdef _CUDA
-	//deallocate gpu memory if allocated to make sure there isnt accidentally copied too much or little memory to cpu or gpu
-	if (isAllocated())
-		deallocate();
-	#endif
-	
-	//Reserve size
-
-	size_t new_amount = amount;
-	size_t tmp_size = m_vector.size();
-	size_t tmp_row_size = get_real_size(index);
-
-
-	m_shape[index] = amount;
-
-	if (index != 0)
-		new_amount = get_real_size(index - 1) * get_dim_length(index);
-	else
-
-		new_amount = get_dim_length(index);
-
-	if (new_amount > tmp_size)
+	template<typename T, Mode device>
+	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(const std::vector<size_t>&)> generator, const bool& add_extra_dim)
+		: m_shape(sizes.size() + 1 * add_extra_dim)
 	{
-		m_vector.reserve(new_amount);
-		new_amount -= tmp_size;
+		if (add_extra_dim)
+			m_shape[sizes.size()] = 1;
+		Resize(sizes);
 
-		//Resize dimention
-		upscale_dim(index, tmp_row_size, new_amount, pad_val);
-	}
-	else
-	{
-		new_amount = tmp_size - new_amount;
-		downscale_dim(index, tmp_row_size, new_amount);
+		std::vector<size_t> indexes(Dims());
+
+		for (size_t i = 0; i < size(); i++)
+		{
+			indexes[0] = (i % get_real_size(0));
+			for (size_t j = 1; j < Dims(); j++)
+			{
+				indexes[j] = (i / get_real_size(j - 1)) % get_real_size(j - 1);
+			}
+			At(i) = generator(indexes);
+		}
 	}
 
-
-
-}
-
-template<typename T, Mode device>
-inline size_t Tensor<T, device>::calc_new_size(const std::initializer_list<size_t>& sizes)
-{
-	MEASURE();
-	size_t new_size = 1;
-	size_t index = 0;
-	for (const size_t& size : sizes)
+	template<typename T, Mode device>
+	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(const std::vector<size_t>&, const size_t&)> generator, const bool& add_extra_dim)
+		: m_shape(sizes.size() + 1 * add_extra_dim)
 	{
-		new_size *= size * (size >= m_shape[index]) +
-					m_shape[index] * (size < m_shape[index]);
-		index++;
+		if (add_extra_dim)
+			m_shape[sizes.size()] = 1;
+		Resize(sizes);
+
+		std::vector<size_t> indexes(Dims());
+
+		for (size_t i = 0; i < size(); i++)
+		{
+			indexes[0] = (i % get_real_size(0));
+			for (size_t j = 1; j < Dims(); j++)
+			{
+				indexes[j] = (i / get_real_size(j - 1)) % get_real_size(j - 1);
+			}
+			At(i) = generator(indexes, i);
+		}
 	}
-	return new_size;
-}
 
-template<typename T, Mode device>
-inline size_t Tensor<T, device>::calc_new_size(const std::vector<size_t>& sizes)
-{
-	MEASURE();
-	size_t new_size = 1;
-	for (const size_t& elem_size : sizes)
+	template<typename T, Mode device>
+	Tensor<T, device>::Tensor(const TensorSlice<T, device>& slice, const bool& add_extra_dim)
+		: m_shape(slice.Shape().size() + 1 * add_extra_dim)
 	{
-		new_size *= elem_size;
+		MEASURE();
+		if (add_extra_dim)
+			m_shape[slice.Shape().size()] = 1;
+		Resize(slice.Shape());
+
+		for (size_t i = 0; i < slice.size(); i++)
+		{
+			At(i) = slice[i];
+		}
 	}
-	return new_size;
-}
 
-template<typename T, Mode device>
-void Tensor<T, device>::Resize(const std::vector<size_t>& sizes, const T& pad_val)
-{
-	MEASURE();
-	#ifdef _CUDA
-	//deallocate gpu memory if allocated to make sure there isnt accidentally copied too much or little memory to cpu or gpu
-	if (isAllocated())
-		deallocate();
-	#endif
-
-	#ifdef _DEBUG
-	if (sizes.size() == 0)
+	template<typename T, Mode device>
+	Tensor<T, device>::Tensor(const Tensor<T, device>& other)
+		: m_vector(other.asVector()), m_shape(other.Shape())
 	{
-		throw BadShape("New shape must not be of length 0");
+		MEASURE();
+
+		#ifdef _CUDA
+
+		if (other.isAllocated())
+		{
+			allocate();
+			cudaMemcpy(gpu_mem, other.gpu_mem, sizeof(T) * size(), cudaMemcpyDeviceToDevice);
+		}
+
+		#endif
 	}
-	#endif
 
-	size_t current_size = get_real_size(m_shape.size() - 1);
-	size_t new_size = calc_new_size(sizes);
-
-	if (current_size < new_size)
-		m_vector.reserve(new_size - current_size);
-	size_t iteration = 0;
-	std::vector<size_t> indexes = based_sort(sizes);
-
-
-	for (size_t i = 0; i < sizes.size(); i++)
+	template<typename T, Mode device>
+	Tensor<T, device>::~Tensor()
 	{
-		size_t new_amount = sizes[indexes[iteration]];
+		#ifdef _CUDA
+		if (isAllocated())
+		{
+			deallocate();
+		}
+		#endif
+	}
+
+	/// Tensor public functions
+
+	template<typename T, Mode device>
+	void Tensor<T, device>::Fill(const T& val)
+	{
+		MEASURE();
+		for (T& elem : *this)
+		{
+			elem = val;
+		}
+	}
+
+	template<typename T, Mode device>
+	void Tensor<T, device>::Fill(const size_t& dim, const T& val, const size_t& index)
+	{
+		MEASURE();
+		for (size_t i = 0; i < get_dim_size(dim); i++)
+		{
+			At(i + get_dim_offset(dim) * index) = val;
+		}
+	}
+
+	template<typename T, Mode device>
+	inline void TSlib::Tensor<T, device>::Fill(std::function<T(const size_t&)> generator)
+	{
+		MEASURE();
+		for (size_t i = 0; i < size(); i++)
+		{
+			At(i) = generator(i);
+		}
+	}
+
+	template<typename T, Mode device>
+	inline void Tensor<T, device>::Fill(std::function<T(const std::vector<size_t>&)> generator)
+	{
+		MEASURE();
+		std::vector<size_t> indexes(Dims());
+
+		for (size_t i = 0; i < size(); i++)
+		{
+			indexes[0] = (i % get_real_size(0));
+			for (size_t j = 1; j < Dims(); j++)
+			{
+				indexes[j] = (i / get_real_size(j - 1)) % get_real_size(j - 1);
+			}
+			At(i) = generator(indexes);
+		}
+	}
+
+	template<typename T, Mode device>
+	inline void Tensor<T, device>::Fill(std::function<T(const std::vector<size_t>&, const size_t&)> generator)
+	{
+		MEASURE();
+		std::vector<size_t> indexes(Dims());
+
+		for (size_t i = 0; i < size(); i++)
+		{
+			indexes[0] = (i % get_real_size(0));
+			for (size_t j = 1; j < Dims(); j++)
+			{
+				indexes[j] = (i / get_real_size(j - 1)) % get_real_size(j - 1);
+			}
+			At(i) = generator(indexes, i);
+		}
+	}
+
+	template<typename T, Mode device>
+	inline void Tensor<T, device>::Replace(const T& target, const T& value)
+	{
+		for (size_t i = 0; i < size(); i++)
+		{
+			if (target == At(i))
+			{
+				At(i) = value;
+			}
+		}
+	}
+
+	/// resize functions
+
+	template<typename T, Mode device>
+	void Tensor<T, device>::upscale_dim(const size_t& index, const size_t& row_size, const size_t& amount, const T& pad_val)
+	{
+		MEASURE();
+		if (0 < get_dim_length(index + 1))
+		{
+			size_t insert_length = amount / get_dim_length(index + 1);
+			if (!insert_length)
+				return;
+			for (size_t j = 0; j < get_dim_length(index + 1); j++)
+			{
+				m_vector.insert(begin() + (row_size + get_real_size(index) * j), insert_length, pad_val);
+			}
+		}
+	}
+
+	template<typename T, Mode device>
+	void Tensor<T, device>::downscale_dim(const size_t& index, const size_t& row_size, const size_t& amount)
+	{
+		MEASURE();
+		if (0 < get_dim_length(index + 1))
+		{
+			size_t erase_length = amount / get_dim_length(index + 1);
+			if (!erase_length)
+				return;
+			for (size_t j = 0; j < get_dim_length(index + 1); j++)
+			{
+				size_t offset = row_size + get_real_size(index) * j;
+				m_vector.erase(begin() + offset - erase_length, begin() + offset);
+			}
+		}
+	}
+
+	template<typename T, Mode device>
+	void Tensor<T, device>::ResizeDim(const size_t& index, const size_t& amount, const T& pad_val)
+	{
+		MEASURE();
+		#ifdef _CUDA
+		//deallocate gpu memory if allocated to make sure there isnt accidentally copied too much or little memory to cpu or gpu
+		if (isAllocated())
+			deallocate();
+		#endif
+
+		//Reserve size
+
+		size_t new_amount = amount;
 		size_t tmp_size = m_vector.size();
-		size_t tmp_row_size = get_real_size(indexes[iteration]);
+		size_t tmp_row_size = get_real_size(index);
 
-		m_shape[indexes[iteration]] = sizes[indexes[iteration]];
+		m_shape[index] = amount;
 
-		if (indexes[iteration] != 0)
-			new_amount = get_real_size(indexes[iteration] - 1) * get_dim_length(indexes[iteration]);
+		if (index != 0)
+			new_amount = get_real_size(index - 1) * get_dim_length(index);
 		else
-			new_amount = get_dim_length(indexes[iteration]);
+
+			new_amount = get_dim_length(index);
 
 		if (new_amount > tmp_size)
 		{
+			m_vector.reserve(new_amount);
 			new_amount -= tmp_size;
 
 			//Resize dimention
-			upscale_dim(indexes[iteration], tmp_row_size, new_amount, pad_val);
+			upscale_dim(index, tmp_row_size, new_amount, pad_val);
 		}
 		else
 		{
 			new_amount = tmp_size - new_amount;
+			downscale_dim(index, tmp_row_size, new_amount);
+		}
+	}
 
-			downscale_dim(indexes[iteration], tmp_row_size, new_amount);
+	template<typename T, Mode device>
+	inline size_t Tensor<T, device>::calc_new_size(const std::initializer_list<size_t>& sizes)
+	{
+		MEASURE();
+		size_t new_size = 1;
+		size_t index = 0;
+		for (const size_t& size : sizes)
+		{
+			new_size *= size * (size >= m_shape[index]) +
+				m_shape[index] * (size < m_shape[index]);
+			index++;
+		}
+		return new_size;
+	}
+
+	template<typename T, Mode device>
+	inline size_t Tensor<T, device>::calc_new_size(const std::vector<size_t>& sizes)
+	{
+		MEASURE();
+		size_t new_size = 1;
+		for (const size_t& elem_size : sizes)
+		{
+			new_size *= elem_size;
+		}
+		return new_size;
+	}
+
+	template<typename T, Mode device>
+	void Tensor<T, device>::Resize(const std::vector<size_t>& sizes, const T& pad_val)
+	{
+		MEASURE();
+		#ifdef _CUDA
+		//deallocate gpu memory if allocated to make sure there isnt accidentally copied too much or little memory to cpu or gpu
+		if (isAllocated())
+			deallocate();
+		#endif
+
+		#ifdef _DEBUG
+		if (sizes.size() == 0)
+		{
+			throw BadShape("New shape must not be of length 0");
+		}
+		#endif
+
+		size_t current_size = get_real_size(m_shape.size() - 1);
+		size_t new_size = calc_new_size(sizes);
+
+		if (current_size < new_size)
+			m_vector.reserve(new_size - current_size);
+		size_t iteration = 0;
+		std::vector<size_t> indexes = based_sort(sizes);
+
+		for (size_t i = 0; i < sizes.size(); i++)
+		{
+			size_t new_amount = sizes[indexes[iteration]];
+			size_t tmp_size = m_vector.size();
+			size_t tmp_row_size = get_real_size(indexes[iteration]);
+
+			m_shape[indexes[iteration]] = sizes[indexes[iteration]];
+
+			if (indexes[iteration] != 0)
+				new_amount = get_real_size(indexes[iteration] - 1) * get_dim_length(indexes[iteration]);
+			else
+				new_amount = get_dim_length(indexes[iteration]);
+
+			if (new_amount > tmp_size)
+			{
+				new_amount -= tmp_size;
+
+				//Resize dimention
+				upscale_dim(indexes[iteration], tmp_row_size, new_amount, pad_val);
+			}
+			else
+			{
+				new_amount = tmp_size - new_amount;
+
+				downscale_dim(indexes[iteration], tmp_row_size, new_amount);
+			}
+
+			iteration++;
 		}
 
-		iteration++;
+		m_vector.shrink_to_fit();
 	}
-	
-	m_vector.shrink_to_fit();
-}
 
-template<typename T, Mode device>
-void Tensor<T, device>::Reshape(const std::initializer_list<size_t>& shape, bool add_extra_dim)
-{
-	MEASURE();
-	#ifdef _DEBUG
-	size_t new_shape_size = 1;
-	for (const size_t& elem : shape)
+	template<typename T, Mode device>
+	void Tensor<T, device>::Reshape(const std::initializer_list<size_t>& shape, bool add_extra_dim)
 	{
-		new_shape_size *= elem;
+		MEASURE();
+		#ifdef _DEBUG
+		size_t new_shape_size = 1;
+		for (const size_t& elem : shape)
+		{
+			new_shape_size *= elem;
+		}
+
+		if (size() != new_shape_size)
+			throw BadShape(this, "New shape does not fit the current tensor's dimensions", shape);
+		#endif
+
+		m_shape.erase(m_shape.begin(), m_shape.end());
+
+		for (const size_t& elem : shape)
+		{
+			m_shape.push_back(elem);
+		}
+
+		if (add_extra_dim)
+			m_shape.push_back(1);
 	}
-	
-	if (size() != new_shape_size)
-		throw BadShape(this, "New shape does not fit the current tensor's dimensions", shape);
-	#endif
 
-	m_shape.erase(m_shape.begin(), m_shape.end());
-
-	for (const size_t& elem : shape)
+	template<typename T, Mode device>
+	void Tensor<T, device>::Reshape(const std::vector<size_t>& shape, bool add_extra_dim)
 	{
-		m_shape.push_back(elem);
+		MEASURE();
+		#ifdef _DEBUG
+		size_t new_shape_size = 1;
+		for (const size_t& elem : shape)
+		{
+			new_shape_size *= elem;
+		}
+
+		if (size() != new_shape_size)
+		{
+			throw BadShape(this, "New shape does not fit the current tensor's dimensions", shape);
+		}
+		#endif
+
+		m_shape.erase(m_shape.begin(), m_shape.end());
+
+		for (const size_t& elem : shape)
+		{
+			m_shape.push_back(elem);
+		}
+
+		if (add_extra_dim)
+			m_shape.push_back(1);
 	}
 
-	if (add_extra_dim)
-		m_shape.push_back(1);
-}
-
-template<typename T, Mode device>
-void Tensor<T, device>::Reshape(const std::vector<size_t>& shape, bool add_extra_dim)
-{
-	MEASURE();
-	#ifdef _DEBUG
-	size_t new_shape_size = 1;
-	for (const size_t& elem : shape)
+	template<typename T, Mode device>
+	void Tensor<T, device>::AddDims(const size_t& dims)
 	{
-		new_shape_size *= elem;
+		MEASURE();
+
+		#ifdef _CUDA
+		//deallocate gpu memory if allocated to make sure there isnt accidentally copied too much or little memory to cpu or gpu
+		if (isAllocated())
+			deallocate();
+		#endif
+
+		m_shape.resize(m_shape.size() + dims, 1);
 	}
 
-	if (size() != new_shape_size)
+	template<typename T, Mode device>
+	void Tensor<T, device>::RemoveDims(const size_t& dims)
 	{
-		throw BadShape(this, "New shape does not fit the current tensor's dimensions", shape);
+		MEASURE();
+
+		#ifdef _CUDA
+		//deallocate gpu memory if allocated to make sure there isnt accidentally copied too much or little memory to cpu or gpu
+		if (isAllocated())
+			deallocate();
+		#endif
+
+		#ifdef _DEBUG
+
+		if (dims > Dims() - 1)
+		{
+			throw BadValue("Cannot Remove more dims than the amount of dims in Tensor", dims);
+		}
+
+		#endif
+
+		m_shape.resize(m_shape.size() - dims);
+		m_shape[m_shape.size() - 1] = 1;
 	}
-	#endif
 
-	m_shape.erase(m_shape.begin(), m_shape.end());
-
-	for (const size_t& elem : shape)
+	template<typename T, Mode device>
+	inline TensorSlice<T, device> Tensor<T, device>::Slice(const std::vector<TSlice>& slices)
 	{
-		m_shape.push_back(elem);
+		MEASURE();
+		return TensorSlice<T, device>(this, slices);
 	}
 
-	if (add_extra_dim)
-		m_shape.push_back(1);
-}
+	//template<typename T, Mode device>
+	//template<typename ... Args>
+	//TensorSlice<T, device> Tensor<T, device>::Slice(const std::initializer_list<Args>& ... slices)
+	//{
+	//	std::vector<TSlice> slice_vec;
+	//	slice_vec.reserve(Dims());
+	//
+	//	to_vector(slice_vec, slices...);
+	//
+	//	#ifdef _DEBUG
+	//
+	//	if (slice_vec.size() > Dims())
+	//	{
+	//		throw BadValue("There cannot be passed more TSlices than dimensions", ExceptValue<size_t>("Got", slice_vec.size()), ExceptValue<size_t>("Expected", size()));
+	//	}
+	//	#endif
+	//
+	//	return TensorSlice<T, device>(this, slice_vec);
+	//}
 
-template<typename T, Mode device>
-void Tensor<T, device>::AddDims(const size_t& dims)
-{
-	MEASURE();
+	/// Element access functions
 
 	#ifdef _CUDA
-	//deallocate gpu memory if allocated to make sure there isnt accidentally copied too much or little memory to cpu or gpu
-	if (isAllocated())
-		deallocate();
-	#endif
-
-	m_shape.resize(m_shape.size() + dims, 1);
-}
-
-template<typename T, Mode device>
-void Tensor<T, device>::RemoveDims(const size_t& dims)
-{
-	MEASURE();
-
-	#ifdef _CUDA
-	//deallocate gpu memory if allocated to make sure there isnt accidentally copied too much or little memory to cpu or gpu
-	if (isAllocated())
-		deallocate();
-	#endif
-	
-	#ifdef _DEBUG
-	
-	if (dims > Dims() - 1)
+	template<typename T, Mode device>
+	Tensor<T, device>::operator T* ()
 	{
-		throw BadValue("Cannot Remove more dims than the amount of dims in Tensor", dims);
+		MEASURE();
+		return gpu_mem;
+	}
+	#endif
+
+	template<typename T, Mode device>
+	template<typename ... Args>
+	inline T& Tensor<T, device>::Get(const Args& ... coords)
+	{
+		MEASURE();
+		size_t index = 0;
+		size_t tmp_multiply = 1;
+		size_t i = 0;
+
+		get_indx(index, i, tmp_multiply, coords...);
+
+		return m_vector.at(index);
 	}
 
-	#endif
+	template<typename T, Mode device>
+	inline T& Tensor<T, device>::At(size_t indx)
+	{
+		return m_vector[indx];
+	}
 
-	m_shape.resize(m_shape.size() - dims);
-	m_shape[m_shape.size() - 1] = 1;
-}
+	template<typename T, Mode device>
+	inline T Tensor<T, device>::At(size_t indx) const
+	{
+		return m_vector[indx];
+	}
 
-template<typename T, Mode device>
-inline TensorSlice<T, device> Tensor<T, device>::Slice(const std::vector<TSlice>& slices)
-{
-	MEASURE();
-	return TensorSlice<T, device>(this, slices);
-}
+	template<typename T, Mode device>
+	inline const T* Tensor<T, device>::Data() const
+	{
+		return m_vector.data();
+	}
 
-//template<typename T, Mode device>
-//template<typename ... Args>
-//TensorSlice<T, device> Tensor<T, device>::Slice(const std::initializer_list<Args>& ... slices)
-//{
-//	std::vector<TSlice> slice_vec;
-//	slice_vec.reserve(Dims());
-//
-//	to_vector(slice_vec, slices...);
-//
-//	#ifdef _DEBUG
-//
-//	if (slice_vec.size() > Dims())
-//	{
-//		throw BadValue("There cannot be passed more TSlices than dimensions", ExceptValue<size_t>("Got", slice_vec.size()), ExceptValue<size_t>("Expected", size()));
-//	}
-//	#endif
-//
-//	return TensorSlice<T, device>(this, slice_vec);
-//}
+	template<typename T, Mode device>
+	inline T* Tensor<T, device>::Data()
+	{
+		return m_vector.data();
+	}
 
+	/// Tensor info / get functions
 
-/// Element access functions
+	template<typename T, Mode device>
+	inline size_t Tensor<T, device>::Dims() const
+	{
+		return m_shape.size();
+	}
 
-#ifdef _CUDA
-template<typename T, Mode device>
-Tensor<T, device>::operator T* ()
-{
-	MEASURE();
-	return gpu_mem;
-}
-#endif
+	template<typename T, Mode device>
+	inline const std::vector<size_t>& Tensor<T, device>::Shape() const
+	{
+		return m_shape;
+	}
 
-template<typename T, Mode device>
-template<typename ... Args>
-inline T& Tensor<T, device>::Get(const Args& ... coords)
-{
-	MEASURE();
-	size_t index = 0;
-	size_t tmp_multiply = 1;
-	size_t i = 0;
-	
-	get_indx(index, i, tmp_multiply, coords...);
-	
-	return m_vector.at(index);
-}
+	template<typename T, Mode device>
+	inline size_t Tensor<T, device>::size() const
+	{
+		return m_vector.size();
+	}
 
-template<typename T, Mode device>
-inline T& Tensor<T, device>::At(size_t indx)
-{
-	return m_vector[indx];
-}
+	/// Tensor iterator funtions
 
-template<typename T, Mode device>
-inline T Tensor<T, device>::At(size_t indx) const
-{
-	return m_vector[indx];
-}
+	template<typename T, Mode device>
+	inline typename std::vector<T>::const_iterator Tensor<T, device>::begin() const
+	{
+		return m_vector.begin();
+	}
 
-template<typename T, Mode device>
-inline const T* Tensor<T, device>::Data() const
-{
-	return m_vector.data();
-}
+	template<typename T, Mode device>
+	inline typename std::vector<T>::iterator Tensor<T, device>::begin()
+	{
+		return m_vector.begin();
+	}
 
-template<typename T, Mode device>
-inline T* Tensor<T, device>::Data()
-{
-	return m_vector.data();
-}
+	template<typename T, Mode device>
+	inline typename std::vector<T>::const_iterator Tensor<T, device>::end() const
+	{
+		return m_vector.end();
+	}
 
-/// Tensor info / get functions
+	template<typename T, Mode device>
+	inline typename std::vector<T>::iterator Tensor<T, device>::end()
+	{
+		return m_vector.end();
+	}
 
-template<typename T, Mode device>
-inline size_t Tensor<T, device>::Dims() const
-{
-	return m_shape.size();
-}
+	template<typename T, Mode device>
+	inline const std::vector<T>& Tensor<T, device>::asVector() const
+	{
+		return m_vector;
+	}
 
-template<typename T, Mode device>
-inline const std::vector<size_t>& Tensor<T, device>::Shape() const
-{
-	return m_shape;
-}
+	/// Tensor access operators
 
-template<typename T, Mode device>
-inline size_t Tensor<T, device>::size() const
-{
-	return m_vector.size();
-}
+	template<typename T, Mode device>
+	template<typename ... Args>
+	inline T& Tensor<T, device>::operator()(Args ... coords)
+	{
+		MEASURE();
+		return Get(coords...);
+	}
 
-/// Tensor iterator funtions
+	template<typename T, Mode device>
+	inline T& Tensor<T, device>::operator[](size_t indx)
+	{
+		return At(indx);
+	}
 
-template<typename T, Mode device>
-inline typename std::vector<T>::const_iterator Tensor<T, device>::begin() const
-{
-	return m_vector.begin();
-}
+	template<typename T, Mode device>
+	inline T Tensor<T, device>::operator[](size_t indx) const
+	{
+		return At(indx);
+	}
 
-template<typename T, Mode device>
-inline typename std::vector<T>::iterator Tensor<T, device>::begin()
-{
-	return m_vector.begin();
-}
-
-template<typename T, Mode device>
-inline typename std::vector<T>::const_iterator Tensor<T, device>::end() const
-{
-	return m_vector.end();
-}
-
-template<typename T, Mode device>
-inline typename std::vector<T>::iterator Tensor<T, device>::end()
-{
-	return m_vector.end();
-}
-
-
-
-
-template<typename T, Mode device>
-inline const std::vector<T>& Tensor<T, device>::asVector() const
-{
-	return m_vector;
-}
-
-
-/// Tensor access operators
- 
-template<typename T, Mode device>
-template<typename ... Args>
-inline T& Tensor<T, device>::operator()(Args ... coords)
-{
-	MEASURE();
-	return Get(coords...);
-}
-
-template<typename T, Mode device>
-inline T& Tensor<T, device>::operator[](size_t indx)
-{
-	return At(indx);
-}
-
-template<typename T, Mode device>
-inline T Tensor<T, device>::operator[](size_t indx) const
-{
-	return At(indx);
-}
-
-
-
-#if defined(_CUDA) && defined(_AMP)
+	#if defined(_CUDA) && defined(_AMP)
 	#pragma message("warning: Cannot use both cuda and amp at the same time defaulting to cuda")
-#endif
-
-/// Tensor math functions
-
-template<typename T, Mode device>
-template<typename RT>
-RT Tensor<T, device>::sum()
-{
-	MEASURE();
-	RT result = RT();
-	for (size_t i = 0; i < size(); i++)
-		result += (RT)At(i);
-	return result;
-}
-
-/*
- * CPU operators
- */
-
-template<typename T, Mode device>
-template<typename RT, typename OT, Mode o_device>
-inline Tensor<RT, device> Tensor<T, device>::add(const Tensor<OT, o_device>& other) const
-{
-	MEASURE();
-	#ifdef _DEBUG
-
-	if (Dims() != other.Dims())
-	{
-		throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
-	}
-
-	for (size_t i = 0; i < this->Dims(); i++)
-	{
-		if (Shape()[i] != other.Shape()[i])
-		{
-			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
-		}
-	}
 	#endif
 
-	Tensor<RT, device> result(this->Shape(), RT(), false);
+	/// Tensor math functions
 
-	for (size_t i = 0; i < this->size(); i++)
+	template<typename T, Mode device>
+	template<typename RT>
+	RT Tensor<T, device>::sum()
 	{
-		result[i] = this->At(i) + other[i];
+		MEASURE();
+		RT result = RT();
+		for (size_t i = 0; i < size(); i++)
+			result += (RT)At(i);
+		return result;
 	}
 
-	return result;
-}
+	/*
+	 * CPU operators
+	 */
 
-template<typename T, Mode device>
-template<typename RT, typename OT, Mode o_device>
-inline Tensor<RT, device> Tensor<T, device>::add(const TensorSlice<OT, o_device>& other) const
-{
-	MEASURE();
-	#ifdef _DEBUG
-	if (Dims() < other.Dims())
+	template<typename T, Mode device>
+	template<typename RT, typename OT, Mode o_device>
+	inline Tensor<RT, device> Tensor<T, device>::add(const Tensor<OT, o_device>& other) const
 	{
-		throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
-	}
+		MEASURE();
+		#ifdef _DEBUG
 
-	for (size_t i = 0; i < this->Dims(); i++)
-	{
-		if (Shape()[i] != other.Shape()[i])
+		if (Dims() != other.Dims())
 		{
-			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+		}
+
+		for (size_t i = 0; i < this->Dims(); i++)
+		{
+			if (Shape()[i] != other.Shape()[i])
+			{
+				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			}
+		}
+		#endif
+
+		Tensor<RT, device> result(this->Shape(), RT(), false);
+
+		for (size_t i = 0; i < this->size(); i++)
+		{
+			result[i] = this->At(i) + other[i];
+		}
+
+		return result;
+	}
+
+	template<typename T, Mode device>
+	template<typename RT, typename OT, Mode o_device>
+	inline Tensor<RT, device> Tensor<T, device>::add(const TensorSlice<OT, o_device>& other) const
+	{
+		MEASURE();
+		#ifdef _DEBUG
+		if (Dims() < other.Dims())
+		{
+			throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
+		}
+
+		for (size_t i = 0; i < this->Dims(); i++)
+		{
+			if (Shape()[i] != other.Shape()[i])
+			{
+				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			}
+		}
+		#endif
+
+		Tensor<RT, device> result = *this;
+
+		for (size_t i = 0; i < other.size(); i++)
+		{
+			result[other.map_index(i)] = At(other.map_index(i)) + other[i];
+		}
+
+		return result;
+	}
+
+	template<typename T, Mode device>
+	template<typename RT, typename OT>
+	inline Tensor<RT, device> Tensor<T, device>::addSingle(const OT& other) const
+	{
+		MEASURE();
+		Tensor<RT, device> result(this->Shape(), RT(), false);
+
+		for (size_t i = 0; i < size(); i++)
+		{
+			result[i] = At(i) + other;
+		}
+
+		return result;
+	}
+
+	template<typename T, Mode device>
+	template<typename RT, typename OT, Mode o_device>
+	inline Tensor<RT, device> Tensor<T, device>::subtract(const Tensor<OT, o_device>& other) const
+	{
+		MEASURE();
+		#ifdef _DEBUG
+		if (Dims() != other.Dims())
+		{
+			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+		}
+
+		for (size_t i = 0; i < this->Dims(); i++)
+		{
+			if (Shape()[i] != other.Shape()[i])
+			{
+				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			}
+		}
+		#endif
+
+		Tensor<RT, device> result(this->Shape(), RT(), false);
+
+		for (size_t i = 0; i < this->size(); i++)
+		{
+			result[i] = this->At(i) - other[i];
+		}
+
+		return result;
+	}
+
+	template<typename T, Mode device>
+	template<typename RT, typename OT, Mode o_device>
+	inline Tensor<RT, device> Tensor<T, device>::subtract(const TensorSlice<OT, o_device>& other) const
+	{
+		MEASURE();
+		#ifdef _DEBUG
+		if (Dims() < other.Dims())
+		{
+			throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
+		}
+
+		for (size_t i = 0; i < this->Dims(); i++)
+		{
+			if (Shape()[i] != other.Shape()[i])
+			{
+				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			}
+		}
+		#endif
+
+		Tensor<RT, device> result = *this;
+
+		for (size_t i = 0; i < other.size(); i++)
+		{
+			result[other.map_index(i)] = At(other.map_index(i)) - other[i];
+		}
+
+		return result;
+	}
+
+	template<typename T, Mode device>
+	template<typename RT, typename OT>
+	inline Tensor<RT, device> Tensor<T, device>::subtractSingle(const OT& other) const
+	{
+		MEASURE();
+		Tensor<RT, device> result(this->Shape(), RT(), false);
+
+		for (size_t i = 0; i < this->size(); i++)
+		{
+			result[i] = this->At(i) - other;
+		}
+
+		return result;
+	}
+
+	template<typename T, Mode device>
+	template<typename RT, typename OT, Mode o_device>
+	inline Tensor<RT, device> Tensor<T, device>::multiply(const Tensor<OT, o_device>& other) const
+	{
+		MEASURE();
+		#ifdef _DEBUG
+		if (Dims() != other.Dims())
+		{
+			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+		}
+
+		for (size_t i = 0; i < this->Dims(); i++)
+		{
+			if (Shape()[i] != other.Shape()[i])
+			{
+				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			}
+		}
+		#endif
+
+		Tensor<RT, device> result(this->Shape(), RT(), false);
+
+		for (size_t i = 0; i < this->size(); i++)
+		{
+			result[i] = this->At(i) * other[i];
+		}
+
+		return result;
+	}
+
+	template<typename T, Mode device>
+	template<typename RT, typename OT, Mode o_device>
+	inline Tensor<RT, device> Tensor<T, device>::multiply(const TensorSlice<OT, o_device>& other) const
+	{
+		MEASURE();
+		#ifdef _DEBUG
+		if (Dims() < other.Dims())
+		{
+			throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
+		}
+
+		for (size_t i = 0; i < this->Dims(); i++)
+		{
+			if (Shape()[i] != other.Shape()[i])
+			{
+				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			}
+		}
+		#endif
+
+		Tensor<RT, device> result = *this;
+
+		for (size_t i = 0; i < other.size(); i++)
+		{
+			result[other.map_index(i)] = At(other.map_index(i)) * other[i];
+		}
+
+		return result;
+	}
+
+	template<typename T, Mode device>
+	template<typename RT, typename OT>
+	inline Tensor<RT, device> Tensor<T, device>::multiplySingle(const OT& other) const
+	{
+		MEASURE();
+		Tensor<RT, device> result(this->Shape(), RT(), false);
+
+		for (size_t i = 0; i < this->size(); i++)
+		{
+			result[i] = this->At(i) * other;
+		}
+
+		return result;
+	}
+
+	template<typename T, Mode device>
+	template<typename RT, typename OT, Mode o_device>
+	inline Tensor<RT, device> Tensor<T, device>::divide(const Tensor<OT, o_device>& other) const
+	{
+		MEASURE();
+		#ifdef _DEBUG
+		if (Dims() != other.Dims())
+		{
+			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+		}
+
+		for (size_t i = 0; i < this->Dims(); i++)
+		{
+			if (Shape()[i] != other.Shape()[i])
+			{
+				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			}
+		}
+		#endif
+
+		Tensor<RT, device> result(this->Shape(), RT(), false);
+
+		for (size_t i = 0; i < this->size(); i++)
+		{
+			result[i] = this->At(i) - other[i];
+		}
+
+		return result;
+	}
+
+	template<typename T, Mode device>
+	template<typename RT, typename OT, Mode o_device>
+	inline Tensor<RT, device> Tensor<T, device>::divide(const TensorSlice<OT, o_device>& other) const
+	{
+		MEASURE();
+		#ifdef _DEBUG
+		if (Dims() < other.Dims())
+		{
+			throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
+		}
+
+		for (size_t i = 0; i < this->Dims(); i++)
+		{
+			if (Shape()[i] != other.Shape()[i])
+			{
+				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			}
+		}
+		#endif
+
+		Tensor<RT, device> result = *this;
+
+		for (size_t i = 0; i < other.size(); i++)
+		{
+			result[other.map_index(i)] = At(other.map_index(i)) / other[i];
+		}
+
+		return result;
+	}
+
+	template<typename T, Mode device>
+	template<typename RT, typename OT>
+	inline Tensor<RT, device> Tensor<T, device>::divideSingle(const OT& other) const
+	{
+		MEASURE();
+		Tensor<RT, device> result(this->Shape(), RT(), false);
+
+		for (size_t i = 0; i < this->size(); i++)
+		{
+			result[i] = this->At(i) - other;
+		}
+
+		return result;
+	}
+
+	template<typename T, Mode device>
+	template<typename RT, typename OT, Mode o_device>
+	inline Tensor<RT, device> Tensor<T, device>::modulous(const Tensor<OT, o_device>& other) const
+	{
+		MEASURE();
+		#ifdef _DEBUG
+		if (Dims() != other.Dims())
+		{
+			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+		}
+
+		for (size_t i = 0; i < this->Dims(); i++)
+		{
+			if (Shape()[i] != other.Shape()[i])
+			{
+				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			}
+		}
+		#endif
+
+		Tensor<RT, device> result(this->Shape(), RT(), false);
+
+		for (size_t i = 0; i < this->size(); i++)
+		{
+			result[i] = this->At(i) % other[i];
+		}
+
+		return result;
+	}
+
+	template<typename T, Mode device>
+	template<typename RT, typename OT, Mode o_device>
+	inline Tensor<RT, device> Tensor<T, device>::modulous(const TensorSlice<OT, o_device>& other) const
+	{
+		MEASURE();
+		#ifdef _DEBUG
+		if (Dims() < other.Dims())
+		{
+			throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
+		}
+
+		for (size_t i = 0; i < this->Dims(); i++)
+		{
+			if (Shape()[i] != other.Shape()[i])
+			{
+				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			}
+		}
+		#endif
+
+		Tensor<RT, device> result = *this;
+
+		for (size_t i = 0; i < other.size(); i++)
+		{
+			result[other.map_index(i)] = At(other.map_index(i)) % other[i];
+		}
+
+		return result;
+	}
+
+	template<typename T, Mode device>
+	template<typename RT, typename OT>
+	inline Tensor<RT, device> Tensor<T, device>::modulousSingle(const OT& other) const
+	{
+		MEASURE();
+		Tensor<RT, device> result(this->Shape(), RT(), false);
+
+		for (size_t i = 0; i < this->size(); i++)
+		{
+			result[i] = this->At(i) % other;
+		}
+
+		return result;
+	}
+
+	template<typename T, Mode device>
+	template<typename OT, Mode o_device>
+	inline void Tensor<T, device>::additionAssignment(const Tensor<OT, o_device>& other)
+	{
+		MEASURE();
+		#ifdef _DEBUG
+		if (Dims() != other.Dims())
+		{
+			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+		}
+
+		for (size_t i = 0; i < this->Dims(); i++)
+		{
+			if (Shape()[i] != other.Shape()[i])
+			{
+				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			}
+		}
+		#endif
+
+		for (size_t i = 0; i < this->size(); i++)
+		{
+			this->At(i) += other[i];
 		}
 	}
-	#endif
 
-	Tensor<RT, device> result = *this;
-
-	for (size_t i = 0; i < other.size(); i++)
+	template<typename T, Mode device>
+	template<typename OT, Mode o_device>
+	inline void Tensor<T, device>::additionAssignment(const TensorSlice<OT, o_device>& other)
 	{
-		result[other.map_index(i)] = At(other.map_index(i)) + other[i];
-	}
-
-	return result;
-}
-
-template<typename T, Mode device>
-template<typename RT, typename OT>
-inline Tensor<RT, device> Tensor<T, device>::addSingle(const OT& other) const
-{
-	MEASURE();
-	Tensor<RT, device> result(this->Shape(), RT(), false);
-
-	for (size_t i = 0; i < size(); i++)
-	{
-		result[i] = At(i) + other;
-	}
-
-	return result;
-}
-
-template<typename T, Mode device>
-template<typename RT, typename OT, Mode o_device>
-inline Tensor<RT, device> Tensor<T, device>::subtract(const Tensor<OT, o_device>& other) const
-{
-	MEASURE();
-	#ifdef _DEBUG
-	if (Dims() != other.Dims())
-	{
-		throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
-	}
-
-	for (size_t i = 0; i < this->Dims(); i++)
-	{
-		if (Shape()[i] != other.Shape()[i])
+		MEASURE();
+		#ifdef _DEBUG
+		if (Dims() < other.Dims())
 		{
-			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
+		}
+
+		for (size_t i = 0; i < this->Dims(); i++)
+		{
+			if (Shape()[i] != other.Shape()[i])
+			{
+				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			}
+		}
+		#endif
+
+		for (size_t i = 0; i < other.size(); i++)
+		{
+			At(other.map_index(i)) += other[i];
 		}
 	}
-	#endif
 
-	Tensor<RT, device> result(this->Shape(), RT(), false);
-
-	for (size_t i = 0; i < this->size(); i++)
+	template<typename T, Mode device>
+	template<typename OT>
+	inline void Tensor<T, device>::additionAssignmentSingle(const OT& other)
 	{
-
-		result[i] = this->At(i) - other[i];
-	}
-
-	return result;
-}
-
-
-template<typename T, Mode device>
-template<typename RT, typename OT, Mode o_device>
-inline Tensor<RT, device> Tensor<T, device>::subtract(const TensorSlice<OT, o_device>& other) const
-{
-	MEASURE();
-	#ifdef _DEBUG
-	if (Dims() < other.Dims())
-	{
-		throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
-	}
-
-	for (size_t i = 0; i < this->Dims(); i++)
-	{
-		if (Shape()[i] != other.Shape()[i])
+		MEASURE();
+		for (size_t i = 0; i < this->size(); i++)
 		{
-			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			this->At(i) += other;
 		}
 	}
-	#endif
 
-	Tensor<RT, device> result = *this;
-
-	for (size_t i = 0; i < other.size(); i++)
+	template<typename T, Mode device>
+	template<typename OT, Mode o_device>
+	inline void Tensor<T, device>::subtractionAssignment(const Tensor<OT, o_device>& other)
 	{
-		result[other.map_index(i)] = At(other.map_index(i)) - other[i];
-	}
-
-	return result;
-}
-
-template<typename T, Mode device>
-template<typename RT, typename OT>
-inline Tensor<RT, device> Tensor<T, device>::subtractSingle(const OT& other) const
-{
-	MEASURE();
-	Tensor<RT, device> result(this->Shape(), RT(), false);
-
-	for (size_t i = 0; i < this->size(); i++)
-	{
-
-		result[i] = this->At(i) - other;
-	}
-
-	return result;
-}
-
-template<typename T, Mode device>
-template<typename RT, typename OT, Mode o_device>
-inline Tensor<RT, device> Tensor<T, device>::multiply(const Tensor<OT, o_device>& other) const
-{
-	MEASURE();
-	#ifdef _DEBUG
-	if (Dims() != other.Dims())
-	{
-		throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
-	}
-
-	for (size_t i = 0; i < this->Dims(); i++)
-	{
-		if (Shape()[i] != other.Shape()[i])
+		MEASURE();
+		#ifdef _DEBUG
+		if (Dims() != other.Dims())
 		{
-			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+		}
+
+		for (size_t i = 0; i < this->Dims(); i++)
+		{
+			if (Shape()[i] != other.Shape()[i])
+			{
+				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			}
+		}
+		#endif
+
+		for (size_t i = 0; i < this->size(); i++)
+		{
+			this->At(i) -= other[i];
 		}
 	}
-	#endif
 
-	Tensor<RT, device> result(this->Shape(), RT(), false);
-
-	for (size_t i = 0; i < this->size(); i++)
+	template<typename T, Mode device>
+	template<typename OT, Mode o_device>
+	inline void Tensor<T, device>::subtractionAssignment(const TensorSlice<OT, o_device>& other)
 	{
-		result[i] = this->At(i) * other[i];
-	}
-
-	return result;
-}
-
-template<typename T, Mode device>
-template<typename RT, typename OT, Mode o_device>
-inline Tensor<RT, device> Tensor<T, device>::multiply(const TensorSlice<OT, o_device>& other) const
-{
-	MEASURE();
-	#ifdef _DEBUG
-	if (Dims() < other.Dims())
-	{
-		throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
-	}
-
-	for (size_t i = 0; i < this->Dims(); i++)
-	{
-		if (Shape()[i] != other.Shape()[i])
+		MEASURE();
+		#ifdef _DEBUG
+		if (Dims() < other.Dims())
 		{
-			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
+		}
+
+		for (size_t i = 0; i < this->Dims(); i++)
+		{
+			if (Shape()[i] != other.Shape()[i])
+			{
+				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			}
+		}
+		#endif
+
+		for (size_t i = 0; i < other.size(); i++)
+		{
+			At(other.map_index(i)) -= other[i];
 		}
 	}
-	#endif
 
-	Tensor<RT, device> result = *this;
-
-	for (size_t i = 0; i < other.size(); i++)
+	template<typename T, Mode device>
+	template<typename OT>
+	inline void Tensor<T, device>::subtractionAssignmentSingle(const OT& other)
 	{
-		result[other.map_index(i)] = At(other.map_index(i)) * other[i];
-	}
-
-	return result;
-}
-
-template<typename T, Mode device>
-template<typename RT, typename OT>
-inline Tensor<RT, device> Tensor<T, device>::multiplySingle(const OT& other) const
-{
-	MEASURE();
-	Tensor<RT, device> result(this->Shape(), RT(), false);
-
-	for (size_t i = 0; i < this->size(); i++)
-	{
-		result[i] = this->At(i) * other;
-	}
-
-	return result;
-}
-
-template<typename T, Mode device>
-template<typename RT, typename OT, Mode o_device>
-inline Tensor<RT, device> Tensor<T, device>::divide(const Tensor<OT, o_device>& other) const
-{
-	MEASURE();
-	#ifdef _DEBUG
-	if (Dims() != other.Dims())
-	{
-		throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
-	}
-
-	for (size_t i = 0; i < this->Dims(); i++)
-	{
-		if (Shape()[i] != other.Shape()[i])
+		MEASURE();
+		for (size_t i = 0; i < this->size(); i++)
 		{
-			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			this->At(i) -= other;
 		}
 	}
-	#endif
 
-	Tensor<RT, device> result(this->Shape(), RT(), false);
-
-	for (size_t i = 0; i < this->size(); i++)
+	template<typename T, Mode device>
+	template<typename OT, Mode o_device>
+	inline void Tensor<T, device>::multiplicationAssignment(const Tensor<OT, o_device>& other)
 	{
-		result[i] = this->At(i) - other[i];
-	}
-
-	return result;
-}
-
-template<typename T, Mode device>
-template<typename RT, typename OT, Mode o_device>
-inline Tensor<RT, device> Tensor<T, device>::divide(const TensorSlice<OT, o_device>& other) const
-{
-	MEASURE();
-	#ifdef _DEBUG
-	if (Dims() < other.Dims())
-	{
-		throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
-	}
-
-	for (size_t i = 0; i < this->Dims(); i++)
-	{
-		if (Shape()[i] != other.Shape()[i])
+		MEASURE();
+		#ifdef _DEBUG
+		if (Dims() != other.Dims())
 		{
-			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+		}
+
+		for (size_t i = 0; i < this->Dims(); i++)
+		{
+			if (Shape()[i] != other.Shape()[i])
+			{
+				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			}
+		}
+		#endif
+
+		for (size_t i = 0; i < this->size(); i++)
+		{
+			this->At(i) *= other[i];
 		}
 	}
-	#endif
 
-	Tensor<RT, device> result = *this;
-
-	for (size_t i = 0; i < other.size(); i++)
+	template<typename T, Mode device>
+	template<typename OT, Mode o_device>
+	inline void Tensor<T, device>::multiplicationAssignment(const TensorSlice<OT, o_device>& other)
 	{
-		result[other.map_index(i)] = At(other.map_index(i)) / other[i];
-	}
-
-	return result;
-}
-
-template<typename T, Mode device>
-template<typename RT, typename OT>
-inline Tensor<RT, device> Tensor<T, device>::divideSingle(const OT& other) const
-{
-	MEASURE();
-	Tensor<RT, device> result(this->Shape(), RT(), false);
-
-	for (size_t i = 0; i < this->size(); i++)
-	{
-		result[i] = this->At(i) - other;
-	}
-
-	return result;
-}
-
-template<typename T, Mode device>
-template<typename RT, typename OT, Mode o_device>
-inline Tensor<RT, device> Tensor<T, device>::modulous(const Tensor<OT, o_device>& other) const
-{
-	MEASURE();
-	#ifdef _DEBUG
-	if (Dims() != other.Dims())
-	{
-		throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
-	}
-
-	for (size_t i = 0; i < this->Dims(); i++)
-	{
-		if (Shape()[i] != other.Shape()[i])
+		MEASURE();
+		#ifdef _DEBUG
+		if (Dims() < other.Dims())
 		{
-			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
+		}
+
+		for (size_t i = 0; i < this->Dims(); i++)
+		{
+			if (Shape()[i] != other.Shape()[i])
+			{
+				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			}
+		}
+		#endif
+
+		for (size_t i = 0; i < other.size(); i++)
+		{
+			At(other.map_index(i)) *= other[i];
 		}
 	}
-	#endif
 
-	Tensor<RT, device> result(this->Shape(), RT(), false);
-
-	for (size_t i = 0; i < this->size(); i++)
+	template<typename T, Mode device>
+	template<typename OT>
+	inline void Tensor<T, device>::multiplicationAssignmentSingle(const OT& other)
 	{
-		result[i] = this->At(i) % other[i];
-	}
-
-	return result;
-}
-
-template<typename T, Mode device>
-template<typename RT, typename OT, Mode o_device>
-inline Tensor<RT, device> Tensor<T, device>::modulous(const TensorSlice<OT, o_device>& other) const
-{
-	MEASURE();
-	#ifdef _DEBUG
-	if (Dims() < other.Dims())
-	{
-		throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
-	}
-
-	for (size_t i = 0; i < this->Dims(); i++)
-	{
-		if (Shape()[i] != other.Shape()[i])
+		MEASURE();
+		for (size_t i = 0; i < this->size(); i++)
 		{
-			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			this->At(i) *= other;
 		}
 	}
-	#endif
 
-	Tensor<RT, device> result = *this;
-
-	for (size_t i = 0; i < other.size(); i++)
+	template<typename T, Mode device>
+	template<typename OT, Mode o_device>
+	inline void Tensor<T, device>::divisionAssignment(const Tensor<OT, o_device>& other)
 	{
-		result[other.map_index(i)] = At(other.map_index(i)) % other[i];
-	}
-
-	return result;
-}
-
-template<typename T, Mode device>
-template<typename RT, typename OT>
-inline Tensor<RT, device> Tensor<T, device>::modulousSingle(const OT& other) const
-{
-	MEASURE();
-	Tensor<RT, device> result(this->Shape(), RT(), false);
-
-	for (size_t i = 0; i < this->size(); i++)
-	{
-		result[i] = this->At(i) % other;
-	}
-
-	return result;
-}
-
-template<typename T, Mode device>
-template<typename OT, Mode o_device>
-inline void Tensor<T, device>::additionAssignment(const Tensor<OT, o_device>& other)
-{
-	MEASURE();
-	#ifdef _DEBUG
-	if (Dims() != other.Dims())
-	{
-		throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
-	}
-
-	for (size_t i = 0; i < this->Dims(); i++)
-	{
-		if (Shape()[i] != other.Shape()[i])
+		MEASURE();
+		#ifdef _DEBUG
+		if (Dims() != other.Dims())
 		{
-			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+		}
+
+		for (size_t i = 0; i < this->Dims(); i++)
+		{
+			if (Shape()[i] != other.Shape()[i])
+			{
+				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			}
+		}
+		#endif
+
+		for (size_t i = 0; i < this->size(); i++)
+		{
+			this->At(i) /= other[i];
 		}
 	}
-	#endif
 
-	for (size_t i = 0; i < this->size(); i++)
+	template<typename T, Mode device>
+	template<typename OT, Mode o_device>
+	inline void Tensor<T, device>::divisionAssignment(const TensorSlice<OT, o_device>& other)
 	{
-		this->At(i) += other[i];
-	}
-}
-
-template<typename T, Mode device>
-template<typename OT, Mode o_device>
-inline void Tensor<T, device>::additionAssignment(const TensorSlice<OT, o_device>& other)
-{
-	MEASURE();
-	#ifdef _DEBUG
-	if (Dims() < other.Dims())
-	{
-		throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
-	}
-
-	for (size_t i = 0; i < this->Dims(); i++)
-	{
-		if (Shape()[i] != other.Shape()[i])
+		MEASURE();
+		#ifdef _DEBUG
+		if (Dims() < other.Dims())
 		{
-			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
+		}
+
+		for (size_t i = 0; i < this->Dims(); i++)
+		{
+			if (Shape()[i] != other.Shape()[i])
+			{
+				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			}
+		}
+		#endif
+
+		for (size_t i = 0; i < other.size(); i++)
+		{
+			At(other.map_index(i)) /= other[i];
 		}
 	}
-	#endif
 
-	for (size_t i = 0; i < other.size(); i++)
+	template<typename T, Mode device>
+	template<typename OT>
+	inline void Tensor<T, device>::divisionAssignmentSingle(const OT& other)
 	{
-		At(other.map_index(i)) += other[i];
-	}
-}
-
-template<typename T, Mode device>
-template<typename OT>
-inline void Tensor<T, device>::additionAssignmentSingle(const OT& other)
-{
-	MEASURE();
-	for (size_t i = 0; i < this->size(); i++)
-	{
-		this->At(i) += other;
-	}
-}
-
-template<typename T, Mode device>
-template<typename OT, Mode o_device>
-inline void Tensor<T, device>::subtractionAssignment(const Tensor<OT, o_device>& other)
-{
-	MEASURE();
-	#ifdef _DEBUG
-	if (Dims() != other.Dims())
-	{
-		throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
-	}
-
-	for (size_t i = 0; i < this->Dims(); i++)
-	{
-		if (Shape()[i] != other.Shape()[i])
+		MEASURE();
+		for (size_t i = 0; i < this->size(); i++)
 		{
-			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			this->At(i) /= other;
 		}
 	}
-	#endif
 
-	for (size_t i = 0; i < this->size(); i++)
+	template<typename T, Mode device>
+	template<typename OT, Mode o_device>
+	inline void Tensor<T, device>::modulouAssignment(const Tensor<OT, o_device>& other)
 	{
-		this->At(i) -= other[i];
-	}
-}
-
-template<typename T, Mode device>
-template<typename OT, Mode o_device>
-inline void Tensor<T, device>::subtractionAssignment(const TensorSlice<OT, o_device>& other)
-{
-	MEASURE();
-	#ifdef _DEBUG
-	if (Dims() < other.Dims())
-	{
-		throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
-	}
-
-	for (size_t i = 0; i < this->Dims(); i++)
-	{
-		if (Shape()[i] != other.Shape()[i])
+		MEASURE();
+		#ifdef _DEBUG
+		if (Dims() != other.Dims())
 		{
-			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+		}
+
+		for (size_t i = 0; i < this->Dims(); i++)
+		{
+			if (Shape()[i] != other.Shape()[i])
+			{
+				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			}
+		}
+		#endif
+
+		for (size_t i = 0; i < this->size(); i++)
+		{
+			this->At(i) %= other[i];
 		}
 	}
-	#endif
 
-	for (size_t i = 0; i < other.size(); i++)
+	template<typename T, Mode device>
+	template<typename OT, Mode o_device>
+	inline void Tensor<T, device>::modulouAssignment(const TensorSlice<OT, o_device>& other)
 	{
-		At(other.map_index(i)) -= other[i];
-	}
-}
-
-template<typename T, Mode device>
-template<typename OT>
-inline void Tensor<T, device>::subtractionAssignmentSingle(const OT& other)
-{
-	MEASURE();
-	for (size_t i = 0; i < this->size(); i++)
-	{
-		this->At(i) -= other;
-	}
-}
-
-template<typename T, Mode device>
-template<typename OT, Mode o_device>
-inline void Tensor<T, device>::multiplicationAssignment(const Tensor<OT, o_device>& other)
-{
-	MEASURE();
-	#ifdef _DEBUG
-	if (Dims() != other.Dims())
-	{
-		throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
-	}
-
-	for (size_t i = 0; i < this->Dims(); i++)
-	{
-		if (Shape()[i] != other.Shape()[i])
+		MEASURE();
+		#ifdef _DEBUG
+		if (Dims() < other.Dims())
 		{
-			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
+		}
+
+		for (size_t i = 0; i < this->Dims(); i++)
+		{
+			if (Shape()[i] != other.Shape()[i])
+			{
+				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			}
+		}
+		#endif
+
+		for (size_t i = 0; i < other.size(); i++)
+		{
+			At(other.map_index(i)) %= other[i];
 		}
 	}
-	#endif
 
-	for (size_t i = 0; i < this->size(); i++)
+	template<typename T, Mode device>
+	template<typename OT>
+	inline void Tensor<T, device>::modulouAssignmentSingle(const OT& other)
 	{
-		this->At(i) *= other[i];
-	}
-}
-
-template<typename T, Mode device>
-template<typename OT, Mode o_device>
-inline void Tensor<T, device>::multiplicationAssignment(const TensorSlice<OT, o_device>& other)
-{
-	MEASURE();
-	#ifdef _DEBUG
-	if (Dims() < other.Dims())
-	{
-		throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
-	}
-
-	for (size_t i = 0; i < this->Dims(); i++)
-	{
-		if (Shape()[i] != other.Shape()[i])
+		MEASURE();
+		for (size_t i = 0; i < this->size(); i++)
 		{
-			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			this->At(i) %= other;
 		}
 	}
-	#endif
 
-	for (size_t i = 0; i < other.size(); i++)
+	template<typename T, Mode device>
+	template<typename RT, typename OT, Mode o_device>
+	inline Tensor<RT, device> TSlib::Tensor<T, device>::compare(const Tensor<OT, o_device>& other, bool(*comp_func)(const T&, const OT&))
 	{
-		At(other.map_index(i)) *= other[i];
-	}
-}
-
-template<typename T, Mode device>
-template<typename OT>
-inline void Tensor<T, device>::multiplicationAssignmentSingle(const OT& other)
-{
-	MEASURE();
-	for (size_t i = 0; i < this->size(); i++)
-	{
-		this->At(i) *= other;
-	}
-}
-
-template<typename T, Mode device>
-template<typename OT, Mode o_device>
-inline void Tensor<T, device>::divisionAssignment(const Tensor<OT, o_device>& other)
-{
-	MEASURE();
-	#ifdef _DEBUG
-	if (Dims() != other.Dims())
-	{
-		throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
-	}
-
-	for (size_t i = 0; i < this->Dims(); i++)
-	{
-		if (Shape()[i] != other.Shape()[i])
+		MEASURE();
+		#ifdef _DEBUG
+		if (Dims() != other.Dims())
 		{
-			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
 		}
-	}
-	#endif
 
-	for (size_t i = 0; i < this->size(); i++)
-	{
-		this->At(i) /= other[i];
-	}
-}
-
-template<typename T, Mode device>
-template<typename OT, Mode o_device>
-inline void Tensor<T, device>::divisionAssignment(const TensorSlice<OT, o_device>& other)
-{
-	MEASURE();
-	#ifdef _DEBUG
-	if (Dims() < other.Dims())
-	{
-		throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
-	}
-
-	for (size_t i = 0; i < this->Dims(); i++)
-	{
-		if (Shape()[i] != other.Shape()[i])
+		for (size_t i = 0; i < this->Dims(); i++)
 		{
-			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			if (Shape()[i] != other.Shape()[i])
+			{
+				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			}
 		}
-	}
-	#endif
+		#endif
 
-	for (size_t i = 0; i < other.size(); i++)
-	{
-		At(other.map_index(i)) /= other[i];
-	}
-}
+		Tensor<RT, device> result(this->Shape());
 
-template<typename T, Mode device>
-template<typename OT>
-inline void Tensor<T, device>::divisionAssignmentSingle(const OT& other)
-{
-	MEASURE();
-	for (size_t i = 0; i < this->size(); i++)
-	{
-		this->At(i) /= other;
-	}
-}
-
-template<typename T, Mode device>
-template<typename OT, Mode o_device>
-inline void Tensor<T, device>::modulouAssignment(const Tensor<OT, o_device>& other)
-{
-	MEASURE();
-	#ifdef _DEBUG
-	if (Dims() != other.Dims())
-	{
-		throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
-	}
-
-	for (size_t i = 0; i < this->Dims(); i++)
-	{
-		if (Shape()[i] != other.Shape()[i])
+		for (size_t i = 0; i < this->size(); i++)
 		{
-			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			result[i] = comp_func(At(i), other[i]);
 		}
-	}
-	#endif
 
-	for (size_t i = 0; i < this->size(); i++)
-	{
-		this->At(i) %= other[i];
-	}
-}
-
-template<typename T, Mode device>
-template<typename OT, Mode o_device>
-inline void Tensor<T, device>::modulouAssignment(const TensorSlice<OT, o_device>& other)
-{
-	MEASURE();
-	#ifdef _DEBUG
-	if (Dims() < other.Dims())
-	{
-		throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
+		return result;
 	}
 
-	for (size_t i = 0; i < this->Dims(); i++)
+	template<typename T, Mode device>
+	template<typename RT, typename OT, Mode o_device>
+	inline Tensor<RT, device> TSlib::Tensor<T, device>::compare(const TensorSlice<OT, o_device>& other, bool(*comp_func)(const T&, const OT&))
 	{
-		if (Shape()[i] != other.Shape()[i])
+		MEASURE();
+		#ifdef _DEBUG
+		if (Dims() != other.Dims())
 		{
-			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
 		}
-	}
-	#endif
 
-	for (size_t i = 0; i < other.size(); i++)
-	{
-		At(other.map_index(i)) %= other[i];
-	}
-}
-
-template<typename T, Mode device>
-template<typename OT>
-inline void Tensor<T, device>::modulouAssignmentSingle(const OT& other)
-{
-	MEASURE();
-	for (size_t i = 0; i < this->size(); i++)
-	{
-		this->At(i) %= other;
-	}
-}
-
-template<typename T, Mode device>
-template<typename RT, typename OT, Mode o_device>
-inline Tensor<RT, device> TSlib::Tensor<T, device>::compare(const Tensor<OT, o_device>& other, bool(*comp_func)(const T&, const OT&))
-{
-	MEASURE();
-	#ifdef _DEBUG
-	if (Dims() != other.Dims())
-	{
-		throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
-	}
-
-	for (size_t i = 0; i < this->Dims(); i++)
-	{
-		if (Shape()[i] != other.Shape()[i])
+		for (size_t i = 0; i < this->Dims(); i++)
 		{
-			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			if (Shape()[i] != other.Shape()[i])
+			{
+				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			}
 		}
-	}
-	#endif
+		#endif
 
-	Tensor<RT, device> result(this->Shape());
+		Tensor<RT, device> result(this->Shape());
 
-	for (size_t i = 0; i < this->size(); i++)
-	{
-		result[i] = comp_func(At(i), other[i]);
-	}
-
-	return result;
-}
-
-template<typename T, Mode device>
-template<typename RT, typename OT, Mode o_device>
-inline Tensor<RT, device> TSlib::Tensor<T, device>::compare(const TensorSlice<OT, o_device>& other, bool(*comp_func)(const T&, const OT&))
-{
-	MEASURE();
-	#ifdef _DEBUG
-	if (Dims() != other.Dims())
-	{
-		throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
-	}
-
-	for (size_t i = 0; i < this->Dims(); i++)
-	{
-		if (Shape()[i] != other.Shape()[i])
+		for (size_t i = 0; i < this->size(); i++)
 		{
-			throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+			result[i] = comp_func(At(i), other[i]);
 		}
+
+		return result;
 	}
-	#endif
 
-	Tensor<RT, device> result(this->Shape());
-
-	for (size_t i = 0; i < this->size(); i++)
+	template<typename T, Mode device>
+	template<typename RT, typename OT>
+	inline Tensor<RT, device> TSlib::Tensor<T, device>::compareSingle(const OT& other, bool(*comp_func)(const T&, const OT&))
 	{
-		result[i] = comp_func(At(i), other[i]);
+		MEASURE();
+
+		Tensor<RT, device> result(this->Shape());
+
+		for (size_t i = 0; i < this->size(); i++)
+		{
+			result[i] = comp_func(At(i), other);
+		}
+
+		return result;
 	}
-
-	return result;
-}
-
-template<typename T, Mode device>
-template<typename RT, typename OT>
-inline Tensor<RT, device> TSlib::Tensor<T, device>::compareSingle(const OT& other, bool(*comp_func)(const T&, const OT&))
-{
-	MEASURE();
-
-	Tensor<RT, device> result(this->Shape());
-
-	for (size_t i = 0; i < this->size(); i++)
-	{
-		result[i] = comp_func(At(i), other);
-	}
-
-	return result;
-}
 }

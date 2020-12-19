@@ -22,7 +22,6 @@ namespace TSlib
 		}
 	}
 
-
 	template <typename T, typename OT, typename RT>
 	__kernel__ CudaSubtract(const CUDATensor3D<T> a, CUDATensor3D<RT> c, const CUDATensor3D<OT> b)
 	{
@@ -39,7 +38,6 @@ namespace TSlib
 			c.At() = RT(a.At()) - RT(b);
 		}
 	}
-
 
 	template <typename T, typename OT, typename RT>
 	__kernel__ CudaMultiply(const CUDATensor3D<T> a, CUDATensor3D<RT> c, const CUDATensor3D<OT> b)
@@ -98,7 +96,6 @@ namespace TSlib
 		}
 	}
 
-
 	template <typename T, typename OT>
 	__kernel__ CudaAdditionAssignment(CUDATensor3D<T> a, const CUDATensor3D<OT> b)
 	{
@@ -132,7 +129,6 @@ namespace TSlib
 			a.At() -= b;
 		}
 	}
-
 
 	template <typename T, typename OT>
 	__kernel__ CudaMultiplicationAssignment(CUDATensor3D<T> a, const CUDATensor3D<OT> b)
@@ -186,7 +182,6 @@ namespace TSlib
 			a.At() %= b;
 		}
 	}
-
 
 	template <typename T, typename OT, typename RT>
 	__kernel__ CudaCompare(const CUDATensor3D<T> a, CUDATensor3D<RT> c, const CUDATensor3D<OT> b)

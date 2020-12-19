@@ -6,7 +6,6 @@
 
 // Initialize with the reference values for the permutation vector
 PerlinNoise::PerlinNoise() {
-
 	// Initialize the permutation vector with the reference values
 	p = {
 		151,160,137,91,90,15,131,13,201,95,96,53,194,233,7,225,140,36,103,30,69,142,

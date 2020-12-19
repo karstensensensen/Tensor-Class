@@ -39,7 +39,6 @@ std::ostream& operator<< (std::ostream& stream, const TSlib::TensorSlice<T, devi
 template<typename T, TSlib::Mode device>
 std::ostream& operator<< (std::ostream& stream, const TSlib::Tensor<T, device>& Tensor)
 {
-
 	stream << Tensor.printable();
 	return stream;
 }

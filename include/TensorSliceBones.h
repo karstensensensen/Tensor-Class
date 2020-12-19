@@ -98,7 +98,6 @@ namespace TSlib
 		template<typename OT>
 		void addAsgmt(const OT& other);
 
-
 		template<typename OT, Mode other_device>
 		Tensor<T, device> subtract(const Tensor<OT, other_device>& other);
 		template<typename OT, Mode other_device>
@@ -113,7 +112,6 @@ namespace TSlib
 		template<typename OT>
 		void subtractAsgmt(const OT& other);
 
-
 		template<typename OT, Mode other_device>
 		Tensor<T, device> multiply(const Tensor<OT, other_device>& other);
 		template<typename OT, Mode other_device>
@@ -127,7 +125,6 @@ namespace TSlib
 		void multiplyAsgmt(const TensorSlice<OT, other_device>& other);
 		template<typename OT>
 		void multiplyAsgmt(const OT& other);
-
 
 		template<typename OT, Mode other_device>
 		Tensor<T, device> dot(const Tensor<OT, other_device>& other);
@@ -285,5 +282,4 @@ namespace TSlib
 		template<typename OT>
 		bool operator>= (const OT& other);
 	};
-
 }

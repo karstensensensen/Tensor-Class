@@ -7,1619 +7,1598 @@
 
 namespace TSlib
 {
+	/// <summary>
+	/// CUDATensor implementation
+	/// </summary>
 
+	/// <summary>
+	/// CUDATensor private funtions
+	/// </summary>
 
-/// <summary>
-/// CUDATensor implementation
-/// </summary>
-
-/// <summary>
-/// CUDATensor private funtions
-/// </summary>
-
-template<typename T>
-template<typename First>
-__device__ void CTBase<T>::get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord) const
-{
-
-	#ifdef _DEBUG
-
-	if (dim_arr[iter] <= coord)
+	template<typename T>
+	template<typename First>
+	__device__ void CTBase<T>::get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord) const
 	{
-		throw OutOfBounds(this, "Index is out of bounds", iter, coord);
+		#ifdef _DEBUG
+
+		if (dim_arr[iter] <= coord)
+		{
+			throw OutOfBounds(this, "Index is out of bounds", iter, coord);
+		}
+
+		#endif
+
+		indx += coord * tmp_multiply;
+		tmp_multiply *= dim_arr[iter];
+		iter++;
 	}
 
-	#endif
+	template<typename T>
+	template<typename First, typename... Args>
+	__device__ void CTBase<T>::get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord, Args ... remaining) const
+	{
+		get_indx(indx, iter, tmp_multiply, coord);
+		get_indx(indx, iter, tmp_multiply, remaining...);
+	}
 
-	indx += coord * tmp_multiply;
-	tmp_multiply *= dim_arr[iter];
-	iter++;
-}
+	/// <summary>
+	/// CUDATensor base default constructors and destructors
+	/// </summary>
 
-template<typename T>
-template<typename First, typename... Args>
-__device__ void CTBase<T>::get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord, Args ... remaining) const
-{
+	template<typename T>
+	TSlib::CTBase<T>::CTBase(T* gpu_mem, size_t m_size, size_t* dim_arr, size_t dims)
+		:gpu_mem(gpu_mem), m_size(m_size), dim_arr(dim_arr), dims(dims)
+	{}
 
-	get_indx(indx, iter, tmp_multiply, coord);
-	get_indx(indx, iter, tmp_multiply, remaining...);
+	template<typename T>
+	CTBase<T>::~CTBase()
+	{
+		CER(cudaFree(dim_arr));
+	}
 
-}
+	/// <summary>
+	/// CUDATensor public funtions
+	/// </summary>
 
-/// <summary>
-/// CUDATensor base default constructors and destructors
-/// </summary>
+	template<typename T>
+	__device__ size_t CTBase<T>::size() const
+	{
+		return m_size;
+	}
 
-template<typename T>
-TSlib::CTBase<T>::CTBase(T* gpu_mem, size_t m_size, size_t* dim_arr, size_t dims)
-	:gpu_mem(gpu_mem), m_size(m_size), dim_arr(dim_arr), dims(dims)
-{}
+	template<typename T>
+	template<typename ... Args>
+	__device__ T& CTBase<T>::Get(Args ... coords)
 
-template<typename T>
-CTBase<T>::~CTBase()
-{
-	CER(cudaFree(dim_arr));
-}
+	{
+		size_t index = 0;
+		size_t tmp_multiply = 1;
+		size_t i = 0;
 
+		get_indx(index, i, tmp_multiply, coords...);
 
-/// <summary>
-/// CUDATensor public funtions
-/// </summary>
+		return gpu_mem[index];
+	}
 
-template<typename T>
-__device__ size_t CTBase<T>::size() const
-{
-	return m_size;
-}
+	/// <summary>
+	/// CUDATensor operator funtions
+	/// </summary>
 
-template<typename T>
-template<typename ... Args>
-__device__ T& CTBase<T>::Get(Args ... coords)
+	template<typename T>
+	__device__ T& CTBase<T>::operator[](size_t index)
+	{
+		return At(index);
+	}
 
-{
-	size_t index = 0;
-	size_t tmp_multiply = 1;
-	size_t i = 0;
+	template<typename T>
+	template<typename ... Args>
+	__device__ T& CTBase<T>::operator()(Args ... args)
+	{
+		return Get(args...);
+	}
 
-	get_indx(index, i, tmp_multiply, coords...);
+	/// <summary>
+	/// CUDATensor children private functions
+	/// </summary>
 
-	return gpu_mem[index];
-}
+	template<typename T>
+	size_t CUDATensor1D<T>::get_length()
+	{
+		return m_length;
+	}
 
-/// <summary>
-/// CUDATensor operator funtions
-/// </summary>
+	template<typename T>
+	size_t CUDATensor2D<T>::get_length()
+	{
+		return m_length;
+	}
 
-template<typename T>
-__device__ T& CTBase<T>::operator[](size_t index)
-{
-	return At(index);
-}
+	template<typename T>
+	size_t CUDATensor2D<T>::get_width()
+	{
+		return m_widthh;
+	}
 
-template<typename T>
-template<typename ... Args>
-__device__ T& CTBase<T>::operator()(Args ... args)
-{
-	return Get(args...);
-}
+	template<typename T>
+	size_t CUDATensor3D<T>::get_length()
+	{
+		return m_length;
+	}
 
-/// <summary>
-/// CUDATensor children private functions
-/// </summary>
+	template<typename T>
+	size_t CUDATensor3D<T>::get_width()
+	{
+		return m_widthh;
+	}
 
-template<typename T>
-size_t CUDATensor1D<T>::get_length()
-{
-	return m_length;
-}
+	template<typename T>
+	size_t CUDATensor3D<T>::get_height()
+	{
+		return m_height;
+	}
 
-template<typename T>
-size_t CUDATensor2D<T>::get_length()
-{
-	return m_length;
-}
+	/// <summary>
+	/// CUDATensor children constructors
+	/// </summary>
 
-template<typename T>
-size_t CUDATensor2D<T>::get_width()
-{
-	return m_widthh;
-}
+	template<typename T>
+	template<Mode device>
+	CUDATensor1D<T>::CUDATensor1D(Tensor<T, device>& tensor)
+		: CTBase(tensor.getGPU(), tensor.size(), nullptr, tensor.Dims())
+	{
+		CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
+		CER(cudaMemcpy(dim_arr, tensor.Shape().data(), sizeof(size_t) * dims, cudaMemcpyHostToDevice));
 
-template<typename T>
-size_t CUDATensor3D<T>::get_length()
-{
-	return m_length;
-}
+		m_length = tensor.FlattenDims();
+	}
 
-template<typename T>
-size_t CUDATensor3D<T>::get_width()
-{
-	return m_widthh;
-}
+	template<typename T>
+	CUDATensor1D<T>::CUDATensor1D(const CUDATensor1D<T>& tensor)
+		: CTBase(other.gpu_mem, other.m_size, nullptr, other.dims), m_length(other.m_length)
+	{
+		CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
+		CER(cudaMemcpy(dim_arr, other.dim_arr, sizeof(size_t) * dims, cudaMemcpyDeviceToDevice));
+	}
 
-template<typename T>
-size_t CUDATensor3D<T>::get_height()
-{
-	return m_height;
-}
+	template<typename T>
+	template<Mode device>
+	CUDATensor2D<T>::CUDATensor2D(Tensor<T, device>& tensor)
+		: CTBase(tensor.getGPU(), tensor.size(), nullptr, tensor.Dims())
+	{
+		CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
+		CER(cudaMemcpy(dim_arr, tensor.Shape().data(), sizeof(size_t) * dims, cudaMemcpyHostToDevice));
 
-/// <summary>
-/// CUDATensor children constructors
-/// </summary>
+		auto new_dims = tensor.FlattenDims(2);
+		m_length = new_dims[0];
+		m_width = new_dims[1];
+	}
 
-template<typename T>
-template<Mode device>
-CUDATensor1D<T>::CUDATensor1D(Tensor<T, device>& tensor)
-	: CTBase(tensor.getGPU(), tensor.size(), nullptr, tensor.Dims())
-{
+	template<typename T>
+	CUDATensor2D<T>::CUDATensor2D(const CUDATensor2D<T>& tensor)
+		: CTBase(other.gpu_mem, other.m_size, nullptr, other.dims), m_length(other.m_length), m_width(other.m_width)
+	{
+		CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
+		CER(cudaMemcpy(dim_arr, other.dim_arr, sizeof(size_t) * dims, cudaMemcpyDeviceToDevice));
+	}
 
-	CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
-	CER(cudaMemcpy(dim_arr, tensor.Shape().data(), sizeof(size_t) * dims, cudaMemcpyHostToDevice));
+	template<typename T>
+	template<Mode device>
+	CUDATensor3D<T>::CUDATensor3D(Tensor<T, device>& tensor)
+		:CTBase(tensor.getGPU(), tensor.size(), nullptr, tensor.Dims())
+	{
+		CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
+		CER(cudaMemcpy(dim_arr, tensor.Shape().data(), sizeof(size_t) * dims, cudaMemcpyHostToDevice));
 
-	m_length = tensor.FlattenDims();
-}
+		auto new_dims = tensor.FlattenDims(3);
+		m_length = new_dims[0];
+		m_width = new_dims[1];
+		m_height = new_dims[2];
+	}
 
-template<typename T>
-CUDATensor1D<T>::CUDATensor1D(const CUDATensor1D<T>& tensor)
-	: CTBase(other.gpu_mem, other.m_size, nullptr, other.dims), m_length(other.m_length)
-{
-	CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
-	CER(cudaMemcpy(dim_arr, other.dim_arr, sizeof(size_t) * dims, cudaMemcpyDeviceToDevice));
-}
+	template<typename T>
+	CUDATensor3D<T>::CUDATensor3D(const CUDATensor3D<T>& tensor)
+		: CTBase(other.gpu_mem, other.m_size, nullptr, other.dims), m_length(other.m_length), m_width(other.m_heihgt), m_length(other.m_height)
+	{
+		CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
+		CER(cudaMemcpy(dim_arr, other.dim_arr, sizeof(size_t) * dims, cudaMemcpyDeviceToDevice));
+	}
 
-template<typename T>
-template<Mode device>
-CUDATensor2D<T>::CUDATensor2D(Tensor<T, device>& tensor)
-	: CTBase(tensor.getGPU(), tensor.size(), nullptr, tensor.Dims())
-{
-	CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
-	CER(cudaMemcpy(dim_arr, tensor.Shape().data(), sizeof(size_t) * dims, cudaMemcpyHostToDevice));
+	/// <summary>
+	/// CUDATensor children public functions
+	/// </summary>
 
-	auto new_dims = tensor.FlattenDims(2);
-	m_length = new_dims[0];
-	m_width = new_dims[1];
-}
+	template<typename T>
+	__device__ T& CUDATensor1D<T>::At(size_t x)
+	{
+		return gpu_mem[x];
+	}
 
-template<typename T>
-CUDATensor2D<T>::CUDATensor2D(const CUDATensor2D<T>& tensor)
-	: CTBase(other.gpu_mem, other.m_size, nullptr, other.dims), m_length(other.m_length), m_width(other.m_width)
-{
-	CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
-	CER(cudaMemcpy(dim_arr, other.dim_arr, sizeof(size_t) * dims, cudaMemcpyDeviceToDevice));
-}
+	template<typename T>
+	__device__ T CUDATensor1D<T>::At(size_t x) const
+	{
+		return gpu_mem[x];
+	}
 
+	template<typename T>
+	__device__ T& CUDATensor1D<T>::At()
+	{
+		return gpu_mem[threadIdx.x + blockIdx.x * blockDim.x];
+	}
 
-template<typename T>
-template<Mode device>
-CUDATensor3D<T>::CUDATensor3D(Tensor<T, device>& tensor)
-	:CTBase(tensor.getGPU(), tensor.size(), nullptr, tensor.Dims())
-{
-	CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
-	CER(cudaMemcpy(dim_arr, tensor.Shape().data(), sizeof(size_t) * dims, cudaMemcpyHostToDevice));
+	template<typename T>
+	__device__ T CUDATensor1D<T>::At() const
+	{
+		return gpu_mem[threadIdx.x + blockIdx.x * blockDim.x];
+	}
 
-	auto new_dims = tensor.FlattenDims(3);
-	m_length = new_dims[0];
-	m_width = new_dims[1];
-	m_height = new_dims[2];
-}
+	template<typename T>
+	__device__ T& CUDATensor1D<T>::Offset(size_t x)
+	{
+		return gpu_mem[threadIdx.x + blockIdx.x * blockDim.x + x];
+	}
 
-template<typename T>
-CUDATensor3D<T>::CUDATensor3D(const CUDATensor3D<T>& tensor)
-	: CTBase(other.gpu_mem, other.m_size, nullptr, other.dims), m_length(other.m_length), m_width(other.m_heihgt), m_length(other.m_height)
-{
-	CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
-	CER(cudaMemcpy(dim_arr, other.dim_arr, sizeof(size_t) * dims, cudaMemcpyDeviceToDevice));
-}
+	template<typename T>
+	__device__ T CUDATensor1D<T>::Offset(size_t x) const
+	{
+		return gpu_mem[threadIdx.x + blockIdx.x * blockDim.x + x];
+	}
 
-/// <summary>
-/// CUDATensor children public functions
-/// </summary>
+	template<typename T>
+	__device__ bool CUDATensor1D<T>::in_bounds() const
+	{
+		return ((threadIdx.x + blockIdx.x * blockDim.x) < m_length);
+	}
 
-template<typename T>
-__device__ T& CUDATensor1D<T>::At(size_t x)
-{
-	return gpu_mem[x];
-}
+	template<typename T>
+	__device__ bool TSlib::CUDATensor1D<T>::offset_bounds(size_t x) const
+	{
+		return ((threadIdx.x + blockIdx.x * blockDim.x + x) < m_length);
+	}
 
-template<typename T>
-__device__ T CUDATensor1D<T>::At(size_t x) const
-{
-	return gpu_mem[x];
-}
+	template<typename T>
+	__device__ T& CUDATensor2D<T>::At(size_t x, size_t y)
+	{
+		return gpu_mem[x + y * m_length];
+	}
 
-template<typename T>
-__device__ T& CUDATensor1D<T>::At()
-{
-	return gpu_mem[threadIdx.x + blockIdx.x * blockDim.x];
-}
+	template<typename T>
+	__device__ T CUDATensor2D<T>::At(size_t x, size_t y) const
+	{
+		return gpu_mem[x + y * m_length];
+	}
 
-template<typename T>
-__device__ T CUDATensor1D<T>::At() const
-{
-	return gpu_mem[threadIdx.x + blockIdx.x * blockDim.x];
-}
+	template<typename T>
+	__device__ T& CUDATensor2D<T>::At()
+	{
+		return gpu_mem[(threadIdx.x + blockIdx.x * blockDim.x) +
+			(threadIdx.y + blockIdx.y * blockDim.y) * m_length];
+	}
 
+	template<typename T>
+	__device__ T CUDATensor2D<T>::At() const
+	{
+		return gpu_mem[(threadIdx.x + blockIdx.x * blockDim.x) +
+			(threadIdx.y + blockIdx.y * blockDim.y) * m_length];
+	}
 
-template<typename T>
-__device__ T& CUDATensor1D<T>::Offset(size_t x)
-{
-	return gpu_mem[threadIdx.x + blockIdx.x * blockDim.x + x];
-}
+	template<typename T>
+	__device__ T& CUDATensor2D<T>::Offset(size_t x, size_t y)
+	{
+		return gpu_mem[(threadIdx.x + blockIdx.x * blockDim.x + x) +
+			(threadIdx.y + blockIdx.y * blockDim.y + y) * m_length];
+	}
 
-template<typename T>
-__device__ T CUDATensor1D<T>::Offset(size_t x) const
-{
-	return gpu_mem[threadIdx.x + blockIdx.x * blockDim.x + x];
-}
+	template<typename T>
+	__device__ T CUDATensor2D<T>::Offset(size_t x, size_t y) const
+	{
+		return gpu_mem[(threadIdx.x + blockIdx.x * blockDim.x + x) +
+			(threadIdx.y + blockIdx.y * blockDim.y + y) * m_length];
+	}
 
-template<typename T>
-__device__ bool CUDATensor1D<T>::in_bounds() const
-{
-	return ((threadIdx.x + blockIdx.x * blockDim.x) < m_length);
-}
-
-template<typename T>
-__device__ bool TSlib::CUDATensor1D<T>::offset_bounds(size_t x) const
-{
-	return ((threadIdx.x + blockIdx.x * blockDim.x + x) < m_length);
-}
-
-template<typename T>
-__device__ T& CUDATensor2D<T>::At(size_t x, size_t y)
-{
-	return gpu_mem[x + y * m_length];
-}
-
-template<typename T>
-__device__ T CUDATensor2D<T>::At(size_t x, size_t y) const
-{
-	return gpu_mem[x + y * m_length];
-}
-
-template<typename T>
-__device__ T& CUDATensor2D<T>::At()
-{
-	return gpu_mem[(threadIdx.x + blockIdx.x * blockDim.x) + 
-				   (threadIdx.y + blockIdx.y * blockDim.y) * m_length];
-}
-
-template<typename T>
-__device__ T CUDATensor2D<T>::At() const
-{
-	return gpu_mem[(threadIdx.x + blockIdx.x * blockDim.x) +
-		(threadIdx.y + blockIdx.y * blockDim.y) * m_length];
-}
-
-template<typename T>
-__device__ T& CUDATensor2D<T>::Offset(size_t x, size_t y)
-{
-	return gpu_mem[(threadIdx.x + blockIdx.x * blockDim.x + x) +
-				   (threadIdx.y + blockIdx.y * blockDim.y + y) * m_length];
-}
-
-template<typename T>
-__device__ T CUDATensor2D<T>::Offset(size_t x, size_t y) const
-{
-	return gpu_mem[(threadIdx.x + blockIdx.x * blockDim.x + x) +
-		(threadIdx.y + blockIdx.y * blockDim.y + y) * m_length];
-}
-
-template<typename T>
-__device__ bool CUDATensor2D<T>::in_bounds() const
-{
-	return ((threadIdx.x + blockIdx.x * blockDim.x) < m_length) && 
+	template<typename T>
+	__device__ bool CUDATensor2D<T>::in_bounds() const
+	{
+		return ((threadIdx.x + blockIdx.x * blockDim.x) < m_length) &&
 			((threadIdx.y + blockIdx.y * blockDim.y) < m_width);
-}
+	}
 
-template<typename T>
-__device__ bool TSlib::CUDATensor2D<T>::offset_bounds(size_t x, size_t y) const
-{
-	return ((threadIdx.x + blockIdx.x * blockDim.x + x) < m_length) &&
-		   ((threadIdx.y + blockIdx.y * blockDim.y + y) < m_width);
-}
+	template<typename T>
+	__device__ bool TSlib::CUDATensor2D<T>::offset_bounds(size_t x, size_t y) const
+	{
+		return ((threadIdx.x + blockIdx.x * blockDim.x + x) < m_length) &&
+			((threadIdx.y + blockIdx.y * blockDim.y + y) < m_width);
+	}
 
-template<typename T>
-__device__ T& CUDATensor3D<T>::At(size_t x, size_t y)
-{
-	return gpu_mem[x + y * m_length + z * m_length * m_width];
-}
+	template<typename T>
+	__device__ T& CUDATensor3D<T>::At(size_t x, size_t y)
+	{
+		return gpu_mem[x + y * m_length + z * m_length * m_width];
+	}
 
-template<typename T>
-__device__ T CUDATensor3D<T>::At(size_t x, size_t y) const
-{
-	return gpu_mem[x + y * m_length + z * m_length * m_width];
-}
+	template<typename T>
+	__device__ T CUDATensor3D<T>::At(size_t x, size_t y) const
+	{
+		return gpu_mem[x + y * m_length + z * m_length * m_width];
+	}
 
-template<typename T>
-__device__ T& CUDATensor3D<T>::At()
-{
-	return gpu_mem[(threadIdx.x + blockIdx.x * blockDim.x) + 
-				   (threadIdx.y + blockIdx.y * blockDim.y) * m_length + 
-				   (threadIdx.z + blockIdx.z * blockDim.z) * m_length * m_width];
-}
+	template<typename T>
+	__device__ T& CUDATensor3D<T>::At()
+	{
+		return gpu_mem[(threadIdx.x + blockIdx.x * blockDim.x) +
+			(threadIdx.y + blockIdx.y * blockDim.y) * m_length +
+			(threadIdx.z + blockIdx.z * blockDim.z) * m_length * m_width];
+	}
 
-template<typename T>
-__device__ T CUDATensor3D<T>::At() const
-{
-	return gpu_mem[(threadIdx.x + blockIdx.x * blockDim.x) +
-		(threadIdx.y + blockIdx.y * blockDim.y) * m_length +
-		(threadIdx.z + blockIdx.z * blockDim.z) * m_length * m_width];
-}
+	template<typename T>
+	__device__ T CUDATensor3D<T>::At() const
+	{
+		return gpu_mem[(threadIdx.x + blockIdx.x * blockDim.x) +
+			(threadIdx.y + blockIdx.y * blockDim.y) * m_length +
+			(threadIdx.z + blockIdx.z * blockDim.z) * m_length * m_width];
+	}
 
-template<typename T>
-__device__ T& CUDATensor3D<T>::Offset(size_t x, size_t y, size_t z)
-{
-	return gpu_mem[(threadIdx.x + blockIdx.x * blockDim.x + x) +
-				   (threadIdx.y + blockIdx.y * blockDim.y + y) * m_length +
-				   (threadIdx.z + blockIdx.z * blockDim.z + z) * m_length * m_width];
-}
+	template<typename T>
+	__device__ T& CUDATensor3D<T>::Offset(size_t x, size_t y, size_t z)
+	{
+		return gpu_mem[(threadIdx.x + blockIdx.x * blockDim.x + x) +
+			(threadIdx.y + blockIdx.y * blockDim.y + y) * m_length +
+			(threadIdx.z + blockIdx.z * blockDim.z + z) * m_length * m_width];
+	}
 
-template<typename T>
-__device__ T CUDATensor3D<T>::Offset(size_t x, size_t y, size_t z) const
-{
-	return gpu_mem[(threadIdx.x + blockIdx.x * blockDim.x + x) +
-		(threadIdx.y + blockIdx.y * blockDim.y + y) * m_length +
-		(threadIdx.z + blockIdx.z * blockDim.z + z) * m_length * m_width];
-}
+	template<typename T>
+	__device__ T CUDATensor3D<T>::Offset(size_t x, size_t y, size_t z) const
+	{
+		return gpu_mem[(threadIdx.x + blockIdx.x * blockDim.x + x) +
+			(threadIdx.y + blockIdx.y * blockDim.y + y) * m_length +
+			(threadIdx.z + blockIdx.z * blockDim.z + z) * m_length * m_width];
+	}
 
-template<typename T>
-__device__ bool CUDATensor3D<T>::in_bounds() const
-{
-	return ((threadIdx.x + blockIdx.x * blockDim.x) < m_length) &&
-			((threadIdx.y + blockIdx.y * blockDim.y) < m_width) && 
+	template<typename T>
+	__device__ bool CUDATensor3D<T>::in_bounds() const
+	{
+		return ((threadIdx.x + blockIdx.x * blockDim.x) < m_length) &&
+			((threadIdx.y + blockIdx.y * blockDim.y) < m_width) &&
 			((threadIdx.z + blockIdx.z * blockDim.z) < m_height);
-}
+	}
 
-template<typename T>
-__device__ bool TSlib::CUDATensor3D<T>::offset_bounds(size_t x, size_t y, size_t z) const
-{
-	return ((threadIdx.x + blockIdx.x * blockDim.x + x) < m_length) &&
-		   ((threadIdx.y + blockIdx.y * blockDim.y + y) < m_width) &&
-		   ((threadIdx.z + blockIdx.z * blockDim.z + z) < m_height);
-}
+	template<typename T>
+	__device__ bool TSlib::CUDATensor3D<T>::offset_bounds(size_t x, size_t y, size_t z) const
+	{
+		return ((threadIdx.x + blockIdx.x * blockDim.x + x) < m_length) &&
+			((threadIdx.y + blockIdx.y * blockDim.y + y) < m_width) &&
+			((threadIdx.z + blockIdx.z * blockDim.z + z) < m_height);
+	}
 
-/// Tensor class CUDATensor cast operators
-
-#if 1
-
-template<typename T, Mode device>
-Tensor<T, device>::operator CUDATensor1D<T>()
-{
-	return CUDATensor1D<T>(*this);
-}
-
-template<typename T, Mode device>
-Tensor<T, device>::operator CUDATensor2D<T>()
-{
-	return CUDATensor2D<T>(*this);
-}
-
-template<typename T, Mode device>
-Tensor<T, device>::operator CUDATensor3D<T>()
-{
-	return CUDATensor3D<T>(*this);
-}
-#endif
-
-/// Tensor class cuda specific functions
-
-template<typename T, Mode device>
-inline __host__ void Tensor<T, device>::allocate()
-{
-	//Allocate the cpu memory on the gpu
-	//this will have to be done every time the Tensor gets resized or deallocated
-
-
-	//assert if trying to allocate already allocated memory FIX: deallocate before allocating
-	#ifdef _DEBUG
-	assert("GPU memory was not deallocated before calling allocate" && isDeallocated());
-	#endif
-
-	CER(cudaMalloc(&(this->gpu_mem), this->size() * sizeof(T)));
-	allocated = true;
-	
-}
-
-template<typename T, Mode device>
-void Tensor<T, device>::deallocate()
-{
-	//Deallocate the gpu memmorry
-
-	//assert if memory is allready deallocated
-	#ifdef _DEBUG
-	assert("GPU memory was already deallocated" && isAllocated());
-	#endif
-
-	CER(cudaFree(gpu_mem));
-	allocated = false;
-}
-
-template<typename T, Mode device>
-bool Tensor<T, device>::isAllocated() const
-{
-	return allocated;
-}
-
-template<typename T, Mode device>
-bool Tensor<T, device>::isDeallocated() const
-{
-	return !allocated;
-}
-
-template<typename T, Mode device>
-inline void Tensor<T, device>::copyGPU()
-{
-	//assert if memory is not allocated on gpu
-	//this error might be thrown if you forget to allocate after a resize
-	#ifdef _DEBUG
-	assert("Memory is not allocated on the gpu unable to copy" && isAllocated());
-	#endif
-
-	//copy source cpu memory to gpu memory
-	CER(cudaMemcpy(gpu_mem, Data(), size() * sizeof(T), cudaMemcpyHostToDevice));
-}
-
-template<typename T, Mode device>
-void Tensor<T, device>::copyCPU()
-{
-	//assert if memory is not allocated on gpu
-	//this error might be thrown if you forget to allocate after a resize
-	#ifdef _DEBUG
-	assert("Memory is not allocated on the gpu unable to copy" && isAllocated());
-	#endif
-
-	//copy source gpu memory to cpu memory
-	CER(cudaMemcpy(Data(), gpu_mem, size() * sizeof(T), cudaMemcpyDeviceToHost));
-}
-
-template<typename T, Mode device>
-inline void Tensor<T, device>::push()
-{
-	allocate();
-	copyGPU();
-}
-
-template<typename T, Mode device>
-void Tensor<T, device>::pull()
-{
-	copyCPU();
-	deallocate();
-}
-
-template<typename T, Mode device>
-__host__ __device__ T* Tensor<T, device>::getGPU()
-{
-	return gpu_mem;
-}
-
-template<typename T, Mode device>
-__host__ __device__ const T* Tensor<T, device>::getGPU() const
-{
-	return gpu_mem;
-}
-
-template<typename T, Mode device>
-void Tensor<T, device>::setTargetThreads(const unsigned short& value)
-{
-	#ifdef _DEBUG
-	if(value > 1024)
-		throw BadThreadTarget(value);
-	#endif
-
-	m_threads = value;
-}
-
-template<typename T, Mode device>
-short Tensor<T, device>::getTargetThreads() const
-{
-	m_threads = value;
-}
-
-/// Tensor class kernel functions
-/// Ways of calculating kernel dimsions:
-/// 
-/// Cube:
-///		create a X*Y*Z cube where the cube is the best fit for the target threads
-/// 
-/// Plane:
-///		create a X*Y*1 plane where the plane is the best fit for the target threads
-/// 
-/// Line:
-///		create an X*1*1 line where the line is the best fit for the target threads
-/// 
-/// 
-/// NOTE: block layout is not affected by these options
-/// NOTE: lower dimension kernels can use higher dimension thread layouts
-
-
-template<typename T, Mode device>
-template<Mode layout, typename FT, typename RT, typename ...Args>
-Tensor<RT, device> Tensor<T, device>::Kernel1DR(CUDALayout<layout> layout, FT(kernel_p), Args && ...args)
-{
+	/// Tensor class CUDATensor cast operators
 
 	#if 1
-	#ifdef _DEBUG
-	assert("There can not be more than 1024 total threads in each block" && m_threads <= 1024);
-	if (isDeallocated())
-		std::cout << "warning: No gpu memory is allocated, illegal memory access may occur\n";
+
+	template<typename T, Mode device>
+	Tensor<T, device>::operator CUDATensor1D<T>()
+	{
+		return CUDATensor1D<T>(*this);
+	}
+
+	template<typename T, Mode device>
+	Tensor<T, device>::operator CUDATensor2D<T>()
+	{
+		return CUDATensor2D<T>(*this);
+	}
+
+	template<typename T, Mode device>
+	Tensor<T, device>::operator CUDATensor3D<T>()
+	{
+		return CUDATensor3D<T>(*this);
+	}
 	#endif
 
-	//create result Tensor: This will hold all of the return values
-	Tensor<RT, device> result(Shape(), RT(), false);
+	/// Tensor class cuda specific functions
 
-	result.allocate();
+	template<typename T, Mode device>
+	inline __host__ void Tensor<T, device>::allocate()
+	{
+		//Allocate the cpu memory on the gpu
+		//this will have to be done every time the Tensor gets resized or deallocated
 
-	//Get flattended version of Tensor so it can fit in the desired dimensions
-	size_t dims = FlattenDims();
+		//assert if trying to allocate already allocated memory FIX: deallocate before allocating
+		#ifdef _DEBUG
+		assert("GPU memory was not deallocated before calling allocate" && isDeallocated());
+		#endif
+
+		CER(cudaMalloc(&(this->gpu_mem), this->size() * sizeof(T)));
+		allocated = true;
+	}
 
-	//calculate block sizes from thread size
-	auto threads = layout.apply(this, m_threads);
-	unsigned int blocks = (unsigned int)(dims + std::get<0>(threads) - 1) / std::get<0>(threads);
+	template<typename T, Mode device>
+	void Tensor<T, device>::deallocate()
+	{
+		//Deallocate the gpu memmorry
 
-	kernel_p << < blocks, {std::get<0>(threads), std::get<1>(threads) , std::get<2>(threads) } >> > (*this, result, args...);
+		//assert if memory is allready deallocated
+		#ifdef _DEBUG
+		assert("GPU memory was already deallocated" && isAllocated());
+		#endif
 
-	#ifdef _DEBUG
-	CER(cudaGetLastError());
-	#endif
+		CER(cudaFree(gpu_mem));
+		allocated = false;
+	}
 
-	CER(cudaDeviceSynchronize());
+	template<typename T, Mode device>
+	bool Tensor<T, device>::isAllocated() const
+	{
+		return allocated;
+	}
 
-	result.pull();
+	template<typename T, Mode device>
+	bool Tensor<T, device>::isDeallocated() const
+	{
+		return !allocated;
+	}
 
-	return result;
-	#endif
-}
+	template<typename T, Mode device>
+	inline void Tensor<T, device>::copyGPU()
+	{
+		//assert if memory is not allocated on gpu
+		//this error might be thrown if you forget to allocate after a resize
+		#ifdef _DEBUG
+		assert("Memory is not allocated on the gpu unable to copy" && isAllocated());
+		#endif
 
-template<typename T, Mode device>
-template<Mode layout, typename FT, typename ...Args>
-void Tensor<T, device>::Kernel1D(CUDALayout<layout> layout, FT(kernel_p), Args && ...args)
-{
+		//copy source cpu memory to gpu memory
+		CER(cudaMemcpy(gpu_mem, Data(), size() * sizeof(T), cudaMemcpyHostToDevice));
+	}
 
-	#ifdef _DEBUG
-	assert("There can not be more than 1024 total threads in each block" && m_threads <= 1024);
-	if (isDeallocated())
-		std::cout << "warning: No gpu memory is allocated, illegal memory access may occur\n";
-	#endif
+	template<typename T, Mode device>
+	void Tensor<T, device>::copyCPU()
+	{
+		//assert if memory is not allocated on gpu
+		//this error might be thrown if you forget to allocate after a resize
+		#ifdef _DEBUG
+		assert("Memory is not allocated on the gpu unable to copy" && isAllocated());
+		#endif
 
-	//Get flattended version of Tensor so it can fit in the desired dimensions
-	size_t dims = FlattenDims();
+		//copy source gpu memory to cpu memory
+		CER(cudaMemcpy(Data(), gpu_mem, size() * sizeof(T), cudaMemcpyDeviceToHost));
+	}
 
-	//calculate block sizes from thread size
-	std::tuple<unsigned int, unsigned int, unsigned int> threads = layout.apply(this, m_threads);
-	unsigned int blocks = (unsigned int)(dims + std::get<0>(threads) - 1) / std::get<0>(threads);
+	template<typename T, Mode device>
+	inline void Tensor<T, device>::push()
+	{
+		allocate();
+		copyGPU();
+	}
 
-	kernel_p << < blocks, {std::get<0>(threads), std::get<1>(threads), std::get<2>(threads)} >> > (*this, args...);
+	template<typename T, Mode device>
+	void Tensor<T, device>::pull()
+	{
+		copyCPU();
+		deallocate();
+	}
 
-	#ifdef _DEBUG
-	CER(cudaGetLastError());
-	#endif
+	template<typename T, Mode device>
+	__host__ __device__ T* Tensor<T, device>::getGPU()
+	{
+		return gpu_mem;
+	}
 
-	CER(cudaDeviceSynchronize());
-}
+	template<typename T, Mode device>
+	__host__ __device__ const T* Tensor<T, device>::getGPU() const
+	{
+		return gpu_mem;
+	}
 
-template<typename T, Mode device>
-template<Mode layout, typename FT, typename RT, typename ...Args>
-Tensor<RT, device> Tensor<T, device>::Kernel2DR(CUDALayout<layout> layout, FT(kernel_p), Args && ...args)
-{
+	template<typename T, Mode device>
+	void Tensor<T, device>::setTargetThreads(const unsigned short& value)
+	{
+		#ifdef _DEBUG
+		if (value > 1024)
+			throw BadThreadTarget(value);
+		#endif
 
-	#ifdef _DEBUG
-	assert("There can not be more than 1024 total threads in each block" && m_threads <= 1024);
-	if (isDeallocated())
-		std::cout << "warning: No gpu memory is allocated, illegal memory access may occur\n";
-	#endif
+		m_threads = value;
+	}
 
+	template<typename T, Mode device>
+	short Tensor<T, device>::getTargetThreads() const
+	{
+		m_threads = value;
+	}
 
-	//create result Tensor: This will hold all of the return values
-	Tensor<RT, device> result(Shape(), RT(), false);
-	result.allocate();
+	/// Tensor class kernel functions
+	/// Ways of calculating kernel dimsions:
+	///
+	/// Cube:
+	///		create a X*Y*Z cube where the cube is the best fit for the target threads
+	///
+	/// Plane:
+	///		create a X*Y*1 plane where the plane is the best fit for the target threads
+	///
+	/// Line:
+	///		create an X*1*1 line where the line is the best fit for the target threads
+	///
+	///
+	/// NOTE: block layout is not affected by these options
+	/// NOTE: lower dimension kernels can use higher dimension thread layouts
 
-	//Get flattended version of Tensor so it can fit in the desired dimensions
+	template<typename T, Mode device>
+	template<Mode layout, typename FT, typename RT, typename ...Args>
+	Tensor<RT, device> Tensor<T, device>::Kernel1DR(CUDALayout<layout> layout, FT(kernel_p), Args && ...args)
+	{
+		#if 1
+		#ifdef _DEBUG
+		assert("There can not be more than 1024 total threads in each block" && m_threads <= 1024);
+		if (isDeallocated())
+			std::cout << "warning: No gpu memory is allocated, illegal memory access may occur\n";
+		#endif
 
-	std::vector<size_t> dims = FlattenDims(2);
+		//create result Tensor: This will hold all of the return values
+		Tensor<RT, device> result(Shape(), RT(), false);
 
-	//calculate block sizes from thread size
+		result.allocate();
 
-	auto threads = layout.apply(this, m_threads);
-	dim3 blocks((uint32_t)std::ceil((dims[0] + std::get<0>(threads) - 1) / std::get<0>(threads)),
-		(uint32_t)std::ceil((dims[1] + std::get<1>(threads) - 1) / std::get<1>(threads)));
+		//Get flattended version of Tensor so it can fit in the desired dimensions
+		size_t dims = FlattenDims();
 
-	kernel_p << < blocks, { std::get<0>(threads), std::get<1>(threads) , std::get<2>(threads) } >> > (*this, result, args...);
+		//calculate block sizes from thread size
+		auto threads = layout.apply(this, m_threads);
+		unsigned int blocks = (unsigned int)(dims + std::get<0>(threads) - 1) / std::get<0>(threads);
 
-	#ifdef _DEBUG
-	CER(cudaGetLastError());
-	#endif
+		kernel_p << < blocks, { std::get<0>(threads), std::get<1>(threads) , std::get<2>(threads) } >> > (*this, result, args...);
 
-	CER(cudaDeviceSynchronize());
+		#ifdef _DEBUG
+		CER(cudaGetLastError());
+		#endif
 
-	result.pull();
+		CER(cudaDeviceSynchronize());
 
-	return result;
-}
+		result.pull();
 
-template<typename T, Mode device>
-template<Mode layout, typename FT, typename ...Args>
-void Tensor<T, device>::Kernel2D(CUDALayout<layout> layout, FT(kernel_p), Args && ...args)
-{
+		return result;
+		#endif
+	}
 
-	#ifdef _DEBUG
-	assert("There can not be more than 1024 total threads in each block" && m_threads <= 1024);
-	if (isDeallocated())
-		std::cout << "warning: No gpu memory is allocated, illegal memory access may occur\n";
-	#endif
+	template<typename T, Mode device>
+	template<Mode layout, typename FT, typename ...Args>
+	void Tensor<T, device>::Kernel1D(CUDALayout<layout> layout, FT(kernel_p), Args && ...args)
+	{
+		#ifdef _DEBUG
+		assert("There can not be more than 1024 total threads in each block" && m_threads <= 1024);
+		if (isDeallocated())
+			std::cout << "warning: No gpu memory is allocated, illegal memory access may occur\n";
+		#endif
 
-	//Get flattended version of Tensor so it can fit in the desired dimensions
-	std::vector<size_t> dims = FlattenDims(2);
+		//Get flattended version of Tensor so it can fit in the desired dimensions
+		size_t dims = FlattenDims();
 
-	//calculate block sizes from thread size
+		//calculate block sizes from thread size
+		std::tuple<unsigned int, unsigned int, unsigned int> threads = layout.apply(this, m_threads);
+		unsigned int blocks = (unsigned int)(dims + std::get<0>(threads) - 1) / std::get<0>(threads);
 
-	auto threads = layout.apply(this, m_threads);
-	dim3 blocks((uint32_t)std::ceil((dims[0] + std::get<0>(threads) - 1) / std::get<0>(threads)),
-				(uint32_t)std::ceil((dims[1] + std::get<1>(threads) - 1) / std::get<1>(threads)));
+		kernel_p << < blocks, { std::get<0>(threads), std::get<1>(threads), std::get<2>(threads) } >> > (*this, args...);
 
-	kernel_p << < blocks, { std::get<0>(threads), std::get<1>(threads) , std::get<2>(threads) } >> > (*this, args...);
+		#ifdef _DEBUG
+		CER(cudaGetLastError());
+		#endif
 
-	#ifdef _DEBUG
-	CER(cudaGetLastError());
-	#endif
+		CER(cudaDeviceSynchronize());
+	}
 
-	CER(cudaDeviceSynchronize());
-}
+	template<typename T, Mode device>
+	template<Mode layout, typename FT, typename RT, typename ...Args>
+	Tensor<RT, device> Tensor<T, device>::Kernel2DR(CUDALayout<layout> layout, FT(kernel_p), Args && ...args)
+	{
+		#ifdef _DEBUG
+		assert("There can not be more than 1024 total threads in each block" && m_threads <= 1024);
+		if (isDeallocated())
+			std::cout << "warning: No gpu memory is allocated, illegal memory access may occur\n";
+		#endif
 
-template<typename T, Mode device>
-template<Mode layout, typename FT, typename RT, typename ...Args>
-Tensor<RT, device> Tensor<T, device>::Kernel3DR(CUDALayout<layout> layout, FT(kernel_p), Args && ...args)
-{
+		//create result Tensor: This will hold all of the return values
+		Tensor<RT, device> result(Shape(), RT(), false);
+		result.allocate();
 
-	#ifdef _DEBUG
-	assert("There can not be more than 1024 total threads in each block" && m_threads <= 1024);
-	if (isDeallocated())
-		std::cout << "warning: No gpu memory is allocated, illegal memory access may occur\n";
-	#endif
+		//Get flattended version of Tensor so it can fit in the desired dimensions
 
-	//create result Tensor: This will hold all of the return values
-	Tensor<RT, device> result(Shape(), RT(), false);
+		std::vector<size_t> dims = FlattenDims(2);
 
-	result.allocate();
+		//calculate block sizes from thread size
 
-	//Get flattended version of Tensor so it can fit in the desired dimensions
-	std::vector<size_t> dims = FlattenDims(3);
+		auto threads = layout.apply(this, m_threads);
+		dim3 blocks((uint32_t)std::ceil((dims[0] + std::get<0>(threads) - 1) / std::get<0>(threads)),
+			(uint32_t)std::ceil((dims[1] + std::get<1>(threads) - 1) / std::get<1>(threads)));
 
-	//calculate block sizes from thread size
+		kernel_p << < blocks, { std::get<0>(threads), std::get<1>(threads) , std::get<2>(threads) } >> > (*this, result, args...);
 
-	auto threads = layout.apply(this, m_threads);
-	dim3 blocks((uint32_t)std::ceil((dims[0] + std::get<0>(threads) - 1) / std::get<0>(threads)),
-				(uint32_t)std::ceil((dims[1] + std::get<1>(threads) - 1) / std::get<1>(threads)),
-				(uint32_t)std::ceil((dims[2] + std::get<2>(threads) - 1) / std::get<2>(threads)));
+		#ifdef _DEBUG
+		CER(cudaGetLastError());
+		#endif
 
-	kernel_p << < blocks, { std::get<0>(threads), std::get<1>(threads) , std::get<2>(threads) } >> > (*this, result, args...);
+		CER(cudaDeviceSynchronize());
 
-	#ifdef _DEBUG
-	CER(cudaGetLastError());
-	#endif
+		result.pull();
 
-	CER(cudaDeviceSynchronize());
+		return result;
+	}
 
-	result.pull();
+	template<typename T, Mode device>
+	template<Mode layout, typename FT, typename ...Args>
+	void Tensor<T, device>::Kernel2D(CUDALayout<layout> layout, FT(kernel_p), Args && ...args)
+	{
+		#ifdef _DEBUG
+		assert("There can not be more than 1024 total threads in each block" && m_threads <= 1024);
+		if (isDeallocated())
+			std::cout << "warning: No gpu memory is allocated, illegal memory access may occur\n";
+		#endif
 
-	return result;
-}
+		//Get flattended version of Tensor so it can fit in the desired dimensions
+		std::vector<size_t> dims = FlattenDims(2);
 
-template<typename T, Mode device>
-template<Mode layout, typename FT, typename ...Args>
-void Tensor<T, device>::Kernel3D(CUDALayout<layout> layout, FT(kernel_p), Args && ...args)
-{
+		//calculate block sizes from thread size
 
-	#ifdef _DEBUG
-	assert("There can not be more than 1024 total threads in each block" && m_threads <= 1024);
-	if (isDeallocated())
-		std::cout << "warning: No gpu memory is allocated, illegal memory access may occur\n";
-	#endif
+		auto threads = layout.apply(this, m_threads);
+		dim3 blocks((uint32_t)std::ceil((dims[0] + std::get<0>(threads) - 1) / std::get<0>(threads)),
+			(uint32_t)std::ceil((dims[1] + std::get<1>(threads) - 1) / std::get<1>(threads)));
 
-	//Get flattended version of Tensor so it can fit in the desired dimensions
-	std::vector<size_t> dims = FlattenDims(3);
+		kernel_p << < blocks, { std::get<0>(threads), std::get<1>(threads) , std::get<2>(threads) } >> > (*this, args...);
 
-	//calculate block sizes from thread size
+		#ifdef _DEBUG
+		CER(cudaGetLastError());
+		#endif
 
-	auto threads = layout.apply(this, m_threads);
-	dim3 blocks((uint32_t)std::ceil((dims[0] + std::get<0>(threads) - 1) / std::get<0>(threads)),
-				(uint32_t)std::ceil((dims[1] + std::get<1>(threads) - 1) / std::get<1>(threads)),
-				(uint32_t)std::ceil((dims[2] + std::get<2>(threads) - 1) / std::get<2>(threads)));
+		CER(cudaDeviceSynchronize());
+	}
 
-	kernel_p << < blocks, { std::get<0>(threads), std::get<1>(threads) , std::get<2>(threads) } >> > (*this, args...);
+	template<typename T, Mode device>
+	template<Mode layout, typename FT, typename RT, typename ...Args>
+	Tensor<RT, device> Tensor<T, device>::Kernel3DR(CUDALayout<layout> layout, FT(kernel_p), Args && ...args)
+	{
+		#ifdef _DEBUG
+		assert("There can not be more than 1024 total threads in each block" && m_threads <= 1024);
+		if (isDeallocated())
+			std::cout << "warning: No gpu memory is allocated, illegal memory access may occur\n";
+		#endif
 
-	#ifdef _DEBUG
-	CER(cudaGetLastError());
-	#endif
+		//create result Tensor: This will hold all of the return values
+		Tensor<RT, device> result(Shape(), RT(), false);
 
-	CER(cudaDeviceSynchronize());
-	}
+		result.allocate();
 
-/// <summary>
-/// Tensor class cuda specific operator call functions
-/// </summary>
+		//Get flattended version of Tensor so it can fit in the desired dimensions
+		std::vector<size_t> dims = FlattenDims(3);
 
-template<typename T, Mode device>
-template<typename RT, typename OT, Mode o_device>
-Tensor<RT, device> Tensor<T, device>::Cadd(Tensor<OT, o_device>& other)
-{
-	#ifdef _DEBUG
-	assert("Unable to fit the Tensors" && size() == other.size());
-	#endif
+		//calculate block sizes from thread size
 
-	bool this_alloc = isDeallocated();
-	bool other_alloc = other.isDeallocated();
+		auto threads = layout.apply(this, m_threads);
+		dim3 blocks((uint32_t)std::ceil((dims[0] + std::get<0>(threads) - 1) / std::get<0>(threads)),
+			(uint32_t)std::ceil((dims[1] + std::get<1>(threads) - 1) / std::get<1>(threads)),
+			(uint32_t)std::ceil((dims[2] + std::get<2>(threads) - 1) / std::get<2>(threads)));
 
-	if (this_alloc)
-	{
-		push();
-	}
+		kernel_p << < blocks, { std::get<0>(threads), std::get<1>(threads) , std::get<2>(threads) } >> > (*this, result, args...);
 
-	if (other_alloc)
-	{
-		other.push();
-	}
+		#ifdef _DEBUG
+		CER(cudaGetLastError());
+		#endif
 
-	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
-								(Layout3D(), CudaAdd<T, OT, RT>, other);
+		CER(cudaDeviceSynchronize());
 
+		result.pull();
 
-	if (this_alloc)
-	{
-		pull();
+		return result;
 	}
 
-	if (other_alloc)
+	template<typename T, Mode device>
+	template<Mode layout, typename FT, typename ...Args>
+	void Tensor<T, device>::Kernel3D(CUDALayout<layout> layout, FT(kernel_p), Args && ...args)
 	{
-		other.pull();
-	}
+		#ifdef _DEBUG
+		assert("There can not be more than 1024 total threads in each block" && m_threads <= 1024);
+		if (isDeallocated())
+			std::cout << "warning: No gpu memory is allocated, illegal memory access may occur\n";
+		#endif
 
-	return result;
-}
+		//Get flattended version of Tensor so it can fit in the desired dimensions
+		std::vector<size_t> dims = FlattenDims(3);
 
-template<typename T, Mode device>
-template<typename RT, typename OT>
-Tensor<RT, device> Tensor<T, device>::CaddSingle(const OT& other)
-{
-	bool this_alloc = isDeallocated();
+		//calculate block sizes from thread size
 
-	if (this_alloc)
-	{
-		push();
+		auto threads = layout.apply(this, m_threads);
+		dim3 blocks((uint32_t)std::ceil((dims[0] + std::get<0>(threads) - 1) / std::get<0>(threads)),
+			(uint32_t)std::ceil((dims[1] + std::get<1>(threads) - 1) / std::get<1>(threads)),
+			(uint32_t)std::ceil((dims[2] + std::get<2>(threads) - 1) / std::get<2>(threads)));
+
+		kernel_p << < blocks, { std::get<0>(threads), std::get<1>(threads) , std::get<2>(threads) } >> > (*this, args...);
+
+		#ifdef _DEBUG
+		CER(cudaGetLastError());
+		#endif
+
+		CER(cudaDeviceSynchronize());
 	}
-	
-	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
-								(Layout3D(), CudaAddSingle<T, OT, RT>, other);
 
-	if (this_alloc)
+	/// <summary>
+	/// Tensor class cuda specific operator call functions
+	/// </summary>
+
+	template<typename T, Mode device>
+	template<typename RT, typename OT, Mode o_device>
+	Tensor<RT, device> Tensor<T, device>::Cadd(Tensor<OT, o_device>& other)
 	{
-		pull();
-	}
+		#ifdef _DEBUG
+		assert("Unable to fit the Tensors" && size() == other.size());
+		#endif
 
-	return result;
-}
+		bool this_alloc = isDeallocated();
+		bool other_alloc = other.isDeallocated();
 
-template<typename T, Mode device>
-template<typename RT, typename OT, Mode o_device>
-Tensor<RT, device> Tensor<T, device>::Csubtract(Tensor<OT, o_device>& other)
-{
-	#ifdef _DEBUG
-	assert("Unable to fit the Tensors" && size() == other.size());
-	#endif
+		if (this_alloc)
+		{
+			push();
+		}
 
-	bool this_alloc = isDeallocated();
-	bool other_alloc = other.isDeallocated();
+		if (other_alloc)
+		{
+			other.push();
+		}
 
-	if (this_alloc)
-	{
-		push();
-	}
+		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
+			(Layout3D(), CudaAdd<T, OT, RT>, other);
 
-	if (other_alloc)
-	{
-		other.push();
-	}
+		if (this_alloc)
+		{
+			pull();
+		}
 
-	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
-								(Layout3D(), CudaSubtract<T, OT, RT>, other);
+		if (other_alloc)
+		{
+			other.pull();
+		}
 
-	if (this_alloc)
-	{
-		pull();
+		return result;
 	}
 
-	if (other_alloc)
+	template<typename T, Mode device>
+	template<typename RT, typename OT>
+	Tensor<RT, device> Tensor<T, device>::CaddSingle(const OT& other)
 	{
-		other.pull();
-	}
+		bool this_alloc = isDeallocated();
 
-	return result;
-}
+		if (this_alloc)
+		{
+			push();
+		}
 
-template<typename T, Mode device>
-template<typename RT, typename OT>
-Tensor<RT, device> Tensor<T, device>::CsubtractSingle(const OT& other)
-{
-	bool this_alloc = isDeallocated();
+		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
+			(Layout3D(), CudaAddSingle<T, OT, RT>, other);
 
-	if (this_alloc)
-	{
-		push();
-	}
+		if (this_alloc)
+		{
+			pull();
+		}
 
-	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
-								(Layout3D(), CudaSubtractSingle<T, OT, RT>, other);
+		return result;
+	}
 
-	if (this_alloc)
+	template<typename T, Mode device>
+	template<typename RT, typename OT, Mode o_device>
+	Tensor<RT, device> Tensor<T, device>::Csubtract(Tensor<OT, o_device>& other)
 	{
-		pull();
-	}
+		#ifdef _DEBUG
+		assert("Unable to fit the Tensors" && size() == other.size());
+		#endif
 
-	return result;
-}
+		bool this_alloc = isDeallocated();
+		bool other_alloc = other.isDeallocated();
 
-template<typename T, Mode device>
-template<typename RT, typename OT, Mode o_device>
-Tensor<RT, device> Tensor<T, device>::Cmultiply(Tensor<OT, o_device>& other)
-{
-	#ifdef _DEBUG
-	assert("Unable to fit the Tensors" && size() == other.size());
-	#endif
+		if (this_alloc)
+		{
+			push();
+		}
 
-	bool this_alloc = isDeallocated();
-	bool other_alloc = other.isDeallocated();
+		if (other_alloc)
+		{
+			other.push();
+		}
 
-	if (this_alloc)
-	{
-		push();
-	}
+		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
+			(Layout3D(), CudaSubtract<T, OT, RT>, other);
 
-	if (other_alloc)
-	{
-		other.push();
-	}
+		if (this_alloc)
+		{
+			pull();
+		}
 
-	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
-								(Layout3D(), CudaMultiply<T, OT, RT>, other);
+		if (other_alloc)
+		{
+			other.pull();
+		}
 
-	if (this_alloc)
-	{
-		pull();
+		return result;
 	}
 
-	if (other_alloc)
+	template<typename T, Mode device>
+	template<typename RT, typename OT>
+	Tensor<RT, device> Tensor<T, device>::CsubtractSingle(const OT& other)
 	{
-		other.pull();
-	}
+		bool this_alloc = isDeallocated();
 
-	return result;
-}
+		if (this_alloc)
+		{
+			push();
+		}
 
-template<typename T, Mode device>
-template<typename RT, typename OT>
-Tensor<RT, device> Tensor<T, device>::CmultiplySingle(const OT& other)
-{
-	bool this_alloc = isDeallocated();
+		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
+			(Layout3D(), CudaSubtractSingle<T, OT, RT>, other);
 
-	if (this_alloc)
-	{
-		push();
-	}
+		if (this_alloc)
+		{
+			pull();
+		}
 
-	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
-								(Layout3D(), CudaMultiplySingle<T, OT, RT>, other);
+		return result;
+	}
 
-	if (this_alloc)
+	template<typename T, Mode device>
+	template<typename RT, typename OT, Mode o_device>
+	Tensor<RT, device> Tensor<T, device>::Cmultiply(Tensor<OT, o_device>& other)
 	{
-		pull();
-	}
+		#ifdef _DEBUG
+		assert("Unable to fit the Tensors" && size() == other.size());
+		#endif
 
-	return result;
-}
+		bool this_alloc = isDeallocated();
+		bool other_alloc = other.isDeallocated();
 
-template<typename T, Mode device>
-template<typename RT, typename OT, Mode o_device>
-Tensor<RT, device> Tensor<T, device>::Cdivide(Tensor<OT, o_device>& other)
-{
-	#ifdef _DEBUG
-	assert("Unable to fit the Tensors" && size() == other.size());
-	#endif
+		if (this_alloc)
+		{
+			push();
+		}
 
-	bool this_alloc = isDeallocated();
-	bool other_alloc = other.isDeallocated();
+		if (other_alloc)
+		{
+			other.push();
+		}
 
-	if (this_alloc)
-	{
-		push();
-	}
+		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
+			(Layout3D(), CudaMultiply<T, OT, RT>, other);
 
-	if (other_alloc)
-	{
-		other.push();
-	}
+		if (this_alloc)
+		{
+			pull();
+		}
 
-	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
-								(Layout3D(), CudaDivide<T, OT, RT>, other);
+		if (other_alloc)
+		{
+			other.pull();
+		}
 
-	if (this_alloc)
-	{
-		pull();
+		return result;
 	}
 
-	if (other_alloc)
+	template<typename T, Mode device>
+	template<typename RT, typename OT>
+	Tensor<RT, device> Tensor<T, device>::CmultiplySingle(const OT& other)
 	{
-		other.pull();
-	}
+		bool this_alloc = isDeallocated();
 
-	return result;
-}
+		if (this_alloc)
+		{
+			push();
+		}
 
-template<typename T, Mode device>
-template<typename RT, typename OT>
-Tensor<RT, device> Tensor<T, device>::CdivideSingle(const OT& other)
-{
-	bool this_alloc = isDeallocated();
+		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
+			(Layout3D(), CudaMultiplySingle<T, OT, RT>, other);
 
-	if (this_alloc)
-	{
-		push();
-	}
+		if (this_alloc)
+		{
+			pull();
+		}
 
-	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
-								(Layout3D(), CudaDivideSingle<T, OT, RT>, other);
+		return result;
+	}
 
-	if (this_alloc)
+	template<typename T, Mode device>
+	template<typename RT, typename OT, Mode o_device>
+	Tensor<RT, device> Tensor<T, device>::Cdivide(Tensor<OT, o_device>& other)
 	{
-		pull();
-	}
+		#ifdef _DEBUG
+		assert("Unable to fit the Tensors" && size() == other.size());
+		#endif
 
-	return result;
-}
+		bool this_alloc = isDeallocated();
+		bool other_alloc = other.isDeallocated();
 
-template<typename T, Mode device>
-template<typename RT, typename OT, Mode o_device>
-Tensor<RT, device> Tensor<T, device>::Cmodulous(Tensor<OT, o_device>& other)
-{
-	#ifdef _DEBUG
-	assert("Unable to fit the Tensors" && size() == other.size());
-	#endif
+		if (this_alloc)
+		{
+			push();
+		}
 
-	bool this_alloc = isDeallocated();
-	bool other_alloc = other.isDeallocated();
+		if (other_alloc)
+		{
+			other.push();
+		}
 
-	if (this_alloc)
-	{
-		push();
-	}
+		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
+			(Layout3D(), CudaDivide<T, OT, RT>, other);
 
-	if (other_alloc)
-	{
-		other.push();
-	}
+		if (this_alloc)
+		{
+			pull();
+		}
 
-	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
-								(Layout3D(), CudaModulous<T, OT, RT>, other);
+		if (other_alloc)
+		{
+			other.pull();
+		}
 
-	if (this_alloc)
-	{
-		pull();
+		return result;
 	}
 
-	if (other_alloc)
+	template<typename T, Mode device>
+	template<typename RT, typename OT>
+	Tensor<RT, device> Tensor<T, device>::CdivideSingle(const OT& other)
 	{
-		other.pull();
-	}
+		bool this_alloc = isDeallocated();
 
-	return result;
-}
+		if (this_alloc)
+		{
+			push();
+		}
 
-template<typename T, Mode device>
-template<typename RT, typename OT>
-Tensor<RT, device> Tensor<T, device>::CmodulousSingle(const OT& other)
-{
-	bool this_alloc = isDeallocated();
+		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
+			(Layout3D(), CudaDivideSingle<T, OT, RT>, other);
 
-	if (this_alloc)
-	{
-		push();
-	}
+		if (this_alloc)
+		{
+			pull();
+		}
 
-	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
-								(Layout3D(), CudaModulousSingle<T, OT, RT>, other);
+		return result;
+	}
 
-	if (this_alloc)
+	template<typename T, Mode device>
+	template<typename RT, typename OT, Mode o_device>
+	Tensor<RT, device> Tensor<T, device>::Cmodulous(Tensor<OT, o_device>& other)
 	{
-		pull();
-	}
+		#ifdef _DEBUG
+		assert("Unable to fit the Tensors" && size() == other.size());
+		#endif
 
-	return result;
-}
+		bool this_alloc = isDeallocated();
+		bool other_alloc = other.isDeallocated();
 
-template<typename T, Mode device>
-template<typename OT, Mode o_device>
-void Tensor<T, device>::CadditionAssignment(Tensor<OT, o_device>& other)
-{
-	#ifdef _DEBUG
-	assert("Unable to fit the Tensors" && size() == other.size());
-	#endif
+		if (this_alloc)
+		{
+			push();
+		}
 
-	bool this_alloc = isDeallocated();
-	bool other_alloc = other.isDeallocated();
+		if (other_alloc)
+		{
+			other.push();
+		}
 
-	if (this_alloc)
-	{
-		push();
-	}
+		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
+			(Layout3D(), CudaModulous<T, OT, RT>, other);
 
-	if (other_alloc)
-	{
-		other.push();
-	}
+		if (this_alloc)
+		{
+			pull();
+		}
 
-	Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
-								(Layout3D(), CudaAdditionAssignment<T, OT>, other);
+		if (other_alloc)
+		{
+			other.pull();
+		}
 
-	if (this_alloc)
-	{
-		pull();
+		return result;
 	}
 
-	if (other_alloc)
+	template<typename T, Mode device>
+	template<typename RT, typename OT>
+	Tensor<RT, device> Tensor<T, device>::CmodulousSingle(const OT& other)
 	{
-		other.pull();
-	}
-}
+		bool this_alloc = isDeallocated();
 
-template<typename T, Mode device>
-template<typename OT>
-void Tensor<T, device>::CadditionAssignmentSingle(const OT& other)
-{
-	bool this_alloc = isDeallocated();
+		if (this_alloc)
+		{
+			push();
+		}
 
-	if (this_alloc)
-	{
-		push();
-	}
+		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
+			(Layout3D(), CudaModulousSingle<T, OT, RT>, other);
 
-	Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, OT)>
-								(Layout3D(), CudaAdditionAssignmentSingle<T, OT>, other);
+		if (this_alloc)
+		{
+			pull();
+		}
 
-	if (this_alloc)
-	{
-		pull();
+		return result;
 	}
-}
 
-template<typename T, Mode device>
-template<typename OT, Mode o_device>
-void Tensor<T, device>::CsubtractionAssignment(Tensor<OT, o_device>& other)
-{
-	#ifdef _DEBUG
-	assert("Unable to fit the Tensors" && size() == other.size());
-	#endif
+	template<typename T, Mode device>
+	template<typename OT, Mode o_device>
+	void Tensor<T, device>::CadditionAssignment(Tensor<OT, o_device>& other)
+	{
+		#ifdef _DEBUG
+		assert("Unable to fit the Tensors" && size() == other.size());
+		#endif
 
-	bool this_alloc = isDeallocated();
-	bool other_alloc = other.isDeallocated();
+		bool this_alloc = isDeallocated();
+		bool other_alloc = other.isDeallocated();
 
-	if (this_alloc)
-	{
-		push();
-	}
+		if (this_alloc)
+		{
+			push();
+		}
 
-	if (other_alloc)
-	{
-		other.push();
-	}
+		if (other_alloc)
+		{
+			other.push();
+		}
 
-	Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
-								(Layout3D(), CudaSubtractionAssignment<T, OT>, other);
+		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
+			(Layout3D(), CudaAdditionAssignment<T, OT>, other);
 
-	if (this_alloc)
-	{
-		pull();
+		if (this_alloc)
+		{
+			pull();
+		}
+
+		if (other_alloc)
+		{
+			other.pull();
+		}
 	}
 
-	if (other_alloc)
+	template<typename T, Mode device>
+	template<typename OT>
+	void Tensor<T, device>::CadditionAssignmentSingle(const OT& other)
 	{
-		other.pull();
-	}
-}
+		bool this_alloc = isDeallocated();
 
-template<typename T, Mode device>
-template<typename OT>
-void Tensor<T, device>::CsubtractionAssignmentSingle(const OT& other)
-{
-	bool this_alloc = isDeallocated();
+		if (this_alloc)
+		{
+			push();
+		}
 
-	if (this_alloc)
-	{
-		push();
-	}
+		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, OT)>
+			(Layout3D(), CudaAdditionAssignmentSingle<T, OT>, other);
 
-	Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
-								(Layout3D(), CudaSubtractionAssignmentSingle<T, OT>, other);
+		if (this_alloc)
+		{
+			pull();
+		}
+	}
 
-	if (this_alloc)
+	template<typename T, Mode device>
+	template<typename OT, Mode o_device>
+	void Tensor<T, device>::CsubtractionAssignment(Tensor<OT, o_device>& other)
 	{
-		pull();
-	}
-}
+		#ifdef _DEBUG
+		assert("Unable to fit the Tensors" && size() == other.size());
+		#endif
 
-template<typename T, Mode device>
-template<typename OT, Mode o_device>
-void Tensor<T, device>::CmultiplicationAssignment(Tensor<OT, o_device>& other)
-{
-	#ifdef _DEBUG
-	assert("Unable to fit the Tensors" && size() == other.size());
-	#endif
+		bool this_alloc = isDeallocated();
+		bool other_alloc = other.isDeallocated();
 
-	bool this_alloc = isDeallocated();
-	bool other_alloc = other.isDeallocated();
+		if (this_alloc)
+		{
+			push();
+		}
 
-	if (this_alloc)
-	{
-		push();
-	}
+		if (other_alloc)
+		{
+			other.push();
+		}
 
-	if (other_alloc)
-	{
-		other.push();
-	}
+		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
+			(Layout3D(), CudaSubtractionAssignment<T, OT>, other);
 
-	Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
-								(Layout3D(), CudaMultiplicationAssignment<T, OT>, other);
+		if (this_alloc)
+		{
+			pull();
+		}
 
-	if (this_alloc)
-	{
-		pull();
+		if (other_alloc)
+		{
+			other.pull();
+		}
 	}
 
-	if (other_alloc)
+	template<typename T, Mode device>
+	template<typename OT>
+	void Tensor<T, device>::CsubtractionAssignmentSingle(const OT& other)
 	{
-		other.pull();
-	}
-}
+		bool this_alloc = isDeallocated();
 
-template<typename T, Mode device>
-template<typename OT>
-void Tensor<T, device>::CmultiplicationAssignmentSingle(const OT& other)
-{
-	bool this_alloc = isDeallocated();
+		if (this_alloc)
+		{
+			push();
+		}
 
-	if (this_alloc)
-	{
-		push();
-	}
+		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
+			(Layout3D(), CudaSubtractionAssignmentSingle<T, OT>, other);
 
-	Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
-								(Layout3D(), CudaMultiplicationAssignmentSingle<T, OT>, other);
+		if (this_alloc)
+		{
+			pull();
+		}
+	}
 
-	if (this_alloc)
+	template<typename T, Mode device>
+	template<typename OT, Mode o_device>
+	void Tensor<T, device>::CmultiplicationAssignment(Tensor<OT, o_device>& other)
 	{
-		pull();
-	}
-}
+		#ifdef _DEBUG
+		assert("Unable to fit the Tensors" && size() == other.size());
+		#endif
 
-template<typename T, Mode device>
-template<typename OT, Mode o_device>
-void Tensor<T, device>::CdivisionAssignment(Tensor<OT, o_device>& other)
-{
-	#ifdef _DEBUG
-	assert("Unable to fit the Tensors" && size() == other.size());
-	#endif
+		bool this_alloc = isDeallocated();
+		bool other_alloc = other.isDeallocated();
 
-	bool this_alloc = isDeallocated();
-	bool other_alloc = other.isDeallocated();
+		if (this_alloc)
+		{
+			push();
+		}
 
-	if (this_alloc)
-	{
-		push();
-	}
+		if (other_alloc)
+		{
+			other.push();
+		}
 
-	if (other_alloc)
-	{
-		other.push();
-	}
+		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
+			(Layout3D(), CudaMultiplicationAssignment<T, OT>, other);
 
-	Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
-								(Layout3D(), CudaDivisionAssignment<T, OT>, other);
+		if (this_alloc)
+		{
+			pull();
+		}
 
-	if (this_alloc)
-	{
-		pull();
+		if (other_alloc)
+		{
+			other.pull();
+		}
 	}
 
-	if (other_alloc)
+	template<typename T, Mode device>
+	template<typename OT>
+	void Tensor<T, device>::CmultiplicationAssignmentSingle(const OT& other)
 	{
-		other.pull();
-	}
-}
+		bool this_alloc = isDeallocated();
 
-template<typename T, Mode device>
-template<typename OT>
-void Tensor<T, device>::CdivisionAssignmentSingle(const OT& other)
-{
-	bool this_alloc = isDeallocated();
+		if (this_alloc)
+		{
+			push();
+		}
 
-	if (this_alloc)
-	{
-		push();
-	}
+		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
+			(Layout3D(), CudaMultiplicationAssignmentSingle<T, OT>, other);
 
-	Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
-								(Layout3D(), CudaDivisionAssignmentSingle<T, OT>, other);
+		if (this_alloc)
+		{
+			pull();
+		}
+	}
 
-	if (this_alloc)
+	template<typename T, Mode device>
+	template<typename OT, Mode o_device>
+	void Tensor<T, device>::CdivisionAssignment(Tensor<OT, o_device>& other)
 	{
-		pull();
-	}
-}
+		#ifdef _DEBUG
+		assert("Unable to fit the Tensors" && size() == other.size());
+		#endif
 
-template<typename T, Mode device>
-template<typename OT, Mode o_device>
-void Tensor<T, device>::CmodulouAssignment(Tensor<OT, o_device>& other)
-{
-	#ifdef _DEBUG
-	assert("Unable to fit the Tensors" && size() == other.size());
-	#endif
+		bool this_alloc = isDeallocated();
+		bool other_alloc = other.isDeallocated();
 
-	bool this_alloc = isDeallocated();
-	bool other_alloc = other.isDeallocated();
+		if (this_alloc)
+		{
+			push();
+		}
 
-	if (this_alloc)
-	{
-		push();
-	}
+		if (other_alloc)
+		{
+			other.push();
+		}
 
-	if (other_alloc)
-	{
-		other.push();
-	}
+		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
+			(Layout3D(), CudaDivisionAssignment<T, OT>, other);
 
-	Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
-								(Layout3D(), CudaModulouAssignment<T, OT>, other);
+		if (this_alloc)
+		{
+			pull();
+		}
 
-	if (this_alloc)
-	{
-		pull();
+		if (other_alloc)
+		{
+			other.pull();
+		}
 	}
 
-	if (other_alloc)
+	template<typename T, Mode device>
+	template<typename OT>
+	void Tensor<T, device>::CdivisionAssignmentSingle(const OT& other)
 	{
-		other.pull();
-	}
-}
+		bool this_alloc = isDeallocated();
 
-template<typename T, Mode device>
-template<typename OT>
-void Tensor<T, device>::CmodulouAssignmentSingle(const OT& other)
-{
-	bool this_alloc = isDeallocated();
+		if (this_alloc)
+		{
+			push();
+		}
 
-	if (this_alloc)
-	{
-		push();
-	}
+		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
+			(Layout3D(), CudaDivisionAssignmentSingle<T, OT>, other);
 
-	Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
-								(Layout3D(), CudaModulouAssignmentSingle<T, OT>, other);
+		if (this_alloc)
+		{
+			pull();
+		}
+	}
 
-	if (this_alloc)
+	template<typename T, Mode device>
+	template<typename OT, Mode o_device>
+	void Tensor<T, device>::CmodulouAssignment(Tensor<OT, o_device>& other)
 	{
-		pull();
-	}
-}
+		#ifdef _DEBUG
+		assert("Unable to fit the Tensors" && size() == other.size());
+		#endif
 
-template<typename T, Mode device>
-template<typename RT, typename OT, Mode o_device>
-Tensor<RT, device> Tensor<T, device>::Ccompare(Tensor<OT, o_device>& other)
-{
-	#ifdef _DEBUG
-	assert("Unable to fit the Tensors" && size() == other.size());
-	#endif
+		bool this_alloc = isDeallocated();
+		bool other_alloc = other.isDeallocated();
 
-	bool this_alloc = isDeallocated();
-	bool other_alloc = other.isDeallocated();
+		if (this_alloc)
+		{
+			push();
+		}
 
-	if (this_alloc)
-	{
-		push();
-	}
+		if (other_alloc)
+		{
+			other.push();
+		}
 
-	if (other_alloc)
-	{
-		other.push();
-	}
+		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
+			(Layout3D(), CudaModulouAssignment<T, OT>, other);
 
-	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
-								(Layout3D(), CudaCompare<T, OT, RT>, other);
+		if (this_alloc)
+		{
+			pull();
+		}
 
-	if (this_alloc)
-	{
-		pull();
+		if (other_alloc)
+		{
+			other.pull();
+		}
 	}
 
-	if (other_alloc)
+	template<typename T, Mode device>
+	template<typename OT>
+	void Tensor<T, device>::CmodulouAssignmentSingle(const OT& other)
 	{
-		other.pull();
-	}
+		bool this_alloc = isDeallocated();
 
-	return result;
-}
+		if (this_alloc)
+		{
+			push();
+		}
 
-template<typename T, Mode device>
-template<typename RT, typename OT>
-Tensor<RT, device> Tensor<T, device>::CcompareSingle(const OT& other)
-{
-	bool this_alloc = isDeallocated();
+		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
+			(Layout3D(), CudaModulouAssignmentSingle<T, OT>, other);
 
-	if (this_alloc)
-	{
-		push();
+		if (this_alloc)
+		{
+			pull();
+		}
 	}
 
-	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
-								(Layout3D(), CudaCompareSingle<T, OT, RT>, other);
-
-	if (this_alloc)
+	template<typename T, Mode device>
+	template<typename RT, typename OT, Mode o_device>
+	Tensor<RT, device> Tensor<T, device>::Ccompare(Tensor<OT, o_device>& other)
 	{
-		pull();
-	}
+		#ifdef _DEBUG
+		assert("Unable to fit the Tensors" && size() == other.size());
+		#endif
 
-	return result;
-}
+		bool this_alloc = isDeallocated();
+		bool other_alloc = other.isDeallocated();
 
-template<typename T, Mode device>
-template<typename RT, typename OT, Mode o_device>
-Tensor<RT, device> Tensor<T, device>::ClessThan(Tensor<OT, o_device>& other)
-{
-	#ifdef _DEBUG
-	assert("Unable to fit the Tensors" && size() == other.size());
-	#endif
+		if (this_alloc)
+		{
+			push();
+		}
 
-	bool this_alloc = isDeallocated();
-	bool other_alloc = other.isDeallocated();
+		if (other_alloc)
+		{
+			other.push();
+		}
 
-	if (this_alloc)
-	{
-		push();
-	}
+		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
+			(Layout3D(), CudaCompare<T, OT, RT>, other);
 
-	if (other_alloc)
-	{
-		other.push();
-	}
+		if (this_alloc)
+		{
+			pull();
+		}
 
-	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
-								(Layout3D(), CudaLessThan<T, OT, RT>, other);
+		if (other_alloc)
+		{
+			other.pull();
+		}
 
-	if (this_alloc)
-	{
-		pull();
+		return result;
 	}
 
-	if (other_alloc)
+	template<typename T, Mode device>
+	template<typename RT, typename OT>
+	Tensor<RT, device> Tensor<T, device>::CcompareSingle(const OT& other)
 	{
-		other.pull();
-	}
+		bool this_alloc = isDeallocated();
 
-	return result;
-}
+		if (this_alloc)
+		{
+			push();
+		}
 
-template<typename T, Mode device>
-template<typename RT, typename OT>
-Tensor<RT, device> Tensor<T, device>::ClessThanSingle(const OT& other)
-{
-	bool this_alloc = isDeallocated();
+		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
+			(Layout3D(), CudaCompareSingle<T, OT, RT>, other);
 
-	if (this_alloc)
-	{
-		push();
-	}
+		if (this_alloc)
+		{
+			pull();
+		}
 
-	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
-								(Layout3D(), CudaLessThanSingle<T, OT, RT>, other);
+		return result;
+	}
 
-	if (this_alloc)
+	template<typename T, Mode device>
+	template<typename RT, typename OT, Mode o_device>
+	Tensor<RT, device> Tensor<T, device>::ClessThan(Tensor<OT, o_device>& other)
 	{
-		pull();
-	}
+		#ifdef _DEBUG
+		assert("Unable to fit the Tensors" && size() == other.size());
+		#endif
 
-	return result;
-}
+		bool this_alloc = isDeallocated();
+		bool other_alloc = other.isDeallocated();
 
-template<typename T, Mode device>
-template<typename RT, typename OT, Mode o_device>
-Tensor<RT, device> Tensor<T, device>::CgreaterThan(Tensor<OT, o_device>& other)
-{
-	#ifdef _DEBUG
-	assert("Unable to fit the Tensors" && size() == other.size());
-	#endif
+		if (this_alloc)
+		{
+			push();
+		}
 
-	bool this_alloc = isDeallocated();
-	bool other_alloc = other.isDeallocated();
+		if (other_alloc)
+		{
+			other.push();
+		}
 
-	if (this_alloc)
-	{
-		push();
-	}
+		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
+			(Layout3D(), CudaLessThan<T, OT, RT>, other);
 
-	if (other_alloc)
-	{
-		other.push();
-	}
+		if (this_alloc)
+		{
+			pull();
+		}
 
-	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
-								(Layout3D(), CudaGreaterThan<T, OT, RT>, other);
+		if (other_alloc)
+		{
+			other.pull();
+		}
 
-	if (this_alloc)
-	{
-		pull();
+		return result;
 	}
 
-	if (other_alloc)
+	template<typename T, Mode device>
+	template<typename RT, typename OT>
+	Tensor<RT, device> Tensor<T, device>::ClessThanSingle(const OT& other)
 	{
-		other.pull();
-	}
+		bool this_alloc = isDeallocated();
 
-	return result;
-}
+		if (this_alloc)
+		{
+			push();
+		}
 
-template<typename T, Mode device>
-template<typename RT, typename OT>
-Tensor<RT, device> Tensor<T, device>::CgreaterThanSingle(const OT& other)
-{
-	bool this_alloc = isDeallocated();
+		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
+			(Layout3D(), CudaLessThanSingle<T, OT, RT>, other);
 
-	if (this_alloc)
-	{
-		push();
-	}
+		if (this_alloc)
+		{
+			pull();
+		}
 
-	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
-								(Layout3D(), CudaGreaterThanSingle<T, OT, RT>, other);
+		return result;
+	}
 
-	if (this_alloc)
+	template<typename T, Mode device>
+	template<typename RT, typename OT, Mode o_device>
+	Tensor<RT, device> Tensor<T, device>::CgreaterThan(Tensor<OT, o_device>& other)
 	{
-		pull();
-	}
+		#ifdef _DEBUG
+		assert("Unable to fit the Tensors" && size() == other.size());
+		#endif
 
-	return result;
-}
+		bool this_alloc = isDeallocated();
+		bool other_alloc = other.isDeallocated();
 
-template<typename T, Mode device>
-template<typename RT, typename OT, Mode o_device>
-Tensor<RT, device> Tensor<T, device>::ClessThanEqual(Tensor<OT, o_device>& other)
-{
-	#ifdef _DEBUG
-	assert("Unable to fit the Tensors" && size() == other.size());
-	#endif
+		if (this_alloc)
+		{
+			push();
+		}
 
-	bool this_alloc = isDeallocated();
-	bool other_alloc = other.isDeallocated();
+		if (other_alloc)
+		{
+			other.push();
+		}
 
-	if (this_alloc)
-	{
-		push();
-	}
+		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
+			(Layout3D(), CudaGreaterThan<T, OT, RT>, other);
 
-	if (other_alloc)
-	{
-		other.push();
-	}
+		if (this_alloc)
+		{
+			pull();
+		}
 
-	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
-								(Layout3D(), CudaLessThanEqual<T, OT, RT>, other);
+		if (other_alloc)
+		{
+			other.pull();
+		}
 
-	if (this_alloc)
-	{
-		pull();
+		return result;
 	}
 
-	if (other_alloc)
+	template<typename T, Mode device>
+	template<typename RT, typename OT>
+	Tensor<RT, device> Tensor<T, device>::CgreaterThanSingle(const OT& other)
 	{
-		other.pull();
-	}
+		bool this_alloc = isDeallocated();
 
-	return result;
-}
+		if (this_alloc)
+		{
+			push();
+		}
 
-template<typename T, Mode device>
-template<typename RT, typename OT>
-Tensor<RT, device> Tensor<T, device>::ClessThanEqualSingle(const OT& other)
-{
-	bool this_alloc = isDeallocated();
+		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
+			(Layout3D(), CudaGreaterThanSingle<T, OT, RT>, other);
 
-	if (this_alloc)
-	{
-		push();
-	}
+		if (this_alloc)
+		{
+			pull();
+		}
 
-	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
-								(Layout3D(), CudaLessThanEqualSingle<T, OT, RT>, other);
+		return result;
+	}
 
-	if (this_alloc)
+	template<typename T, Mode device>
+	template<typename RT, typename OT, Mode o_device>
+	Tensor<RT, device> Tensor<T, device>::ClessThanEqual(Tensor<OT, o_device>& other)
 	{
-		pull();
-	}
+		#ifdef _DEBUG
+		assert("Unable to fit the Tensors" && size() == other.size());
+		#endif
 
-	return result;
-}
+		bool this_alloc = isDeallocated();
+		bool other_alloc = other.isDeallocated();
 
-template<typename T, Mode device>
-template<typename RT, typename OT, Mode o_device>
-Tensor<RT, device> Tensor<T, device>::CgreaterThanEqual(Tensor<OT, o_device>& other)
-{
-	#ifdef _DEBUG
-	assert("Unable to fit the Tensors" && size() == other.size());
-	#endif
+		if (this_alloc)
+		{
+			push();
+		}
 
-	bool this_alloc = isDeallocated();
-	bool other_alloc = other.isDeallocated();
+		if (other_alloc)
+		{
+			other.push();
+		}
 
-	if (this_alloc)
-	{
-		push();
+		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
+			(Layout3D(), CudaLessThanEqual<T, OT, RT>, other);
+
+		if (this_alloc)
+		{
+			pull();
+		}
+
+		if (other_alloc)
+		{
+			other.pull();
+		}
+
+		return result;
 	}
 
-	if (other_alloc)
+	template<typename T, Mode device>
+	template<typename RT, typename OT>
+	Tensor<RT, device> Tensor<T, device>::ClessThanEqualSingle(const OT& other)
 	{
-		other.push();
-	}
+		bool this_alloc = isDeallocated();
 
-	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
-								(Layout3D(), CudaGreaterThanEqual<T, OT, RT>, other);
+		if (this_alloc)
+		{
+			push();
+		}
 
-	if (this_alloc)
-	{
-		pull();
+		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
+			(Layout3D(), CudaLessThanEqualSingle<T, OT, RT>, other);
+
+		if (this_alloc)
+		{
+			pull();
+		}
+
+		return result;
 	}
 
-	if (other_alloc)
+	template<typename T, Mode device>
+	template<typename RT, typename OT, Mode o_device>
+	Tensor<RT, device> Tensor<T, device>::CgreaterThanEqual(Tensor<OT, o_device>& other)
 	{
-		other.pull();
-	}
+		#ifdef _DEBUG
+		assert("Unable to fit the Tensors" && size() == other.size());
+		#endif
 
-	return result;
-}
+		bool this_alloc = isDeallocated();
+		bool other_alloc = other.isDeallocated();
 
-template<typename T, Mode device>
-template<typename RT, typename OT>
-Tensor<RT, device> Tensor<T, device>::CgreaterThanEqualSingle(const OT& other)
-{
-	bool this_alloc = isDeallocated();
+		if (this_alloc)
+		{
+			push();
+		}
 
-	if (this_alloc)
-	{
-		push();
-	}
+		if (other_alloc)
+		{
+			other.push();
+		}
 
-	Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
-								(Layout3D(), CudaGreaterThanEqualSingle<T, OT, RT>, other);
+		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
+			(Layout3D(), CudaGreaterThanEqual<T, OT, RT>, other);
 
-	if (this_alloc)
-	{
-		pull();
+		if (this_alloc)
+		{
+			pull();
+		}
+
+		if (other_alloc)
+		{
+			other.pull();
+		}
+
+		return result;
 	}
+
+	template<typename T, Mode device>
+	template<typename RT, typename OT>
+	Tensor<RT, device> Tensor<T, device>::CgreaterThanEqualSingle(const OT& other)
+	{
+		bool this_alloc = isDeallocated();
+
+		if (this_alloc)
+		{
+			push();
+		}
+
+		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
+			(Layout3D(), CudaGreaterThanEqualSingle<T, OT, RT>, other);
 
-	return result;
-}
+		if (this_alloc)
+		{
+			pull();
+		}
 
-void CUDAInitialize(int i = 0)
-{
-	/*
-	* this is primarily used to initialize the cuda api. This oftens takes some time to load so this function makes it possible to have more control over when this pause will happen.
-	*/
-	cudaSetDevice(0);
-	cudaDeviceSynchronize();
-	cudaThreadSynchronize();
-	
-	#ifdef _DEBUG
-	CUDA_IS_INITIALIZED = true;
-	#endif
-}
+		return result;
+	}
+
+	void CUDAInitialize(int i = 0)
+	{
+		/*
+		* this is primarily used to initialize the cuda api. This oftens takes some time to load so this function makes it possible to have more control over when this pause will happen.
+		*/
+		cudaSetDevice(0);
+		cudaDeviceSynchronize();
+		cudaThreadSynchronize();
 
+		#ifdef _DEBUG
+		CUDA_IS_INITIALIZED = true;
+		#endif
+	}
 
-#else
+	#else
 #pragma message("warning: cuda is not enabled, this header file should not be included.")
 #endif
 }

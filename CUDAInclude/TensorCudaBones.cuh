@@ -11,13 +11,10 @@
 
 namespace TSlib
 {
-
 	namespace
 	{
 		#ifdef _DEBUG
 		static bool CUDA_IS_INITIALIZED = false;
-
-
 
 		#define CER(ans) { gpuAssert((ans), __FILE__, __LINE__); }
 		inline void gpuAssert(cudaError_t code, const char* file, int line)
@@ -57,7 +54,6 @@ namespace TSlib
 
 	class CTBase
 	{
-
 		friend CUDATensor1D<T>;
 		friend CUDATensor2D<T>;
 		friend CUDATensor3D<T>;
@@ -89,7 +85,6 @@ namespace TSlib
 		__device__ T& operator()(Args ... args);
 	};
 
-
 	/// <summary>
 	/// Declaration of CUDATensor1D
 	/// </summary>
@@ -97,7 +92,6 @@ namespace TSlib
 	template<typename T>
 	class CUDATensor1D : public CTBase<T>
 	{
-
 		size_t m_length = NULL;
 
 	public:
@@ -122,7 +116,6 @@ namespace TSlib
 		__device__ bool offset_bounds(size_t x) const;
 	};
 
-
 	/// <summary>
 	/// Declaration of CUDATensor2D
 	/// </summary>
@@ -131,7 +124,6 @@ namespace TSlib
 	template<typename T>
 	class CUDATensor2D : public CTBase<T>
 	{
-
 		size_t m_length = NULL;
 		size_t m_width = NULL;
 
@@ -166,7 +158,6 @@ namespace TSlib
 	template<typename T>
 	class CUDATensor3D : public CTBase<T>
 	{
-
 		size_t m_length = NULL;
 		size_t m_width = NULL;
 		size_t m_height = NULL;
@@ -268,8 +259,6 @@ namespace TSlib
 			unsigned int width = threads_cubed;
 			unsigned int height = threads_cubed;
 
-
-
 			#ifdef _DEBUG
 			if (double_t(length) * X_ratio != std::floor(double_t(length) * X_ratio))
 			{
@@ -294,7 +283,7 @@ namespace TSlib
 				throw BadValue("Height ratio does not divide cleanly into thread height", ExceptValue<double_t>("ratio", Z_ratio), ExceptValue<double_t>("cubed threads", threads_cubed));
 			}
 			#endif
-			
+
 			height *= Z_ratio;
 
 			return { length, width, height };
@@ -367,9 +356,6 @@ namespace TSlib
 			unsigned int width = threads_squared;
 			unsigned int height = 1;
 
-
-			
-
 			#ifdef _DEBUG
 			if (double_t(length) * X_ratio != std::floor(double_t(length) * X_ratio))
 			{
@@ -394,7 +380,7 @@ namespace TSlib
 				throw BadValue("Height ratio does not divide cleanly into thread height", std::pair<std::string, double_t>("ratio", Z_ratio), std::pair<std::string, double_t>("squared threads", threads_squared));
 			}
 			#endif
-			
+
 			height *= Z_ratio;
 
 			return { length, width, height };
@@ -425,13 +411,11 @@ namespace TSlib
 		template<typename T, Mode device>
 		std::tuple<unsigned int, unsigned int, unsigned int> apply(const Tensor<T, device>* tensor, unsigned int target_threads)
 		{
-
 			#pragma warning(disable: 4244)
 
 			unsigned int length = target_threads;
 			unsigned int width = 1;
 			unsigned int height = 1;
-			
 
 			#ifdef _DEBUG
 			if (double_t(length) * X_ratio != std::floor(double_t(length) * X_ratio))
@@ -439,9 +423,9 @@ namespace TSlib
 				throw BadValue("Length ratio does not divide cleanly into thread length", std::pair<std::string, double_t>("ratio", X_ratio), std::pair<std::string, double_t>("target threads", target_threads));
 			}
 			#endif
-			
+
 			length *= X_ratio;
-			
+
 			#ifdef _DEBUG
 			if (double_t(width) * Y_ratio != std::floor(double_t(width) * Y_ratio))
 			{
@@ -459,7 +443,7 @@ namespace TSlib
 			#endif
 
 			height *= Z_ratio;
-			
+
 			return { length, width, height };
 			#pragma warning(default: 4244)
 		}
