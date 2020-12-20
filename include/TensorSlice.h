@@ -154,7 +154,7 @@ namespace TSlib
 				{
 					At(i) = other[i];
 				}
-		}
+	}
 
 			template<typename T, Mode device>
 			template<typename OT, Mode device_other>
@@ -180,7 +180,7 @@ namespace TSlib
 				{
 					At(i) = other[i];
 				}
-				}
+			}
 
 			template<typename T, Mode device>
 			void TensorSlice<T, device>::Fill(const T & other)
@@ -1029,7 +1029,7 @@ namespace TSlib
 				#else
 				return compareSingle(other).sum<size_t>() == size();
 				#endif
-	}
+			}
 
 			template<typename T, Mode device>
 			template<typename OT, Mode other_device>
@@ -1040,7 +1040,7 @@ namespace TSlib
 				#else
 				return compare(other, NotEqual).sum<size_t>() == other.size();
 				#endif
-}
+			}
 
 			template<typename T, Mode device>
 			template<typename OT, Mode other_device>

@@ -144,8 +144,9 @@ namespace TSlib
 			throw OutOfBounds(Shape(), "Exception was thrown, because an element outside the Tensor bounds was accsessed", iter, coord);
 		#endif
 
+		tmp_multiply /= m_shape[iter];
 		indx += coord * tmp_multiply;
-		tmp_multiply *= m_shape[iter];
+
 		iter++;
 	}
 
@@ -197,9 +198,9 @@ namespace TSlib
 			max_length = std::max(std::to_string(elem).size(), max_length);
 		}
 
-		for (size_t i = 0; i < get_dim_size(0); i++)
+		for (size_t i = 0; i < get_dim_size(Dims() - 1); i++)
 		{
-			stream << At(i) << ',';
+			stream << std::to_string(At(i));
 
 			size_t str_len = std::to_string(At(i)).size();
 
@@ -208,18 +209,20 @@ namespace TSlib
 				stream << ' ';
 			}
 
-			if (i % Shape()[0] == Shape()[0] - 1)
+			stream << ',';
+
+			if (i % Shape()[Dims() - 1] == Shape()[Dims() - 1] - 1)
 			{
 				stream << '\n';
 			}
 		}
 
-		for (unsigned int dim = 1; dim < Dims(); dim++)
+		for (unsigned int dim = Dims() - 2; dim > 0; dim--)
 		{
 			stream << "\n";
 			for (size_t i = get_dim_size(dim - 1); i < get_dim_size(dim); i++)
 			{
-				stream << At(i) << ',';
+				stream << std::to_string(At(i));
 
 				size_t str_len = std::to_string(At(i)).size();
 
@@ -228,7 +231,9 @@ namespace TSlib
 					stream << ' ';
 				}
 
-				if (i % Shape()[0] == Shape()[0] - 1)
+				stream << ',';
+
+				if (i % Shape()[Dims() - 1] == Shape()[Dims() - 1] - 1)
 				{
 					stream << '\n';
 				}
@@ -275,7 +280,8 @@ namespace TSlib
 	std::vector<size_t> Tensor<T, device>::based_sort(const std::vector<size_t>& target)
 	{
 		std::vector<size_t> new_indexes(target.size());
-		std::iota(new_indexes.begin(), new_indexes.end(), 0);
+		//
+		std::generate(new_indexes.begin(), new_indexes.end(), [n = target.size() - 1]() mutable {return n--; });
 
 		std::sort(new_indexes.begin(), new_indexes.end(), sorter(target));
 
@@ -297,31 +303,26 @@ namespace TSlib
 	///
 	template<typename T, Mode device>
 	Tensor<T, device>::Tensor(const int& dims)
-		: m_shape(dims + 1)
+		: m_shape(dims /*+ 1*/)
 	{
 		MEASURE();
-		m_shape[dims] = 1;
 	}
 
 	template<typename T, Mode device>
-	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, const T& pad_val, const bool& add_extra_dim)
-		: m_shape(sizes.size() + 1 * add_extra_dim)
+	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, const T& pad_val)
+		: m_shape(sizes.size() + 1)
 	{
 		MEASURE();
-		if (add_extra_dim)
-			m_shape[sizes.size()] = 1;
 		Resize(sizes, pad_val);
 	}
 
 	//generator functions take an index / coordinate as parameters and returns a value with the containter type
 
 	template<typename T, Mode device>
-	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(const size_t&)> generator, const bool& add_extra_dim)
+	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(const size_t&)> generator)
 
-		: m_shape(sizes.size() + 1 * add_extra_dim)
+		: m_shape(sizes.size() + 1)
 	{
-		if (add_extra_dim)
-			m_shape[sizes.size()] = 1;
 		Resize(sizes);
 
 		for (size_t i = 0; i < size(); i++)
@@ -331,11 +332,9 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(const std::vector<size_t>&)> generator, const bool& add_extra_dim)
-		: m_shape(sizes.size() + 1 * add_extra_dim)
+	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(const std::vector<size_t>&)> generator)
+		: m_shape(sizes.size() + 1)
 	{
-		if (add_extra_dim)
-			m_shape[sizes.size()] = 1;
 		Resize(sizes);
 
 		std::vector<size_t> indexes(Dims());
@@ -352,11 +351,9 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(const std::vector<size_t>&, const size_t&)> generator, const bool& add_extra_dim)
-		: m_shape(sizes.size() + 1 * add_extra_dim)
+	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(const std::vector<size_t>&, const size_t&)> generator)
+		: m_shape(sizes.size() + 1)
 	{
-		if (add_extra_dim)
-			m_shape[sizes.size()] = 1;
 		Resize(sizes);
 
 		std::vector<size_t> indexes(Dims());
@@ -373,12 +370,11 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	Tensor<T, device>::Tensor(const TensorSlice<T, device>& slice, const bool& add_extra_dim)
-		: m_shape(slice.Shape().size() + 1 * add_extra_dim)
+	Tensor<T, device>::Tensor(const TensorSlice<T, device>& slice)
+		: m_shape(slice.Shape().size() + 1)
 	{
 		MEASURE();
-		if (add_extra_dim)
-			m_shape[slice.Shape().size()] = 1;
+
 		Resize(slice.Shape());
 
 		for (size_t i = 0; i < slice.size(); i++)
@@ -529,7 +525,7 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	void Tensor<T, device>::ResizeDim(const size_t& index, const size_t& amount, const T& pad_val)
+	void Tensor<T, device>::ResizeDim(const size_t& dim, const size_t& amount, const T& pad_val)
 	{
 		MEASURE();
 		#ifdef _CUDA
@@ -542,28 +538,28 @@ namespace TSlib
 
 		size_t new_amount = amount;
 		size_t tmp_size = m_vector.size();
-		size_t tmp_row_size = get_real_size(index);
+		size_t tmp_row_size = get_real_size(dim);
 
-		m_shape[index] = amount;
+		m_shape[dim] = amount;
 
-		if (index != 0)
-			new_amount = get_real_size(index - 1) * get_dim_length(index);
+		if (dim != 0)
+			new_amount = get_real_size(dim - 1) * get_dim_length(dim);
 		else
 
-			new_amount = get_dim_length(index);
+			new_amount = get_dim_length(dim);
 
 		if (new_amount > tmp_size)
 		{
 			m_vector.reserve(new_amount);
 			new_amount -= tmp_size;
 
-			//Resize dimention
-			upscale_dim(index, tmp_row_size, new_amount, pad_val);
+			//Resize dimension
+			upscale_dim(dim, tmp_row_size, new_amount, pad_val);
 		}
 		else
 		{
 			new_amount = tmp_size - new_amount;
-			downscale_dim(index, tmp_row_size, new_amount);
+			downscale_dim(dim, tmp_row_size, new_amount);
 		}
 	}
 
@@ -616,44 +612,43 @@ namespace TSlib
 
 		if (current_size < new_size)
 			m_vector.reserve(new_size - current_size);
-		size_t iteration = 0;
-		std::vector<size_t> indexes = based_sort(sizes);
+
+		std::vector<size_t> dimensions = based_sort(sizes);
 
 		for (size_t i = 0; i < sizes.size(); i++)
 		{
-			size_t new_amount = sizes[indexes[iteration]];
+			size_t target_size = sizes.size() - dimensions[i] - 1;
+			size_t new_amount = sizes[target_size];
 			size_t tmp_size = m_vector.size();
-			size_t tmp_row_size = get_real_size(indexes[iteration]);
+			size_t tmp_row_size = get_real_size(dimensions[i]);
 
-			m_shape[indexes[iteration]] = sizes[indexes[iteration]];
+			m_shape[target_size] = sizes[target_size];
 
-			if (indexes[iteration] != 0)
-				new_amount = get_real_size(indexes[iteration] - 1) * get_dim_length(indexes[iteration]);
+			if (dimensions[i] != 0)
+				new_amount = get_real_size(dimensions[i] - 1) * get_dim_length(dimensions[i]);
 			else
-				new_amount = get_dim_length(indexes[iteration]);
+				new_amount = get_dim_length(dimensions[i]);
 
 			if (new_amount > tmp_size)
 			{
 				new_amount -= tmp_size;
 
-				//Resize dimention
-				upscale_dim(indexes[iteration], tmp_row_size, new_amount, pad_val);
+				//Resize dimension
+				upscale_dim(dimensions[i], tmp_row_size, new_amount, pad_val);
 			}
 			else
 			{
 				new_amount = tmp_size - new_amount;
 
-				downscale_dim(indexes[iteration], tmp_row_size, new_amount);
+				downscale_dim(dimensions[i], tmp_row_size, new_amount);
 			}
-
-			iteration++;
 		}
 
 		m_vector.shrink_to_fit();
 	}
 
 	template<typename T, Mode device>
-	void Tensor<T, device>::Reshape(const std::initializer_list<size_t>& shape, bool add_extra_dim)
+	void Tensor<T, device>::Reshape(const std::initializer_list<size_t>& shape)
 	{
 		MEASURE();
 		#ifdef _DEBUG
@@ -673,13 +668,10 @@ namespace TSlib
 		{
 			m_shape.push_back(elem);
 		}
-
-		if (add_extra_dim)
-			m_shape.push_back(1);
 	}
 
 	template<typename T, Mode device>
-	void Tensor<T, device>::Reshape(const std::vector<size_t>& shape, bool add_extra_dim)
+	void Tensor<T, device>::Reshape(const std::vector<size_t>& shape)
 	{
 		MEASURE();
 		#ifdef _DEBUG
@@ -701,9 +693,6 @@ namespace TSlib
 		{
 			m_shape.push_back(elem);
 		}
-
-		if (add_extra_dim)
-			m_shape.push_back(1);
 	}
 
 	template<typename T, Mode device>
@@ -788,7 +777,7 @@ namespace TSlib
 	{
 		MEASURE();
 		size_t index = 0;
-		size_t tmp_multiply = 1;
+		size_t tmp_multiply = get_real_size(Dims() - 1);
 		size_t i = 0;
 
 		get_indx(index, i, tmp_multiply, coords...);

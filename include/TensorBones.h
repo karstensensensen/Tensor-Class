@@ -83,12 +83,12 @@ namespace TSlib
 
 	public:
 
-		Tensor(const int& dims);
-		Tensor(const std::vector<size_t>& sizes, const T& pad_val = T(), const bool& add_extra_dim = true);
-		Tensor(const std::vector<size_t>& sizes, std::function<T(const size_t&)> generator, const bool& add_extra_dim = true);
-		Tensor(const std::vector<size_t>& sizes, std::function<T(const std::vector<size_t>&)> generator, const bool& add_extra_dim = true);
-		Tensor(const std::vector<size_t>& sizes, std::function<T(const std::vector<size_t>&, const size_t&)> generator, const bool& add_extra_dim = true);
-		Tensor(const TensorSlice<T, device>& slice, const bool& add_extra_dim = true);
+		Tensor(const int& dims = 0);
+		Tensor(const std::vector<size_t>& sizes, const T& pad_val = T());
+		Tensor(const std::vector<size_t>& sizes, std::function<T(const size_t&)> generator);
+		Tensor(const std::vector<size_t>& sizes, std::function<T(const std::vector<size_t>&)> generator);
+		Tensor(const std::vector<size_t>& sizes, std::function<T(const std::vector<size_t>&, const size_t&)> generator);
+		Tensor(const TensorSlice<T, device>& slicee);
 
 		Tensor(const Tensor<T, device>& other);
 
@@ -101,8 +101,8 @@ namespace TSlib
 
 		void Resize(const std::vector<size_t>& sizes, const T& pad_val = T());
 
-		void Reshape(const std::initializer_list<size_t>& shape, bool add_extra_dim = true);
-		void Reshape(const std::vector<size_t>& shape, bool add_extra_dim = true);
+		void Reshape(const std::initializer_list<size_t>& shape);
+		void Reshape(const std::vector<size_t>& shape);
 
 		void AddDims(const size_t& dims = 1);
 
