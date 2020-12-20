@@ -198,7 +198,7 @@ namespace TSlib
 			max_length = std::max(std::to_string(elem).size(), max_length);
 		}
 
-		for (size_t i = 0; i < get_dim_size(0); i++)
+		for (size_t i = 0; i < Shape()[Dims() - 1]; i++)
 		{
 			stream << std::to_string(At(i));
 
@@ -220,7 +220,7 @@ namespace TSlib
 		for (size_t dim = 1; dim < Dims(); dim++)
 		{
 			stream << "\n";
-			for (size_t i = get_dim_size(dim - 1); i < get_dim_size(dim); i++)
+			for (size_t i = Shape()[Dims() - 1]; i < get_dim_size(dim); i++)
 			{
 				stream << std::to_string(At(i));
 
