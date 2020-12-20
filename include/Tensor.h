@@ -483,11 +483,11 @@ namespace TSlib
 		#ifdef _TS_DEBUG
 		if (vals.size() != size())
 		{
-			throw BadShape(this, "Vector must have the same size as the target tensor", { vals.size() });
+			throw BadShape(this, "Vector must have the same size as the target tensor", std::vector<size_t>{ vals.size() });
 		}
 		#endif
 
-		memcpy(Data(), vals.data(), size());
+		memcpy(Data(), vals.data(), size()*sizeof(T));
 
 	}
 
@@ -901,7 +901,7 @@ namespace TSlib
 	Tensor<T>& Tensor<T, device>::operator=(const std::vector<T>& other)
 	{
 		Fill(other);
-		return this;
+		return *this;
 	}
 
 	#if defined(_CUDA) && defined(_AMP)
