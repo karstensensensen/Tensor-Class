@@ -5,7 +5,7 @@
 
 namespace TSlib
 {
-	#ifdef _DEBUG
+	#ifdef _TS_DEBUG
 	template<typename T, Mode device>
 	template<typename First, typename ...Args>
 	inline void TensorSlice<T, device>::bounds_check(size_t& i, First first, Args ...remaining)
@@ -51,7 +51,7 @@ namespace TSlib
 	{
 		MEASURE();
 
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 
 		if (slices.size() > (source->Dims() - 1))
 		{
@@ -67,7 +67,7 @@ namespace TSlib
 	T& TensorSlice<T, device>::Get(Args ... coords)
 	{
 		MEASURE();
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		size_t i = 0;
 		bounds_check(i, coords...);
 		#endif
@@ -80,7 +80,7 @@ namespace TSlib
 	T TensorSlice<T, device>::Get(Args ... coords) const
 	{
 		MEASURE();
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		size_t i = 0;
 		bounds_check(i, coords...);
 		#endif
@@ -113,7 +113,7 @@ namespace TSlib
 	inline void TensorSlice<T, device>::update()
 	{
 		MEASURE();
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 
 		if (m_slice_shape.size() > source->Dims() - 1)
 		{
@@ -822,7 +822,7 @@ namespace TSlib
 			inline Tensor<RT, device> TensorSlice<T, device>::compare(const Tensor<OT, o_device> & other, bool(*comp_func)(const T&, const OT&))
 			{
 				MEASURE();
-				#ifdef _DEBUG
+				#ifdef _TS_DEBUG
 				if (Dims() != other.Dims())
 				{
 					throw BadShape("Must have the same number of dimensions in each Tensor", Shape(), other.Shape());
@@ -852,7 +852,7 @@ namespace TSlib
 			inline Tensor<RT, device> TensorSlice<T, device>::compare(const TensorSlice<OT, o_device> & other, bool(*comp_func)(const T&, const OT&))
 			{
 				MEASURE();
-				#ifdef _DEBUG
+				#ifdef _TS_DEBUG
 				if (Dims() != other.Dims())
 				{
 					throw BadShape("Must have the same number of dimensions in each Tensor", Shape(), other.Shape());

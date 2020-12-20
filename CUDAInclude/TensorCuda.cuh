@@ -19,7 +19,7 @@ namespace TSlib
 	template<typename First>
 	__device__ void CTBase<T>::get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord) const
 	{
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 
 		if (dim_arr[iter] <= coord)
 		{
@@ -401,7 +401,7 @@ namespace TSlib
 		//this will have to be done every time the Tensor gets resized or deallocated
 
 		//assert if trying to allocate already allocated memory FIX: deallocate before allocating
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		assert("GPU memory was not deallocated before calling allocate" && isDeallocated());
 		#endif
 
@@ -415,7 +415,7 @@ namespace TSlib
 		//Deallocate the gpu memmorry
 
 		//assert if memory is allready deallocated
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		assert("GPU memory was already deallocated" && isAllocated());
 		#endif
 
@@ -440,7 +440,7 @@ namespace TSlib
 	{
 		//assert if memory is not allocated on gpu
 		//this error might be thrown if you forget to allocate after a resize
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		assert("Memory is not allocated on the gpu unable to copy" && isAllocated());
 		#endif
 
@@ -453,7 +453,7 @@ namespace TSlib
 	{
 		//assert if memory is not allocated on gpu
 		//this error might be thrown if you forget to allocate after a resize
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		assert("Memory is not allocated on the gpu unable to copy" && isAllocated());
 		#endif
 
@@ -490,7 +490,7 @@ namespace TSlib
 	template<typename T, Mode device>
 	void Tensor<T, device>::setTargetThreads(const unsigned short& value)
 	{
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		if (value > 1024)
 			throw BadThreadTarget(value);
 		#endif
@@ -525,7 +525,7 @@ namespace TSlib
 	Tensor<RT, device> Tensor<T, device>::Kernel1DR(CUDALayout<layout> layout, FT(kernel_p), Args && ...args)
 	{
 		#if 1
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		assert("There can not be more than 1024 total threads in each block" && m_threads <= 1024);
 		if (isDeallocated())
 			std::cout << "warning: No gpu memory is allocated, illegal memory access may occur\n";
@@ -545,7 +545,7 @@ namespace TSlib
 
 		kernel_p << < blocks, { std::get<0>(threads), std::get<1>(threads) , std::get<2>(threads) } >> > (*this, result, args...);
 
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		CER(cudaGetLastError());
 		#endif
 
@@ -561,7 +561,7 @@ namespace TSlib
 	template<Mode layout, typename FT, typename ...Args>
 	void Tensor<T, device>::Kernel1D(CUDALayout<layout> layout, FT(kernel_p), Args && ...args)
 	{
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		assert("There can not be more than 1024 total threads in each block" && m_threads <= 1024);
 		if (isDeallocated())
 			std::cout << "warning: No gpu memory is allocated, illegal memory access may occur\n";
@@ -576,7 +576,7 @@ namespace TSlib
 
 		kernel_p << < blocks, { std::get<0>(threads), std::get<1>(threads), std::get<2>(threads) } >> > (*this, args...);
 
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		CER(cudaGetLastError());
 		#endif
 
@@ -587,7 +587,7 @@ namespace TSlib
 	template<Mode layout, typename FT, typename RT, typename ...Args>
 	Tensor<RT, device> Tensor<T, device>::Kernel2DR(CUDALayout<layout> layout, FT(kernel_p), Args && ...args)
 	{
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		assert("There can not be more than 1024 total threads in each block" && m_threads <= 1024);
 		if (isDeallocated())
 			std::cout << "warning: No gpu memory is allocated, illegal memory access may occur\n";
@@ -609,7 +609,7 @@ namespace TSlib
 
 		kernel_p << < blocks, { std::get<0>(threads), std::get<1>(threads) , std::get<2>(threads) } >> > (*this, result, args...);
 
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		CER(cudaGetLastError());
 		#endif
 
@@ -624,7 +624,7 @@ namespace TSlib
 	template<Mode layout, typename FT, typename ...Args>
 	void Tensor<T, device>::Kernel2D(CUDALayout<layout> layout, FT(kernel_p), Args && ...args)
 	{
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		assert("There can not be more than 1024 total threads in each block" && m_threads <= 1024);
 		if (isDeallocated())
 			std::cout << "warning: No gpu memory is allocated, illegal memory access may occur\n";
@@ -641,7 +641,7 @@ namespace TSlib
 
 		kernel_p << < blocks, { std::get<0>(threads), std::get<1>(threads) , std::get<2>(threads) } >> > (*this, args...);
 
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		CER(cudaGetLastError());
 		#endif
 
@@ -652,7 +652,7 @@ namespace TSlib
 	template<Mode layout, typename FT, typename RT, typename ...Args>
 	Tensor<RT, device> Tensor<T, device>::Kernel3DR(CUDALayout<layout> layout, FT(kernel_p), Args && ...args)
 	{
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		assert("There can not be more than 1024 total threads in each block" && m_threads <= 1024);
 		if (isDeallocated())
 			std::cout << "warning: No gpu memory is allocated, illegal memory access may occur\n";
@@ -675,7 +675,7 @@ namespace TSlib
 
 		kernel_p << < blocks, { std::get<0>(threads), std::get<1>(threads) , std::get<2>(threads) } >> > (*this, result, args...);
 
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		CER(cudaGetLastError());
 		#endif
 
@@ -690,7 +690,7 @@ namespace TSlib
 	template<Mode layout, typename FT, typename ...Args>
 	void Tensor<T, device>::Kernel3D(CUDALayout<layout> layout, FT(kernel_p), Args && ...args)
 	{
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		assert("There can not be more than 1024 total threads in each block" && m_threads <= 1024);
 		if (isDeallocated())
 			std::cout << "warning: No gpu memory is allocated, illegal memory access may occur\n";
@@ -708,7 +708,7 @@ namespace TSlib
 
 		kernel_p << < blocks, { std::get<0>(threads), std::get<1>(threads) , std::get<2>(threads) } >> > (*this, args...);
 
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		CER(cudaGetLastError());
 		#endif
 
@@ -723,7 +723,7 @@ namespace TSlib
 	template<typename RT, typename OT, Mode o_device>
 	Tensor<RT, device> Tensor<T, device>::Cadd(Tensor<OT, o_device>& other)
 	{
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		assert("Unable to fit the Tensors" && size() == other.size());
 		#endif
 
@@ -782,7 +782,7 @@ namespace TSlib
 	template<typename RT, typename OT, Mode o_device>
 	Tensor<RT, device> Tensor<T, device>::Csubtract(Tensor<OT, o_device>& other)
 	{
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		assert("Unable to fit the Tensors" && size() == other.size());
 		#endif
 
@@ -841,7 +841,7 @@ namespace TSlib
 	template<typename RT, typename OT, Mode o_device>
 	Tensor<RT, device> Tensor<T, device>::Cmultiply(Tensor<OT, o_device>& other)
 	{
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		assert("Unable to fit the Tensors" && size() == other.size());
 		#endif
 
@@ -900,7 +900,7 @@ namespace TSlib
 	template<typename RT, typename OT, Mode o_device>
 	Tensor<RT, device> Tensor<T, device>::Cdivide(Tensor<OT, o_device>& other)
 	{
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		assert("Unable to fit the Tensors" && size() == other.size());
 		#endif
 
@@ -959,7 +959,7 @@ namespace TSlib
 	template<typename RT, typename OT, Mode o_device>
 	Tensor<RT, device> Tensor<T, device>::Cmodulous(Tensor<OT, o_device>& other)
 	{
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		assert("Unable to fit the Tensors" && size() == other.size());
 		#endif
 
@@ -1018,7 +1018,7 @@ namespace TSlib
 	template<typename OT, Mode o_device>
 	void Tensor<T, device>::CadditionAssignment(Tensor<OT, o_device>& other)
 	{
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		assert("Unable to fit the Tensors" && size() == other.size());
 		#endif
 
@@ -1073,7 +1073,7 @@ namespace TSlib
 	template<typename OT, Mode o_device>
 	void Tensor<T, device>::CsubtractionAssignment(Tensor<OT, o_device>& other)
 	{
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		assert("Unable to fit the Tensors" && size() == other.size());
 		#endif
 
@@ -1128,7 +1128,7 @@ namespace TSlib
 	template<typename OT, Mode o_device>
 	void Tensor<T, device>::CmultiplicationAssignment(Tensor<OT, o_device>& other)
 	{
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		assert("Unable to fit the Tensors" && size() == other.size());
 		#endif
 
@@ -1183,7 +1183,7 @@ namespace TSlib
 	template<typename OT, Mode o_device>
 	void Tensor<T, device>::CdivisionAssignment(Tensor<OT, o_device>& other)
 	{
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		assert("Unable to fit the Tensors" && size() == other.size());
 		#endif
 
@@ -1238,7 +1238,7 @@ namespace TSlib
 	template<typename OT, Mode o_device>
 	void Tensor<T, device>::CmodulouAssignment(Tensor<OT, o_device>& other)
 	{
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		assert("Unable to fit the Tensors" && size() == other.size());
 		#endif
 
@@ -1293,7 +1293,7 @@ namespace TSlib
 	template<typename RT, typename OT, Mode o_device>
 	Tensor<RT, device> Tensor<T, device>::Ccompare(Tensor<OT, o_device>& other)
 	{
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		assert("Unable to fit the Tensors" && size() == other.size());
 		#endif
 
@@ -1352,7 +1352,7 @@ namespace TSlib
 	template<typename RT, typename OT, Mode o_device>
 	Tensor<RT, device> Tensor<T, device>::ClessThan(Tensor<OT, o_device>& other)
 	{
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		assert("Unable to fit the Tensors" && size() == other.size());
 		#endif
 
@@ -1411,7 +1411,7 @@ namespace TSlib
 	template<typename RT, typename OT, Mode o_device>
 	Tensor<RT, device> Tensor<T, device>::CgreaterThan(Tensor<OT, o_device>& other)
 	{
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		assert("Unable to fit the Tensors" && size() == other.size());
 		#endif
 
@@ -1470,7 +1470,7 @@ namespace TSlib
 	template<typename RT, typename OT, Mode o_device>
 	Tensor<RT, device> Tensor<T, device>::ClessThanEqual(Tensor<OT, o_device>& other)
 	{
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		assert("Unable to fit the Tensors" && size() == other.size());
 		#endif
 
@@ -1529,7 +1529,7 @@ namespace TSlib
 	template<typename RT, typename OT, Mode o_device>
 	Tensor<RT, device> Tensor<T, device>::CgreaterThanEqual(Tensor<OT, o_device>& other)
 	{
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		assert("Unable to fit the Tensors" && size() == other.size());
 		#endif
 
@@ -1592,7 +1592,7 @@ namespace TSlib
 		cudaSetDevice(0);
 		cudaDeviceSynchronize();
 
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		CUDA_IS_INITIALIZED = true;
 		#endif
 	}

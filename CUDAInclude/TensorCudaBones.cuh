@@ -13,13 +13,13 @@ namespace TSlib
 {
 	namespace
 	{
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		static bool CUDA_IS_INITIALIZED = false;
 
 		#define CER(ans) { gpuAssert((ans), __FILE__, __LINE__); }
 		inline void gpuAssert(cudaError_t code, const char* file, int line)
 		{
-			#ifdef _DEBUG
+			#ifdef _TS_DEBUG
 			if (!CUDA_IS_INITIALIZED)
 				std::cout << "WARNING: CUDA library has not been initialized. CUDA dependent functions are not guaranteed to work.\nUse CUDAInitialize() to initialize the CUDA library\n";
 			#endif
@@ -228,7 +228,7 @@ namespace TSlib
 				}
 			}
 
-			#ifdef _DEBUG
+			#ifdef _TS_DEBUG
 			assert(NT != NULL && "Value for NT was not found");
 			#endif
 
@@ -239,7 +239,7 @@ namespace TSlib
 		CUDALayout(double_t X, double_t Y, double_t Z)
 			:X_ratio(X), Y_ratio(Y), Z_ratio(Z)
 		{
-			#ifdef _DEBUG
+			#ifdef _TS_DEBUG
 
 			if (X_ratio * Y_ratio * Z_ratio != 1)
 				throw BadShape("There must be an equal number of multiplications and divisions, when initializing PlaneLayout.\nOtherwise the thread target wouldn't be hit: ", { X_ratio, Y_ratio, Z_ratio });
@@ -259,7 +259,7 @@ namespace TSlib
 			unsigned int width = threads_cubed;
 			unsigned int height = threads_cubed;
 
-			#ifdef _DEBUG
+			#ifdef _TS_DEBUG
 			if (double_t(length) * X_ratio != std::floor(double_t(length) * X_ratio))
 			{
 				throw BadValue("Length ratio does not divide cleanly into thread length", ExceptValue<double_t>("ratio", X_ratio), ExceptValue<double_t>("cubed threads", threads_cubed));
@@ -268,7 +268,7 @@ namespace TSlib
 
 			length *= X_ratio;
 
-			#ifdef _DEBUG
+			#ifdef _TS_DEBUG
 			if (double_t(width) * Y_ratio != std::floor(double_t(width) * Y_ratio))
 			{
 				throw BadValue("Width ratio does not divide cleanly into thread width", ExceptValue<double_t>("ratio", Y_ratio), ExceptValue<double_t>("cubed threads", threads_cubed));
@@ -277,7 +277,7 @@ namespace TSlib
 
 			width *= Y_ratio;
 
-			#ifdef _DEBUG
+			#ifdef _TS_DEBUG
 			if (double_t(height) * Z_ratio != std::floor(double_t(height) * Z_ratio))
 			{
 				throw BadValue("Height ratio does not divide cleanly into thread height", ExceptValue<double_t>("ratio", Z_ratio), ExceptValue<double_t>("cubed threads", threads_cubed));
@@ -326,7 +326,7 @@ namespace TSlib
 				}
 			}
 
-			#ifdef _DEBUG
+			#ifdef _TS_DEBUG
 			assert(NT != NULL && "Value for NT was not found");
 			#endif
 
@@ -337,7 +337,7 @@ namespace TSlib
 		CUDALayout(double_t X, double_t Y, double_t Z)
 			:X_ratio(X), Y_ratio(Y), Z_ratio(Z)
 		{
-			#ifdef _DEBUG
+			#ifdef _TS_DEBUG
 
 			if (X_ratio * Y_ratio * Z_ratio != 1)
 				throw BadShape("There must be an equal number of multiplications and divisions, when initializing PlaneLayout.\nOtherwise the thread target wouldn't be hit: ", { X_ratio, Y_ratio, Z_ratio });
@@ -356,7 +356,7 @@ namespace TSlib
 			unsigned int width = threads_squared;
 			unsigned int height = 1;
 
-			#ifdef _DEBUG
+			#ifdef _TS_DEBUG
 			if (double_t(length) * X_ratio != std::floor(double_t(length) * X_ratio))
 			{
 				throw BadValue("Length ratio does not divide cleanly into thread length", std::pair<std::string, double_t>("ratio", X_ratio), std::pair<std::string, double_t>("squared threads", threads_squared));
@@ -365,7 +365,7 @@ namespace TSlib
 
 			length *= X_ratio;
 
-			#ifdef _DEBUG
+			#ifdef _TS_DEBUG
 			if (double_t(width) * Y_ratio != std::floor(double_t(width) * Y_ratio))
 			{
 				throw BadValue("Width ratio does not divide cleanly into thread width", std::pair<std::string, double_t>("ratio", Y_ratio), std::pair<std::string, double_t>("squared threads", threads_squared));
@@ -374,7 +374,7 @@ namespace TSlib
 
 			width *= Y_ratio;
 
-			#ifdef _DEBUG
+			#ifdef _TS_DEBUG
 			if (double_t(height) * Z_ratio != std::floor(double_t(height) * Z_ratio))
 			{
 				throw BadValue("Height ratio does not divide cleanly into thread height", std::pair<std::string, double_t>("ratio", Z_ratio), std::pair<std::string, double_t>("squared threads", threads_squared));
@@ -400,7 +400,7 @@ namespace TSlib
 		CUDALayout(double_t X, double_t Y, double_t Z)
 			:X_ratio(X), Y_ratio(Y), Z_ratio(Z)
 		{
-			#ifdef _DEBUG
+			#ifdef _TS_DEBUG
 
 			if (X_ratio * Y_ratio * Z_ratio != 1)
 				throw BadShape("The total area must not be changed by the new ratios.\nOtherwise the thread target wouldn't be hit: ", { X_ratio, Y_ratio, Z_ratio });
@@ -417,7 +417,7 @@ namespace TSlib
 			unsigned int width = 1;
 			unsigned int height = 1;
 
-			#ifdef _DEBUG
+			#ifdef _TS_DEBUG
 			if (double_t(length) * X_ratio != std::floor(double_t(length) * X_ratio))
 			{
 				throw BadValue("Length ratio does not divide cleanly into thread length", std::pair<std::string, double_t>("ratio", X_ratio), std::pair<std::string, double_t>("target threads", target_threads));
@@ -426,7 +426,7 @@ namespace TSlib
 
 			length *= X_ratio;
 
-			#ifdef _DEBUG
+			#ifdef _TS_DEBUG
 			if (double_t(width) * Y_ratio != std::floor(double_t(width) * Y_ratio))
 			{
 				throw BadValue("Width ratio does not divide cleanly into thread width", std::pair<std::string, double_t>("ratio", Y_ratio), std::pair<std::string, double_t>("target threads", target_threads));
@@ -435,7 +435,7 @@ namespace TSlib
 
 			width *= Y_ratio;
 
-			#ifdef _DEBUG
+			#ifdef _TS_DEBUG
 			if (double_t(height) * Z_ratio != std::floor(double_t(height) * Z_ratio))
 			{
 				throw BadValue("Height ratio does not divide cleanly into thread height", std::pair<std::string, double_t>("ratio", Z_ratio), std::pair<std::string, double_t>("target threads", target_threads));

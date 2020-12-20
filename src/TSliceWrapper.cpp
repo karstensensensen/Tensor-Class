@@ -13,7 +13,7 @@ namespace TSlib
 		:from(from), to(to), from_max(from_max), to_max(to_max)
 	{
 		MEASURE();
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 
 		if (from < 0 && to < 0 && to >= from)
 		{
@@ -41,7 +41,7 @@ namespace TSlib
 		from = *val.begin();
 		to = *(val.begin() + 1);
 
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 
 		if (from < 0 && to < 0 && to <= from)
 		{

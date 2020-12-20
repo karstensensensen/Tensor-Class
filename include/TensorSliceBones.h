@@ -18,7 +18,7 @@ namespace TSlib
 		std::vector<size_t> m_real_shape;
 		size_t m_offset;
 
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 
 		template<typename First, typename ... Args>
 		void bounds_check(size_t& i, First first, Args ... remaining);

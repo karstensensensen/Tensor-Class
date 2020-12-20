@@ -3,7 +3,7 @@
 #ifdef __clang__
 typedef double double_t;
 #ifdef DEBUG
-#define _DEBUG
+#define _TS_DEBUG
 #endif
 #endif
 
@@ -139,7 +139,7 @@ namespace TSlib
 	{
 		MEASURE();
 
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		if (m_shape[iter] <= coord)
 			throw OutOfBounds(Shape(), "Exception was thrown, because an element outside the Tensor bounds was accsessed", iter, coord);
 		#endif
@@ -171,7 +171,7 @@ namespace TSlib
 	template<typename ... Args, typename First>
 	void Tensor<T, device>::to_vector(std::vector<TSlice>& vec, const std::initializer_list<First>& first, const std::initializer_list<Args>& ... args)
 	{
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		std::cout << std::is_integral<First>::value << '\n' << !std::is_integral<First>::value << '\n';
 		if (!std::is_integral<First>::value)
 		{
@@ -600,7 +600,7 @@ namespace TSlib
 			deallocate();
 		#endif
 
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		if (sizes.size() == 0)
 		{
 			throw BadShape("New shape must not be of length 0");
@@ -651,7 +651,7 @@ namespace TSlib
 	void Tensor<T, device>::Reshape(const std::initializer_list<size_t>& shape)
 	{
 		MEASURE();
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		size_t new_shape_size = 1;
 		for (const size_t& elem : shape)
 		{
@@ -674,7 +674,7 @@ namespace TSlib
 	void Tensor<T, device>::Reshape(const std::vector<size_t>& shape)
 	{
 		MEASURE();
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		size_t new_shape_size = 1;
 		for (const size_t& elem : shape)
 		{
@@ -720,7 +720,7 @@ namespace TSlib
 			deallocate();
 		#endif
 
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 
 		if (dims > Dims() - 1)
 		{
@@ -749,7 +749,7 @@ namespace TSlib
 	//
 	//	to_vector(slice_vec, slices...);
 	//
-	//	#ifdef _DEBUG
+	//	#ifdef _TS_DEBUG
 	//
 	//	if (slice_vec.size() > Dims())
 	//	{
@@ -909,7 +909,7 @@ namespace TSlib
 	inline Tensor<RT, device> Tensor<T, device>::add(const Tensor<OT, o_device>& other) const
 	{
 		MEASURE();
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 
 		if (Dims() != other.Dims())
 		{
@@ -940,7 +940,7 @@ namespace TSlib
 	inline Tensor<RT, device> Tensor<T, device>::add(const TensorSlice<OT, o_device>& other) const
 	{
 		MEASURE();
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		if (Dims() < other.Dims())
 		{
 			throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
@@ -985,7 +985,7 @@ namespace TSlib
 	inline Tensor<RT, device> Tensor<T, device>::subtract(const Tensor<OT, o_device>& other) const
 	{
 		MEASURE();
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		if (Dims() != other.Dims())
 		{
 			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
@@ -1015,7 +1015,7 @@ namespace TSlib
 	inline Tensor<RT, device> Tensor<T, device>::subtract(const TensorSlice<OT, o_device>& other) const
 	{
 		MEASURE();
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		if (Dims() < other.Dims())
 		{
 			throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
@@ -1060,7 +1060,7 @@ namespace TSlib
 	inline Tensor<RT, device> Tensor<T, device>::multiply(const Tensor<OT, o_device>& other) const
 	{
 		MEASURE();
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		if (Dims() != other.Dims())
 		{
 			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
@@ -1090,7 +1090,7 @@ namespace TSlib
 	inline Tensor<RT, device> Tensor<T, device>::multiply(const TensorSlice<OT, o_device>& other) const
 	{
 		MEASURE();
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		if (Dims() < other.Dims())
 		{
 			throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
@@ -1135,7 +1135,7 @@ namespace TSlib
 	inline Tensor<RT, device> Tensor<T, device>::divide(const Tensor<OT, o_device>& other) const
 	{
 		MEASURE();
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		if (Dims() != other.Dims())
 		{
 			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
@@ -1165,7 +1165,7 @@ namespace TSlib
 	inline Tensor<RT, device> Tensor<T, device>::divide(const TensorSlice<OT, o_device>& other) const
 	{
 		MEASURE();
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		if (Dims() < other.Dims())
 		{
 			throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
@@ -1210,7 +1210,7 @@ namespace TSlib
 	inline Tensor<RT, device> Tensor<T, device>::modulous(const Tensor<OT, o_device>& other) const
 	{
 		MEASURE();
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		if (Dims() != other.Dims())
 		{
 			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
@@ -1240,7 +1240,7 @@ namespace TSlib
 	inline Tensor<RT, device> Tensor<T, device>::modulous(const TensorSlice<OT, o_device>& other) const
 	{
 		MEASURE();
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		if (Dims() < other.Dims())
 		{
 			throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
@@ -1285,7 +1285,7 @@ namespace TSlib
 	inline void Tensor<T, device>::additionAssignment(const Tensor<OT, o_device>& other)
 	{
 		MEASURE();
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		if (Dims() != other.Dims())
 		{
 			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
@@ -1311,7 +1311,7 @@ namespace TSlib
 	inline void Tensor<T, device>::additionAssignment(const TensorSlice<OT, o_device>& other)
 	{
 		MEASURE();
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		if (Dims() < other.Dims())
 		{
 			throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
@@ -1348,7 +1348,7 @@ namespace TSlib
 	inline void Tensor<T, device>::subtractionAssignment(const Tensor<OT, o_device>& other)
 	{
 		MEASURE();
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		if (Dims() != other.Dims())
 		{
 			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
@@ -1374,7 +1374,7 @@ namespace TSlib
 	inline void Tensor<T, device>::subtractionAssignment(const TensorSlice<OT, o_device>& other)
 	{
 		MEASURE();
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		if (Dims() < other.Dims())
 		{
 			throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
@@ -1411,7 +1411,7 @@ namespace TSlib
 	inline void Tensor<T, device>::multiplicationAssignment(const Tensor<OT, o_device>& other)
 	{
 		MEASURE();
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		if (Dims() != other.Dims())
 		{
 			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
@@ -1437,7 +1437,7 @@ namespace TSlib
 	inline void Tensor<T, device>::multiplicationAssignment(const TensorSlice<OT, o_device>& other)
 	{
 		MEASURE();
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		if (Dims() < other.Dims())
 		{
 			throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
@@ -1474,7 +1474,7 @@ namespace TSlib
 	inline void Tensor<T, device>::divisionAssignment(const Tensor<OT, o_device>& other)
 	{
 		MEASURE();
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		if (Dims() != other.Dims())
 		{
 			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
@@ -1500,7 +1500,7 @@ namespace TSlib
 	inline void Tensor<T, device>::divisionAssignment(const TensorSlice<OT, o_device>& other)
 	{
 		MEASURE();
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		if (Dims() < other.Dims())
 		{
 			throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
@@ -1537,7 +1537,7 @@ namespace TSlib
 	inline void Tensor<T, device>::modulouAssignment(const Tensor<OT, o_device>& other)
 	{
 		MEASURE();
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		if (Dims() != other.Dims())
 		{
 			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
@@ -1563,7 +1563,7 @@ namespace TSlib
 	inline void Tensor<T, device>::modulouAssignment(const TensorSlice<OT, o_device>& other)
 	{
 		MEASURE();
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		if (Dims() < other.Dims())
 		{
 			throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
@@ -1600,7 +1600,7 @@ namespace TSlib
 	inline Tensor<RT, device> TSlib::Tensor<T, device>::compare(const Tensor<OT, o_device>& other, bool(*comp_func)(const T&, const OT&))
 	{
 		MEASURE();
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		if (Dims() != other.Dims())
 		{
 			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
@@ -1630,7 +1630,7 @@ namespace TSlib
 	inline Tensor<RT, device> TSlib::Tensor<T, device>::compare(const TensorSlice<OT, o_device>& other, bool(*comp_func)(const T&, const OT&))
 	{
 		MEASURE();
-		#ifdef _DEBUG
+		#ifdef _TS_DEBUG
 		if (Dims() != other.Dims())
 		{
 			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
