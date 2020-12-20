@@ -380,7 +380,7 @@ namespace TSlib
 			template<typename RT, Mode return_device>
 			TensorSlice<T, device>::operator Tensor<RT, return_device>()
 			{
-				return Tensor<T, device>(*this, false);
+				return Tensor<T, device>(*this);
 			}
 
 			template<typename T, Mode device>

@@ -961,7 +961,7 @@ namespace TSlib
 		template<typename CT, Mode o_device>
 		operator Tensor<CT, o_device>() const
 		{
-			Tensor<CT, device> new_Tensor(this->Shape(), CT(), false);
+			Tensor<CT, device> new_Tensor(this->Shape(), CT());
 
 			for (size_t i = 0; i < this->size(); i++)
 			{
@@ -974,7 +974,7 @@ namespace TSlib
 		template<typename CT, Mode o_device>
 		operator Tensor<CT, o_device>()
 		{
-			Tensor<CT, o_device> new_Tensor(this->Shape(), CT(), false);
+			Tensor<CT, o_device> new_Tensor(this->Shape(), CT());
 
 			for (size_t i = 0; i < this->size(); i++)
 			{

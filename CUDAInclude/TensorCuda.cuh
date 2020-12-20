@@ -532,7 +532,7 @@ namespace TSlib
 		#endif
 
 		//create result Tensor: This will hold all of the return values
-		Tensor<RT, device> result(Shape(), RT(), false);
+		Tensor<RT, device> result(Shape(), RT());
 
 		result.allocate();
 
@@ -594,7 +594,7 @@ namespace TSlib
 		#endif
 
 		//create result Tensor: This will hold all of the return values
-		Tensor<RT, device> result(Shape(), RT(), false);
+		Tensor<RT, device> result(Shape(), RT());
 		result.allocate();
 
 		//Get flattended version of Tensor so it can fit in the desired dimensions
@@ -659,7 +659,7 @@ namespace TSlib
 		#endif
 
 		//create result Tensor: This will hold all of the return values
-		Tensor<RT, device> result(Shape(), RT(), false);
+		Tensor<RT, device> result(Shape(), RT());
 
 		result.allocate();
 

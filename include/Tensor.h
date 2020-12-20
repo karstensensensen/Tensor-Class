@@ -925,7 +925,7 @@ namespace TSlib
 		}
 		#endif
 
-		Tensor<RT, device> result(this->Shape(), RT(), false);
+		Tensor<RT, device> result(this->Shape(), RT());
 
 		for (size_t i = 0; i < this->size(); i++)
 		{
@@ -970,7 +970,7 @@ namespace TSlib
 	inline Tensor<RT, device> Tensor<T, device>::addSingle(const OT& other) const
 	{
 		MEASURE();
-		Tensor<RT, device> result(this->Shape(), RT(), false);
+		Tensor<RT, device> result(this->Shape(), RT());
 
 		for (size_t i = 0; i < size(); i++)
 		{
@@ -1000,7 +1000,7 @@ namespace TSlib
 		}
 		#endif
 
-		Tensor<RT, device> result(this->Shape(), RT(), false);
+		Tensor<RT, device> result(this->Shape(), RT());
 
 		for (size_t i = 0; i < this->size(); i++)
 		{
@@ -1045,7 +1045,7 @@ namespace TSlib
 	inline Tensor<RT, device> Tensor<T, device>::subtractSingle(const OT& other) const
 	{
 		MEASURE();
-		Tensor<RT, device> result(this->Shape(), RT(), false);
+		Tensor<RT, device> result(this->Shape(), RT());
 
 		for (size_t i = 0; i < this->size(); i++)
 		{
@@ -1075,7 +1075,7 @@ namespace TSlib
 		}
 		#endif
 
-		Tensor<RT, device> result(this->Shape(), RT(), false);
+		Tensor<RT, device> result(this->Shape(), RT());
 
 		for (size_t i = 0; i < this->size(); i++)
 		{
@@ -1120,7 +1120,7 @@ namespace TSlib
 	inline Tensor<RT, device> Tensor<T, device>::multiplySingle(const OT& other) const
 	{
 		MEASURE();
-		Tensor<RT, device> result(this->Shape(), RT(), false);
+		Tensor<RT, device> result(this->Shape(), RT());
 
 		for (size_t i = 0; i < this->size(); i++)
 		{
@@ -1150,7 +1150,7 @@ namespace TSlib
 		}
 		#endif
 
-		Tensor<RT, device> result(this->Shape(), RT(), false);
+		Tensor<RT, device> result(this->Shape(), RT());
 
 		for (size_t i = 0; i < this->size(); i++)
 		{
@@ -1195,7 +1195,7 @@ namespace TSlib
 	inline Tensor<RT, device> Tensor<T, device>::divideSingle(const OT& other) const
 	{
 		MEASURE();
-		Tensor<RT, device> result(this->Shape(), RT(), false);
+		Tensor<RT, device> result(this->Shape(), RT());
 
 		for (size_t i = 0; i < this->size(); i++)
 		{
@@ -1225,7 +1225,7 @@ namespace TSlib
 		}
 		#endif
 
-		Tensor<RT, device> result(this->Shape(), RT(), false);
+		Tensor<RT, device> result(this->Shape(), RT());
 
 		for (size_t i = 0; i < this->size(); i++)
 		{
@@ -1270,7 +1270,7 @@ namespace TSlib
 	inline Tensor<RT, device> Tensor<T, device>::modulousSingle(const OT& other) const
 	{
 		MEASURE();
-		Tensor<RT, device> result(this->Shape(), RT(), false);
+		Tensor<RT, device> result(this->Shape(), RT());
 
 		for (size_t i = 0; i < this->size(); i++)
 		{
