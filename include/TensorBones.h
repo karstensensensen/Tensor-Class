@@ -113,6 +113,7 @@ namespace TSlib
 		void Fill(std::function<T(const size_t&)> generator);
 		void Fill(std::function<T(const std::vector<size_t>&)> generator);
 		void Fill(std::function<T(const std::vector<size_t>&, const size_t&)> generator);
+		void Fill(std::vector<T> vals);
 
 		void Replace(const T& target, const T& value);
 
@@ -179,6 +180,8 @@ namespace TSlib
 
 		T& operator[](size_t indx);
 		T operator[](size_t indx) const;
+
+		Tensor<T>& operator=(const std::vector<T>& other);
 
 		template<typename RT = T>
 		RT sum();

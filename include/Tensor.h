@@ -478,6 +478,20 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
+	inline void Tensor<T, device>::Fill(std::vector<T> vals)
+	{
+		#ifdef _TS_DEBUG
+		if (vals.size() != size())
+		{
+			throw BadShape(this, "Vector must have the same size as the target tensor", { vals.size() });
+		}
+		#endif
+
+		memcpy(Data(), vals.data(), size());
+
+	}
+
+	template<typename T, Mode device>
 	inline void Tensor<T, device>::Replace(const T& target, const T& value)
 	{
 		for (size_t i = 0; i < size(); i++)
@@ -881,6 +895,13 @@ namespace TSlib
 	inline T Tensor<T, device>::operator[](size_t indx) const
 	{
 		return At(indx);
+	}
+
+	template<typename T, Mode device>
+	Tensor<T>& Tensor<T, device>::operator=(const std::vector<T>& other)
+	{
+		Fill(other);
+		return this;
 	}
 
 	#if defined(_CUDA) && defined(_AMP)
