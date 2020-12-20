@@ -11,6 +11,7 @@
 *.sln.docstates
 src/main.cpp
 src/empty.cpp
+lib
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
