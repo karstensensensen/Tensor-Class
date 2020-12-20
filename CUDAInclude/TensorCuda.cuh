@@ -1591,7 +1591,6 @@ namespace TSlib
 		*/
 		cudaSetDevice(0);
 		cudaDeviceSynchronize();
-		cudaThreadSynchronize();
 
 		#ifdef _DEBUG
 		CUDA_IS_INITIALIZED = true;
