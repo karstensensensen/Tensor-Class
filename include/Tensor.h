@@ -198,7 +198,7 @@ namespace TSlib
 			max_length = std::max(std::to_string(elem).size(), max_length);
 		}
 
-		for (size_t i = 0; i < get_dim_size(Dims() - 1); i++)
+		for (size_t i = 0; i < get_dim_size(0); i++)
 		{
 			stream << std::to_string(At(i));
 
@@ -217,7 +217,7 @@ namespace TSlib
 			}
 		}
 
-		for (size_t dim = Dims() - 2; dim > 0; dim--)
+		for (size_t dim = 1; dim < Dims(); dim++)
 		{
 			stream << "\n";
 			for (size_t i = get_dim_size(dim - 1); i < get_dim_size(dim); i++)
@@ -281,7 +281,7 @@ namespace TSlib
 	{
 		std::vector<size_t> new_indexes(target.size());
 		//
-		std::generate(new_indexes.begin(), new_indexes.end(), [n = target.size() - 1]() mutable {return n--; });
+		std::generate(new_indexes.begin(), new_indexes.end(), [n = 0]() mutable {return n++; });
 
 		std::sort(new_indexes.begin(), new_indexes.end(), sorter(target));
 
@@ -310,7 +310,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, const T& pad_val)
-		: m_shape(sizes.size() + 1)
+		: m_shape(sizes.size())
 	{
 		MEASURE();
 		Resize(sizes, pad_val);
@@ -321,7 +321,7 @@ namespace TSlib
 	template<typename T, Mode device>
 	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(const size_t&)> generator)
 
-		: m_shape(sizes.size() + 1)
+		: m_shape(sizes.size())
 	{
 		Resize(sizes);
 
@@ -333,7 +333,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(const std::vector<size_t>&)> generator)
-		: m_shape(sizes.size() + 1)
+		: m_shape(sizes.size())
 	{
 		Resize(sizes);
 
@@ -352,7 +352,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(const std::vector<size_t>&, const size_t&)> generator)
-		: m_shape(sizes.size() + 1)
+		: m_shape(sizes.size())
 	{
 		Resize(sizes);
 
@@ -371,7 +371,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	Tensor<T, device>::Tensor(const TensorSlice<T, device>& slice)
-		: m_shape(slice.Shape().size() + 1)
+		: m_shape(slice.Shape().size())
 	{
 		MEASURE();
 
