@@ -217,7 +217,7 @@ namespace TSlib
 			}
 		}
 
-		for (unsigned int dim = Dims() - 2; dim > 0; dim--)
+		for (size_t dim = Dims() - 2; dim > 0; dim--)
 		{
 			stream << "\n";
 			for (size_t i = get_dim_size(dim - 1); i < get_dim_size(dim); i++)
