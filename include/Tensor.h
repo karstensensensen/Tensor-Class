@@ -2,9 +2,6 @@
 
 #ifdef __clang__
 typedef double double_t;
-#ifdef DEBUG
-#define _TS_DEBUG
-#endif
 #endif
 
 #include <stdlib.h>
