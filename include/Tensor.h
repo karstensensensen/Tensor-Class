@@ -48,7 +48,7 @@ namespace TSlib
 
 		for (size_t i = 0; i <= index; i++)
 		{
-			r_size *= m_shape[i];
+			r_size *= m_shape[Dims() - i - 1];
 		}
 
 		return r_size;
@@ -63,7 +63,7 @@ namespace TSlib
 
 		for (size_t i = index; i < m_shape.size(); i++)
 		{
-			r_size *= m_shape[i];
+			r_size *= m_shape[Dims() - i - 1];
 		}
 
 		return r_size;
@@ -220,7 +220,7 @@ namespace TSlib
 		for (size_t dim = 1; dim < Dims(); dim++)
 		{
 			stream << "\n";
-			for (size_t i = Shape()[Dims() - 1]; i < get_dim_size(dim); i++)
+			for (size_t i = get_real_size(dim - 1); i < get_real_size(dim); i++)
 			{
 				stream << std::to_string(At(i));
 
@@ -281,7 +281,7 @@ namespace TSlib
 	{
 		std::vector<size_t> new_indexes(target.size());
 		//
-		std::generate(new_indexes.begin(), new_indexes.end(), [n = 0]() mutable {return n++; });
+		std::generate(new_indexes.begin(), new_indexes.end(), [n = Dims() - 1]() mutable {return n--; });
 
 		std::sort(new_indexes.begin(), new_indexes.end(), sorter(target));
 
@@ -632,8 +632,8 @@ namespace TSlib
 		for (size_t i = 0; i < sizes.size(); i++)
 		{
 			size_t target_size = sizes.size() - dimensions[i] - 1;
-			size_t new_amount = sizes[target_size];
-			size_t tmp_size = m_vector.size();
+			size_t new_amount = NULL;
+			size_t tmp_size = size();
 			size_t tmp_row_size = get_real_size(dimensions[i]);
 
 			m_shape[target_size] = sizes[target_size];
