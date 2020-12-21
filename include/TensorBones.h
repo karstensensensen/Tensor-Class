@@ -83,7 +83,6 @@ namespace TSlib
 
 	public:
 
-		Tensor(const int& dims = 0);
 		Tensor(const std::vector<size_t>& sizes, const T& pad_val = T());
 		Tensor(const std::vector<size_t>& sizes, std::function<T(const size_t&)> generator);
 		Tensor(const std::vector<size_t>& sizes, std::function<T(const std::vector<size_t>&)> generator);
@@ -103,6 +102,8 @@ namespace TSlib
 
 		void Reshape(const std::initializer_list<size_t>& shape);
 		void Reshape(const std::vector<size_t>& shape);
+
+		void SetDims(const size_t& dims);
 
 		void AddDims(const size_t& dims = 1);
 
@@ -155,7 +156,6 @@ namespace TSlib
 
 		#endif
 
-		size_t get_dim_size(const size_t& index) const;
 		size_t get_dim_offset(const size_t& index) const;
 
 		size_t Dims() const;

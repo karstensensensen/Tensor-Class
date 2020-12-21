@@ -107,20 +107,6 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	size_t  Tensor<T, device>::get_dim_size(const size_t& index) const
-	{
-		MEASURE();
-
-		size_t size = 1;
-		for (size_t i = 0; i <= index; i++)
-		{
-			size *= m_shape[i];
-		}
-
-		return size;
-	}
-
-	template<typename T, Mode device>
 	size_t Tensor<T, device>::get_dim_offset(const size_t& index) const
 	{
 		MEASURE();
@@ -281,7 +267,7 @@ namespace TSlib
 	{
 		std::vector<size_t> new_indexes(target.size());
 		//
-		std::generate(new_indexes.begin(), new_indexes.end(), [n = Dims() - 1]() mutable {return n--; });
+		std::generate(new_indexes.begin(), new_indexes.end(), [n = target.size() - 1]() mutable {return n--; });
 
 		std::sort(new_indexes.begin(), new_indexes.end(), sorter(target));
 
@@ -300,13 +286,6 @@ namespace TSlib
 	}
 
 	/// Tensor constructors
-	///
-	template<typename T, Mode device>
-	Tensor<T, device>::Tensor(const int& dims)
-		: m_shape(dims /*+ 1*/)
-	{
-		MEASURE();
-	}
 
 	template<typename T, Mode device>
 	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, const T& pad_val)
@@ -427,7 +406,7 @@ namespace TSlib
 	void Tensor<T, device>::Fill(const size_t& dim, const T& val, const size_t& index)
 	{
 		MEASURE();
-		for (size_t i = 0; i < get_dim_size(dim); i++)
+		for (size_t i = 0; i < get_real_size(dim); i++)
 		{
 			At(i + get_dim_offset(dim) * index) = val;
 		}
@@ -621,6 +600,8 @@ namespace TSlib
 		}
 		#endif
 
+		SetDims(sizes.size());
+
 		size_t current_size = get_real_size(m_shape.size() - 1);
 		size_t new_size = calc_new_size(sizes);
 
@@ -710,6 +691,26 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
+	void Tensor<T, device>::SetDims(const size_t& dims)
+	{
+		MEASURE();
+
+		#ifdef _CUDA
+		//deallocate gpu memory if allocated to make sure there isnt accidentally copied too much or little memory to cpu or gpu
+		if (isAllocated())
+			deallocate();
+		#endif
+		if (dims > Dims())
+		{
+			AddDims(dims - Dims());
+		}
+		else if ( dims < Dims() )
+		{
+			RemoveDims(Dims() - dims);
+		}
+	}
+
+	template<typename T, Mode device>
 	void Tensor<T, device>::AddDims(const size_t& dims)
 	{
 		MEASURE();
@@ -743,8 +744,12 @@ namespace TSlib
 
 		#endif
 
+		for (unsigned int i = 0; i < dims; i++)
+		{
+			ResizeDim(Dims() - i - 1, 1);
+		}
+
 		m_shape.resize(m_shape.size() - dims);
-		m_shape[m_shape.size() - 1] = 1;
 	}
 
 	template<typename T, Mode device>
