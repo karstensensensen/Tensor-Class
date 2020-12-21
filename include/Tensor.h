@@ -292,7 +292,20 @@ namespace TSlib
 		Resize(sizes, pad_val);
 	}
 
-	//generator functions take an index / coordinate as parameters and returns a value with the containter type
+	//generator functions take an index / coordinate or nothing as parameters and returns a value with the containter type
+
+	template<typename T, Mode device>
+	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T()> generator)
+
+		: m_shape(sizes.size())
+	{
+		Resize(sizes);
+
+		for (size_t i = 0; i < size(); i++)
+		{
+			At(i) = generator();
+		}
+	}
 
 	template<typename T, Mode device>
 	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(const size_t&)> generator)
