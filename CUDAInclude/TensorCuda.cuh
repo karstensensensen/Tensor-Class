@@ -1584,12 +1584,12 @@ namespace TSlib
 		return result;
 	}
 
-	void CUDAInitialize(int i = 0)
+	void CUDAInitialize(int device = 0)
 	{
 		/*
 		* this is primarily used to initialize the cuda api. This oftens takes some time to load so this function makes it possible to have more control over when this pause will happen.
 		*/
-		cudaSetDevice(0);
+		cudaSetDevice(device);
 		cudaDeviceSynchronize();
 
 		#ifdef _TS_DEBUG

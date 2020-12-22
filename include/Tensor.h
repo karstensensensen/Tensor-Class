@@ -1662,7 +1662,7 @@ namespace TSlib
 
 		Tensor<RT, device> result(this->Shape());
 
-		Compute([result, other](T& val, const size_t& index) {result = comp_func(val, other[index]); });
+		Compute([comp_func, result, other](T& val, const size_t& index) {result = comp_func(val, other[index]); });
 
 		return result;
 	}
@@ -1705,7 +1705,7 @@ namespace TSlib
 
 		Tensor<RT, device> result(this->Shape());
 
-		Compute([result, other](T& val, const size_t& index) {result[index] = comp_func(val, other); });
+		Compute([comp_func, result, other](T& val, const size_t& index) {result[index] = comp_func(val, other); });
 
 		for (size_t i = 0; i < this->size(); i++)
 		{
