@@ -316,7 +316,7 @@ namespace TSlib
 
 					tmp_multiply /= m_slice_shape[i].width();
 
-					new_index += rows * source->get_dim_size(i);
+					new_index += rows * source->get_real_size(i);
 				}
 
 				new_index += index + m_offset;

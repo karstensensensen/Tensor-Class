@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include <vector>
+#include <thread>
+#include <atomic>
 #include <assert.h>
 #include <functional>
 #include "TensorEnums.h"
@@ -38,6 +40,10 @@ namespace TSlib
 	constexpr Mode default_device = Mode::CPU;
 	#endif
 
+	#ifndef _TS_MAX_THREADS
+	#define _TS_MAX_THREADS std::thread::hardware_concurrency()
+	#endif
+
 	template<typename T, Mode device = default_device>
 	class Tensor
 	{
@@ -45,6 +51,7 @@ namespace TSlib
 
 		std::vector<T> m_vector;
 		std::vector<size_t> m_shape;
+		std::vector<std::thread> pool;
 
 		#ifdef _CUDA
 	public:
@@ -81,6 +88,8 @@ namespace TSlib
 
 		std::vector<size_t> based_sort(const std::vector<TSlice>& target);
 
+		
+
 	public:
 
 		Tensor(const std::vector<size_t>& sizes, const T& pad_val = T());
@@ -116,6 +125,11 @@ namespace TSlib
 		void Fill(std::function<T(const std::vector<size_t>&)> generator);
 		void Fill(std::function<T(const std::vector<size_t>&, const size_t&)> generator);
 		void Fill(std::vector<T> vals);
+
+		inline void Compute(std::function<void(T&)> compute_func);
+		inline void Compute(std::function<void(T&, const size_t&)> compute_func);
+		inline void Compute(std::function<void(T&, const std::vector<size_t>&)> compute_func);
+		inline void Compute(std::function<void(T&, const std::vector<size_t>&, const size_t&)> compute_func);
 
 		void Replace(const T& target, const T& value);
 

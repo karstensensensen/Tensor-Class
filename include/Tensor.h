@@ -26,6 +26,7 @@ typedef double double_t;
 
 #include "TensorOperators.h"
 #include "TensorSlice.h"
+#include <functional>
 #include <algorithm>
 #include <math.h>
 #include <cstdarg>
@@ -282,11 +283,9 @@ namespace TSlib
 		return new_indexes;
 	}
 
-	/// Tensor constructors
-
 	template<typename T, Mode device>
 	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, const T& pad_val)
-		: m_shape(sizes.size())
+		: m_shape(sizes.size()), pool(_TS_MAX_THREADS)
 	{
 		MEASURE();
 		Resize(sizes, pad_val);
@@ -297,7 +296,7 @@ namespace TSlib
 	template<typename T, Mode device>
 	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T()> generator)
 
-		: m_shape(sizes.size())
+		: m_shape(sizes.size()), pool(_TS_MAX_THREADS)
 	{
 		Resize(sizes);
 
@@ -310,7 +309,7 @@ namespace TSlib
 	template<typename T, Mode device>
 	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(const size_t&)> generator)
 
-		: m_shape(sizes.size())
+		: m_shape(sizes.size()), pool(_TS_MAX_THREADS)
 	{
 		Resize(sizes);
 
@@ -322,7 +321,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(const std::vector<size_t>&)> generator)
-		: m_shape(sizes.size())
+		: m_shape(sizes.size()), pool(_TS_MAX_THREADS)
 	{
 		Resize(sizes);
 
@@ -341,7 +340,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(const std::vector<size_t>&, const size_t&)> generator)
-		: m_shape(sizes.size())
+		: m_shape(sizes.size()), pool(_TS_MAX_THREADS)
 	{
 		Resize(sizes);
 
@@ -360,7 +359,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	Tensor<T, device>::Tensor(const TensorSlice<T, device>& slice)
-		: m_shape(slice.Shape().size())
+		: m_shape(slice.Shape().size()), pool(_TS_MAX_THREADS)
 	{
 		MEASURE();
 
@@ -374,7 +373,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	Tensor<T, device>::Tensor(const Tensor<T, device>& other)
-		: m_vector(other.asVector()), m_shape(other.Shape())
+		: m_vector(other.asVector()), m_shape(other.Shape()), pool(_TS_MAX_THREADS)
 	{
 		MEASURE();
 
@@ -478,6 +477,72 @@ namespace TSlib
 
 		memcpy(Data(), vals.data(), size()*sizeof(T));
 
+	}
+
+	template<typename T, Mode device>
+	inline void TSlib::Tensor<T, device>::Compute(std::function<void(T&)> compute_func)
+	{
+		#pragma omp parallel for
+		for (long long index = 0; (size_t)index < size(); index++)
+		{
+			compute_func(At(index));
+		}
+	}
+
+	template<typename T, Mode device>
+	inline void TSlib::Tensor<T, device>::Compute(std::function<void(T&,  const size_t&) > compute_func)
+	{
+		#pragma omp parallel for
+		for (long long index = 0; (size_t)index < size(); index++)
+		{
+			compute_func(At(index), index);
+		}
+	}
+
+	template<typename T, Mode device>
+	inline void TSlib::Tensor<T, device>::Compute(std::function<void(T&, const std::vector<size_t>&)> compute_func)
+	{
+
+		#pragma omp parallel for
+		for (long long index = 0; (size_t)index < size(); index++)
+		{
+			compute_func(At(index), index);
+
+			std::vector<size_t> coords(Dims());
+
+
+			coords[0] = (index % get_real_size(0));
+			for (size_t j = 1; j < Dims(); j++)
+			{
+				coords[j] = (index / get_real_size(j - 1)) % get_real_size(j - 1);
+			}
+
+
+			compute_func(At(index), coords);
+		}
+	}
+
+	template<typename T, Mode device>
+	inline void TSlib::Tensor<T, device>::Compute(std::function<void(T&, const std::vector<size_t>&, const size_t&)> compute_func)
+	{
+
+		#pragma omp parallel for
+		for (long long index = 0; (size_t)index < size(); index++)
+		{
+			compute_func(At(index), index);
+
+			std::vector<size_t> coords(Dims());
+
+
+			coords[0] = (index % get_real_size(0));
+			for (size_t j = 1; j < Dims(); j++)
+			{
+				coords[j] = (index / get_real_size(j - 1)) % get_real_size(j - 1);
+			}
+
+
+			compute_func(At(index), coords, index);
+		}
 	}
 
 	template<typename T, Mode device>
@@ -961,12 +1026,11 @@ namespace TSlib
 		}
 		#endif
 
+		
+
 		Tensor<RT, device> result(this->Shape(), RT());
 
-		for (size_t i = 0; i < this->size(); i++)
-		{
-			result[i] = this->At(i) + other[i];
-		}
+		Compute([result, other](T& val, const size_t& index) {result[index] = val + other[index]; });
 
 		return result;
 	}
@@ -993,6 +1057,7 @@ namespace TSlib
 
 		Tensor<RT, device> result = *this;
 
+
 		for (size_t i = 0; i < other.size(); i++)
 		{
 			result[other.map_index(i)] = At(other.map_index(i)) + other[i];
@@ -1008,10 +1073,7 @@ namespace TSlib
 		MEASURE();
 		Tensor<RT, device> result(this->Shape(), RT());
 
-		for (size_t i = 0; i < size(); i++)
-		{
-			result[i] = At(i) + other;
-		}
+		Compute([result, other](T& val, const size_t& index) {result[index] = val + other; });
 
 		return result;
 	}
@@ -1038,10 +1100,7 @@ namespace TSlib
 
 		Tensor<RT, device> result(this->Shape(), RT());
 
-		for (size_t i = 0; i < this->size(); i++)
-		{
-			result[i] = this->At(i) - other[i];
-		}
+		fCompute([result, other](T& val, const size_t& index) {result[index] = val - other[index]; });
 
 		return result;
 	}
@@ -1083,10 +1142,7 @@ namespace TSlib
 		MEASURE();
 		Tensor<RT, device> result(this->Shape(), RT());
 
-		for (size_t i = 0; i < this->size(); i++)
-		{
-			result[i] = this->At(i) - other;
-		}
+		Compute([result, other](T& val, const size_t& index) {result[index] = val + other; });
 
 		return result;
 	}
@@ -1113,10 +1169,7 @@ namespace TSlib
 
 		Tensor<RT, device> result(this->Shape(), RT());
 
-		for (size_t i = 0; i < this->size(); i++)
-		{
-			result[i] = this->At(i) * other[i];
-		}
+		Compute([result, other](T& val, const size_t& index) {result[index] = val * other[index]; });
 
 		return result;
 	}
@@ -1158,10 +1211,7 @@ namespace TSlib
 		MEASURE();
 		Tensor<RT, device> result(this->Shape(), RT());
 
-		for (size_t i = 0; i < this->size(); i++)
-		{
-			result[i] = this->At(i) * other;
-		}
+		Compute([result, other](T& val, const size_t& index) {result[index] = val + other; });
 
 		return result;
 	}
@@ -1188,10 +1238,7 @@ namespace TSlib
 
 		Tensor<RT, device> result(this->Shape(), RT());
 
-		for (size_t i = 0; i < this->size(); i++)
-		{
-			result[i] = this->At(i) - other[i];
-		}
+		Compute([result, other](T& val, const size_t& index) {result[index] = val / other[index]; });
 
 		return result;
 	}
@@ -1233,10 +1280,7 @@ namespace TSlib
 		MEASURE();
 		Tensor<RT, device> result(this->Shape(), RT());
 
-		for (size_t i = 0; i < this->size(); i++)
-		{
-			result[i] = this->At(i) - other;
-		}
+		Compute([result, other](T& val, const size_t& index) {result[index] = val / other; });
 
 		return result;
 	}
@@ -1263,10 +1307,7 @@ namespace TSlib
 
 		Tensor<RT, device> result(this->Shape(), RT());
 
-		for (size_t i = 0; i < this->size(); i++)
-		{
-			result[i] = this->At(i) % other[i];
-		}
+		Compute([result, other](T& val, const size_t& index) {result[index] = val % other[index]; });
 
 		return result;
 	}
@@ -1308,10 +1349,7 @@ namespace TSlib
 		MEASURE();
 		Tensor<RT, device> result(this->Shape(), RT());
 
-		for (size_t i = 0; i < this->size(); i++)
-		{
-			result[i] = this->At(i) % other;
-		}
+		Compute([result, other](T& val, const size_t& index) {result[index] = val % other; });
 
 		return result;
 	}
@@ -1336,10 +1374,7 @@ namespace TSlib
 		}
 		#endif
 
-		for (size_t i = 0; i < this->size(); i++)
-		{
-			this->At(i) += other[i];
-		}
+		Compute([other](T& val, const size_t& index) {val += other[index]; });
 	}
 
 	template<typename T, Mode device>
@@ -1373,10 +1408,8 @@ namespace TSlib
 	inline void Tensor<T, device>::additionAssignmentSingle(const OT& other)
 	{
 		MEASURE();
-		for (size_t i = 0; i < this->size(); i++)
-		{
-			this->At(i) += other;
-		}
+
+		Compute([other](T& val) {val += other; });
 	}
 
 	template<typename T, Mode device>
@@ -1399,10 +1432,7 @@ namespace TSlib
 		}
 		#endif
 
-		for (size_t i = 0; i < this->size(); i++)
-		{
-			this->At(i) -= other[i];
-		}
+		Compute([other](T& val, const size_t& index) {val -= other[index]; });
 	}
 
 	template<typename T, Mode device>
@@ -1436,10 +1466,7 @@ namespace TSlib
 	inline void Tensor<T, device>::subtractionAssignmentSingle(const OT& other)
 	{
 		MEASURE();
-		for (size_t i = 0; i < this->size(); i++)
-		{
-			this->At(i) -= other;
-		}
+		Compute([other](T& val, const size_t& index) {val -= other; });
 	}
 
 	template<typename T, Mode device>
@@ -1462,10 +1489,7 @@ namespace TSlib
 		}
 		#endif
 
-		for (size_t i = 0; i < this->size(); i++)
-		{
-			this->At(i) *= other[i];
-		}
+		Compute([other](T& val, const size_t& index) {val *= other[index]; });
 	}
 
 	template<typename T, Mode device>
@@ -1499,10 +1523,7 @@ namespace TSlib
 	inline void Tensor<T, device>::multiplicationAssignmentSingle(const OT& other)
 	{
 		MEASURE();
-		for (size_t i = 0; i < this->size(); i++)
-		{
-			this->At(i) *= other;
-		}
+		Compute([other](T& val, const size_t& index) {val *= other; });
 	}
 
 	template<typename T, Mode device>
@@ -1525,10 +1546,7 @@ namespace TSlib
 		}
 		#endif
 
-		for (size_t i = 0; i < this->size(); i++)
-		{
-			this->At(i) /= other[i];
-		}
+		Compute([other](T& val, const size_t& index) {val /= other[index]; });
 	}
 
 	template<typename T, Mode device>
@@ -1562,10 +1580,7 @@ namespace TSlib
 	inline void Tensor<T, device>::divisionAssignmentSingle(const OT& other)
 	{
 		MEASURE();
-		for (size_t i = 0; i < this->size(); i++)
-		{
-			this->At(i) /= other;
-		}
+		Compute([other](T& val, const size_t& index) {val /= other; });
 	}
 
 	template<typename T, Mode device>
@@ -1588,10 +1603,7 @@ namespace TSlib
 		}
 		#endif
 
-		for (size_t i = 0; i < this->size(); i++)
-		{
-			this->At(i) %= other[i];
-		}
+		Compute([other](T& val, const size_t& index) {val %= other[index]; });
 	}
 
 	template<typename T, Mode device>
@@ -1625,10 +1637,7 @@ namespace TSlib
 	inline void Tensor<T, device>::modulouAssignmentSingle(const OT& other)
 	{
 		MEASURE();
-		for (size_t i = 0; i < this->size(); i++)
-		{
-			this->At(i) %= other;
-		}
+		Compute([other](T& val, const size_t& index) {val %= other; });
 	}
 
 	template<typename T, Mode device>
@@ -1653,10 +1662,7 @@ namespace TSlib
 
 		Tensor<RT, device> result(this->Shape());
 
-		for (size_t i = 0; i < this->size(); i++)
-		{
-			result[i] = comp_func(At(i), other[i]);
-		}
+		Compute([result, other](T& val, const size_t& index) {result = comp_func(val, other[index]); });
 
 		return result;
 	}
@@ -1698,6 +1704,8 @@ namespace TSlib
 		MEASURE();
 
 		Tensor<RT, device> result(this->Shape());
+
+		Compute([result, other](T& val, const size_t& index) {result[index] = comp_func(val, other); });
 
 		for (size_t i = 0; i < this->size(); i++)
 		{
