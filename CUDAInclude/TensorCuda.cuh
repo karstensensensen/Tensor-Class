@@ -241,8 +241,6 @@ namespace TSlib
 		return threadIdx.z + blockIdx.z * blockDim.z;
 	}
 
-	
-
 	template<typename T>
 	__device__ T& CUDATensor1D<T>::At(size_t x)
 	{
@@ -392,7 +390,6 @@ namespace TSlib
 	template<typename T>
 	__device__ bool CUDATensor3D<T>::in_bounds() const
 	{
-
 		return ((threadIdx.x + blockIdx.x * blockDim.x) < m_length) &&
 			((threadIdx.y + blockIdx.y * blockDim.y) < m_width) &&
 			((threadIdx.z + blockIdx.z * blockDim.z) < m_height);

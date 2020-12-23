@@ -97,13 +97,12 @@ namespace TSlib
 	public:
 
 		__device__ size_t X();
-		
+
 		__device__ size_t get_length();
 
 		template<Mode device>
 		CUDATensor1D(Tensor<T, device>& tensor);
 		CUDATensor1D(const CUDATensor1D<T>& other);
-
 
 		__device__ T& At(size_t x);
 		__device__ T At(size_t x) const;

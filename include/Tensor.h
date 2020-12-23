@@ -474,8 +474,7 @@ namespace TSlib
 		}
 		#endif
 
-		memcpy(Data(), vals.data(), size()*sizeof(T));
-
+		memcpy(Data(), vals.data(), size() * sizeof(T));
 	}
 
 	template<typename T, Mode device>
@@ -489,7 +488,7 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	inline void TSlib::Tensor<T, device>::Compute(std::function<void(T&,  const size_t&) > compute_func)
+	inline void TSlib::Tensor<T, device>::Compute(std::function<void(T&, const size_t&) > compute_func)
 	{
 		#pragma omp parallel for
 		for (long long index = 0; (size_t)index < size(); index++)
@@ -501,7 +500,6 @@ namespace TSlib
 	template<typename T, Mode device>
 	inline void TSlib::Tensor<T, device>::Compute(std::function<void(T&, const std::vector<size_t>&)> compute_func)
 	{
-
 		#pragma omp parallel for
 		for (long long index = 0; (size_t)index < size(); index++)
 		{
@@ -509,13 +507,11 @@ namespace TSlib
 
 			std::vector<size_t> coords(Dims());
 
-
 			coords[0] = (index % get_real_size(0));
 			for (size_t j = 1; j < Dims(); j++)
 			{
 				coords[j] = (index / get_real_size(j - 1)) % get_real_size(j - 1);
 			}
-
 
 			compute_func(At(index), coords);
 		}
@@ -524,7 +520,6 @@ namespace TSlib
 	template<typename T, Mode device>
 	inline void TSlib::Tensor<T, device>::Compute(std::function<void(T&, const std::vector<size_t>&, const size_t&)> compute_func)
 	{
-
 		#pragma omp parallel for
 		for (long long index = 0; (size_t)index < size(); index++)
 		{
@@ -532,13 +527,11 @@ namespace TSlib
 
 			std::vector<size_t> coords(Dims());
 
-
 			coords[0] = (index % get_real_size(0));
 			for (size_t j = 1; j < Dims(); j++)
 			{
 				coords[j] = (index / get_real_size(j - 1)) % get_real_size(j - 1);
 			}
-
 
 			compute_func(At(index), coords, index);
 		}
@@ -778,7 +771,7 @@ namespace TSlib
 		{
 			AddDims(dims - Dims());
 		}
-		else if ( dims < Dims() )
+		else if (dims < Dims())
 		{
 			RemoveDims(Dims() - dims);
 		}
@@ -1025,8 +1018,6 @@ namespace TSlib
 		}
 		#endif
 
-		
-
 		Tensor<RT, device> result(this->Shape(), RT());
 
 		Compute([result, other](T& val, const size_t& index) {result[index] = val + other[index]; });
@@ -1055,7 +1046,6 @@ namespace TSlib
 		#endif
 
 		Tensor<RT, device> result = *this;
-
 
 		for (size_t i = 0; i < other.size(); i++)
 		{

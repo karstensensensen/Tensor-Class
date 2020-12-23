@@ -83,8 +83,6 @@ namespace TSlib
 
 		std::vector<size_t> based_sort(const std::vector<TSlice>& target);
 
-		
-
 	public:
 
 		Tensor(const std::vector<size_t>& sizes, const T& pad_val = T());

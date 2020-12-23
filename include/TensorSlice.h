@@ -154,7 +154,7 @@ namespace TSlib
 				{
 					At(i) = other[i];
 				}
-	}
+			}
 
 			template<typename T, Mode device>
 			template<typename OT, Mode device_other>
@@ -1209,4 +1209,4 @@ namespace TSlib
 				MEASURE();
 				return At(index);
 			}
-}
+		}
