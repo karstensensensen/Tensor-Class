@@ -98,7 +98,7 @@ namespace TSlib
 
 		__device__ size_t X();
 		
-		size_t get_length();
+		__device__ size_t get_length();
 
 		template<Mode device>
 		CUDATensor1D(Tensor<T, device>& tensor);
@@ -135,8 +135,8 @@ namespace TSlib
 		__device__ size_t X();
 		__device__ size_t Y();
 
-		size_t get_length();
-		size_t get_width();
+		__device__ size_t get_length();
+		__device__ size_t get_width();
 
 		template<Mode device>
 		CUDATensor2D(Tensor<T, device>& tensor);
@@ -174,9 +174,9 @@ namespace TSlib
 		__device__ size_t Y();
 		__device__ size_t Z();
 
-		size_t get_length();
-		size_t get_width();
-		size_t get_height();
+		__device__ size_t get_length();
+		__device__ size_t get_width();
+		__device__ size_t get_height();
 
 		template<Mode device>
 		CUDATensor3D(Tensor<T, device>& tensor);

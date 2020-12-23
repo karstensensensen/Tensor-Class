@@ -102,37 +102,37 @@ namespace TSlib
 	/// </summary>
 
 	template<typename T>
-	size_t CUDATensor1D<T>::get_length()
+	__device__ size_t CUDATensor1D<T>::get_length()
 	{
 		return m_length;
 	}
 
 	template<typename T>
-	size_t CUDATensor2D<T>::get_length()
+	__device__ size_t CUDATensor2D<T>::get_length()
 	{
 		return m_length;
 	}
 
 	template<typename T>
-	size_t CUDATensor2D<T>::get_width()
+	__device__ size_t CUDATensor2D<T>::get_width()
 	{
-		return m_widthh;
+		return m_width;
 	}
 
 	template<typename T>
-	size_t CUDATensor3D<T>::get_length()
+	__device__ size_t CUDATensor3D<T>::get_length()
 	{
 		return m_length;
 	}
 
 	template<typename T>
-	size_t CUDATensor3D<T>::get_width()
+	__device__ size_t CUDATensor3D<T>::get_width()
 	{
-		return m_widthh;
+		return m_width;
 	}
 
 	template<typename T>
-	size_t CUDATensor3D<T>::get_height()
+	__device__ size_t CUDATensor3D<T>::get_height()
 	{
 		return m_height;
 	}
@@ -169,8 +169,8 @@ namespace TSlib
 		CER(cudaMemcpy(dim_arr, tensor.Shape().data(), sizeof(size_t) * dims, cudaMemcpyHostToDevice));
 
 		auto new_dims = tensor.FlattenDims(2);
-		m_length = new_dims[0];
-		m_width = new_dims[1];
+		m_length = new_dims[1];
+		m_width = new_dims[0];
 	}
 
 	template<typename T>
@@ -190,9 +190,9 @@ namespace TSlib
 		CER(cudaMemcpy(dim_arr, tensor.Shape().data(), sizeof(size_t) * dims, cudaMemcpyHostToDevice));
 
 		auto new_dims = tensor.FlattenDims(3);
-		m_length = new_dims[0];
+		m_length = new_dims[2];
 		m_width = new_dims[1];
-		m_height = new_dims[2];
+		m_height = new_dims[0];
 	}
 
 	template<typename T>
@@ -208,40 +208,40 @@ namespace TSlib
 	/// </summary>
 
 	template<typename T>
-	__device__ size_t CUDATensor1D<T>::X()
+	inline __device__ size_t CUDATensor1D<T>::X()
 	{
 		return threadIdx.x + blockIdx.x * blockDim.x;
 	}
 
 	template<typename T>
-	__device__ size_t CUDATensor2D<T>::X()
+	inline __device__ size_t CUDATensor2D<T>::X()
 	{
 		return threadIdx.x + blockIdx.x * blockDim.x;
 	}
 
 	template<typename T>
-	__device__ size_t CUDATensor2D<T>::Y()
+	inline __device__ size_t CUDATensor2D<T>::Y()
 	{
 		return threadIdx.y + blockIdx.y * blockDim.y;
 	}
 
 	template<typename T>
-	__device__ size_t CUDATensor3D<T>::X()
+	inline __device__ size_t CUDATensor3D<T>::X()
 	{
 		return threadIdx.x + blockIdx.x * blockDim.x;
 	}
-
 	template<typename T>
-	__device__ size_t CUDATensor3D<T>::Y()
+	inline __device__ size_t CUDATensor3D<T>::Y()
 	{
 		return threadIdx.y + blockIdx.y * blockDim.y;
 	}
-
 	template<typename T>
-	__device__ size_t CUDATensor3D<T>::Z()
+	inline __device__ size_t CUDATensor3D<T>::Z()
 	{
 		return threadIdx.z + blockIdx.z * blockDim.z;
 	}
+
+	
 
 	template<typename T>
 	__device__ T& CUDATensor1D<T>::At(size_t x)
@@ -392,6 +392,7 @@ namespace TSlib
 	template<typename T>
 	__device__ bool CUDATensor3D<T>::in_bounds() const
 	{
+
 		return ((threadIdx.x + blockIdx.x * blockDim.x) < m_length) &&
 			((threadIdx.y + blockIdx.y * blockDim.y) < m_width) &&
 			((threadIdx.z + blockIdx.z * blockDim.z) < m_height);
@@ -672,8 +673,8 @@ namespace TSlib
 		//calculate block sizes from thread size
 
 		auto threads = layout.apply(this, m_threads);
-		dim3 blocks((uint32_t)std::ceil((dims[0] + std::get<0>(threads) - 1) / std::get<0>(threads)),
-			(uint32_t)std::ceil((dims[1] + std::get<1>(threads) - 1) / std::get<1>(threads)));
+		dim3 blocks((uint32_t)std::ceil((dims[1] + std::get<0>(threads) - 1) / std::get<0>(threads)),
+			(uint32_t)std::ceil((dims[0] + std::get<1>(threads) - 1) / std::get<1>(threads)));
 
 		kernel_p << < blocks, { std::get<0>(threads), std::get<1>(threads) , std::get<2>(threads) } >> > (*this, args...);
 
@@ -705,9 +706,9 @@ namespace TSlib
 		//calculate block sizes from thread size
 
 		auto threads = layout.apply(this, m_threads);
-		dim3 blocks((uint32_t)std::ceil((dims[0] + std::get<0>(threads) - 1) / std::get<0>(threads)),
+		dim3 blocks((uint32_t)std::ceil((dims[2] + std::get<0>(threads) - 1) / std::get<0>(threads)),
 			(uint32_t)std::ceil((dims[1] + std::get<1>(threads) - 1) / std::get<1>(threads)),
-			(uint32_t)std::ceil((dims[2] + std::get<2>(threads) - 1) / std::get<2>(threads)));
+			(uint32_t)std::ceil((dims[0] + std::get<2>(threads) - 1) / std::get<2>(threads)));
 
 		kernel_p << < blocks, { std::get<0>(threads), std::get<1>(threads) , std::get<2>(threads) } >> > (*this, result, args...);
 

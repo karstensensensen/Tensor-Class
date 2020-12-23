@@ -77,13 +77,12 @@ namespace TSlib
 		size_t i;
 		for (i = 0; i < std::min(dims, Dims()); i++)
 		{
-			new_dim[i] = m_shape[i];
+			new_dim[dims - i - 1] = m_shape[Dims() - i - 1];
 		}
-		i--;
 
-		for (size_t j = i + 1; j < m_shape.size(); j++)
+		for (size_t j = dims; j < Dims(); j++)
 		{
-			new_dim[i] *= m_shape[j];
+			new_dim[0] *= m_shape[Dims() - j - 1];
 		}
 
 		return new_dim;
