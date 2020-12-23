@@ -285,7 +285,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, const T& pad_val)
-		: m_shape(sizes.size()), pool(_TS_MAX_THREADS)
+		: m_shape(sizes.size())
 	{
 		MEASURE();
 		Resize(sizes, pad_val);
@@ -296,7 +296,7 @@ namespace TSlib
 	template<typename T, Mode device>
 	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T()> generator)
 
-		: m_shape(sizes.size()), pool(_TS_MAX_THREADS)
+		: m_shape(sizes.size())
 	{
 		Resize(sizes);
 
@@ -309,7 +309,7 @@ namespace TSlib
 	template<typename T, Mode device>
 	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(const size_t&)> generator)
 
-		: m_shape(sizes.size()), pool(_TS_MAX_THREADS)
+		: m_shape(sizes.size())
 	{
 		Resize(sizes);
 
@@ -321,7 +321,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(const std::vector<size_t>&)> generator)
-		: m_shape(sizes.size()), pool(_TS_MAX_THREADS)
+		: m_shape(sizes.size())
 	{
 		Resize(sizes);
 
@@ -340,7 +340,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(const std::vector<size_t>&, const size_t&)> generator)
-		: m_shape(sizes.size()), pool(_TS_MAX_THREADS)
+		: m_shape(sizes.size())
 	{
 		Resize(sizes);
 
@@ -359,7 +359,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	Tensor<T, device>::Tensor(const TensorSlice<T, device>& slice)
-		: m_shape(slice.Shape().size()), pool(_TS_MAX_THREADS)
+		: m_shape(slice.Shape().size())
 	{
 		MEASURE();
 
@@ -373,7 +373,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	Tensor<T, device>::Tensor(const Tensor<T, device>& other)
-		: m_vector(other.asVector()), m_shape(other.Shape()), pool(_TS_MAX_THREADS)
+		: m_vector(other.asVector()), m_shape(other.Shape())
 	{
 		MEASURE();
 

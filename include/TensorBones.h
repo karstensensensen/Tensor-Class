@@ -40,10 +40,6 @@ namespace TSlib
 	constexpr Mode default_device = Mode::CPU;
 	#endif
 
-	#ifndef _TS_MAX_THREADS
-	#define _TS_MAX_THREADS std::thread::hardware_concurrency()
-	#endif
-
 	template<typename T, Mode device = default_device>
 	class Tensor
 	{
@@ -51,7 +47,6 @@ namespace TSlib
 
 		std::vector<T> m_vector;
 		std::vector<size_t> m_shape;
-		std::vector<std::thread> pool;
 
 		#ifdef _CUDA
 	public:

@@ -87,7 +87,7 @@ namespace TSlib
 	template<typename T>
 	__device__ T& CTBase<T>::operator[](size_t index)
 	{
-		return At(index);
+		return gpu_mem[index];
 	}
 
 	template<typename T>

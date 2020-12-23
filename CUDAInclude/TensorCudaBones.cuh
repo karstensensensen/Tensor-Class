@@ -96,11 +96,14 @@ namespace TSlib
 
 	public:
 
+		const size_t X = threadIdx.x + blockIdx.x * blockDim.x;
+		
+		size_t get_length();
+
 		template<Mode device>
 		CUDATensor1D(Tensor<T, device>& tensor);
 		CUDATensor1D(const CUDATensor1D<T>& other);
 
-		size_t get_length();
 
 		__device__ T& At(size_t x);
 		__device__ T At(size_t x) const;
@@ -128,6 +131,9 @@ namespace TSlib
 		size_t m_width = NULL;
 
 	public:
+
+		const size_t X = threadIdx.x + blockIdx.x * blockDim.x;
+		const size_t Y = threadIdx.y + blockIdx.y * blockDim.y;
 
 		size_t get_length();
 		size_t get_width();
@@ -163,6 +169,10 @@ namespace TSlib
 		size_t m_height = NULL;
 
 	public:
+
+		const size_t X = threadIdx.x + blockIdx.x * blockDim.x;
+		const size_t Y = threadIdx.y + blockIdx.y * blockDim.y;
+		const size_t Z = threadIdx.z + blockIdx.z * blockDim.z;
 
 		size_t get_length();
 		size_t get_width();
