@@ -208,6 +208,42 @@ namespace TSlib
 	/// </summary>
 
 	template<typename T>
+	__device__ size_t CUDATensor1D<T>::X()
+	{
+		return threadIdx.x + blockIdx.x * blockDim.x;
+	}
+
+	template<typename T>
+	__device__ size_t CUDATensor2D<T>::X()
+	{
+		return threadIdx.x + blockIdx.x * blockDim.x;
+	}
+
+	template<typename T>
+	__device__ size_t CUDATensor2D<T>::Y()
+	{
+		return threadIdx.y + blockIdx.y * blockDim.y;
+	}
+
+	template<typename T>
+	__device__ size_t CUDATensor3D<T>::X()
+	{
+		return threadIdx.x + blockIdx.x * blockDim.x;
+	}
+
+	template<typename T>
+	__device__ size_t CUDATensor3D<T>::Y()
+	{
+		return threadIdx.y + blockIdx.y * blockDim.y;
+	}
+
+	template<typename T>
+	__device__ size_t CUDATensor3D<T>::Z()
+	{
+		return threadIdx.z + blockIdx.z * blockDim.z;
+	}
+
+	template<typename T>
 	__device__ T& CUDATensor1D<T>::At(size_t x)
 	{
 		return gpu_mem[x];

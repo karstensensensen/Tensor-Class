@@ -96,7 +96,7 @@ namespace TSlib
 
 	public:
 
-		const size_t X = threadIdx.x + blockIdx.x * blockDim.x;
+		__device__ size_t X();
 		
 		size_t get_length();
 
@@ -131,9 +131,9 @@ namespace TSlib
 		size_t m_width = NULL;
 
 	public:
-
-		const size_t X = threadIdx.x + blockIdx.x * blockDim.x;
-		const size_t Y = threadIdx.y + blockIdx.y * blockDim.y;
+		// = threadIdx.x + blockIdx.x * blockDim.x;
+		__device__ size_t X();
+		__device__ size_t Y();
 
 		size_t get_length();
 		size_t get_width();
@@ -170,9 +170,9 @@ namespace TSlib
 
 	public:
 
-		const size_t X = threadIdx.x + blockIdx.x * blockDim.x;
-		const size_t Y = threadIdx.y + blockIdx.y * blockDim.y;
-		const size_t Z = threadIdx.z + blockIdx.z * blockDim.z;
+		__device__ size_t X();
+		__device__ size_t Y();
+		__device__ size_t Z();
 
 		size_t get_length();
 		size_t get_width();
@@ -217,10 +217,10 @@ namespace TSlib
 
 			for (unsigned int i = 0; target_threads - i != 0; i += 32)
 			{
-				double_t square = std::cbrt(target_threads - i);
-				if (square == std::floor(square))
+				double_t cube = std::cbrt(target_threads - i);
+				if (cube == std::floor(cube))
 				{
-					NT = (unsigned int)square;
+					NT = (unsigned int)cube;
 					break;
 				}
 			}
@@ -229,10 +229,10 @@ namespace TSlib
 			{
 				for (size_t i = 0; target_threads + i <= 1024; i += 32)
 				{
-					double_t square = std::cbrt(target_threads + i);
-					if (square == std::floor(square))
+					double_t cube = std::cbrt(target_threads + i);
+					if (cube == std::floor(cube))
 					{
-						NT = (unsigned int)square;
+						NT = (unsigned int)cube;
 						break;
 					}
 				}
@@ -309,16 +309,16 @@ namespace TSlib
 		double_t Y_ratio;
 		double_t Z_ratio;
 
-		unsigned int get_cubed(size_t target_threads)
+		unsigned int get_squared(size_t target_threads)
 		{
 			unsigned int NT = NULL;
 
 			for (unsigned int i = 0; target_threads - i != 0; i += 32)
 			{
-				double_t cube = std::cbrt(target_threads - i);
-				if (cube == std::floor(cube))
+				double_t square = std::sqrt(target_threads - i);
+				if (square == std::floor(square))
 				{
-					NT = (unsigned int)cube;
+					NT = (unsigned int)square;
 					break;
 				}
 			}
@@ -327,10 +327,10 @@ namespace TSlib
 			{
 				for (unsigned int i = 0; target_threads + i <= 1024; i += 32)
 				{
-					double_t cube = std::cbrt(target_threads + i);
-					if (cube == std::floor(cube))
+					double_t square = std::sqrt(target_threads + i);
+					if (square == std::floor(square))
 					{
-						NT = (unsigned int)cube;
+						NT = (unsigned int)square;
 						break;
 					}
 				}
