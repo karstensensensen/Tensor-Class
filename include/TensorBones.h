@@ -85,6 +85,7 @@ namespace TSlib
 
 	public:
 
+		Tensor();
 		Tensor(const std::vector<size_t>& sizes, const T& pad_val = T());
 		Tensor(const std::vector<size_t>& sizes, std::function<T()> generator);
 		Tensor(const std::vector<size_t>& sizes, std::function<T(const size_t&)> generator);

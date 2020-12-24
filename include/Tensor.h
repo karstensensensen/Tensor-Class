@@ -283,6 +283,12 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
+	inline Tensor<T, device>::Tensor()
+		: m_shape(0)
+	{
+	}
+
+	template<typename T, Mode device>
 	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, const T& pad_val)
 		: m_shape(sizes.size())
 	{
@@ -404,17 +410,16 @@ namespace TSlib
 	void Tensor<T, device>::Fill(const T& val)
 	{
 		MEASURE();
-		for (T& elem : *this)
-		{
-			elem = val;
-		}
+		Compute([val](T& elem) {elem = val; });
 	}
 
 	template<typename T, Mode device>
 	void Tensor<T, device>::Fill(const size_t& dim, const T& val, const size_t& index)
 	{
 		MEASURE();
-		for (size_t i = 0; i < get_real_size(dim); i++)
+
+		#pragma omp parallel for
+		for (long long i = 0; i < get_real_size(dim); i++)
 		{
 			At(i + get_dim_offset(dim) * index) = val;
 		}
@@ -424,44 +429,24 @@ namespace TSlib
 	inline void TSlib::Tensor<T, device>::Fill(std::function<T(const size_t&)> generator)
 	{
 		MEASURE();
-		for (size_t i = 0; i < size(); i++)
-		{
-			At(i) = generator(i);
-		}
+
+		Compute([generator](T& elem, const size_t& index) {elem = generator(index); });
 	}
 
 	template<typename T, Mode device>
 	inline void Tensor<T, device>::Fill(std::function<T(const std::vector<size_t>&)> generator)
 	{
 		MEASURE();
-		std::vector<size_t> indexes(Dims());
-
-		for (size_t i = 0; i < size(); i++)
-		{
-			indexes[0] = (i % get_real_size(0));
-			for (size_t j = 1; j < Dims(); j++)
-			{
-				indexes[j] = (i / get_real_size(j - 1)) % get_real_size(j - 1);
-			}
-			At(i) = generator(indexes);
-		}
+		Compute([generator](T& elem, const std::vector<size_t>& dimensions) {elem = generator(dimensions); });
 	}
 
 	template<typename T, Mode device>
 	inline void Tensor<T, device>::Fill(std::function<T(const std::vector<size_t>&, const size_t&)> generator)
 	{
 		MEASURE();
-		std::vector<size_t> indexes(Dims());
 
-		for (size_t i = 0; i < size(); i++)
-		{
-			indexes[0] = (i % get_real_size(0));
-			for (size_t j = 1; j < Dims(); j++)
-			{
-				indexes[j] = (i / get_real_size(j - 1)) % get_real_size(j - 1);
-			}
-			At(i) = generator(indexes, i);
-		}
+		Compute([generator](T& elem, const std::vector<size_t>& dimensions, const size_t& intex) {elem = generator(dimensions, index); });
+
 	}
 
 	template<typename T, Mode device>
