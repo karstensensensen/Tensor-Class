@@ -23,13 +23,13 @@ namespace TSlib
 
 		if (dim_arr[iter] <= coord)
 		{
-			throw OutOfBounds(this, "Index is out of bounds", iter, coord);
+			throw OutOfBounds(dim_arr, "Index is out of bounds", iter, coord);
 		}
 
 		#endif
 
+		tmp_multiply /= dim_arr[iter];
 		indx += coord * tmp_multiply;
-		tmp_multiply *= dim_arr[iter];
 		iter++;
 	}
 
@@ -72,7 +72,7 @@ namespace TSlib
 
 	{
 		size_t index = 0;
-		size_t tmp_multiply = 1;
+		size_t tmp_multiply = size();
 		size_t i = 0;
 
 		get_indx(index, i, tmp_multiply, coords...);
