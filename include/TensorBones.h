@@ -114,11 +114,10 @@ namespace TSlib
 		void RemoveDims(const size_t& dims = 1);
 
 		void Fill(const T& val = NULL);
-		void Fill(const size_t& dim, const T& val = NULL, const size_t& index = 0);
 		void Fill(std::function<T(const size_t&)> generator);
 		void Fill(std::function<T(const std::vector<size_t>&)> generator);
 		void Fill(std::function<T(const std::vector<size_t>&, const size_t&)> generator);
-		void Fill(std::vector<T> vals);
+		void Fill(const std::vector<T>& vals);
 
 		inline void Compute(std::function<void(T&)> compute_func);
 		inline void Compute(std::function<void(T&, const size_t&)> compute_func);

@@ -146,15 +146,15 @@ namespace TSlib
 			if (Shape()[i] != other.Shape()[i])
 			{
 				throw BadShape(Shape(), "The shapes passed must be the same", other.Shape());
-				{
-				}
-				#endif
-
-				for (size_t i = 0; i < size(); i++)
-				{
-					At(i) = other[i];
-				}
 			}
+		}
+		#endif
+
+		for (size_t i = 0; i < size(); i++)
+		{
+			At(i) = other[i];
+		}
+	}
 
 			template<typename T, Mode device>
 			template<typename OT, Mode device_other>
@@ -185,55 +185,105 @@ namespace TSlib
 			template<typename T, Mode device>
 			void TensorSlice<T, device>::Fill(const T & other)
 			{
-				for (size_t i = 0; i < size(); i++)
-				{
-					At(i) = other;
-				}
+				Compute([val](T& elem) {elem = val; });
 			}
 
 			template<typename T, Mode device>
 			inline void TensorSlice<T, device>::Fill(std::function<T(const size_t&)> generator)
 			{
 				MEASURE();
-				for (size_t i = 0; i < size(); i++)
-				{
-					At(i) = generator(i);
-				}
+				Compute([generator](T& elem, const size_t& index) {elem = generator(index); });
 			}
 
 			template<typename T, Mode device>
 			inline void TensorSlice<T, device>::Fill(std::function<T(const std::vector<size_t>&)> generator)
 			{
 				MEASURE();
-				std::vector<size_t> indexes(Dims());
-
-				for (size_t i = 0; i < size(); i++)
-				{
-					indexes[0] = (i % source->get_real_size(0));
-					for (size_t j = 1; j < Dims(); j++)
-					{
-						indexes[j] = (i / source->get_real_size(j - 1)) % source->get_real_size(j - 1);
-					}
-					At(i) = generator(indexes);
-				}
+				Compute([generator](T& elem, const std::vector<size_t>& dimensions) {elem = generator(dimensions); });
 			}
 
 			template<typename T, Mode device>
 			inline void TensorSlice<T, device>::Fill(std::function<T(const std::vector<size_t>&, const size_t&)> generator)
 			{
-				MEASURE();
-				std::vector<size_t> indexes(Dims());
+				Compute([generator](T& elem, const std::vector<size_t>& dimensions, const size_t& index) {elem = generator(dimensions, index); });
+			}
 
-				for (size_t i = 0; i < size(); i++)
+			template<typename T, Mode device>
+			inline void TSlib::TensorSlice<T, device>::Fill(const std::vector<T>& vals)
+			{
+
+				#ifdef _TS_DEBUG
+				if (vals.size() != size())
 				{
-					indexes[0] = (i % source->get_real_size(0));
-					for (size_t j = 1; j < Dims(); j++)
-					{
-						indexes[j] = (i / source->get_real_size(j - 1)) % source->get_real_size(j - 1);
-					}
-					At(i) = generator(indexes, i);
+					throw BadShape("Vector must have the same size as the target tensor slice", dim_arr, std::vector<size_t>{ vals.size() });
+				}
+				#endif
+
+				Compute([vals](T& elem, const size_t& index) {elem = vals[index]; });
+			}
+
+			template<typename T, Mode device>
+			inline void TensorSlice<T, device>::Compute(std::function<void(T&)> compute_func)
+			{
+				#pragma omp parallel for
+				for (long long index = 0; (size_t)index < size(); index++)
+				{
+					compute_func(At(index));
 				}
 			}
+
+			template<typename T, Mode device>
+			inline void TensorSlice<T, device>::Compute(std::function<void(T&, const size_t&)> compute_func)
+			{
+				#pragma omp parallel for
+				for (long long index = 0; (size_t)index < size(); index++)
+				{
+					compute_func(At(index), index);
+				}
+			}
+
+			template<typename T, Mode device>
+			inline void TensorSlice<T, device>::Compute(std::function<void(T&, const std::vector<size_t>&)> compute_func)
+			{
+				#pragma omp parallel for
+				for (long long index = 0; (size_t)index < size(); index++)
+				{
+					compute_func(At(index), index);
+
+					std::vector<size_t> coords(Dims());
+
+					coords[0] = (index % get_real_size(0));
+					for (size_t j = 1; j < Dims(); j++)
+					{
+						coords[j] = (index / get_real_size(j - 1)) % get_real_size(j - 1);
+					}
+
+					compute_func(At(index), coords);
+				}
+			}
+
+			template<typename T, Mode device>
+			inline void TensorSlice<T, device>::Compute(std::function<void(T&, const std::vector<size_t>&, const size_t&)> compute_func)
+			{
+				#pragma omp parallel for
+				for (long long index = 0; (size_t)index < size(); index++)
+				{
+					compute_func(At(index), index);
+
+					std::vector<size_t> coords(Dims());
+
+					coords[0] = (index % get_real_size(0));
+					for (size_t j = 1; j < Dims(); j++)
+					{
+						coords[j] = (index / get_real_size(j - 1)) % get_real_size(j - 1);
+					}
+
+					compute_func(At(index), coords, index);
+				}
+			}
+
+
+
 
 			template<typename T, Mode device>
 			inline void TensorSlice<T, device>::Replace(const T & target, const T & value)

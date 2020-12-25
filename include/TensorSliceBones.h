@@ -47,6 +47,12 @@ namespace TSlib
 		void Fill(std::function<T(const size_t&)> generator);
 		void Fill(std::function<T(const std::vector<size_t>&)> generator);
 		void Fill(std::function<T(const std::vector<size_t>&, const size_t&)> generator);
+		void Fill(const std::vector<T>& vals);
+
+		inline void Compute(std::function<void(T&)> compute_func);
+		inline void Compute(std::function<void(T&, const size_t&)> compute_func);
+		inline void Compute(std::function<void(T&, const std::vector<size_t>&)> compute_func);
+		inline void Compute(std::function<void(T&, const std::vector<size_t>&, const size_t&)> compute_func);
 
 		void Replace(const T& target, const T& value);
 

@@ -413,7 +413,7 @@ namespace TSlib
 		Compute([val](T& elem) {elem = val; });
 	}
 
-	template<typename T, Mode device>
+	/*template<typename T, Mode device>
 	void Tensor<T, device>::Fill(const size_t& dim, const T& val, const size_t& index)
 	{
 		MEASURE();
@@ -423,7 +423,7 @@ namespace TSlib
 		{
 			At(i + get_dim_offset(dim) * index) = val;
 		}
-	}
+	}*/
 
 	template<typename T, Mode device>
 	inline void TSlib::Tensor<T, device>::Fill(std::function<T(const size_t&)> generator)
@@ -445,12 +445,12 @@ namespace TSlib
 	{
 		MEASURE();
 
-		Compute([generator](T& elem, const std::vector<size_t>& dimensions, const size_t& intex) {elem = generator(dimensions, index); });
+		Compute([generator](T& elem, const std::vector<size_t>& dimensions, const size_t& index) {elem = generator(dimensions, index); });
 
 	}
 
 	template<typename T, Mode device>
-	inline void Tensor<T, device>::Fill(std::vector<T> vals)
+	inline void Tensor<T, device>::Fill(const std::vector<T>& vals)
 	{
 		#ifdef _TS_DEBUG
 		if (vals.size() != size())
