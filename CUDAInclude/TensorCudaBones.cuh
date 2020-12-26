@@ -19,7 +19,6 @@ namespace TSlib
 		static int devcount;
 		#ifdef _TS_DEBUG
 		static bool CUDA_IS_INITIALIZED = false;
-		
 
 		#define CER(ans) { gpuAssert((ans), __FILE__, __LINE__); }
 		inline void gpuAssert(cudaError_t code, const char* file, int line)

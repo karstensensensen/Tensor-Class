@@ -446,7 +446,6 @@ namespace TSlib
 		MEASURE();
 
 		Compute([generator](T& elem, const std::vector<size_t>& dimensions, const size_t& index) {elem = generator(dimensions, index); });
-
 	}
 
 	template<typename T, Mode device>

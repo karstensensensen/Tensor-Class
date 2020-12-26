@@ -69,7 +69,6 @@ namespace TSlib
 
 		size_t map_index(size_t index) const;
 
-
 		const std::vector<size_t>& Shape() const;
 
 		void reshape(const std::vector<size_t> new_shape);

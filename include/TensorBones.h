@@ -43,7 +43,6 @@ namespace TSlib
 	template<typename T, Mode device = default_device>
 	class Tensor
 	{
-
 		friend TensorSlice<T, device>;
 
 	protected:
