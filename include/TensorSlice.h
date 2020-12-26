@@ -217,7 +217,7 @@ namespace TSlib
 				#ifdef _TS_DEBUG
 				if (vals.size() != size())
 				{
-					throw BadShape("Vector must have the same size as the target tensor slice", dim_arr, std::vector<size_t>{ vals.size() });
+					throw BadShape("Vector must have the same size as the target tensor slice", m_slice_shape, std::vector<size_t>{ vals.size() });
 				}
 				#endif
 
@@ -324,12 +324,9 @@ namespace TSlib
 			template<typename RT>
 			inline RT TSlib::TensorSlice<T, device>::sum()
 			{
-				RT sum = At(0);
+				RT sum = 0;
 
-				for (size_t i = 1; i < size(); i++)
-				{
-					sum += At(i);
-				}
+				Compute([sum](T& val) {sum += val; });
 
 				return sum;
 			}
