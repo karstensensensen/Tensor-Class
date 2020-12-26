@@ -194,9 +194,6 @@
     <ClInclude Include="..\Multrix\PerlinNoise.h" />
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="..\include\PerlinNoise.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <CudaCompile Include="..\src\TSliceWrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
