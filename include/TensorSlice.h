@@ -37,7 +37,7 @@ namespace TSlib
 		size_t tmp_multiply = source->size();
 		m_offset = 0;
 
-		for (size_t i = m_slice_shape.size() - 1; i != SIZE_MAX; i--)
+		for (size_t i = 0; i < m_slice_shape.size(); i++)
 		{
 			tmp_multiply /= m_slice_shape[i].to_max;
 
@@ -47,7 +47,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	TensorSlice<T, device>::TensorSlice(Tensor<T, device>* source, const std::vector<TSlice>& slices)
-		: source(source), m_slice_shape(slices), m_real_shape(m_slice_shape.size())
+		: source(source), m_slice_shape(slices), m_real_shape(source->Dims())
 	{
 		MEASURE();
 
@@ -121,6 +121,8 @@ namespace TSlib
 		}
 		#endif
 
+		m_slice_shape.resize(source->Dims(), All);
+
 		for (size_t i = 0; i < Dims(); i++)
 		{
 			m_slice_shape[i].to_max = (uint32_t)source->Shape()[i];
@@ -183,7 +185,7 @@ namespace TSlib
 			}
 
 			template<typename T, Mode device>
-			void TensorSlice<T, device>::Fill(const T & other)
+			void TensorSlice<T, device>::Fill(const T & val)
 			{
 				Compute([val](T& elem) {elem = val; });
 			}
@@ -301,10 +303,11 @@ namespace TSlib
 			size_t TensorSlice<T, device>::size() const
 			{
 				MEASURE();
-				size_t size = m_slice_shape[0].get_to() - m_slice_shape[0].get_from();
+				m_slice_shape[0].width();
+				size_t size = m_slice_shape[0].width();
 				for (size_t i = 1; i < m_slice_shape.size(); i++)
 				{
-					size *= (m_slice_shape[i].get_to() - m_slice_shape[i].get_from());
+					size *= (m_slice_shape[i].width());
 				}
 
 				return size;
@@ -356,15 +359,15 @@ namespace TSlib
 			size_t TensorSlice<T, device>::map_index(size_t index) const
 			{
 				MEASURE();
-				size_t tmp_multiply = size();
+				size_t tmp_multiply = m_slice_shape[Dims() - 1].width();
 				size_t new_index = 0;
 
-				for (size_t i = m_slice_shape.size() - 1; i != SIZE_MAX; i--)
+				for (size_t i = 0; i < m_slice_shape.size(); i++)
 				{
 					size_t rows = index / tmp_multiply;
 					index -= tmp_multiply * rows;
 
-					tmp_multiply /= m_slice_shape[i].width();
+					tmp_multiply *= m_slice_shape[i].width();
 
 					new_index += rows * source->get_real_size(i);
 				}
@@ -424,6 +427,19 @@ namespace TSlib
 			T TensorSlice<T, device>::copy_generator(const size_t & index)
 			{
 				return At(index);
+			}
+
+			template<typename T, Mode device>
+			inline size_t TSlib::TensorSlice<T, device>::get_real_size(const size_t& index) const
+			{
+				size_t r_size = 1;
+
+				for (size_t i = 0; i <= index; i++)
+				{
+					r_size *= m_slice_shape[Dims() - i - 1].width();
+				}
+
+				return r_size;
 			}
 
 			template<typename T, Mode device>
@@ -1258,5 +1274,61 @@ namespace TSlib
 			{
 				MEASURE();
 				return At(index);
+			}
+
+			template<typename T, Mode device>
+			inline std::string TensorSlice<T, device>::printable() const
+			{
+				size_t max_length = 0;
+				std::stringstream stream;
+
+				for (size_t i = 0; i < size(); i++)
+				{
+					max_length = std::max(std::to_string(At(i)).size(), max_length);
+				}
+
+				for (size_t i = 0; i < m_slice_shape[Dims() - 1].width(); i++)
+				{
+					stream << std::to_string(At(i));
+
+					size_t str_len = std::to_string(At(i)).size();
+
+					for (size_t j = 0; j < max_length - str_len; j++)
+					{
+						stream << ' ';
+					}
+
+					stream << ',';
+
+					if (i % m_slice_shape[Dims() - 1].width() == m_slice_shape[Dims() - 1].width() - 1)
+					{
+						stream << '\n';
+					}
+				}
+
+				for (size_t dim = 1; dim < Dims(); dim++)
+				{
+					stream << "\n";
+					for (size_t i = get_real_size(dim - 1); i < get_real_size(dim); i++)
+					{
+						stream << std::to_string(At(i));
+
+						size_t str_len = std::to_string(At(i)).size();
+
+						for (size_t j = 0; j < max_length - str_len; j++)
+						{
+							stream << ' ';
+						}
+
+						stream << ',';
+
+						if (i % m_slice_shape[Dims() - 1].width() == m_slice_shape[Dims() - 1].width() - 1)
+						{
+							stream << '\n';
+						}
+					}
+				}
+
+				return stream.str();
 			}
 		}

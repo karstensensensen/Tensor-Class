@@ -34,6 +34,8 @@ namespace TSlib
 
 		T copy_generator(const size_t& index);
 
+		size_t get_real_size(const size_t& index) const;
+
 	public:
 		TensorSlice(Tensor<T, device>* source, const std::vector<TSlice>& slices);
 
@@ -43,7 +45,7 @@ namespace TSlib
 		void Fill(const Tensor<OT, device_other>& other);
 		template<typename OT, Mode device_other>
 		void Fill(const TensorSlice<OT, device_other>& other);
-		void Fill(const T& other);
+		void Fill(const T& val);
 		void Fill(std::function<T(const size_t&)> generator);
 		void Fill(std::function<T(const std::vector<size_t>&)> generator);
 		void Fill(std::function<T(const std::vector<size_t>&, const size_t&)> generator);
@@ -85,6 +87,8 @@ namespace TSlib
 
 		template<typename RT, Mode return_device = device>
 		operator Tensor<RT, return_device>();
+
+		std::string printable() const;
 
 		iterator begin();
 
