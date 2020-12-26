@@ -65,8 +65,6 @@ namespace TSlib
 		template<typename RT = T>
 		RT sum();
 
-		size_t get_dim_size(const size_t& index) const;
-
 		size_t map_index(size_t index) const;
 
 		const std::vector<size_t>& Shape() const;

@@ -54,7 +54,7 @@ namespace TSlib
 	/// <summary>
 	/// Declaration of CUDATensor base
 	/// </summary>
-	/// <typeparam name="T"></typeparam>
+
 
 	class CTBase
 	{
@@ -92,7 +92,7 @@ namespace TSlib
 	/// <summary>
 	/// Declaration of CUDATensor1D
 	/// </summary>
-	/// <typeparam name="T"></typeparam>
+
 	template<typename T>
 	class CUDATensor1D : public CTBase<T>
 	{
@@ -125,7 +125,7 @@ namespace TSlib
 	/// <summary>
 	/// Declaration of CUDATensor2D
 	/// </summary>
-	/// <typeparam name="T"></typeparam>
+
 
 	template<typename T>
 	class CUDATensor2D : public CTBase<T>
@@ -162,7 +162,7 @@ namespace TSlib
 	/// <summary>
 	/// Declaration of CUDATensor3D
 	/// </summary>
-	/// <typeparam name="T"></typeparam>
+
 
 	template<typename T>
 	class CUDATensor3D : public CTBase<T>

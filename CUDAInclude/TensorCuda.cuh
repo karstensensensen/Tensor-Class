@@ -405,7 +405,6 @@ namespace TSlib
 
 	/// Tensor class CUDATensor cast operators
 
-	#if 1
 
 	template<typename T, Mode device>
 	Tensor<T, device>::operator CUDATensor1D<T>()
@@ -424,7 +423,6 @@ namespace TSlib
 	{
 		return CUDATensor3D<T>(*this);
 	}
-	#endif
 
 	/// Tensor class cuda specific functions
 
@@ -1634,6 +1632,6 @@ namespace TSlib
 	}
 
 	#else
-#pragma message("warning: cuda is not enabled, this header file should not be included.")
+		#pragma message("warning: cuda is not enabled, this header file should not be included.")
 #endif
 }
