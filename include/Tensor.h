@@ -797,8 +797,15 @@ namespace TSlib
 	inline void TSlib::Tensor<T, device>::Append(const Tensor<OT, o_device>& other, const size_t& dimension)
 	{
 		#ifdef _TS_DEBUG
-		if (other.Dims() != Dims())
+
+		if (dimension >= Dims())
+		{
+			throw BadValue("The target dimension must be less than or equal to the total dimensions in the target tensors", { "Target dimension", dimension }, { "Tensor dimensions", Dims() });
+		}
+		else if (other.Dims() != Dims())
+		{
 			throw BadShape("The source Tensor must have the same amount of dimensions as the destination Tensor", other.Shape(), Shape());
+		}
 
 		for (size_t i = 0; i < Dims(); i++)
 		{
