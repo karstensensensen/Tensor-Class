@@ -26,6 +26,7 @@ typedef double double_t;
 
 #include "TensorOperators.h"
 #include "TensorSlice.h"
+#include "TensorTools.h"
 #include <functional>
 #include <algorithm>
 #include <math.h>
@@ -822,9 +823,9 @@ namespace TSlib
 
 		std::vector<TSlice> append_slice(Dims(), All);
 
-		append_slice[dimension] = TSlice(other.Shape(), -1);
+		append_slice[dimension] = TSlice(Shape()[dimension] - other.Shape()[dimension], -1);
 
-		Slice(append_slice) = other;
+		Slice(append_slice).Fill(other);
 	}
 
 	template<typename T, Mode device>

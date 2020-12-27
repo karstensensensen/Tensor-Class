@@ -81,7 +81,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>TENSOR_PROFILING;_CUDA;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>TENSOR_PROFILING;_TS_DEBUG;_CUDA;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Dev\cpp\libs\Performance\include;..\include;..\CUDAinclude;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/WL /showIncludes %(AdditionalOptions)</AdditionalOptions>
@@ -189,6 +189,8 @@
     <ClInclude Include="..\include\TensorOperators.h" />
     <ClInclude Include="..\include\TensorSlice.h" />
     <ClInclude Include="..\include\TensorSliceBones.h" />
+    <ClInclude Include="..\include\TensorTools.h" />
+    <ClInclude Include="..\include\TensorToolsBones.h" />
     <ClInclude Include="..\include\TSliceWrapper.h" />
     <ClInclude Include="..\Multrix\PerlinKernel.cuh" />
     <ClInclude Include="..\Multrix\PerlinNoise.h" />

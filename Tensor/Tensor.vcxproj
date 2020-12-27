@@ -288,10 +288,11 @@
     <ClInclude Include="..\include\TensorOperators.h" />
     <ClInclude Include="..\include\TensorSlice.h" />
     <ClInclude Include="..\include\TensorSliceBones.h" />
+    <ClInclude Include="..\include\TensorTools.h" />
+    <ClInclude Include="..\include\TensorToolsBones.h" />
     <ClInclude Include="..\include\TSliceWrapper.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\include\PerlinNoise.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\src\TSliceWrapper.cpp" />
   </ItemGroup>

@@ -53,7 +53,7 @@ namespace TSlib
 
 		#ifdef _TS_DEBUG
 
-		if (slices.size() > (source->Dims() - 1))
+		if (slices.size() > (source->Dims()))
 		{
 			throw BadShape(source, "There must be the same amount or less slices as dimensions in the slice", slices);
 		}
@@ -118,7 +118,7 @@ namespace TSlib
 		MEASURE();
 		#ifdef _TS_DEBUG
 
-		if (m_slice_shape.size() > source->Dims() - 1)
+		if (m_slice_shape.size() > source->Dims())
 		{
 			throw BadShape(source, "There must be the same amount or less slices as dimensions in the tensor", Shape());
 		}
@@ -140,26 +140,24 @@ namespace TSlib
 	template<typename OT, Mode device_other>
 	void TensorSlice<T, device>::Fill(const Tensor<OT, device_other>& other)
 	{
-		#ifdef DEBUG
+		#ifdef _TS_DEBUG
 
 		if (Dims() != other.Dims())
 		{
-			throw BadShape(Shape(), "There must be the same amount dimensions", other.Shape());
+			throw BadShape("There must be the same amount dimensions", other.Shape(), Shape());
 		}
 
 		for (size_t i = 0; i < Dims(); i++)
 		{
 			if (Shape()[i] != other.Shape()[i])
 			{
-				throw BadShape(Shape(), "The shapes passed must be the same", other.Shape());
+				throw BadShape("The shapes passed must be the same", other.Shape(), Shape());
 			}
 		}
 		#endif
 
-		for (size_t i = 0; i < size(); i++)
-		{
-			At(i) = other[i];
-		}
+		Compute([&](T& elem, const size_t& index) {elem = other[index]; });
+
 	}
 
 	template<typename T, Mode device>
@@ -182,10 +180,7 @@ namespace TSlib
 		}
 		#endif
 
-		for (size_t i = 0; i < size(); i++)
-		{
-			At(i) = other[i];
-		}
+		Compute([&](T& elem, const size_t& index) {elem = other[index]; });
 	}
 
 	template<typename T, Mode device>

@@ -68,11 +68,14 @@
     <ClInclude Include="..\include\TensorCompareOperators.h">
       <Filter>Header Files\Tensor</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\TensorTools.h">
+      <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\TensorToolsBones.h">
+      <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\include\PerlinNoise.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\TSliceWrapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
