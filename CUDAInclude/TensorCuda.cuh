@@ -20,7 +20,7 @@ namespace TSlib
 	__device__ void CTBase<T>::get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord) const
 	{
 		#ifdef _TS_DEBUG
-		assert(("Index is out of bounds", dim_arr[iter] > coord));
+		assert("Index is out of bounds" && dim_arr[iter] > coord);
 		#endif
 
 		tmp_multiply /= dim_arr[iter];

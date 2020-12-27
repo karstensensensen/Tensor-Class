@@ -260,8 +260,6 @@ namespace TSlib
 		template<typename T, Mode device>
 		std::tuple<unsigned int, unsigned int, unsigned int> apply(const Tensor<T, device>* tensor, unsigned int target_threads)
 		{
-			#pragma warning ( push )
-			#pragma warning ( disable: 4244 )
 
 			unsigned int threads_cubed = get_cubed(target_threads);
 
@@ -298,7 +296,6 @@ namespace TSlib
 
 			return { length, width, height };
 
-			#pragma ( pop )
 		}
 	};
 
