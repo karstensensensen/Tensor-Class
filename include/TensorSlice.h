@@ -187,27 +187,27 @@ namespace TSlib
 	template<typename T, Mode device>
 	void TensorSlice<T, device>::Fill(const T& val)
 	{
-		Compute([val](T& elem) {elem = val; });
+		Compute([&](T& elem) {elem = val; });
 	}
 
 	template<typename T, Mode device>
 	inline void TensorSlice<T, device>::Fill(std::function<T(const size_t&)> generator)
 	{
 		MEASURE();
-		Compute([generator](T& elem, const size_t& index) {elem = generator(index); });
+		Compute([&](T& elem, const size_t& index) {elem = generator(index); });
 	}
 
 	template<typename T, Mode device>
 	inline void TensorSlice<T, device>::Fill(std::function<T(const std::vector<size_t>&)> generator)
 	{
 		MEASURE();
-		Compute([generator](T& elem, const std::vector<size_t>& dimensions) {elem = generator(dimensions); });
+		Compute([&](T& elem, const std::vector<size_t>& dimensions) {elem = generator(dimensions); });
 	}
 
 	template<typename T, Mode device>
 	inline void TensorSlice<T, device>::Fill(std::function<T(const std::vector<size_t>&, const size_t&)> generator)
 	{
-		Compute([generator](T& elem, const std::vector<size_t>& dimensions, const size_t& index) {elem = generator(dimensions, index); });
+		Compute([&](T& elem, const std::vector<size_t>& dimensions, const size_t& index) {elem = generator(dimensions, index); });
 	}
 
 	template<typename T, Mode device>
@@ -220,7 +220,7 @@ namespace TSlib
 		}
 		#endif
 
-		Compute([vals](T& elem, const size_t& index) {elem = vals[index]; });
+		Compute([&](T& elem, const size_t& index) {elem = vals[index]; });
 	}
 
 	template<typename T, Mode device>
@@ -286,13 +286,7 @@ namespace TSlib
 	template<typename T, Mode device>
 	inline void TensorSlice<T, device>::Replace(const T& target, const T& value)
 	{
-		for (size_t i = 0; i < size(); i++)
-		{
-			if (target == At(i))
-			{
-				At(i) = value;
-			}
-		}
+		Compute([&](T& elem) {if (target == elem) elem = value; });
 	}
 
 	template<typename T, Mode device>
@@ -322,7 +316,7 @@ namespace TSlib
 	{
 		RT sum = 0;
 
-		Compute([sum](T& val) {sum += val; });
+		Compute([&](T& val) {sum += val; });
 
 		return sum;
 	}
