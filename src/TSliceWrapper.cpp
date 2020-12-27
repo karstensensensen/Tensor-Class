@@ -7,7 +7,6 @@
 #define MEASURE()
 #endif
 
-
 namespace TSlib
 {
 	TSlice::TSlice(const intmax_t& from, const intmax_t& to, const uint32_t& from_max, const uint32_t& to_max)

@@ -400,7 +400,6 @@ namespace TSlib
 
 	/// Tensor class CUDATensor cast operators
 
-
 	template<typename T, Mode device>
 	Tensor<T, device>::operator CUDATensor1D<T>()
 	{
@@ -1627,6 +1626,6 @@ namespace TSlib
 	}
 
 	#else
-		#pragma message("warning: cuda is not enabled, this header file should not be included.")
+#pragma message("warning: cuda is not enabled, this header file should not be included.")
 #endif
 }

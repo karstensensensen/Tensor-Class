@@ -55,7 +55,6 @@ namespace TSlib
 	/// Declaration of CUDATensor base
 	/// </summary>
 
-
 	class CTBase
 	{
 		friend CUDATensor1D<T>;
@@ -126,7 +125,6 @@ namespace TSlib
 	/// Declaration of CUDATensor2D
 	/// </summary>
 
-
 	template<typename T>
 	class CUDATensor2D : public CTBase<T>
 	{
@@ -162,7 +160,6 @@ namespace TSlib
 	/// <summary>
 	/// Declaration of CUDATensor3D
 	/// </summary>
-
 
 	template<typename T>
 	class CUDATensor3D : public CTBase<T>
