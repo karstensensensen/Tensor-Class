@@ -795,6 +795,37 @@ namespace TSlib
 		m_shape.resize(m_shape.size() - dims);
 	}
 
+	template<typename T, Mode device>
+	template<typename OT, Mode o_device>
+	inline void TSlib::Tensor<T, device>::Append(const Tensor<OT, o_device>& other, const size_t& dimension)
+	{
+		#ifdef _TS_DEBUG
+		if (other.Dims() != Dims())
+			throw BadShape("The source Tensor must have the same amount of dimensions as the destination Tensor", other.Shape(), Shape());
+
+		for (size_t i = 0; i < Dims(); i++)
+		{
+			if (Shape()[i] != other.Shape()[i] && i != dimension)
+			{
+				throw BadShape("The source Tensor must match the destination Tensors Shape appart from the dimensions that is getting appended to", other.Shape(), Shape());
+			}
+		}
+		#endif
+
+		
+
+		std::vector<size_t> new_shape = Shape();
+
+		new_shape[dimension] += other.Shape()[dimension];
+
+		Resize(new_shape);
+
+		std::vector<TSlice> append_slice(Dims(), All);
+
+		append_slice[dimension] = TSlice(other.Shape(), -1);
+
+		Slice(append_slice) = other;
+	}
 
 	template<typename T, Mode device>
 	inline TensorSlice<T, device> Tensor<T, device>::Slice(const std::vector<TSlice>& slices)

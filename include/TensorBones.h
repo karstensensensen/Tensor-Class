@@ -115,6 +115,9 @@ namespace TSlib
 
 		void RemoveDims(const size_t& dims = 1);
 
+		template<typename OT, Mode o_device>
+		void Append(const Tensor<OT, o_device>& other, const size_t& dimension);
+
 		void Fill(const T& val = NULL);
 		void Fill(std::function<T(const size_t&)> generator);
 		void Fill(std::function<T(const std::vector<size_t>&)> generator);
