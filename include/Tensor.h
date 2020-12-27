@@ -413,18 +413,6 @@ namespace TSlib
 		Compute([val](T& elem) {elem = val; });
 	}
 
-	/*template<typename T, Mode device>
-	void Tensor<T, device>::Fill(const size_t& dim, const T& val, const size_t& index)
-	{
-		MEASURE();
-
-		#pragma omp parallel for
-		for (long long i = 0; i < get_real_size(dim); i++)
-		{
-			At(i + get_dim_offset(dim) * index) = val;
-		}
-	}*/
-
 	template<typename T, Mode device>
 	inline void TSlib::Tensor<T, device>::Fill(std::function<T(const size_t&)> generator)
 	{
@@ -460,6 +448,7 @@ namespace TSlib
 
 		memcpy(Data(), vals.data(), size() * sizeof(T));
 	}
+
 
 	template<typename T, Mode device>
 	inline void TSlib::Tensor<T, device>::Compute(std::function<void(T&)> compute_func)
@@ -607,6 +596,7 @@ namespace TSlib
 		}
 	}
 
+
 	template<typename T, Mode device>
 	inline size_t Tensor<T, device>::calc_new_size(const std::initializer_list<size_t>& sizes)
 	{
@@ -633,6 +623,7 @@ namespace TSlib
 		}
 		return new_size;
 	}
+
 
 	template<typename T, Mode device>
 	void Tensor<T, device>::Resize(const std::vector<size_t>& sizes, const T& pad_val)
@@ -741,6 +732,7 @@ namespace TSlib
 		}
 	}
 
+
 	template<typename T, Mode device>
 	void Tensor<T, device>::SetDims(const size_t& dims)
 	{
@@ -802,6 +794,7 @@ namespace TSlib
 
 		m_shape.resize(m_shape.size() - dims);
 	}
+
 
 	template<typename T, Mode device>
 	inline TensorSlice<T, device> Tensor<T, device>::Slice(const std::vector<TSlice>& slices)
@@ -866,6 +859,7 @@ namespace TSlib
 	{
 		return m_vector[indx];
 	}
+
 
 	template<typename T, Mode device>
 	inline const T* Tensor<T, device>::Data() const
@@ -941,6 +935,7 @@ namespace TSlib
 		return Get(coords...);
 	}
 
+
 	template<typename T, Mode device>
 	inline T& Tensor<T, device>::operator[](size_t indx)
 	{
@@ -952,6 +947,7 @@ namespace TSlib
 	{
 		return At(indx);
 	}
+
 
 	template<typename T, Mode device>
 	Tensor<T>& Tensor<T, device>::operator=(const std::vector<T>& other)
@@ -971,9 +967,11 @@ namespace TSlib
 	RT Tensor<T, device>::sum()
 	{
 		MEASURE();
+
 		RT result = RT();
-		for (size_t i = 0; i < size(); i++)
-			result += (RT)At(i);
+
+		Compute([result](T& elem) {result += elem; });
+
 		return result;
 	}
 
@@ -1051,6 +1049,7 @@ namespace TSlib
 		return result;
 	}
 
+
 	template<typename T, Mode device>
 	template<typename RT, typename OT, Mode o_device>
 	inline Tensor<RT, device> Tensor<T, device>::subtract(const Tensor<OT, o_device>& other) const
@@ -1119,6 +1118,7 @@ namespace TSlib
 
 		return result;
 	}
+
 
 	template<typename T, Mode device>
 	template<typename RT, typename OT, Mode o_device>
@@ -1189,6 +1189,7 @@ namespace TSlib
 		return result;
 	}
 
+
 	template<typename T, Mode device>
 	template<typename RT, typename OT, Mode o_device>
 	inline Tensor<RT, device> Tensor<T, device>::divide(const Tensor<OT, o_device>& other) const
@@ -1257,6 +1258,7 @@ namespace TSlib
 
 		return result;
 	}
+
 
 	template<typename T, Mode device>
 	template<typename RT, typename OT, Mode o_device>
@@ -1327,6 +1329,7 @@ namespace TSlib
 		return result;
 	}
 
+
 	template<typename T, Mode device>
 	template<typename OT, Mode o_device>
 	inline void Tensor<T, device>::additionAssignment(const Tensor<OT, o_device>& other)
@@ -1385,6 +1388,7 @@ namespace TSlib
 		Compute([other](T& val) {val += other; });
 	}
 
+
 	template<typename T, Mode device>
 	template<typename OT, Mode o_device>
 	inline void Tensor<T, device>::subtractionAssignment(const Tensor<OT, o_device>& other)
@@ -1441,6 +1445,7 @@ namespace TSlib
 		MEASURE();
 		Compute([other](T& val, const size_t& index) {val -= other; });
 	}
+
 
 	template<typename T, Mode device>
 	template<typename OT, Mode o_device>
@@ -1499,6 +1504,7 @@ namespace TSlib
 		Compute([other](T& val, const size_t& index) {val *= other; });
 	}
 
+
 	template<typename T, Mode device>
 	template<typename OT, Mode o_device>
 	inline void Tensor<T, device>::divisionAssignment(const Tensor<OT, o_device>& other)
@@ -1556,6 +1562,7 @@ namespace TSlib
 		Compute([other](T& val, const size_t& index) {val /= other; });
 	}
 
+
 	template<typename T, Mode device>
 	template<typename OT, Mode o_device>
 	inline void Tensor<T, device>::modulouAssignment(const Tensor<OT, o_device>& other)
@@ -1612,6 +1619,7 @@ namespace TSlib
 		MEASURE();
 		Compute([other](T& val, const size_t& index) {val %= other; });
 	}
+
 
 	template<typename T, Mode device>
 	template<typename RT, typename OT, Mode o_device>
