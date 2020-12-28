@@ -74,6 +74,9 @@
     <ClInclude Include="..\include\TensorToolsBones.h">
       <Filter>Header Files\Tensor</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\TensorArithmetic.h">
+      <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\TSliceWrapper.cpp">

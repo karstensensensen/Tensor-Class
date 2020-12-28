@@ -7,6 +7,11 @@
 #endif
 #include <tuple>
 
+namespace TSlib
+{
+
+}
+
 template<typename T, TSlib::Mode device>
 std::ostream& operator<< (std::ostream& stream, const TSlib::TensorSlice<T, device>& slice)
 {

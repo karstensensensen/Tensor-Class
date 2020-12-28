@@ -281,6 +281,7 @@
   <ItemGroup>
     <ClInclude Include="..\include\PerlinNoise.h" />
     <ClInclude Include="..\include\Tensor.h" />
+    <ClInclude Include="..\include\TensorArithmetic.h" />
     <ClInclude Include="..\include\TensorBones.h" />
     <ClInclude Include="..\include\TensorCompareOperators.h" />
     <ClInclude Include="..\include\TensorEnums.h" />

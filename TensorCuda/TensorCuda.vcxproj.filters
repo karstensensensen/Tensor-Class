@@ -86,6 +86,9 @@
     <ClInclude Include="..\include\TensorToolsBones.h">
       <Filter>Header Files\Tensor</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\TensorArithmetic.h">
+      <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="..\src\TSliceWrapper.cpp">
