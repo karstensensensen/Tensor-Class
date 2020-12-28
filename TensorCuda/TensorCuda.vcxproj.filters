@@ -44,9 +44,6 @@
     <ClInclude Include="..\Multrix\PerlinKernel.cuh">
       <Filter>Header Files\Noise</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\TensorOperators.h">
-      <Filter>Header Files\Tensor</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\Tensor.h">
       <Filter>Header Files\Tensor</Filter>
     </ClInclude>
@@ -87,6 +84,9 @@
       <Filter>Header Files\Tensor</Filter>
     </ClInclude>
     <ClInclude Include="..\include\TensorArithmetic.h">
+      <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\TensorArithmeticOperators.h">
       <Filter>Header Files\Tensor</Filter>
     </ClInclude>
   </ItemGroup>

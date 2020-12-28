@@ -24,7 +24,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -107,7 +107,7 @@
     <CudaCompile />
     <CudaCompile />
     <CudaCompile>
-      <AdditionalOptions>--std c++17 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-Xcompiler "/openmp" --std c++17 %(AdditionalOptions)</AdditionalOptions>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -142,7 +142,7 @@
     <CudaCompile />
     <CudaCompile />
     <CudaCompile>
-      <AdditionalOptions>--std c++17 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-Xcompiler "/openmp" --std c++17 %(AdditionalOptions)</AdditionalOptions>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelException|x64'">
@@ -177,7 +177,7 @@
     <CudaCompile />
     <CudaCompile />
     <CudaCompile>
-      <AdditionalOptions>--std c++17 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-Xcompiler "/openmp" --std c++17 %(AdditionalOptions)</AdditionalOptions>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -192,11 +192,11 @@
     <ClInclude Include="..\CUDAInclude\TensorOperatorKernels.cuh" />
     <ClInclude Include="..\include\Tensor.h" />
     <ClInclude Include="..\include\TensorArithmetic.h" />
+    <ClInclude Include="..\include\TensorArithmeticOperators.h" />
     <ClInclude Include="..\include\TensorBones.h" />
     <ClInclude Include="..\include\TensorCompareOperators.h" />
     <ClInclude Include="..\include\TensorEnums.h" />
     <ClInclude Include="..\include\TensorExceptions.h" />
-    <ClInclude Include="..\include\TensorOperators.h" />
     <ClInclude Include="..\include\TensorSlice.h" />
     <ClInclude Include="..\include\TensorSliceBones.h" />
     <ClInclude Include="..\include\TensorTools.h" />

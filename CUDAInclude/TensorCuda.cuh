@@ -784,7 +784,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename RT, typename OT>
-	Tensor<RT, device> Tensor<T, device>::CaddSingle(const OT& other)
+	Tensor<RT, device> Tensor<T, device>::Cadd(const OT& other)
 	{
 		bool this_alloc = isDeallocated();
 
@@ -794,7 +794,7 @@ namespace TSlib
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
-			(Layout3D(), CudaAddSingle<T, OT, RT>, other);
+			(Layout3D(), CudaAdd<T, OT, RT>, other);
 
 		if (this_alloc)
 		{
@@ -843,7 +843,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename RT, typename OT>
-	Tensor<RT, device> Tensor<T, device>::CsubtractSingle(const OT& other)
+	Tensor<RT, device> Tensor<T, device>::Csubtract(const OT& other)
 	{
 		bool this_alloc = isDeallocated();
 
@@ -853,7 +853,7 @@ namespace TSlib
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
-			(Layout3D(), CudaSubtractSingle<T, OT, RT>, other);
+			(Layout3D(), CudaSubtract<T, OT, RT>, other);
 
 		if (this_alloc)
 		{
@@ -902,7 +902,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename RT, typename OT>
-	Tensor<RT, device> Tensor<T, device>::CmultiplySingle(const OT& other)
+	Tensor<RT, device> Tensor<T, device>::Cmultiply(const OT& other)
 	{
 		bool this_alloc = isDeallocated();
 
@@ -912,7 +912,7 @@ namespace TSlib
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
-			(Layout3D(), CudaMultiplySingle<T, OT, RT>, other);
+			(Layout3D(), CudaMultiply<T, OT, RT>, other);
 
 		if (this_alloc)
 		{
@@ -961,7 +961,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename RT, typename OT>
-	Tensor<RT, device> Tensor<T, device>::CdivideSingle(const OT& other)
+	Tensor<RT, device> Tensor<T, device>::Cdivide(const OT& other)
 	{
 		bool this_alloc = isDeallocated();
 
@@ -971,7 +971,7 @@ namespace TSlib
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
-			(Layout3D(), CudaDivideSingle<T, OT, RT>, other);
+			(Layout3D(), CudaDivide<T, OT, RT>, other);
 
 		if (this_alloc)
 		{
@@ -1020,7 +1020,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename RT, typename OT>
-	Tensor<RT, device> Tensor<T, device>::CmodulousSingle(const OT& other)
+	Tensor<RT, device> Tensor<T, device>::Cmodulous(const OT& other)
 	{
 		bool this_alloc = isDeallocated();
 
@@ -1030,7 +1030,7 @@ namespace TSlib
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
-			(Layout3D(), CudaModulousSingle<T, OT, RT>, other);
+			(Layout3D(), CudaModulous<T, OT, RT>, other);
 
 		if (this_alloc)
 		{
@@ -1042,7 +1042,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename OT, Mode o_device>
-	void Tensor<T, device>::CadditionAssignment(Tensor<OT, o_device>& other)
+	void Tensor<T, device>::CadditionAsgmt(Tensor<OT, o_device>& other)
 	{
 		#ifdef _TS_DEBUG
 		assert("Unable to fit the Tensors" && size() == other.size());
@@ -1062,7 +1062,7 @@ namespace TSlib
 		}
 
 		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
-			(Layout3D(), CudaAdditionAssignment<T, OT>, other);
+			(Layout3D(), CudaAdditionAsgmt<T, OT>, other);
 
 		if (this_alloc)
 		{
@@ -1077,7 +1077,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename OT>
-	void Tensor<T, device>::CadditionAssignmentSingle(const OT& other)
+	void Tensor<T, device>::CadditionAsgmt(const OT& other)
 	{
 		bool this_alloc = isDeallocated();
 
@@ -1087,7 +1087,7 @@ namespace TSlib
 		}
 
 		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, OT)>
-			(Layout3D(), CudaAdditionAssignmentSingle<T, OT>, other);
+			(Layout3D(), CudaAdditionAsgmt<T, OT>, other);
 
 		if (this_alloc)
 		{
@@ -1097,7 +1097,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename OT, Mode o_device>
-	void Tensor<T, device>::CsubtractionAssignment(Tensor<OT, o_device>& other)
+	void Tensor<T, device>::CsubtractionAsgmt(Tensor<OT, o_device>& other)
 	{
 		#ifdef _TS_DEBUG
 		assert("Unable to fit the Tensors" && size() == other.size());
@@ -1117,7 +1117,7 @@ namespace TSlib
 		}
 
 		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
-			(Layout3D(), CudaSubtractionAssignment<T, OT>, other);
+			(Layout3D(), CudaSubtractionAsgmt<T, OT>, other);
 
 		if (this_alloc)
 		{
@@ -1132,7 +1132,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename OT>
-	void Tensor<T, device>::CsubtractionAssignmentSingle(const OT& other)
+	void Tensor<T, device>::CsubtractionAsgmt(const OT& other)
 	{
 		bool this_alloc = isDeallocated();
 
@@ -1142,7 +1142,7 @@ namespace TSlib
 		}
 
 		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
-			(Layout3D(), CudaSubtractionAssignmentSingle<T, OT>, other);
+			(Layout3D(), CudaSubtractionAsgmt<T, OT>, other);
 
 		if (this_alloc)
 		{
@@ -1152,7 +1152,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename OT, Mode o_device>
-	void Tensor<T, device>::CmultiplicationAssignment(Tensor<OT, o_device>& other)
+	void Tensor<T, device>::CmultiplicationAsgmt(Tensor<OT, o_device>& other)
 	{
 		#ifdef _TS_DEBUG
 		assert("Unable to fit the Tensors" && size() == other.size());
@@ -1172,7 +1172,7 @@ namespace TSlib
 		}
 
 		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
-			(Layout3D(), CudaMultiplicationAssignment<T, OT>, other);
+			(Layout3D(), CudaMultiplicationAsgmt<T, OT>, other);
 
 		if (this_alloc)
 		{
@@ -1187,7 +1187,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename OT>
-	void Tensor<T, device>::CmultiplicationAssignmentSingle(const OT& other)
+	void Tensor<T, device>::CmultiplicationAsgmt(const OT& other)
 	{
 		bool this_alloc = isDeallocated();
 
@@ -1197,7 +1197,7 @@ namespace TSlib
 		}
 
 		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
-			(Layout3D(), CudaMultiplicationAssignmentSingle<T, OT>, other);
+			(Layout3D(), CudaMultiplicationAsgmt<T, OT>, other);
 
 		if (this_alloc)
 		{
@@ -1207,7 +1207,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename OT, Mode o_device>
-	void Tensor<T, device>::CdivisionAssignment(Tensor<OT, o_device>& other)
+	void Tensor<T, device>::CdivisionAsgmt(Tensor<OT, o_device>& other)
 	{
 		#ifdef _TS_DEBUG
 		assert("Unable to fit the Tensors" && size() == other.size());
@@ -1227,7 +1227,7 @@ namespace TSlib
 		}
 
 		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
-			(Layout3D(), CudaDivisionAssignment<T, OT>, other);
+			(Layout3D(), CudaDivisionAsgmt<T, OT>, other);
 
 		if (this_alloc)
 		{
@@ -1242,7 +1242,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename OT>
-	void Tensor<T, device>::CdivisionAssignmentSingle(const OT& other)
+	void Tensor<T, device>::CdivisionAsgmt(const OT& other)
 	{
 		bool this_alloc = isDeallocated();
 
@@ -1252,7 +1252,7 @@ namespace TSlib
 		}
 
 		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
-			(Layout3D(), CudaDivisionAssignmentSingle<T, OT>, other);
+			(Layout3D(), CudaDivisionAsgmt<T, OT>, other);
 
 		if (this_alloc)
 		{
@@ -1262,7 +1262,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename OT, Mode o_device>
-	void Tensor<T, device>::CmodulouAssignment(Tensor<OT, o_device>& other)
+	void Tensor<T, device>::CmodulouAsgmt(Tensor<OT, o_device>& other)
 	{
 		#ifdef _TS_DEBUG
 		assert("Unable to fit the Tensors" && size() == other.size());
@@ -1282,7 +1282,7 @@ namespace TSlib
 		}
 
 		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
-			(Layout3D(), CudaModulouAssignment<T, OT>, other);
+			(Layout3D(), CudaModulouAsgmt<T, OT>, other);
 
 		if (this_alloc)
 		{
@@ -1297,7 +1297,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename OT>
-	void Tensor<T, device>::CmodulouAssignmentSingle(const OT& other)
+	void Tensor<T, device>::CmodulouAsgmt(const OT& other)
 	{
 		bool this_alloc = isDeallocated();
 
@@ -1307,7 +1307,7 @@ namespace TSlib
 		}
 
 		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
-			(Layout3D(), CudaModulouAssignmentSingle<T, OT>, other);
+			(Layout3D(), CudaModulouAsgmt<T, OT>, other);
 
 		if (this_alloc)
 		{
@@ -1354,7 +1354,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename RT, typename OT>
-	Tensor<RT, device> Tensor<T, device>::CcompareSingle(const OT& other)
+	Tensor<RT, device> Tensor<T, device>::Ccompare(const OT& other)
 	{
 		bool this_alloc = isDeallocated();
 
@@ -1364,7 +1364,7 @@ namespace TSlib
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
-			(Layout3D(), CudaCompareSingle<T, OT, RT>, other);
+			(Layout3D(), CudaCompare<T, OT, RT>, other);
 
 		if (this_alloc)
 		{
@@ -1413,7 +1413,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename RT, typename OT>
-	Tensor<RT, device> Tensor<T, device>::ClessThanSingle(const OT& other)
+	Tensor<RT, device> Tensor<T, device>::ClessThan(const OT& other)
 	{
 		bool this_alloc = isDeallocated();
 
@@ -1423,7 +1423,7 @@ namespace TSlib
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
-			(Layout3D(), CudaLessThanSingle<T, OT, RT>, other);
+			(Layout3D(), CudaLessThan<T, OT, RT>, other);
 
 		if (this_alloc)
 		{
@@ -1472,7 +1472,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename RT, typename OT>
-	Tensor<RT, device> Tensor<T, device>::CgreaterThanSingle(const OT& other)
+	Tensor<RT, device> Tensor<T, device>::CgreaterThan(const OT& other)
 	{
 		bool this_alloc = isDeallocated();
 
@@ -1482,7 +1482,7 @@ namespace TSlib
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
-			(Layout3D(), CudaGreaterThanSingle<T, OT, RT>, other);
+			(Layout3D(), CudaGreaterThan<T, OT, RT>, other);
 
 		if (this_alloc)
 		{
@@ -1531,7 +1531,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename RT, typename OT>
-	Tensor<RT, device> Tensor<T, device>::ClessThanEqualSingle(const OT& other)
+	Tensor<RT, device> Tensor<T, device>::ClessThanEqual(const OT& other)
 	{
 		bool this_alloc = isDeallocated();
 
@@ -1541,7 +1541,7 @@ namespace TSlib
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
-			(Layout3D(), CudaLessThanEqualSingle<T, OT, RT>, other);
+			(Layout3D(), CudaLessThanEqual<T, OT, RT>, other);
 
 		if (this_alloc)
 		{
@@ -1590,7 +1590,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename RT, typename OT>
-	Tensor<RT, device> Tensor<T, device>::CgreaterThanEqualSingle(const OT& other)
+	Tensor<RT, device> Tensor<T, device>::CgreaterThanEqual(const OT& other)
 	{
 		bool this_alloc = isDeallocated();
 
@@ -1600,7 +1600,7 @@ namespace TSlib
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
-			(Layout3D(), CudaGreaterThanEqualSingle<T, OT, RT>, other);
+			(Layout3D(), CudaGreaterThanEqual<T, OT, RT>, other);
 
 		if (this_alloc)
 		{

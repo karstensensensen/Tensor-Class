@@ -185,7 +185,7 @@ namespace TSlib
 		Tensor<RT, device> compare(const TensorSlice<OT, o_device>& other, bool(*comp_func)(const T&, const OT&) = Equal);
 
 		template<typename RT = char, typename OT>
-		Tensor<RT, device> compareSingle(const OT& other, bool(*comp_func)(const T&, const OT&) = Equal);
+		Tensor<RT, device> compare(const OT& other, bool(*comp_func)(const T&, const OT&) = Equal);
 
 		template<typename OT, Mode other_device>
 		Tensor<char, device> lessThan(const Tensor<OT, other_device>& other);

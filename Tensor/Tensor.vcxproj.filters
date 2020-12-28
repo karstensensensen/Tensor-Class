@@ -44,9 +44,6 @@
     <ClInclude Include="..\include\TensorBones.h">
       <Filter>Header Files\Tensor</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\TensorOperators.h">
-      <Filter>Header Files\Tensor</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\PerlinNoise.h">
       <Filter>Header Files\Noise</Filter>
     </ClInclude>
@@ -75,6 +72,9 @@
       <Filter>Header Files\Tensor</Filter>
     </ClInclude>
     <ClInclude Include="..\include\TensorArithmetic.h">
+      <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\TensorArithmeticOperators.h">
       <Filter>Header Files\Tensor</Filter>
     </ClInclude>
   </ItemGroup>

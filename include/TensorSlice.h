@@ -912,7 +912,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename RT, typename OT>
-	inline Tensor<RT, device> TensorSlice<T, device>::compareSingle(const OT& other, bool(*comp_func)(const T&, const OT&))
+	inline Tensor<RT, device> TensorSlice<T, device>::compare(const OT& other, bool(*comp_func)(const T&, const OT&))
 	{
 		MEASURE();
 
@@ -1058,9 +1058,9 @@ namespace TSlib
 	inline bool TensorSlice<T, device>::operator==(const OT& other)
 	{
 		#ifdef __clang__
-		return compareSingle(other).template sum<size_t>() == size();
+		return compare(other).template sum<size_t>() == size();
 		#else
-		return compareSingle(other).sum<size_t>() == size();
+		return compare(other).sum<size_t>() == size();
 		#endif
 	}
 
@@ -1091,9 +1091,9 @@ namespace TSlib
 	inline bool TensorSlice<T, device>::operator!=(const OT& other)
 	{
 		#ifdef __clang__
-		return compareSingle(other, NotEqual).template sum<size_t>() == size();
+		return compare(other, NotEqual).template sum<size_t>() == size();
 		#else
-		return compareSingle(other, NotEqual).sum<size_t>() == size();
+		return compare(other, NotEqual).sum<size_t>() == size();
 		#endif
 	}
 
@@ -1124,9 +1124,9 @@ namespace TSlib
 	inline bool TensorSlice<T, device>::operator<(const OT& other)
 	{
 		#ifdef __clang__
-		return compareSingle(other, LessThan).template sum<size_t>() == size();
+		return compare(other, LessThan).template sum<size_t>() == size();
 		#else
-		return compareSingle(other, LessThan).sum<size_t>() == size();
+		return compare(other, LessThan).sum<size_t>() == size();
 		#endif
 	}
 
@@ -1157,9 +1157,9 @@ namespace TSlib
 	inline bool TensorSlice<T, device>::operator>(const OT& other)
 	{
 		#ifdef __clang__
-		return compareSingle(other, GreaterThan).template sum<size_t>() == size();
+		return compare(other, GreaterThan).template sum<size_t>() == size();
 		#else
-		return compareSingle(other, GreaterThan).sum<size_t>() == size();
+		return compare(other, GreaterThan).sum<size_t>() == size();
 		#endif
 	}
 
@@ -1190,9 +1190,9 @@ namespace TSlib
 	inline bool TensorSlice<T, device>::operator<=(const OT& other)
 	{
 		#ifdef __clang__
-		return compareSingle(other, LessThanEqual).template sum<size_t>() == size();
+		return compare(other, LessThanEqual).template sum<size_t>() == size();
 		#else
-		return compareSingle(other, LessThanEqual).sum<size_t>() == size();
+		return compare(other, LessThanEqual).sum<size_t>() == size();
 		#endif
 	}
 
@@ -1223,9 +1223,9 @@ namespace TSlib
 	inline bool TensorSlice<T, device>::operator>=(const OT& other)
 	{
 		#ifdef __clang__
-		return compareSingle(other, GreaterThanEqual).template sum<size_t>() == size();
+		return compare(other, GreaterThanEqual).template sum<size_t>() == size();
 		#else
-		return compareSingle(other, GreaterThanEqual).sum<size_t>() == size();
+		return compare(other, GreaterThanEqual).sum<size_t>() == size();
 		#endif
 	}
 

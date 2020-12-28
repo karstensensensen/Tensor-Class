@@ -274,7 +274,7 @@ namespace TSlib
 			}
 			#endif
 
-			length *= X_ratio;
+			length = unsigned int(double_t(length) * X_ratio);
 
 			#ifdef _TS_DEBUG
 			if (double_t(width) * Y_ratio != std::floor(double_t(width) * Y_ratio))
@@ -283,7 +283,7 @@ namespace TSlib
 			}
 			#endif
 
-			width *= Y_ratio;
+			width *= unsigned int(double_t(length) * Y_ratio);
 
 			#ifdef _TS_DEBUG
 			if (double_t(height) * Z_ratio != std::floor(double_t(height) * Z_ratio))
@@ -292,7 +292,7 @@ namespace TSlib
 			}
 			#endif
 
-			height *= Z_ratio;
+			height *= unsigned int(double_t(length) * Z_ratio);
 
 			return { length, width, height };
 
@@ -370,7 +370,7 @@ namespace TSlib
 			}
 			#endif
 
-			length *= X_ratio;
+			length *= unsigned int(double_t(length) * X_ratio);
 
 			#ifdef _TS_DEBUG
 			if (double_t(width) * Y_ratio != std::floor(double_t(width) * Y_ratio))
@@ -379,7 +379,7 @@ namespace TSlib
 			}
 			#endif
 
-			width *= Y_ratio;
+			width *= unsigned int(double_t(length) * Y_ratio);
 
 			#ifdef _TS_DEBUG
 			if (double_t(height) * Z_ratio != std::floor(double_t(height) * Z_ratio))
@@ -388,7 +388,7 @@ namespace TSlib
 			}
 			#endif
 
-			height *= Z_ratio;
+			height *= unsigned int(double_t(length) * Z_ratio);
 
 			return { length, width, height };
 
@@ -431,7 +431,7 @@ namespace TSlib
 			}
 			#endif
 
-			length *= X_ratio;
+			length *= unsigned int(double_t(length) * X_ratio);
 
 			#ifdef _TS_DEBUG
 			if (double_t(width) * Y_ratio != std::floor(double_t(width) * Y_ratio))
@@ -440,7 +440,7 @@ namespace TSlib
 			}
 			#endif
 
-			width *= Y_ratio;
+			width *= unsigned int(double_t(length) * Y_ratio);
 
 			#ifdef _TS_DEBUG
 			if (double_t(height) * Z_ratio != std::floor(double_t(height) * Z_ratio))
@@ -449,7 +449,7 @@ namespace TSlib
 			}
 			#endif
 
-			height *= Z_ratio;
+			height *= unsigned int(double_t(length) * Z_ratio);
 
 			return { length, width, height };
 			#pragma warning(default: 4244)

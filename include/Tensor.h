@@ -24,8 +24,8 @@ typedef double double_t;
 
 #include <sstream>
 
+#include "TensorArithmeticOperators.h"
 #include "TensorArithmetic.h"
-#include "TensorOperators.h"
 #include "TensorSlice.h"
 #include "TensorTools.h"
 #include <functional>
@@ -452,7 +452,7 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	inline void TSlib::Tensor<T, device>::Compute(std::function<void(T&)> compute_func)
+	inline void Tensor<T, device>::Compute(std::function<void(T&)> compute_func)
 	{
 		#pragma omp parallel for
 		for (long long index = 0; (size_t)index < size(); index++)
@@ -462,7 +462,7 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	inline void TSlib::Tensor<T, device>::Compute(std::function<void(T&, const size_t&) > compute_func)
+	inline void Tensor<T, device>::Compute(std::function<void(T&, const size_t&) > compute_func)
 	{
 		#pragma omp parallel for
 		for (long long index = 0; (size_t)index < size(); index++)
@@ -472,7 +472,7 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	inline void TSlib::Tensor<T, device>::Compute(std::function<void(T&, const std::vector<size_t>&)> compute_func)
+	inline void Tensor<T, device>::Compute(std::function<void(T&, const std::vector<size_t>&)> compute_func)
 	{
 		#pragma omp parallel for
 		for (long long index = 0; (size_t)index < size(); index++)
@@ -492,7 +492,67 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	inline void TSlib::Tensor<T, device>::Compute(std::function<void(T&, const std::vector<size_t>&, const size_t&)> compute_func)
+	inline void Tensor<T, device>::Compute(std::function<void(T&, const std::vector<size_t>&, const size_t&)> compute_func)
+	{
+		#pragma omp parallel for
+		for (long long index = 0; (size_t)index < size(); index++)
+		{
+			compute_func(At(index), index);
+
+			std::vector<size_t> coords(Dims());
+
+			coords[0] = (index % get_real_size(0));
+			for (size_t j = 1; j < Dims(); j++)
+			{
+				coords[j] = (index / get_real_size(j - 1)) % get_real_size(j - 1);
+			}
+
+			compute_func(At(index), coords, index);
+		}
+	}
+
+	template<typename T, Mode device>
+	inline void Tensor<T, device>::Compute(std::function<void(const T&)> compute_func) const
+	{
+		#pragma omp parallel for
+		for (long long index = 0; (size_t)index < size(); index++)
+		{
+			compute_func(At(index));
+		}
+	}
+
+	template<typename T, Mode device>
+	inline void Tensor<T, device>::Compute(std::function<void(const T&, const size_t&)> compute_func) const
+	{
+		#pragma omp parallel for
+		for (long long index = 0; (size_t)index < size(); index++)
+		{
+			compute_func(At(index), index);
+		}
+	}
+
+	template<typename T, Mode device>
+	inline void Tensor<T, device>::Compute(std::function<void(const T&, const std::vector<size_t>&)> compute_func) const
+	{
+		#pragma omp parallel for
+		for (long long index = 0; (size_t)index < size(); index++)
+		{
+			compute_func(At(index), index);
+
+			std::vector<size_t> coords(Dims());
+
+			coords[0] = (index % get_real_size(0));
+			for (size_t j = 1; j < Dims(); j++)
+			{
+				coords[j] = (index / get_real_size(j - 1)) % get_real_size(j - 1);
+			}
+
+			compute_func(At(index), coords);
+		}
+	}
+
+	template<typename T, Mode device>
+	inline void Tensor<T, device>::Compute(std::function<void(const T&, const std::vector<size_t>&, const size_t&)> compute_func) const
 	{
 		#pragma omp parallel for
 		for (long long index = 0; (size_t)index < size(); index++)
