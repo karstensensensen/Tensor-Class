@@ -206,6 +206,8 @@ namespace TSlib
 
 		#ifdef _CUDA
 		operator T* ();
+
+		operator const T* () const;
 		#endif
 
 		template<typename RT = T, typename OT, Mode o_device>
@@ -320,11 +322,17 @@ namespace TSlib
 		template<typename RT = T, typename OT, Mode o_device>
 		Tensor<RT, device> Cadd(Tensor<OT, o_device>& other);
 
+		template<typename RT = T, typename OT, Mode o_device>
+		Tensor<RT, device> Cadd(const Tensor<OT, o_device>& other);
+
 		template<typename RT = T, typename OT>
 		Tensor<RT, device> Cadd(const OT& other);
 
 		template<typename RT = T, typename OT, Mode o_device>
 		Tensor<RT, device> Csubtract(Tensor<OT, o_device>& other);
+
+		template<typename RT = T, typename OT, Mode o_device>
+		Tensor<RT, device> Csubtract(const Tensor<OT, o_device>& other);
 
 		template<typename RT = T, typename OT>
 		Tensor<RT, device> Csubtract(const OT& other);
@@ -332,11 +340,17 @@ namespace TSlib
 		template<typename RT = T, typename OT, Mode o_device>
 		Tensor<RT, device> Cmultiply(Tensor<OT, o_device>& other);
 
+		template<typename RT = T, typename OT, Mode o_device>
+		Tensor<RT, device> Cmultiply(const Tensor<OT, o_device>& other);
+
 		template<typename RT = T, typename OT>
 		Tensor<RT, device> Cmultiply(const OT& other);
 
 		template<typename RT = T, typename OT, Mode o_device>
 		Tensor<RT, device> Cdivide(Tensor<OT, o_device>& other);
+
+		template<typename RT = T, typename OT, Mode o_device>
+		Tensor<RT, device> Cdivide(const Tensor<OT, o_device>& other);
 
 		template<typename RT = T, typename OT>
 		Tensor<RT, device> Cdivide(const OT& other);
@@ -344,17 +358,26 @@ namespace TSlib
 		template<typename RT = T, typename OT, Mode o_device>
 		Tensor<RT, device> Cmodulous(Tensor<OT, o_device>& other);
 
+		template<typename RT = T, typename OT, Mode o_device>
+		Tensor<RT, device> Cmodulous(const Tensor<OT, o_device>& other);
+
 		template<typename RT = T, typename OT>
 		Tensor<RT, device> Cmodulous(const OT& other);
 
 		template<typename OT, Mode o_device>
 		void CadditionAsgmt(Tensor<OT, o_device>& other);
 
+		template<typename OT, Mode o_device>
+		void CadditionAsgmt(const Tensor<OT, o_device>& other);
+
 		template<typename OT>
 		void CadditionAsgmt(const OT& other);
 
 		template<typename OT, Mode o_device>
 		void CsubtractionAsgmt(Tensor<OT, o_device>& other);
+		
+		template<typename OT, Mode o_device>
+		void CsubtractionAsgmt(const Tensor<OT, o_device>& other);
 
 		template<typename OT>
 		void CsubtractionAsgmt(const OT& other);
@@ -362,11 +385,17 @@ namespace TSlib
 		template<typename OT, Mode o_device>
 		void CmultiplicationAsgmt(Tensor<OT, o_device>& other);
 
+		template<typename OT, Mode o_device>
+		void CmultiplicationAsgmt(const Tensor<OT, o_device>& other);
+
 		template<typename OT>
 		void CmultiplicationAsgmt(const OT& other);
 
 		template<typename OT, Mode o_device>
 		void CdivisionAsgmt(Tensor<OT, o_device>& other);
+
+		template<typename OT, Mode o_device>
+		void CdivisionAsgmt(const Tensor<OT, o_device>& other);
 
 		template<typename OT>
 		void CdivisionAsgmt(const OT& other);
@@ -374,35 +403,38 @@ namespace TSlib
 		template<typename OT, Mode o_device>
 		void CmodulouAsgmt(Tensor<OT, o_device>& other);
 
+		template<typename OT, Mode o_device>
+		void CmodulouAsgmt(const Tensor<OT, o_device>& other);
+
 		template<typename OT>
 		void CmodulouAsgmt(const OT& other);
 
 		template<typename RT = char, typename OT, Mode o_device>
-		Tensor<RT, device> Ccompare(Tensor<OT, o_device>& other);
+		Tensor<RT, device> Ccompare(const Tensor<OT, o_device>& other);
 
 		template<typename RT = char, typename OT>
 		Tensor<RT, device> Ccompare(const OT& other);
 
 		template<typename RT = char, typename OT, Mode o_device>
-		Tensor<RT, device> ClessThan(Tensor<OT, o_device>& other);
+		Tensor<RT, device> ClessThan(const Tensor<OT, o_device>& other);
 
 		template<typename RT = char, typename OT>
 		Tensor<RT, device> ClessThan(const OT& other);
 
 		template<typename RT = char, typename OT, Mode o_device>
-		Tensor<RT, device> CgreaterThan(Tensor<OT, o_device>& other);
+		Tensor<RT, device> CgreaterThan(const Tensor<OT, o_device>& other);
 
 		template<typename RT = char, typename OT>
 		Tensor<RT, device> CgreaterThan(const OT& other);
 
 		template<typename RT = char, typename OT, Mode o_device>
-		Tensor<RT, device> ClessThanEqual(Tensor<OT, o_device>& other);
+		Tensor<RT, device> ClessThanEqual(const Tensor<OT, o_device>& other);
 
 		template<typename RT = char, typename OT>
 		Tensor<RT, device> ClessThanEqual(const OT& other);
 
 		template<typename RT = char, typename OT, Mode o_device>
-		Tensor<RT, device> CgreaterThanEqual(Tensor<OT, o_device>& other);
+		Tensor<RT, device> CgreaterThanEqual(const Tensor<OT, o_device>& other);
 
 		template<typename RT = char, typename OT>
 		Tensor<RT, device> CgreaterThanEqual(const OT& other);
@@ -418,185 +450,35 @@ namespace TSlib
 		template<typename RT = char, typename OT>
 		Tensor<RT, device> compare(const OT& other, bool(*comp_func)(const T&, const OT&) = Equal);
 
-		template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
-		inline bool operator==(Tensor<OT, o_device>& other)
-		{
-			#ifdef __clang__
-			return compare(other).template sum<size_t>() == other.size();
-			#else
-			return compare(other).sum<size_t>() == other.size();
-			#endif
-		}
+		template<typename OT>
+		inline bool operator==(OT& other);
+		template<typename OT>
+		inline bool operator==(const OT& other);
 
-		template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
-		inline bool operator==(TensorSlice<OT, o_device>& other)
-		{
-			#ifdef __clang__
-			return compare(other).template sum<size_t>() == other.size();
-			#else
-			return compare(other).sum<size_t>() == other.size();
-			#endif
-		}
+		template<typename OT>
+		inline bool operator!=(OT& other);
+		template<typename OT>
+		inline bool operator!=(const OT& other);
 
-		template<typename OT, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
-		inline bool operator==(const OT& other)
-		{
-			#ifdef __clang__
-			return compare(other).template sum<size_t>() == other.size();
-			#else
-			return compare(other).sum<size_t>() == other.size();
-			#endif
-		}
+		template<typename OT>
+		inline bool operator<(OT& other);
+		template<typename OT>
+		inline bool operator<(const OT& other);
 
-		template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
-		inline bool operator!=(Tensor<OT, o_device>& other)
-		{
-			#ifdef __clang__
-			return compare(other, NotEqual).template sum<size_t>() == other.size();
-			#else
-			return compare(other, NotEqual).sum<size_t>() == other.size();
-			#endif
-		}
+		template<typename OT>
+		inline bool operator>(OT& other);
+		template<typename OT>
+		inline bool operator>(const OT& other);
 
-		template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
-		inline bool operator!=(TensorSlice<OT, o_device>& other)
-		{
-			#ifdef __clang__
-			return !(bool)compare(other, NotEqual).template sum<size_t>() == other.size();
-			#else
-			return !(bool)compare(other, NotEqual).sum<size_t>() == other.size();
-			#endif
-		}
+		template<typename OT>
+		inline bool operator<=(OT& other);
+		template<typename OT>
+		inline bool operator<=(const OT& other);
 
-		template<typename OT, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
-		inline bool operator!=(const OT& other)
-		{
-			#ifdef __clang__
-			return !(bool)compare(other, NotEqual).template sum<size_t>() == other.size();
-			#else
-			return !(bool)compare(other, NotEqual).sum<size_t>() == other.size();
-			#endif
-		}
-
-		template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
-		inline bool operator<(Tensor<OT, o_device>& other)
-		{
-			#ifdef __clang__
-			return (bool)compare(other, LessThan).template sum<size_t>() == other.size();
-			#else
-			return (bool)compare(other, LessThan).sum<size_t>() == other.size();
-			#endif
-		}
-
-		template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
-		inline bool operator<(TensorSlice<OT, o_device>& other)
-		{
-			#ifdef __clang__
-			return (bool)compare(other, LessThan).template sum<size_t>() == other.size();
-			#else
-			return (bool)compare(other, LessThan).sum<size_t>() == other.size();
-			#endif
-		}
-
-		template<typename OT, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
-		inline bool operator<(const OT& other)
-		{
-			#ifdef __clang__
-			return (bool)compare(other, LessThan).template sum<size_t>() == other.size();
-			#else
-			return (bool)compare(other, LessThan).sum<size_t>() == other.size();
-			#endif
-		}
-
-		template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
-		inline bool operator>(Tensor<OT, o_device>& other)
-		{
-			#ifdef __clang__
-			return (bool)compare(other, GreaterThan).template sum<size_t>() == other.size();
-			#else
-			return (bool)compare(other, GreaterThan).sum<size_t>() == other.size();
-			#endif
-		}
-
-		template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
-		inline bool operator>(TensorSlice<OT, o_device>& other)
-		{
-			#ifdef __clang__
-			return (bool)compare(other, GreaterThan).template sum<size_t>() == other.size();
-			#else
-			return (bool)compare(other, GreaterThan).sum<size_t>() == other.size();
-			#endif
-		}
-
-		template<typename OT, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
-		inline bool operator>(const OT& other)
-		{
-			#ifdef __clang__
-			return (bool)compare(other, GreaterThan).template sum<size_t>() == other.size();
-			#else
-			return (bool)compare(other, GreaterThan).sum<size_t>() == other.size();
-			#endif
-		}
-
-		template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
-		inline bool operator<=(Tensor<OT, o_device>& other)
-		{
-			#ifdef __clang__
-			return (bool)compare(other, LessThanEqual).template sum<size_t>() == other.size();
-			#else
-			return (bool)compare(other, LessThanEqual).sum<size_t>() == other.size();
-			#endif
-		}
-
-		template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
-		inline bool operator<=(TensorSlice<OT, o_device>& other)
-		{
-			#ifdef __clang__
-			return (bool)compare(other, LessThanEqual).template sum<size_t>() == other.size();
-			#else
-			return (bool)compare(other, LessThanEqual).sum<size_t>() == other.size();
-			#endif
-		}
-
-		template<typename OT, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
-		inline bool operator<=(const OT& other)
-		{
-			#ifdef __clang__
-			return (bool)compare(other, LessThanEqual).template sum<size_t>() == other.size();
-			#else
-			return (bool)compare(other, LessThanEqual).sum<size_t>() == other.size();
-			#endif
-		}
-
-		template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
-		inline bool operator>=(Tensor<OT, o_device>& other)
-		{
-			#ifdef __clang__
-			return (bool)compare(other, GreaterThanEqual).template sum<size_t>() == other.size();
-			#else
-			return (bool)compare(other, GreaterThanEqual).sum<size_t>() == other.size();
-			#endif
-		}
-
-		template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
-		inline bool operator>=(TensorSlice<OT, o_device>& other)
-		{
-			#ifdef __clang__
-			return (bool)compare(other, GreaterThanEqual).template sum<size_t>() == other.size();
-			#else
-			return (bool)compare(other, GreaterThanEqual).sum<size_t>() == other.size();
-			#endif
-		}
-
-		template<typename OT, typename std::enable_if_t<device == Mode::CPU, OT>* = nullptr>
-		inline bool operator>=(const OT& other)
-		{
-			#ifdef __clang__
-			return (bool)compare(other, GreaterThanEqual).template sum<size_t>() == other.size();
-			#else
-			return (bool)compare(other, GreaterThanEqual).sum<size_t>() == other.size();
-			#endif
-		}
+		template<typename OT>
+		inline bool operator>=(OT& other);
+		template<typename OT>
+		inline bool operator>=(const OT& other);
 
 		template<typename OT>
 		inline Tensor<T, device> operator+(OT& other);
@@ -680,202 +562,11 @@ namespace TSlib
 		inline Tensor<T, device> operator>=(const OT& other);
 
 		#ifdef _CUDA
-		template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::GPU, OT>* = nullptr>
-		inline bool operator==(Tensor<OT, o_device>& other)
-		{
-			return Ccompare(other).sum<size_t>() == other.size();
-		}
-
-		template<typename OT, typename std::enable_if_t<device == Mode::GPU, OT>* = nullptr>
-		inline bool operator==(const OT& other)
-		{
-			return (bool)Ccompare(other).sum<size_t>() == other.size();
-		}
-
-		template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::GPU, OT>* = nullptr>
-		inline bool operator!=(Tensor<OT, o_device>& other)
-		{
-			return !(bool)Ccompare(other).sum<size_t>() == other.size();
-		}
-
-		template<typename OT, typename std::enable_if_t<device == Mode::GPU, OT>* = nullptr>
-		inline bool operator!=(const OT& other)
-		{
-			return !(bool)Ccompare(other).sum<size_t>() == other.size();
-		}
-
-		template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::GPU, OT>* = nullptr>
-		inline bool operator<(Tensor<OT, o_device>& other)
-		{
-			return (bool)ClessThan(other).sum<size_t>() == other.size();
-		}
-
-		template<typename OT, typename std::enable_if_t<device == Mode::GPU, OT>* = nullptr>
-		inline bool operator<(const OT& other)
-		{
-			return (bool)ClessThan(other).sum<size_t>() == other.size();
-		}
-
-		template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::GPU, OT>* = nullptr>
-		inline bool operator>(Tensor<OT, o_device>& other)
-		{
-			return (bool)CmoreThan(other).sum<size_t>() == other.size();
-		}
-
-		template<typename OT, typename std::enable_if_t<device == Mode::GPU, OT>* = nullptr>
-		inline bool operator>(const OT& other)
-		{
-			return (bool)CmoreThan(other).sum<size_t>() == other.size();
-		}
-
-		template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::GPU, OT>* = nullptr>
-		inline bool operator<=(Tensor<OT, o_device>& other)
-		{
-			return (bool)ClessThanEqual(other).sum<size_t>() == other.size();
-		}
-
-		template<typename OT, typename std::enable_if_t<device == Mode::GPU, OT>* = nullptr>
-		inline bool operator<=(const OT& other)
-		{
-			return (bool)ClessThanEqual(other).sum<size_t>() == other.size();
-		}
-
-		template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::GPU, OT>* = nullptr>
-		inline bool operator>=(Tensor<OT, o_device>& other)
-		{
-			return (bool)CmoreThanEqual(other).sum<size_t>() == other.size();
-		}
-
-		template<typename OT, typename std::enable_if_t<device == Mode::GPU, OT>* = nullptr>
-		inline bool operator>=(const OT& other)
-		{
-			return (bool)CmoreThanEqual(other).sum<size_t>() == other.size();
-		}
-
-		/*template<typename OT, Mode o_device>
-		typename std::enable_if_t<device == Mode::GPU, Tensor<T, device>>
-		operator+(Tensor<OT, o_device>& other);*/
-
-		/*template<typename OT, typename std::enable_if_t<device == Mode::GPU, OT>* = nullptr>
-		inline Tensor<T, device> operator+(const OT& other)
-		{
-			return Cadd<T, OT>(other);
-		}*/
-
-		template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::GPU, OT>* = nullptr>
-		inline Tensor<T, device> operator-(Tensor<OT, o_device>& other)
-		{
-			return Csubtract(other);
-		}
-
-		template<typename OT, typename std::enable_if_t<device == Mode::GPU, OT>* = nullptr>
-		inline Tensor<T, device> operator-(const OT& other)
-		{
-			return Csubtract(other);
-		}
-
-		template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::GPU, OT>* = nullptr>
-		inline Tensor<T, device> operator*(Tensor<OT, o_device>& other)
-		{
-			return Cmultiply(other);
-		}
-
-		template<typename OT, typename std::enable_if_t<device == Mode::GPU, OT>* = nullptr>
-		inline Tensor<T, device> operator*(const OT& other)
-		{
-			return Cmultiply(other);
-		}
-
-		template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::GPU, OT>* = nullptr>
-		inline Tensor<T, device> operator/(Tensor<OT, o_device>& other)
-		{
-			return Cdivide(other);
-		}
-
-		template<typename OT, typename std::enable_if_t<device == Mode::GPU, OT>* = nullptr>
-		inline Tensor<T, device> operator/(const OT& other)
-		{
-			return Cdivide(other);
-		}
-
-		template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::GPU, OT>* = nullptr>
-		inline Tensor<T, device> operator%(Tensor<OT, o_device>& other)
-		{
-			return Cmodulous(other);
-		}
-
-		template<typename OT, typename std::enable_if_t<device == Mode::GPU, OT>* = nullptr>
-		inline Tensor<T, device> operator%(const OT& other)
-		{
-			return Cmodulous(other);
-		}
-
-		template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::GPU, OT>* = nullptr>
-		inline void operator+=(Tensor<OT, o_device>& other)
-		{
-			CadditionAsgmt(other);
-		}
-
-		template<typename OT, typename std::enable_if_t<device == Mode::GPU, OT>* = nullptr>
-		inline void operator+=(const OT& other)
-		{
-			CadditionAsgmt(other);
-		}
-
-		template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::GPU, OT>* = nullptr>
-		inline void operator-=(Tensor<OT, o_device>& other)
-		{
-			CsubtractionAsgmt(other);
-		}
-
-		template<typename OT, typename std::enable_if_t<device == Mode::GPU, OT>* = nullptr>
-		inline void operator-=(const OT& other)
-		{
-			CsubtractionAsgmt(other);
-		}
-
-		template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::GPU, OT>* = nullptr>
-		inline void operator*=(Tensor<OT, o_device>& other)
-		{
-			CmultiplicationAsgmt(other);
-		}
-
-		template<typename OT, typename std::enable_if_t<device == Mode::GPU, OT>* = nullptr>
-		inline void operator*=(const OT& other)
-		{
-			CmultiplicationAsgmt(other);
-		}
-
-		template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::GPU, OT>* = nullptr>
-		inline void operator/=(Tensor<OT, o_device>& other)
-		{
-			CdivisionAsgmt(other);
-		}
-
-		template<typename OT, typename std::enable_if_t<device == Mode::GPU, OT>* = nullptr>
-		inline void operator/=(const OT& other)
-		{
-			CdivisionAsgmt(other);
-		}
-
-		template<typename OT, Mode o_device, typename std::enable_if_t<device == Mode::GPU, OT>* = nullptr>
-		inline void operator%=(Tensor<OT, o_device>& other)
-		{
-			CmodulouAsgmt(other);
-		}
-
-		template<typename OT, typename std::enable_if_t<device == Mode::GPU, OT>* = nullptr>
-		inline void operator%=(const OT& other)
-		{
-			CmodulouAsgmt(other);
-		}
-
 		operator CUDATensor1D<T>();
 
 		operator CUDATensor2D<T>();
 
 		operator CUDATensor3D<T>();
-
 		#endif
 
 		template<typename CT, Mode o_device>

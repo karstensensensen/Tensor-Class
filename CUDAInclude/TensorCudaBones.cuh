@@ -74,6 +74,7 @@ namespace TSlib
 
 	public:
 
+		CTBase(const T* gpu_mem, size_t m_size, size_t* dim_arr, size_t dims);
 		CTBase(T* gpu_mem, size_t m_size, size_t* dim_arr, size_t dims);
 		~CTBase();
 
@@ -105,6 +106,8 @@ namespace TSlib
 
 		template<Mode device>
 		CUDATensor1D(Tensor<T, device>& tensor);
+		template<Mode device>
+		CUDATensor1D(const Tensor<T, device>& tensor);
 		CUDATensor1D(const CUDATensor1D<T>& other);
 
 		__device__ T& At(size_t x);
@@ -141,6 +144,8 @@ namespace TSlib
 
 		template<Mode device>
 		CUDATensor2D(Tensor<T, device>& tensor);
+		template<Mode device>
+		CUDATensor2D(const Tensor<T, device>& tensor);
 		CUDATensor2D(const CUDATensor2D<T>& other);
 
 		__device__ T& At(size_t x, size_t y);
@@ -180,6 +185,8 @@ namespace TSlib
 
 		template<Mode device>
 		CUDATensor3D(Tensor<T, device>& tensor);
+		template<Mode device>
+		CUDATensor3D(const Tensor<T, device>& tensor);
 		CUDATensor3D(const CUDATensor3D<T>& other);
 
 		__device__ T& At(size_t x, size_t y);

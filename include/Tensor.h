@@ -926,6 +926,13 @@ namespace TSlib
 		MEASURE();
 		return gpu_mem;
 	}
+
+	template<typename T, Mode device>
+	Tensor<T, device>::operator const T* () const
+	{
+		MEASURE();
+		return gpu_mem;
+	}
 	#endif
 
 	template<typename T, Mode device>
