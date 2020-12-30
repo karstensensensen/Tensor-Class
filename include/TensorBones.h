@@ -9,7 +9,6 @@
 #include "TensorEnums.h"
 #include "TensorSliceBones.h"
 #include "TensorExceptions.h"
-#include "TensorCompareOperators.h"
 
 namespace TSlib
 {

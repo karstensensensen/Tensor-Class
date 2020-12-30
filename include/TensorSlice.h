@@ -2,6 +2,7 @@
 
 #include "TensorSliceBones.h"
 #include "TensorExceptions.h"
+#include "TensorArithmetic.h"
 
 namespace TSlib
 {
