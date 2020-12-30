@@ -142,18 +142,6 @@ namespace TSlib
 	/// </summary>
 	template<typename T>
 	template<Mode device>
-	CUDATensor2D<T>::CUDATensor2D(Tensor<T, device>& tensor)
-		: CTBase(tensor.getGPU(), tensor.size(), nullptr, tensor.Dims())
-	{
-		CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
-		CER(cudaMemcpy(dim_arr, tensor.Shape().data(), sizeof(size_t) * dims, cudaMemcpyHostToDevice));
-
-		auto new_dims = tensor.FlattenDims(2);
-		m_length = new_dims[1];
-		m_width = new_dims[0];
-	}
-	template<typename T>
-	template<Mode device>
 	CUDATensor1D<T>::CUDATensor1D(const Tensor<T, device>& tensor) const
 		: CTBase(tensor.getGPU(), tensor.size(), nullptr, tensor.Dims())
 	{
@@ -217,18 +205,6 @@ namespace TSlib
 		m_length = new_dims[2];
 		m_width = new_dims[1];
 		m_height = new_dims[0];
-	}
-	template<typename T>
-	template<Mode device>
-	CUDATensor2D<T>::CUDATensor2D(const Tensor<T, device>& tensor)
-		: CTBase(tensor.getGPU(), tensor.size(), nullptr, tensor.Dims())
-	{
-		CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
-		CER(cudaMemcpy(dim_arr, tensor.Shape().data(), sizeof(size_t) * dims, cudaMemcpyHostToDevice));
-
-		auto new_dims = tensor.FlattenDims(2);
-		m_length = new_dims[1];
-		m_width = new_dims[0];
 	}
 	template<typename T>
 	CUDATensor3D<T>::CUDATensor3D(const CUDATensor3D<T>& tensor)

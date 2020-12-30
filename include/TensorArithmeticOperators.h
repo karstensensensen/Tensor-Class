@@ -205,7 +205,7 @@ namespace TSlib
 
 		if (size() != other.size())
 		{
-			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape, Shape());
+			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape(), Shape());
 		}
 		#endif
 
@@ -1436,6 +1436,114 @@ namespace TSlib
 		return result;
 	}
 	#endif
+
+	template<typename T, Mode device>
+	template<typename OT>
+	Tensor<T, device> Tensor<T, device>::operator==(OT& other)
+	{
+		if constexpr (device == Mode::GPU)
+		{
+			return (bool)Ccompare(other, Equal).sum<size_t>();
+		}
+
+		return (bool)compare(other, Equal).sum<size_t>();
+	}
+	template<typename T, Mode device>
+	template<typename OT>
+	Tensor<T, device> Tensor<T, device>::operator==(const OT& other)
+	{
+		return (bool)compare(other, Equal).sum<size_t>();
+	}
+
+	template<typename T, Mode device>
+	template<typename OT>
+	Tensor<T, device> Tensor<T, device>::operator!=(OT& other)
+	{
+		if constexpr (device == Mode::GPU)
+		{
+			return !(bool)Ccompare(other, Equal).sum<size_t>();
+		}
+
+		return !(bool)compare(other, Equal).sum<size_t>();
+	}
+	template<typename T, Mode device>
+	template<typename OT>
+	Tensor<T, device> Tensor<T, device>::operator!=(const OT& other)
+	{
+		return !(bool)compare(other, Equal).sum<size_t>();
+	}
+
+	template<typename T, Mode device>
+	template<typename OT>
+	Tensor<T, device> Tensor<T, device>::operator<(OT& other)
+	{
+		if constexpr (device == Mode::GPU)
+		{
+			return (bool)Ccompare(other, LessThan).sum<size_t>();
+		}
+
+		return (bool)compare(other, LessThan).sum<size_t>();
+	}
+	template<typename T, Mode device>
+	template<typename OT>
+	Tensor<T, device> Tensor<T, device>::operator<(const OT& other)
+	{
+		return (bool)compare(other, LessThan).sum<size_t>();
+	}
+
+	template<typename T, Mode device>
+	template<typename OT>
+	Tensor<T, device> Tensor<T, device>::operator>(OT& other)
+	{
+		if constexpr (device == Mode::GPU)
+		{
+			return (bool)Ccompare(other, GreaterThan).sum<size_t>();
+		}
+
+		return (bool)compare(other, GreaterThan).sum<size_t>();
+	}
+	template<typename T, Mode device>
+	template<typename OT>
+	Tensor<T, device> Tensor<T, device>::operator>(const OT& other)
+	{
+		return (bool)compare(other, GreaterThan).sum<size_t>();
+	}
+
+	template<typename T, Mode device>
+	template<typename OT>
+	Tensor<T, device> Tensor<T, device>::operator<=(OT& other)
+	{
+		if constexpr (device == Mode::GPU)
+		{
+			return (bool)Ccompare(other, LessThanEqual).sum<size_t>();
+		}
+
+		return (bool)compare(other, LessThanEqual).sum<size_t>();
+	}
+	template<typename T, Mode device>
+	template<typename OT>
+	Tensor<T, device> Tensor<T, device>::operator<=(const OT& other)
+	{
+		return (bool)compare(other, LessThanEqual).sum<size_t>();
+	}
+
+	template<typename T, Mode device>
+	template<typename OT>
+	Tensor<T, device> Tensor<T, device>::operator>=(OT& other)
+	{
+		if constexpr (device == Mode::GPU)
+		{
+			return (bool)Ccompare(other, GreaterThanEqual).sum<size_t>();
+		}
+
+		return (bool)compare(other, GreaterThanEqual).sum<size_t>();
+	}
+	template<typename T, Mode device>
+	template<typename OT>
+	Tensor<T, device> Tensor<T, device>::operator>=(const OT& other)
+	{
+		return (bool)compare(other, GreaterThanEqual).sum<size_t>();
+	}
 }
 
 template<typename T, TSlib::Mode device>

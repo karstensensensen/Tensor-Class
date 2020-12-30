@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 #include "TSliceWrapper.h"
-#include "TensorBones.h"
+#include "TensorCompareOperators.h"
 
 namespace TSlib
 {
