@@ -423,15 +423,33 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
+	Tensor<T, device>::operator const CUDATensor1D<T>() const
+	{
+		return const CUDATensor1D<T>(*this);
+	}
+
+	template<typename T, Mode device>
 	Tensor<T, device>::operator CUDATensor2D<T>()
 	{
 		return CUDATensor2D<T>(*this);
 	}
 
 	template<typename T, Mode device>
+	Tensor<T, device>::operator const CUDATensor2D<T>() const
+	{
+		return const CUDATensor2D<T>(*this);
+	}
+
+	template<typename T, Mode device>
 	Tensor<T, device>::operator CUDATensor3D<T>()
 	{
 		return CUDATensor3D<T>(*this);
+	}
+
+	template<typename T, Mode device>
+	Tensor<T, device>::operator const CUDATensor3D<T>() const
+	{
+		return const CUDATensor3D<T>(*this);
 	}
 
 	/// Tensor class cuda specific functions

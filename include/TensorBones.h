@@ -562,10 +562,13 @@ namespace TSlib
 
 		#ifdef _CUDA
 		operator CUDATensor1D<T>();
+		operator const CUDATensor1D<T>() const;
 
 		operator CUDATensor2D<T>();
+		operator const CUDATensor2D<T>() const;
 
 		operator CUDATensor3D<T>();
+		operator const CUDATensor3D<T>() const;
 		#endif
 
 		template<typename CT, Mode o_device>
