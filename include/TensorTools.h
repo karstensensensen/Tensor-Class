@@ -9,7 +9,7 @@ namespace TSlib
 		Tensor<T, device> merge(Tensor<T, device> tensor1, Tensor<OT, o_device> tensor2, const size_t& dimension)
 		{
 			#ifdef _TS_DEBUG
-			
+
 			if (dimension >= tensor1.Dims())
 			{
 				throw BadValue("The target dimension must be less than or equal to the total dimensions in the target tensors", ExceptValue{ "Target dimension", dimension }, ExceptValue{ "Tensor dimension", tensor1.Dims() });

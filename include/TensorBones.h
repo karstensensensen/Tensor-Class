@@ -374,7 +374,7 @@ namespace TSlib
 
 		template<typename OT, Mode o_device>
 		void CsubtractionAsgmt(Tensor<OT, o_device>& other);
-		
+
 		template<typename OT, Mode o_device>
 		void CsubtractionAsgmt(const Tensor<OT, o_device>& other);
 
@@ -473,7 +473,6 @@ namespace TSlib
 		inline Tensor<T, device> operator%(OT& other);
 		template<typename OT>
 		inline Tensor<T, device> operator%(const OT& other);
-
 
 		template<typename OT>
 		inline Tensor<T, device> operator+=(OT& other);

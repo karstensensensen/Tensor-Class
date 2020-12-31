@@ -270,7 +270,6 @@ namespace TSlib
 		template<typename T, Mode device>
 		std::tuple<unsigned int, unsigned int, unsigned int> apply(const Tensor<T, device>* tensor, unsigned int target_threads)
 		{
-
 			unsigned int threads_cubed = get_cubed(target_threads);
 
 			unsigned int length = threads_cubed;
@@ -305,7 +304,6 @@ namespace TSlib
 			height *= unsigned int(double_t(length) * Z_ratio);
 
 			return { length, width, height };
-
 		}
 	};
 

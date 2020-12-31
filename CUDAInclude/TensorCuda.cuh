@@ -147,7 +147,7 @@ namespace TSlib
 	/// <summary>
 	/// CUDATensor children constructors
 	/// </summary>
-	
+
 	template<typename T>
 	template<Mode device>
 	CUDATensor1D<T>::CUDATensor1D(Tensor<T, device>& tensor)
@@ -808,8 +808,6 @@ namespace TSlib
 
 		CER(cudaDeviceSynchronize());
 	}
-
-	
 
 	void CUDAInitialize(int device)
 	{

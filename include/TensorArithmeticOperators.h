@@ -25,7 +25,6 @@ namespace TSlib
 	template<typename OT>
 	Tensor<T, device> Tensor<T, device>::operator+(const OT& other)
 	{
-
 		if constexpr (device == Mode::GPU)
 		{
 			return Cadd(other);
@@ -282,7 +281,6 @@ namespace TSlib
 	template<typename RT, typename OT, Mode o_device>
 	Tensor<RT, device> Tensor<T, device>::Cadd(const Tensor<OT, o_device>& other)
 	{
-
 		bool this_alloc = isDeallocated();
 		bool other_alloc = other.isDeallocated();
 
@@ -297,8 +295,6 @@ namespace TSlib
 			throw BadValue("A const Tensor must have already allocated memory on the gpu");
 		}
 		#endif
-
-		
 
 		if (this_alloc)
 		{
