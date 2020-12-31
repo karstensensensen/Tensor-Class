@@ -41,11 +41,6 @@ namespace TSlib
 	/// </summary>
 
 	template<typename T>
-	TSlib::CTBase<T>::CTBase(const T* gpu_mem, size_t m_size, size_t* dim_arr, size_t dims)
-		:gpu_mem(gpu_mem), m_size(m_size), dim_arr(dim_arr), dims(dims)
-	{}
-
-	template<typename T>
 	TSlib::CTBase<T>::CTBase(T* gpu_mem, size_t m_size, size_t* dim_arr, size_t dims)
 		:gpu_mem(gpu_mem), m_size(m_size), dim_arr(dim_arr), dims(dims)
 	{}
@@ -59,6 +54,18 @@ namespace TSlib
 	/// <summary>
 	/// CUDATensor public funtions
 	/// </summary>
+
+	template<typename T>
+	__device__ T* TSlib::CTBase<T>::get_gpu()
+	{
+		return gpu_mem;
+	}
+
+	template<typename T>
+	__device__ const T* TSlib::CTBase<T>::get_gpu() const
+	{
+		return gpu_mem;
+	}
 
 	template<typename T>
 	__device__ size_t CTBase<T>::size() const
@@ -77,7 +84,7 @@ namespace TSlib
 
 		get_indx(index, i, tmp_multiply, coords...);
 
-		return gpu_mem[index];
+		return get_gpu()[index];
 	}
 
 	/// <summary>
@@ -87,7 +94,7 @@ namespace TSlib
 	template<typename T>
 	__device__ T& CTBase<T>::operator[](size_t index)
 	{
-		return gpu_mem[index];
+		return get_gpu()[index];
 	}
 
 	template<typename T>
@@ -140,10 +147,22 @@ namespace TSlib
 	/// <summary>
 	/// CUDATensor children constructors
 	/// </summary>
+	
+	template<typename T>
+	template<Mode device>
+	CUDATensor1D<T>::CUDATensor1D(Tensor<T, device>& tensor)
+		: CTBase(tensor.gpu_mem, tensor.size(), nullptr, tensor.Dims())
+	{
+		CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
+		CER(cudaMemcpy(dim_arr, tensor.Shape().data(), sizeof(size_t) * dims, cudaMemcpyHostToDevice));
+
+		m_length = tensor.FlattenDims();
+	}
+
 	template<typename T>
 	template<Mode device>
 	CUDATensor1D<T>::CUDATensor1D(const Tensor<T, device>& tensor) const
-		: CTBase(tensor.getGPU(), tensor.size(), nullptr, tensor.Dims())
+		: CTBase(tensor.gpu_mem, tensor.size(), nullptr, tensor.Dims())
 	{
 		CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
 		CER(cudaMemcpy(dim_arr, tensor.Shape().data(), sizeof(size_t) * dims, cudaMemcpyHostToDevice));
@@ -162,7 +181,7 @@ namespace TSlib
 	template<typename T>
 	template<Mode device>
 	CUDATensor2D<T>::CUDATensor2D(Tensor<T, device>& tensor)
-		: CTBase(tensor.getGPU(), tensor.size(), nullptr, tensor.Dims())
+		: CTBase(tensor.gpu_mem, tensor.size(), nullptr, tensor.Dims())
 	{
 		CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
 		CER(cudaMemcpy(dim_arr, tensor.Shape().data(), sizeof(size_t) * dims, cudaMemcpyHostToDevice));
@@ -175,7 +194,7 @@ namespace TSlib
 	template<typename T>
 	template<Mode device>
 	CUDATensor2D<T>::CUDATensor2D(const Tensor<T, device>& tensor)
-		: CTBase(tensor.getGPU(), tensor.size(), nullptr, tensor.Dims())
+		: CTBase(tensor.gpu_mem, tensor.size(), nullptr, tensor.Dims())
 	{
 		CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
 		CER(cudaMemcpy(dim_arr, tensor.Shape().data(), sizeof(size_t) * dims, cudaMemcpyHostToDevice));
@@ -196,7 +215,7 @@ namespace TSlib
 	template<typename T>
 	template<Mode device>
 	CUDATensor3D<T>::CUDATensor3D(Tensor<T, device>& tensor)
-		:CTBase(tensor.getGPU(), tensor.size(), nullptr, tensor.Dims())
+		:CTBase(tensor.gpu_mem, tensor.size(), nullptr, tensor.Dims())
 	{
 		CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
 		CER(cudaMemcpy(dim_arr, tensor.Shape().data(), sizeof(size_t) * dims, cudaMemcpyHostToDevice));
@@ -206,6 +225,21 @@ namespace TSlib
 		m_width = new_dims[1];
 		m_height = new_dims[0];
 	}
+
+	template<typename T>
+	template<Mode device>
+	CUDATensor3D<T>::CUDATensor3D(const Tensor<T, device>& tensor)
+		:CTBase(tensor.gpu_mem, tensor.size(), nullptr, tensor.Dims())
+	{
+		CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
+		CER(cudaMemcpy(dim_arr, tensor.Shape().data(), sizeof(size_t) * dims, cudaMemcpyHostToDevice));
+
+		auto new_dims = tensor.FlattenDims(3);
+		m_length = new_dims[2];
+		m_width = new_dims[1];
+		m_height = new_dims[0];
+	}
+
 	template<typename T>
 	CUDATensor3D<T>::CUDATensor3D(const CUDATensor3D<T>& tensor)
 		: CTBase(other.gpu_mem, other.m_size, nullptr, other.dims), m_length(other.m_length), m_width(other.m_heihgt), m_length(other.m_height)
@@ -255,37 +289,37 @@ namespace TSlib
 	template<typename T>
 	__device__ T& CUDATensor1D<T>::At(size_t x)
 	{
-		return gpu_mem[x];
+		return get_gpu()[x];
 	}
 
 	template<typename T>
 	__device__ T CUDATensor1D<T>::At(size_t x) const
 	{
-		return gpu_mem[x];
+		return get_gpu()[x];
 	}
 
 	template<typename T>
 	__device__ T& CUDATensor1D<T>::At()
 	{
-		return gpu_mem[threadIdx.x + blockIdx.x * blockDim.x];
+		return get_gpu()[threadIdx.x + blockIdx.x * blockDim.x];
 	}
 
 	template<typename T>
 	__device__ T CUDATensor1D<T>::At() const
 	{
-		return gpu_mem[threadIdx.x + blockIdx.x * blockDim.x];
+		return get_gpu()[threadIdx.x + blockIdx.x * blockDim.x];
 	}
 
 	template<typename T>
 	__device__ T& CUDATensor1D<T>::Offset(size_t x)
 	{
-		return gpu_mem[threadIdx.x + blockIdx.x * blockDim.x + x];
+		return get_gpu()[threadIdx.x + blockIdx.x * blockDim.x + x];
 	}
 
 	template<typename T>
 	__device__ T CUDATensor1D<T>::Offset(size_t x) const
 	{
-		return gpu_mem[threadIdx.x + blockIdx.x * blockDim.x + x];
+		return get_gpu()[threadIdx.x + blockIdx.x * blockDim.x + x];
 	}
 
 	template<typename T>
@@ -303,40 +337,40 @@ namespace TSlib
 	template<typename T>
 	__device__ T& CUDATensor2D<T>::At(size_t x, size_t y)
 	{
-		return gpu_mem[x + y * m_length];
+		return get_gpu()[x + y * m_length];
 	}
 
 	template<typename T>
 	__device__ T CUDATensor2D<T>::At(size_t x, size_t y) const
 	{
-		return gpu_mem[x + y * m_length];
+		return get_gpu()[x + y * m_length];
 	}
 
 	template<typename T>
 	__device__ T& CUDATensor2D<T>::At()
 	{
-		return gpu_mem[(threadIdx.x + blockIdx.x * blockDim.x) +
+		return get_gpu()[(threadIdx.x + blockIdx.x * blockDim.x) +
 			(threadIdx.y + blockIdx.y * blockDim.y) * m_length];
 	}
 
 	template<typename T>
 	__device__ T CUDATensor2D<T>::At() const
 	{
-		return gpu_mem[(threadIdx.x + blockIdx.x * blockDim.x) +
+		return get_gpu()[(threadIdx.x + blockIdx.x * blockDim.x) +
 			(threadIdx.y + blockIdx.y * blockDim.y) * m_length];
 	}
 
 	template<typename T>
 	__device__ T& CUDATensor2D<T>::Offset(size_t x, size_t y)
 	{
-		return gpu_mem[(threadIdx.x + blockIdx.x * blockDim.x + x) +
+		return get_gpu()[(threadIdx.x + blockIdx.x * blockDim.x + x) +
 			(threadIdx.y + blockIdx.y * blockDim.y + y) * m_length];
 	}
 
 	template<typename T>
 	__device__ T CUDATensor2D<T>::Offset(size_t x, size_t y) const
 	{
-		return gpu_mem[(threadIdx.x + blockIdx.x * blockDim.x + x) +
+		return get_gpu()[(threadIdx.x + blockIdx.x * blockDim.x + x) +
 			(threadIdx.y + blockIdx.y * blockDim.y + y) * m_length];
 	}
 
@@ -357,19 +391,19 @@ namespace TSlib
 	template<typename T>
 	__device__ T& CUDATensor3D<T>::At(size_t x, size_t y)
 	{
-		return gpu_mem[x + y * m_length + z * m_length * m_width];
+		return get_gpu()[x + y * m_length + z * m_length * m_width];
 	}
 
 	template<typename T>
 	__device__ T CUDATensor3D<T>::At(size_t x, size_t y) const
 	{
-		return gpu_mem[x + y * m_length + z * m_length * m_width];
+		return get_gpu()[x + y * m_length + z * m_length * m_width];
 	}
 
 	template<typename T>
 	__device__ T& CUDATensor3D<T>::At()
 	{
-		return gpu_mem[(threadIdx.x + blockIdx.x * blockDim.x) +
+		return get_gpu()[(threadIdx.x + blockIdx.x * blockDim.x) +
 			(threadIdx.y + blockIdx.y * blockDim.y) * m_length +
 			(threadIdx.z + blockIdx.z * blockDim.z) * m_length * m_width];
 	}
@@ -377,7 +411,7 @@ namespace TSlib
 	template<typename T>
 	__device__ T CUDATensor3D<T>::At() const
 	{
-		return gpu_mem[(threadIdx.x + blockIdx.x * blockDim.x) +
+		return get_gpu()[(threadIdx.x + blockIdx.x * blockDim.x) +
 			(threadIdx.y + blockIdx.y * blockDim.y) * m_length +
 			(threadIdx.z + blockIdx.z * blockDim.z) * m_length * m_width];
 	}
@@ -385,7 +419,7 @@ namespace TSlib
 	template<typename T>
 	__device__ T& CUDATensor3D<T>::Offset(size_t x, size_t y, size_t z)
 	{
-		return gpu_mem[(threadIdx.x + blockIdx.x * blockDim.x + x) +
+		return get_gpu()[(threadIdx.x + blockIdx.x * blockDim.x + x) +
 			(threadIdx.y + blockIdx.y * blockDim.y + y) * m_length +
 			(threadIdx.z + blockIdx.z * blockDim.z + z) * m_length * m_width];
 	}
@@ -393,7 +427,7 @@ namespace TSlib
 	template<typename T>
 	__device__ T CUDATensor3D<T>::Offset(size_t x, size_t y, size_t z) const
 	{
-		return gpu_mem[(threadIdx.x + blockIdx.x * blockDim.x + x) +
+		return get_gpu()[(threadIdx.x + blockIdx.x * blockDim.x + x) +
 			(threadIdx.y + blockIdx.y * blockDim.y + y) * m_length +
 			(threadIdx.z + blockIdx.z * blockDim.z + z) * m_length * m_width];
 	}
@@ -465,7 +499,7 @@ namespace TSlib
 		assert("GPU memory was not deallocated before calling allocate" && isDeallocated());
 		#endif
 
-		CER(cudaMalloc(&(this->gpu_mem), this->size() * sizeof(T)));
+		CER(cudaMalloc(&(gpu_mem), size() * sizeof(T)));
 		allocated = true;
 	}
 

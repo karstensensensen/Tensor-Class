@@ -450,36 +450,6 @@ namespace TSlib
 		Tensor<RT, device> compare(const OT& other, bool(*comp_func)(const T&, const OT&) = Equal);
 
 		template<typename OT>
-		inline bool operator==(OT& other);
-		template<typename OT>
-		inline bool operator==(const OT& other);
-
-		template<typename OT>
-		inline bool operator!=(OT& other);
-		template<typename OT>
-		inline bool operator!=(const OT& other);
-
-		template<typename OT>
-		inline bool operator<(OT& other);
-		template<typename OT>
-		inline bool operator<(const OT& other);
-
-		template<typename OT>
-		inline bool operator>(OT& other);
-		template<typename OT>
-		inline bool operator>(const OT& other);
-
-		template<typename OT>
-		inline bool operator<=(OT& other);
-		template<typename OT>
-		inline bool operator<=(const OT& other);
-
-		template<typename OT>
-		inline bool operator>=(OT& other);
-		template<typename OT>
-		inline bool operator>=(const OT& other);
-
-		template<typename OT>
 		inline Tensor<T, device> operator+(OT& other);
 		template<typename OT>
 		inline Tensor<T, device> operator+(const OT& other);
@@ -531,34 +501,34 @@ namespace TSlib
 		inline Tensor<T, device> operator%=(const OT& other);
 
 		template<typename OT>
-		inline Tensor<T, device> operator==(OT& other);
+		inline bool operator==(OT& other);
 		template<typename OT>
-		inline Tensor<T, device> operator==(const OT& other);
+		inline bool operator==(const OT& other);
 
 		template<typename OT>
-		inline Tensor<T, device> operator!=(OT& other);
+		inline bool operator!=(OT& other);
 		template<typename OT>
-		inline Tensor<T, device> operator!=(const OT& other);
+		inline bool operator!=(const OT& other);
 
 		template<typename OT>
-		inline Tensor<T, device> operator<(OT& other);
+		inline bool operator<(OT& other);
 		template<typename OT>
-		inline Tensor<T, device> operator<(const OT& other);
+		inline bool operator<(const OT& other);
 
 		template<typename OT>
-		inline Tensor<T, device> operator>(OT& other);
+		inline bool operator>(OT& other);
 		template<typename OT>
-		inline Tensor<T, device> operator>(const OT& other);
+		inline bool operator>(const OT& other);
 
 		template<typename OT>
-		inline Tensor<T, device> operator<=(OT& other);
+		inline bool operator<=(OT& other);
 		template<typename OT>
-		inline Tensor<T, device> operator<=(const OT& other);
+		inline bool operator<=(const OT& other);
 
 		template<typename OT>
-		inline Tensor<T, device> operator>=(OT& other);
+		inline bool operator>=(OT& other);
 		template<typename OT>
-		inline Tensor<T, device> operator>=(const OT& other);
+		inline bool operator>=(const OT& other);
 
 		#ifdef _CUDA
 		operator CUDATensor1D<T>();

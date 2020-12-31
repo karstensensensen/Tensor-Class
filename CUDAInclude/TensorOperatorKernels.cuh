@@ -14,7 +14,7 @@ namespace TSlib
 		}
 	}
 	template <typename T, typename OT, typename RT>
-	__kernel__ CudaAdd(CUDATensor3D<T> a, CUDATensor3D<RT> c, const OT b)
+	__kernel__ CudaAdd(const CUDATensor3D<T> a, CUDATensor3D<RT> c, const OT b)
 	{
 		if (a.in_bounds())
 		{
@@ -63,7 +63,7 @@ namespace TSlib
 	__kernel__ CudaDot(const CUDATensor3D<T> a, CUDATensor3D<RT> c, const OT b);
 
 	template <typename T, typename OT, typename RT>
-	__kernel__ CudaDivide(const CUDATensor3D<T> a, CUDATensor3D<RT> c, CUDATensor3D<OT> b)
+	__kernel__ CudaDivide(const CUDATensor3D<T> a, CUDATensor3D<RT> c, const CUDATensor3D<OT> b)
 	{
 		if (a.in_bounds())
 		{

@@ -25,7 +25,7 @@ namespace TSlib
 		{
 			#ifdef _TS_DEBUG
 			if (!CUDA_IS_INITIALIZED)
-				std::cout << "WARNING: CUDA library has not been initialized. CUDA dependent functions are not guaranteed to work.\nUse CUDAInitialize() to initialize the CUDA library\n";
+				std::cout << "WARNING: CUDA library has not been initialized. CUDA dependent functions are not guaranteed to work.\nUse the function TSlib::CUDAInitialize() to initialize the CUDA library\n";
 			#endif
 			if (code != cudaSuccess)
 			{
@@ -57,6 +57,7 @@ namespace TSlib
 
 	class CTBase
 	{
+	protected:
 		friend CUDATensor1D<T>;
 		friend CUDATensor2D<T>;
 		friend CUDATensor3D<T>;
@@ -72,11 +73,13 @@ namespace TSlib
 		template<typename First, typename ... Args>
 		__device__ void get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord, Args ... remaining) const;
 
-	public:
-
-		CTBase(const T* gpu_mem, size_t m_size, size_t* dim_arr, size_t dims);
 		CTBase(T* gpu_mem, size_t m_size, size_t* dim_arr, size_t dims);
 		~CTBase();
+
+	public:
+
+		__device__ T* get_gpu();
+		__device__ const T* get_gpu() const;
 
 		__device__ size_t size() const;
 

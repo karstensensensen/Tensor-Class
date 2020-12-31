@@ -2,6 +2,7 @@
 
 #ifdef _CUDA
 #include "TensorCudaBones.cuh"
+#include "TensorOperatorKernels.cuh"
 #else
 #include "TensorBones.h"
 #endif
@@ -24,6 +25,12 @@ namespace TSlib
 	template<typename OT>
 	Tensor<T, device> Tensor<T, device>::operator+(const OT& other)
 	{
+
+		if constexpr (device == Mode::GPU)
+		{
+			return Cadd(other);
+		}
+
 		return add(other);
 	}
 
@@ -42,6 +49,10 @@ namespace TSlib
 	template<typename OT>
 	Tensor<T, device> Tensor<T, device>::operator-(const OT& other)
 	{
+		if constexpr (device == Mode::GPU)
+		{
+			return Csubtract(other);
+		}
 		return subtract(other);
 	}
 
@@ -60,6 +71,10 @@ namespace TSlib
 	template<typename OT>
 	Tensor<T, device> Tensor<T, device>::operator*(const OT& other)
 	{
+		if constexpr (device == Mode::GPU)
+		{
+			return Cmultiply(other);
+		}
 		return multiply(other);
 	}
 
@@ -78,6 +93,10 @@ namespace TSlib
 	template<typename OT>
 	Tensor<T, device> Tensor<T, device>::operator/(const OT& other)
 	{
+		if constexpr (device == Mode::GPU)
+		{
+			return Cdivide(other);
+		}
 		return divide(other);
 	}
 
@@ -96,6 +115,10 @@ namespace TSlib
 	template<typename OT>
 	Tensor<T, device> Tensor<T, device>::operator%(const OT& other)
 	{
+		if constexpr (device == Mode::GPU)
+		{
+			return Cmodulous(other);
+		}
 		return modulous(other);
 	}
 
@@ -114,6 +137,10 @@ namespace TSlib
 	template<typename OT>
 	Tensor<T, device> Tensor<T, device>::operator+=(const OT& other)
 	{
+		if constexpr (device == Mode::GPU)
+		{
+			return CaddAsgmt(other);
+		}
 		return addAsgmt(other);
 	}
 
@@ -132,6 +159,10 @@ namespace TSlib
 	template<typename OT>
 	Tensor<T, device> Tensor<T, device>::operator-=(const OT& other)
 	{
+		if constexpr (device == Mode::GPU)
+		{
+			return CsubtractAsgmt(other);
+		}
 		return subtractAsgmt(other);
 	}
 
@@ -150,6 +181,10 @@ namespace TSlib
 	template<typename OT>
 	Tensor<T, device> Tensor<T, device>::operator*=(const OT& other)
 	{
+		if constexpr (device == Mode::GPU)
+		{
+			return CmultiplyAsgmt(other);
+		}
 		return multiplyAsgmt(other);
 	}
 
@@ -168,6 +203,10 @@ namespace TSlib
 	template<typename OT>
 	Tensor<T, device> Tensor<T, device>::operator/=(const OT& other)
 	{
+		if constexpr (device == Mode::GPU)
+		{
+			return CdivideAsgmt(other);
+		}
 		return divideAsgmt(other);
 	}
 
@@ -186,6 +225,10 @@ namespace TSlib
 	template<typename OT>
 	Tensor<T, device> Tensor<T, device>::operator%=(const OT& other)
 	{
+		if constexpr (device == Mode::GPU)
+		{
+			return CmodulousAsgmt(other);
+		}
 		return modulousAsgmt(other);
 	}
 
@@ -247,9 +290,9 @@ namespace TSlib
 
 		if (size() != other.size())
 		{
-			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape, Shape());
+			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape(), Shape());
 		}
-		else if (!other_alloc)
+		else if (other_alloc)
 		{
 			throw BadValue("A const Tensor must have already allocated memory on the gpu");
 		}
@@ -306,7 +349,7 @@ namespace TSlib
 
 		if (size() != other.size())
 		{
-			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape, Shape());
+			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape(), Shape());
 		}
 		#endif
 
@@ -347,9 +390,9 @@ namespace TSlib
 
 		if (size() != other.size())
 		{
-			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape, Shape());
+			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape(), Shape());
 		}
-		else if (!other_alloc)
+		else if (other_alloc)
 		{
 			throw BadValue("A const Tensor must have already allocated memory on the gpu");
 		}
@@ -404,7 +447,7 @@ namespace TSlib
 
 		if (size() != other.size())
 		{
-			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape, Shape());
+			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape(), Shape());
 		}
 		#endif
 
@@ -444,9 +487,9 @@ namespace TSlib
 
 		if (size() != other.size())
 		{
-			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape, Shape());
+			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape(), Shape());
 		}
-		else if (!other_alloc)
+		else if (other_alloc)
 		{
 			throw BadValue("A const Tensor must have already allocated memory on the gpu");
 		}
@@ -500,7 +543,7 @@ namespace TSlib
 
 		if (size() != other.size())
 		{
-			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape, Shape());
+			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape(), Shape());
 		}
 		#endif
 
@@ -540,9 +583,9 @@ namespace TSlib
 
 		if (size() != other.size())
 		{
-			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape, Shape());
+			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape(), Shape());
 		}
-		else if (!other_alloc)
+		else if (other_alloc)
 		{
 			throw BadValue("A const Tensor must have already allocated memory on the gpu");
 		}
@@ -596,7 +639,7 @@ namespace TSlib
 
 		if (size() != other.size())
 		{
-			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape, Shape());
+			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape(), Shape());
 		}
 		#endif
 
@@ -636,9 +679,9 @@ namespace TSlib
 
 		if (size() != other.size())
 		{
-			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape, Shape());
+			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape(), Shape());
 		}
-		else if (!other_alloc)
+		else if (other_alloc)
 		{
 			throw BadValue("A const Tensor must have already allocated memory on the gpu");
 		}
@@ -693,7 +736,7 @@ namespace TSlib
 
 		if (size() != other.size())
 		{
-			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape, Shape());
+			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape(), Shape());
 		}
 		#endif
 
@@ -732,9 +775,9 @@ namespace TSlib
 
 		if (size() != other.size())
 		{
-			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape, Shape());
+			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape(), Shape());
 		}
-		else if (!other_alloc)
+		else if (other_alloc)
 		{
 			throw BadValue("A const Tensor must have already allocated memory on the gpu");
 		}
@@ -785,7 +828,7 @@ namespace TSlib
 
 		if (size() != other.size())
 		{
-			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape, Shape());
+			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape(), Shape());
 		}
 		#endif
 
@@ -824,9 +867,9 @@ namespace TSlib
 
 		if (size() != other.size())
 		{
-			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape, Shape());
+			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape(), Shape());
 		}
-		else if (!other_alloc)
+		else if (other_alloc)
 		{
 			throw BadValue("A const Tensor must have already allocated memory on the gpu");
 		}
@@ -876,7 +919,7 @@ namespace TSlib
 
 		if (size() != other.size())
 		{
-			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape, Shape());
+			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape(), Shape());
 		}
 		#endif
 
@@ -915,9 +958,9 @@ namespace TSlib
 
 		if (size() != other.size())
 		{
-			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape, Shape());
+			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape(), Shape());
 		}
-		else if (!other_alloc)
+		else if (other_alloc)
 		{
 			throw BadValue("A const Tensor must have already allocated memory on the gpu");
 		}
@@ -968,7 +1011,7 @@ namespace TSlib
 
 		if (size() != other.size())
 		{
-			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape, Shape());
+			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape(), Shape());
 		}
 		#endif
 
@@ -1007,9 +1050,9 @@ namespace TSlib
 
 		if (size() != other.size())
 		{
-			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape, Shape());
+			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape(), Shape());
 		}
-		else if (!other_alloc)
+		else if (other_alloc)
 		{
 			throw BadValue("A const Tensor must have already allocated memory on the gpu");
 		}
@@ -1060,7 +1103,7 @@ namespace TSlib
 
 		if (size() != other.size())
 		{
-			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape, Shape());
+			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape(), Shape());
 		}
 		#endif
 
@@ -1099,9 +1142,9 @@ namespace TSlib
 
 		if (size() != other.size())
 		{
-			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape, Shape());
+			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape(), Shape());
 		}
-		else if (!other_alloc)
+		else if (other_alloc)
 		{
 			throw BadValue("A const Tensor must have already allocated memory on the gpu");
 		}
@@ -1145,12 +1188,20 @@ namespace TSlib
 	template<typename RT, typename OT, Mode o_device>
 	Tensor<RT, device> Tensor<T, device>::Ccompare(const Tensor<OT, o_device>& other)
 	{
-		#ifdef _TS_DEBUG
-		assert("Unable to fit the Tensors" && size() == other.size());
-		#endif
-
 		bool this_alloc = isDeallocated();
 		bool other_alloc = other.isDeallocated();
+
+		#ifdef _TS_DEBUG
+
+		if (size() != other.size())
+		{
+			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape(), Shape());
+		}
+		else if (other_alloc)
+		{
+			throw BadValue("A const Tensor must have already allocated memory on the gpu");
+		}
+		#endif
 
 		if (this_alloc)
 		{
@@ -1204,12 +1255,20 @@ namespace TSlib
 	template<typename RT, typename OT, Mode o_device>
 	Tensor<RT, device> Tensor<T, device>::ClessThan(const Tensor<OT, o_device>& other)
 	{
-		#ifdef _TS_DEBUG
-		assert("Unable to fit the Tensors" && size() == other.size());
-		#endif
-
 		bool this_alloc = isDeallocated();
 		bool other_alloc = other.isDeallocated();
+
+		#ifdef _TS_DEBUG
+
+		if (size() != other.size())
+		{
+			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape(), Shape());
+		}
+		else if (other_alloc)
+		{
+			throw BadValue("A const Tensor must have already allocated memory on the gpu");
+		}
+		#endif
 
 		if (this_alloc)
 		{
@@ -1263,12 +1322,20 @@ namespace TSlib
 	template<typename RT, typename OT, Mode o_device>
 	Tensor<RT, device> Tensor<T, device>::CgreaterThan(const Tensor<OT, o_device>& other)
 	{
-		#ifdef _TS_DEBUG
-		assert("Unable to fit the Tensors" && size() == other.size());
-		#endif
-
 		bool this_alloc = isDeallocated();
 		bool other_alloc = other.isDeallocated();
+
+		#ifdef _TS_DEBUG
+
+		if (size() != other.size())
+		{
+			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape(), Shape());
+		}
+		else if (other_alloc)
+		{
+			throw BadValue("A const Tensor must have already allocated memory on the gpu");
+		}
+		#endif
 
 		if (this_alloc)
 		{
@@ -1322,12 +1389,20 @@ namespace TSlib
 	template<typename RT, typename OT, Mode o_device>
 	Tensor<RT, device> Tensor<T, device>::ClessThanEqual(const Tensor<OT, o_device>& other)
 	{
-		#ifdef _TS_DEBUG
-		assert("Unable to fit the Tensors" && size() == other.size());
-		#endif
-
 		bool this_alloc = isDeallocated();
 		bool other_alloc = other.isDeallocated();
+
+		#ifdef _TS_DEBUG
+
+		if (size() != other.size())
+		{
+			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape(), Shape());
+		}
+		else if (other_alloc)
+		{
+			throw BadValue("A const Tensor must have already allocated memory on the gpu");
+		}
+		#endif
 
 		if (this_alloc)
 		{
@@ -1381,12 +1456,20 @@ namespace TSlib
 	template<typename RT, typename OT, Mode o_device>
 	Tensor<RT, device> Tensor<T, device>::CgreaterThanEqual(const Tensor<OT, o_device>& other)
 	{
-		#ifdef _TS_DEBUG
-		assert("Unable to fit the Tensors" && size() == other.size());
-		#endif
-
 		bool this_alloc = isDeallocated();
 		bool other_alloc = other.isDeallocated();
+
+		#ifdef _TS_DEBUG
+
+		if (size() != other.size())
+		{
+			throw BadShape("The source tensor must have the same shape as the destination Tensor", other.Shape(), Shape());
+		}
+		else if (other_alloc)
+		{
+			throw BadValue("A const Tensor must have already allocated memory on the gpu");
+		}
+		#endif
 
 		if (this_alloc)
 		{
@@ -1439,7 +1522,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename OT>
-	Tensor<T, device> Tensor<T, device>::operator==(OT& other)
+	bool Tensor<T, device>::operator==(OT& other)
 	{
 		if constexpr (device == Mode::GPU)
 		{
@@ -1450,14 +1533,18 @@ namespace TSlib
 	}
 	template<typename T, Mode device>
 	template<typename OT>
-	Tensor<T, device> Tensor<T, device>::operator==(const OT& other)
+	bool Tensor<T, device>::operator==(const OT& other)
 	{
+		if constexpr (device == Mode::GPU)
+		{
+			return (bool)Ccompare(other, Equal).sum<size_t>();
+		}
 		return (bool)compare(other, Equal).sum<size_t>();
 	}
 
 	template<typename T, Mode device>
 	template<typename OT>
-	Tensor<T, device> Tensor<T, device>::operator!=(OT& other)
+	bool Tensor<T, device>::operator!=(OT& other)
 	{
 		if constexpr (device == Mode::GPU)
 		{
@@ -1468,14 +1555,18 @@ namespace TSlib
 	}
 	template<typename T, Mode device>
 	template<typename OT>
-	Tensor<T, device> Tensor<T, device>::operator!=(const OT& other)
+	bool Tensor<T, device>::operator!=(const OT& other)
 	{
+		if constexpr (device == Mode::GPU)
+		{
+			return !(bool)Ccompare(other, Equal).sum<size_t>();
+		}
 		return !(bool)compare(other, Equal).sum<size_t>();
 	}
 
 	template<typename T, Mode device>
 	template<typename OT>
-	Tensor<T, device> Tensor<T, device>::operator<(OT& other)
+	bool Tensor<T, device>::operator<(OT& other)
 	{
 		if constexpr (device == Mode::GPU)
 		{
@@ -1486,14 +1577,18 @@ namespace TSlib
 	}
 	template<typename T, Mode device>
 	template<typename OT>
-	Tensor<T, device> Tensor<T, device>::operator<(const OT& other)
+	bool Tensor<T, device>::operator<(const OT& other)
 	{
+		if constexpr (device == Mode::GPU)
+		{
+			return (bool)Ccompare(other).sum<size_t>();
+		}
 		return (bool)compare(other, LessThan).sum<size_t>();
 	}
 
 	template<typename T, Mode device>
 	template<typename OT>
-	Tensor<T, device> Tensor<T, device>::operator>(OT& other)
+	bool Tensor<T, device>::operator>(OT& other)
 	{
 		if constexpr (device == Mode::GPU)
 		{
@@ -1504,14 +1599,18 @@ namespace TSlib
 	}
 	template<typename T, Mode device>
 	template<typename OT>
-	Tensor<T, device> Tensor<T, device>::operator>(const OT& other)
+	bool Tensor<T, device>::operator>(const OT& other)
 	{
+		if constexpr (device == Mode::GPU)
+		{
+			return (bool)Ccompare(other, GreaterThan).sum<size_t>();
+		}
 		return (bool)compare(other, GreaterThan).sum<size_t>();
 	}
 
 	template<typename T, Mode device>
 	template<typename OT>
-	Tensor<T, device> Tensor<T, device>::operator<=(OT& other)
+	bool Tensor<T, device>::operator<=(OT& other)
 	{
 		if constexpr (device == Mode::GPU)
 		{
@@ -1522,14 +1621,18 @@ namespace TSlib
 	}
 	template<typename T, Mode device>
 	template<typename OT>
-	Tensor<T, device> Tensor<T, device>::operator<=(const OT& other)
+	bool Tensor<T, device>::operator<=(const OT& other)
 	{
+		if constexpr (device == Mode::GPU)
+		{
+			return (bool)Ccompare(other, LessThanEqual).sum<size_t>();
+		}
 		return (bool)compare(other, LessThanEqual).sum<size_t>();
 	}
 
 	template<typename T, Mode device>
 	template<typename OT>
-	Tensor<T, device> Tensor<T, device>::operator>=(OT& other)
+	bool Tensor<T, device>::operator>=(OT& other)
 	{
 		if constexpr (device == Mode::GPU)
 		{
@@ -1540,8 +1643,12 @@ namespace TSlib
 	}
 	template<typename T, Mode device>
 	template<typename OT>
-	Tensor<T, device> Tensor<T, device>::operator>=(const OT& other)
+	bool Tensor<T, device>::operator>=(const OT& other)
 	{
+		if constexpr (device == Mode::GPU)
+		{
+			return (bool)Ccompare(other, GreaterThanEqual).sum<size_t>();
+		}
 		return (bool)compare(other, GreaterThanEqual).sum<size_t>();
 	}
 }

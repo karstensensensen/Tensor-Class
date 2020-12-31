@@ -39,14 +39,14 @@ namespace TSlib
 		#ifdef _TS_DEBUG
 		if (Dims() < other.Dims())
 		{
-			throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
+			throw BadShape("Must have less than or the same number of dimensions in each Tensor", other.Shape(), shape());
 		}
 
 		for (size_t i = 0; i < this->Dims(); i++)
 		{
 			if (Shape()[i] != other.Shape()[i])
 			{
-				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+				throw BadShape("Must have same dimension length in each Tensor", other.Shape(), Shape());
 			}
 		}
 		#endif
@@ -81,21 +81,21 @@ namespace TSlib
 		#ifdef _TS_DEBUG
 		if (Dims() != other.Dims())
 		{
-			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+			throw BadShape("Must have the same number of dimensions in each Tensor", other.Shape(), Shape());
 		}
 
 		for (size_t i = 0; i < this->Dims(); i++)
 		{
 			if (Shape()[i] != other.Shape()[i])
 			{
-				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+				throw BadShape("Must have same dimension length in each Tensor", other.Shape(), Shape());
 			}
 		}
 		#endif
 
 		Tensor<RT, device> result(this->Shape(), RT());
 
-		fCompute([&](const T& val, const size_t& index) {result[index] = val - other[index]; });
+		Compute([&](const T& val, const size_t& index) {result[index] = val - other[index]; });
 
 		return result;
 	}
@@ -108,14 +108,14 @@ namespace TSlib
 		#ifdef _TS_DEBUG
 		if (Dims() < other.Dims())
 		{
-			throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
+			throw BadShape("Must have less than or the same number of dimensions in each Tensor", other.Shape(), shape());
 		}
 
 		for (size_t i = 0; i < this->Dims(); i++)
 		{
 			if (Shape()[i] != other.Shape()[i])
 			{
-				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+				throw BadShape("Must have same dimension length in each Tensor", other.Shape(), Shape());
 			}
 		}
 		#endif
@@ -150,14 +150,14 @@ namespace TSlib
 		#ifdef _TS_DEBUG
 		if (Dims() != other.Dims())
 		{
-			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+			throw BadShape("Must have the same number of dimensions in each Tensor", other.Shape(), Shape());
 		}
 
 		for (size_t i = 0; i < this->Dims(); i++)
 		{
 			if (Shape()[i] != other.Shape()[i])
 			{
-				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+				throw BadShape("Must have same dimension length in each Tensor", other.Shape(), Shape());
 			}
 		}
 		#endif
@@ -177,14 +177,14 @@ namespace TSlib
 		#ifdef _TS_DEBUG
 		if (Dims() < other.Dims())
 		{
-			throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
+			throw BadShape("Must have less than or the same number of dimensions in each Tensor", other.Shape(), shape());
 		}
 
 		for (size_t i = 0; i < this->Dims(); i++)
 		{
 			if (Shape()[i] != other.Shape()[i])
 			{
-				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+				throw BadShape("Must have same dimension length in each Tensor", other.Shape(), Shape());
 			}
 		}
 		#endif
@@ -219,14 +219,14 @@ namespace TSlib
 		#ifdef _TS_DEBUG
 		if (Dims() != other.Dims())
 		{
-			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+			throw BadShape("Must have the same number of dimensions in each Tensor", other.Shape(), Shape());
 		}
 
 		for (size_t i = 0; i < this->Dims(); i++)
 		{
 			if (Shape()[i] != other.Shape()[i])
 			{
-				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+				throw BadShape("Must have same dimension length in each Tensor", other.Shape(), Shape());
 			}
 		}
 		#endif
@@ -246,14 +246,14 @@ namespace TSlib
 		#ifdef _TS_DEBUG
 		if (Dims() < other.Dims())
 		{
-			throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
+			throw BadShape("Must have less than or the same number of dimensions in each Tensor", other.Shape(), shape());
 		}
 
 		for (size_t i = 0; i < this->Dims(); i++)
 		{
 			if (Shape()[i] != other.Shape()[i])
 			{
-				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+				throw BadShape("Must have same dimension length in each Tensor", other.Shape(), Shape());
 			}
 		}
 		#endif
@@ -288,14 +288,14 @@ namespace TSlib
 		#ifdef _TS_DEBUG
 		if (Dims() != other.Dims())
 		{
-			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+			throw BadShape("Must have the same number of dimensions in each Tensor", other.Shape(), Shape());
 		}
 
 		for (size_t i = 0; i < this->Dims(); i++)
 		{
 			if (Shape()[i] != other.Shape()[i])
 			{
-				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+				throw BadShape("Must have same dimension length in each Tensor", other.Shape(), Shape());
 			}
 		}
 		#endif
@@ -315,14 +315,14 @@ namespace TSlib
 		#ifdef _TS_DEBUG
 		if (Dims() < other.Dims())
 		{
-			throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
+			throw BadShape("Must have less than or the same number of dimensions in each Tensor", other.Shape(), shape());
 		}
 
 		for (size_t i = 0; i < this->Dims(); i++)
 		{
 			if (Shape()[i] != other.Shape()[i])
 			{
-				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+				throw BadShape("Must have same dimension length in each Tensor", other.Shape(), Shape());
 			}
 		}
 		#endif
@@ -357,14 +357,14 @@ namespace TSlib
 		#ifdef _TS_DEBUG
 		if (Dims() != other.Dims())
 		{
-			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+			throw BadShape("Must have the same number of dimensions in each Tensor", other.Shape(), Shape());
 		}
 
 		for (size_t i = 0; i < this->Dims(); i++)
 		{
 			if (Shape()[i] != other.Shape()[i])
 			{
-				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+				throw BadShape("Must have same dimension length in each Tensor", other.Shape(), Shape());
 			}
 		}
 		#endif
@@ -380,14 +380,14 @@ namespace TSlib
 		#ifdef _TS_DEBUG
 		if (Dims() < other.Dims())
 		{
-			throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
+			throw BadShape("Must have less than or the same number of dimensions in each Tensor", other.Shape(), shape());
 		}
 
 		for (size_t i = 0; i < this->Dims(); i++)
 		{
 			if (Shape()[i] != other.Shape()[i])
 			{
-				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+				throw BadShape("Must have same dimension length in each Tensor", other.Shape(), Shape());
 			}
 		}
 		#endif
@@ -415,14 +415,14 @@ namespace TSlib
 		#ifdef _TS_DEBUG
 		if (Dims() != other.Dims())
 		{
-			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+			throw BadShape("Must have the same number of dimensions in each Tensor", other.Shape(), Shape());
 		}
 
 		for (size_t i = 0; i < this->Dims(); i++)
 		{
 			if (Shape()[i] != other.Shape()[i])
 			{
-				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+				throw BadShape("Must have same dimension length in each Tensor", other.Shape(), Shape());
 			}
 		}
 		#endif
@@ -438,14 +438,14 @@ namespace TSlib
 		#ifdef _TS_DEBUG
 		if (Dims() < other.Dims())
 		{
-			throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
+			throw BadShape("Must have less than or the same number of dimensions in each Tensor", other.Shape(), shape());
 		}
 
 		for (size_t i = 0; i < this->Dims(); i++)
 		{
 			if (Shape()[i] != other.Shape()[i])
 			{
-				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+				throw BadShape("Must have same dimension length in each Tensor", other.Shape(), Shape());
 			}
 		}
 		#endif
@@ -472,14 +472,14 @@ namespace TSlib
 		#ifdef _TS_DEBUG
 		if (Dims() != other.Dims())
 		{
-			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+			throw BadShape("Must have the same number of dimensions in each Tensor", other.Shape(), Shape());
 		}
 
 		for (size_t i = 0; i < this->Dims(); i++)
 		{
 			if (Shape()[i] != other.Shape()[i])
 			{
-				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+				throw BadShape("Must have same dimension length in each Tensor", other.Shape(), Shape());
 			}
 		}
 		#endif
@@ -495,14 +495,14 @@ namespace TSlib
 		#ifdef _TS_DEBUG
 		if (Dims() < other.Dims())
 		{
-			throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
+			throw BadShape("Must have less than or the same number of dimensions in each Tensor", other.Shape(), shape());
 		}
 
 		for (size_t i = 0; i < this->Dims(); i++)
 		{
 			if (Shape()[i] != other.Shape()[i])
 			{
-				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+				throw BadShape("Must have same dimension length in each Tensor", other.Shape(), Shape());
 			}
 		}
 		#endif
@@ -529,14 +529,14 @@ namespace TSlib
 		#ifdef _TS_DEBUG
 		if (Dims() != other.Dims())
 		{
-			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+			throw BadShape("Must have the same number of dimensions in each Tensor", other.Shape(), Shape());
 		}
 
 		for (size_t i = 0; i < this->Dims(); i++)
 		{
 			if (Shape()[i] != other.Shape()[i])
 			{
-				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+				throw BadShape("Must have same dimension length in each Tensor", other.Shape(), Shape());
 			}
 		}
 		#endif
@@ -552,14 +552,14 @@ namespace TSlib
 		#ifdef _TS_DEBUG
 		if (Dims() < other.Dims())
 		{
-			throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
+			throw BadShape("Must have less than or the same number of dimensions in each Tensor", other.Shape(), shape());
 		}
 
 		for (size_t i = 0; i < this->Dims(); i++)
 		{
 			if (Shape()[i] != other.Shape()[i])
 			{
-				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+				throw BadShape("Must have same dimension length in each Tensor", other.Shape(), Shape());
 			}
 		}
 		#endif
@@ -586,14 +586,14 @@ namespace TSlib
 		#ifdef _TS_DEBUG
 		if (Dims() != other.Dims())
 		{
-			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+			throw BadShape("Must have the same number of dimensions in each Tensor", other.Shape(), Shape());
 		}
 
 		for (size_t i = 0; i < this->Dims(); i++)
 		{
 			if (Shape()[i] != other.Shape()[i])
 			{
-				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+				throw BadShape("Must have same dimension length in each Tensor", other.Shape(), Shape());
 			}
 		}
 		#endif
@@ -609,14 +609,14 @@ namespace TSlib
 		#ifdef _TS_DEBUG
 		if (Dims() < other.Dims())
 		{
-			throw BadShape(this, "Must have less than or the same number of dimensions in each Tensor", other.Shape());
+			throw BadShape("Must have less than or the same number of dimensions in each Tensor", other.Shape(), shape());
 		}
 
 		for (size_t i = 0; i < this->Dims(); i++)
 		{
 			if (Shape()[i] != other.Shape()[i])
 			{
-				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+				throw BadShape("Must have same dimension length in each Tensor", other.Shape(), Shape());
 			}
 		}
 		#endif
@@ -643,14 +643,14 @@ namespace TSlib
 		#ifdef _TS_DEBUG
 		if (Dims() != other.Dims())
 		{
-			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+			throw BadShape("Must have the same number of dimensions in each Tensor", other.Shape(), Shape());
 		}
 
 		for (size_t i = 0; i < this->Dims(); i++)
 		{
 			if (Shape()[i] != other.Shape()[i])
 			{
-				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+				throw BadShape("Must have same dimension length in each Tensor", other.Shape(), Shape());
 			}
 		}
 		#endif
@@ -670,14 +670,14 @@ namespace TSlib
 		#ifdef _TS_DEBUG
 		if (Dims() != other.Dims())
 		{
-			throw BadShape(this, "Must have the same number of dimensions in each Tensor", other.Shape());
+			throw BadShape("Must have the same number of dimensions in each Tensor", other.Shape(), Shape());
 		}
 
 		for (size_t i = 0; i < Dims(); i++)
 		{
 			if (Shape()[i] != other.Shape()[i])
 			{
-				throw BadShape(this, "Must have same dimension length in each Tensor", other.Shape());
+				throw BadShape("Must have same dimension length in each Tensor", other.Shape(), Shape());
 			}
 		}
 		#endif
