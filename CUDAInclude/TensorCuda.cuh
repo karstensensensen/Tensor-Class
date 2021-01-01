@@ -153,7 +153,7 @@ namespace TSlib
 	CUDATensor1D<T>::CUDATensor1D(Tensor<T, device>& tensor)
 		: CTBase(tensor.gpu_mem, tensor.size(), nullptr, tensor.Dims())
 	{
-		CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
+		CER(cudaMallocManaged(&dim_arr, sizeof(size_t) * dims));
 		CER(cudaMemcpy(dim_arr, tensor.Shape().data(), sizeof(size_t) * dims, cudaMemcpyHostToDevice));
 
 		m_length = tensor.FlattenDims();
@@ -164,7 +164,7 @@ namespace TSlib
 	CUDATensor1D<T>::CUDATensor1D(const Tensor<T, device>& tensor) const
 		: CTBase(tensor.gpu_mem, tensor.size(), nullptr, tensor.Dims())
 	{
-		CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
+		CER(cudaMallocManaged(&dim_arr, sizeof(size_t) * dims));
 		CER(cudaMemcpy(dim_arr, tensor.Shape().data(), sizeof(size_t) * dims, cudaMemcpyHostToDevice));
 
 		m_length = tensor.FlattenDims();
@@ -174,7 +174,7 @@ namespace TSlib
 	CUDATensor1D<T>::CUDATensor1D(const CUDATensor1D<T>& tensor)
 		: CTBase(other.gpu_mem, other.m_size, nullptr, other.dims), m_length(other.m_length)
 	{
-		CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
+		CER(cudaMallocManaged(&dim_arr, sizeof(size_t) * dims));
 		CER(cudaMemcpy(dim_arr, other.dim_arr, sizeof(size_t) * dims, cudaMemcpyDeviceToDevice));
 	}
 
@@ -183,7 +183,7 @@ namespace TSlib
 	CUDATensor2D<T>::CUDATensor2D(Tensor<T, device>& tensor)
 		: CTBase(tensor.gpu_mem, tensor.size(), nullptr, tensor.Dims())
 	{
-		CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
+		CER(cudaMallocManaged(&dim_arr, sizeof(size_t) * dims));
 		CER(cudaMemcpy(dim_arr, tensor.Shape().data(), sizeof(size_t) * dims, cudaMemcpyHostToDevice));
 
 		auto new_dims = tensor.FlattenDims(2);
@@ -196,7 +196,7 @@ namespace TSlib
 	CUDATensor2D<T>::CUDATensor2D(const Tensor<T, device>& tensor)
 		: CTBase(tensor.gpu_mem, tensor.size(), nullptr, tensor.Dims())
 	{
-		CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
+		CER(cudaMallocManaged(&dim_arr, sizeof(size_t) * dims));
 		CER(cudaMemcpy(dim_arr, tensor.Shape().data(), sizeof(size_t) * dims, cudaMemcpyHostToDevice));
 
 		auto new_dims = tensor.FlattenDims(2);
@@ -208,7 +208,7 @@ namespace TSlib
 	CUDATensor2D<T>::CUDATensor2D(const CUDATensor2D<T>& tensor)
 		: CTBase(other.gpu_mem, other.m_size, nullptr, other.dims), m_length(other.m_length), m_width(other.m_width)
 	{
-		CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
+		CER(cudaMallocManaged(&dim_arr, sizeof(size_t) * dims));
 		CER(cudaMemcpy(dim_arr, other.dim_arr, sizeof(size_t) * dims, cudaMemcpyDeviceToDevice));
 	}
 
@@ -217,7 +217,7 @@ namespace TSlib
 	CUDATensor3D<T>::CUDATensor3D(Tensor<T, device>& tensor)
 		:CTBase(tensor.gpu_mem, tensor.size(), nullptr, tensor.Dims())
 	{
-		CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
+		CER(cudaMallocManaged(&dim_arr, sizeof(size_t) * dims));
 		CER(cudaMemcpy(dim_arr, tensor.Shape().data(), sizeof(size_t) * dims, cudaMemcpyHostToDevice));
 
 		auto new_dims = tensor.FlattenDims(3);
@@ -231,7 +231,7 @@ namespace TSlib
 	CUDATensor3D<T>::CUDATensor3D(const Tensor<T, device>& tensor)
 		:CTBase(tensor.gpu_mem, tensor.size(), nullptr, tensor.Dims())
 	{
-		CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
+		CER(cudaMallocManaged(&dim_arr, sizeof(size_t) * dims));
 		CER(cudaMemcpy(dim_arr, tensor.Shape().data(), sizeof(size_t) * dims, cudaMemcpyHostToDevice));
 
 		auto new_dims = tensor.FlattenDims(3);
@@ -244,7 +244,7 @@ namespace TSlib
 	CUDATensor3D<T>::CUDATensor3D(const CUDATensor3D<T>& tensor)
 		: CTBase(other.gpu_mem, other.m_size, nullptr, other.dims), m_length(other.m_length), m_width(other.m_heihgt), m_length(other.m_height)
 	{
-		CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
+		CER(cudaMallocManaged(&dim_arr, sizeof(size_t) * dims));
 		CER(cudaMemcpy(dim_arr, other.dim_arr, sizeof(size_t) * dims, cudaMemcpyDeviceToDevice));
 	}
 
@@ -499,7 +499,7 @@ namespace TSlib
 		assert("GPU memory was not deallocated before calling allocate" && isDeallocated());
 		#endif
 
-		CER(cudaMalloc(&(gpu_mem), size() * sizeof(T)));
+		CER(cudaMallocManaged(&(gpu_mem), size() * sizeof(T)));
 		allocated = true;
 	}
 
