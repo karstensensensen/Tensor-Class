@@ -12,4 +12,10 @@ namespace TSlib
 		Plane,
 		Line
 	};
+
+	#ifdef _CUDA
+	constexpr Mode default_device = Mode::GPU;
+	#else
+	constexpr Mode default_device = Mode::CPU;
+	#endif
 }

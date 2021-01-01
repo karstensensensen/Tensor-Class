@@ -637,7 +637,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename RT, typename OT, Mode o_device>
-	inline Tensor<RT, device> Tensor<T, device>::compare(const Tensor<OT, o_device>& other, bool(*comp_func)(const T&, const OT&))
+	inline Tensor<RT, device> Tensor<T, device>::compare(const Tensor<OT, o_device>& other, bool(*comp_func)(const T&, const OT&)) const
 	{
 		MEASURE();
 		#ifdef _TS_DEBUG
@@ -664,34 +664,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename RT, typename OT, Mode o_device>
-	inline Tensor<RT, device> Tensor<T, device>::compare(Tensor<OT, o_device>& other, bool(*comp_func)(const T&, const OT&))
-	{
-		MEASURE();
-		#ifdef _TS_DEBUG
-		if (Dims() != other.Dims())
-		{
-			throw BadShape("Must have the same number of dimensions in each Tensor", other.Shape(), Shape());
-		}
-
-		for (size_t i = 0; i < this->Dims(); i++)
-		{
-			if (Shape()[i] != other.Shape()[i])
-			{
-				throw BadShape("Must have same dimension length in each Tensor", other.Shape(), Shape());
-			}
-		}
-		#endif
-
-		Tensor<RT, device> result(Shape());
-
-		Compute([&](const T& val, const size_t& index) {result[index] = comp_func(val, other[index]); });
-
-		return result;
-	}
-
-	template<typename T, Mode device>
-	template<typename RT, typename OT, Mode o_device>
-	inline Tensor<RT, device> Tensor<T, device>::compare(const TensorSlice<OT, o_device>& other, bool(*comp_func)(const T&, const OT&))
+	inline Tensor<RT, device> Tensor<T, device>::compare(const TensorSlice<OT, o_device>& other, bool(*comp_func)(const T&, const OT&)) const
 	{
 		MEASURE();
 		#ifdef _TS_DEBUG
@@ -717,35 +690,8 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	template<typename RT, typename OT, Mode o_device>
-	inline Tensor<RT, device> Tensor<T, device>::compare(TensorSlice<OT, o_device>& other, bool(*comp_func)(const T&, const OT&))
-	{
-		MEASURE();
-		#ifdef _TS_DEBUG
-		if (Dims() != other.Dims())
-		{
-			throw BadShape("Must have the same number of dimensions in each Tensor", other.Shape(), Shape());
-		}
-
-		for (size_t i = 0; i < this->Dims(); i++)
-		{
-			if (Shape()[i] != other.Shape()[i])
-			{
-				throw BadShape("Must have same dimension length in each Tensor", other.Shape(), Shape());
-			}
-		}
-		#endif
-
-		Tensor<RT, device> result(Shape());
-
-		Compute([&](const T& val, const size_t& index) {result[index] = comp_func(val, other[index]); });
-
-		return result;
-	}
-
-	template<typename T, Mode device>
-	template<typename RT, typename OT>
-	inline Tensor<RT, device> Tensor<T, device>::compare(const OT& other, bool(*comp_func)(const T&, const OT&))
+	template<typename RT, typename OT, std::enable_if<!is_tensor<OT>::value, int>::type>
+	inline Tensor<RT, device> Tensor<T, device>::compare(const OT& other, bool(*comp_func)(const T&, const OT&)) const
 	{
 		MEASURE();
 

@@ -6,19 +6,34 @@
 #include <atomic>
 #include <assert.h>
 #include <functional>
+#include <type_traits>
 #include "TensorEnums.h"
 #include "TensorSliceBones.h"
 #include "TensorExceptions.h"
 
 namespace TSlib
 {
+
+	namespace
+	{
+
+		template<typename T>
+		struct is_tensor : std::false_type {};
+
+		template<typename T, Mode device>
+		struct is_tensor<Tensor<T, device>> : std::true_type {};
+
+		template<typename T, Mode device>
+		struct is_tensor<TensorSlice<T, device>> : std::true_type {};
+	}
+
 	#ifdef _CUDA
 
 	#ifndef DEVICE_MAX_THREADS
 	#define DEVICE_MAX_THREADS 1024
 	#endif
 
-	constexpr Mode default_device = Mode::GPU;
+	
 
 	template<typename T>
 	class CTBase;
@@ -34,9 +49,6 @@ namespace TSlib
 
 	template<Mode layout>
 	class CUDALayout;
-
-	#else
-	constexpr Mode default_device = Mode::CPU;
 	#endif
 
 	template<typename T, Mode device = default_device>
@@ -441,17 +453,11 @@ namespace TSlib
 		#endif
 
 		template<typename RT = char, typename OT, Mode o_device>
-		Tensor<RT, device> compare(const Tensor<OT, o_device>& other, bool(*comp_func)(const T&, const OT&) = Equal);
+		Tensor<RT, device> compare(const Tensor<OT, o_device>& other, bool(*comp_func)(const T&, const OT&) = Equal) const;
 		template<typename RT = char, typename OT, Mode o_device>
-		Tensor<RT, device> compare(Tensor<OT, o_device>& other, bool(*comp_func)(const T&, const OT&) = Equal);
-
-		template<typename RT = char, typename OT, Mode o_device>
-		Tensor<RT, device> compare(const TensorSlice<OT, o_device>& other, bool(*comp_func)(const T&, const OT&) = Equal);
-		template<typename RT = char, typename OT, Mode o_device>
-		Tensor<RT, device> compare(TensorSlice<OT, o_device>& other, bool(*comp_func)(const T&, const OT&) = Equal);
-
-		template<typename RT = char, typename OT>
-		Tensor<RT, device> compare(const OT& other, bool(*comp_func)(const T&, const OT&) = Equal);
+		Tensor<RT, device> compare(const TensorSlice<OT, o_device>& other, bool(*comp_func)(const T&, const OT&) = Equal) const;
+		template<typename RT = char, typename OT, std::enable_if<!is_tensor<OT>::value, int>::type = 0>
+		Tensor<RT, device> compare(const OT& other, bool(*comp_func)(const T&, const OT&) = Equal) const;
 
 		template<typename OT>
 		inline Tensor<T, device> operator+(OT& other);
