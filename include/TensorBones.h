@@ -201,7 +201,7 @@ namespace TSlib
 		Tensor<T>& operator=(const std::vector<T>& other);
 
 		template<typename RT = T>
-		RT sum();
+		RT sum() const;
 
 		#ifdef _CUDA
 		operator T* ();
@@ -442,9 +442,13 @@ namespace TSlib
 
 		template<typename RT = char, typename OT, Mode o_device>
 		Tensor<RT, device> compare(const Tensor<OT, o_device>& other, bool(*comp_func)(const T&, const OT&) = Equal);
+		template<typename RT = char, typename OT, Mode o_device>
+		Tensor<RT, device> compare(Tensor<OT, o_device>& other, bool(*comp_func)(const T&, const OT&) = Equal);
 
 		template<typename RT = char, typename OT, Mode o_device>
 		Tensor<RT, device> compare(const TensorSlice<OT, o_device>& other, bool(*comp_func)(const T&, const OT&) = Equal);
+		template<typename RT = char, typename OT, Mode o_device>
+		Tensor<RT, device> compare(TensorSlice<OT, o_device>& other, bool(*comp_func)(const T&, const OT&) = Equal);
 
 		template<typename RT = char, typename OT>
 		Tensor<RT, device> compare(const OT& other, bool(*comp_func)(const T&, const OT&) = Equal);

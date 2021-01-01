@@ -1062,13 +1062,13 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename RT>
-	RT Tensor<T, device>::sum()
+	RT Tensor<T, device>::sum() const
 	{
 		MEASURE();
 
 		RT result = RT();
 
-		Compute([result](T& elem) {result += elem; });
+		Compute([&](const T& elem) {result += elem; });
 
 		return result;
 	}

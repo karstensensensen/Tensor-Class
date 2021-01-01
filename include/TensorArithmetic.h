@@ -39,7 +39,7 @@ namespace TSlib
 		#ifdef _TS_DEBUG
 		if (Dims() < other.Dims())
 		{
-			throw BadShape("Must have less than or the same number of dimensions in each Tensor", other.Shape(), shape());
+			throw BadShape("Must have less than or the same number of dimensions in each Tensor", other.Shape(), Shape());
 		}
 
 		for (size_t i = 0; i < this->Dims(); i++)
@@ -108,7 +108,7 @@ namespace TSlib
 		#ifdef _TS_DEBUG
 		if (Dims() < other.Dims())
 		{
-			throw BadShape("Must have less than or the same number of dimensions in each Tensor", other.Shape(), shape());
+			throw BadShape("Must have less than or the same number of dimensions in each Tensor", other.Shape(), Shape());
 		}
 
 		for (size_t i = 0; i < this->Dims(); i++)
@@ -177,7 +177,7 @@ namespace TSlib
 		#ifdef _TS_DEBUG
 		if (Dims() < other.Dims())
 		{
-			throw BadShape("Must have less than or the same number of dimensions in each Tensor", other.Shape(), shape());
+			throw BadShape("Must have less than or the same number of dimensions in each Tensor", other.Shape(), Shape());
 		}
 
 		for (size_t i = 0; i < this->Dims(); i++)
@@ -246,7 +246,7 @@ namespace TSlib
 		#ifdef _TS_DEBUG
 		if (Dims() < other.Dims())
 		{
-			throw BadShape("Must have less than or the same number of dimensions in each Tensor", other.Shape(), shape());
+			throw BadShape("Must have less than or the same number of dimensions in each Tensor", other.Shape(), Shape());
 		}
 
 		for (size_t i = 0; i < this->Dims(); i++)
@@ -315,7 +315,7 @@ namespace TSlib
 		#ifdef _TS_DEBUG
 		if (Dims() < other.Dims())
 		{
-			throw BadShape("Must have less than or the same number of dimensions in each Tensor", other.Shape(), shape());
+			throw BadShape("Must have less than or the same number of dimensions in each Tensor", other.Shape(), Shape());
 		}
 
 		for (size_t i = 0; i < this->Dims(); i++)
@@ -380,7 +380,7 @@ namespace TSlib
 		#ifdef _TS_DEBUG
 		if (Dims() < other.Dims())
 		{
-			throw BadShape("Must have less than or the same number of dimensions in each Tensor", other.Shape(), shape());
+			throw BadShape("Must have less than or the same number of dimensions in each Tensor", other.Shape(), Shape());
 		}
 
 		for (size_t i = 0; i < this->Dims(); i++)
@@ -438,7 +438,7 @@ namespace TSlib
 		#ifdef _TS_DEBUG
 		if (Dims() < other.Dims())
 		{
-			throw BadShape("Must have less than or the same number of dimensions in each Tensor", other.Shape(), shape());
+			throw BadShape("Must have less than or the same number of dimensions in each Tensor", other.Shape(), Shape());
 		}
 
 		for (size_t i = 0; i < this->Dims(); i++)
@@ -495,7 +495,7 @@ namespace TSlib
 		#ifdef _TS_DEBUG
 		if (Dims() < other.Dims())
 		{
-			throw BadShape("Must have less than or the same number of dimensions in each Tensor", other.Shape(), shape());
+			throw BadShape("Must have less than or the same number of dimensions in each Tensor", other.Shape(), Shape());
 		}
 
 		for (size_t i = 0; i < this->Dims(); i++)
@@ -552,7 +552,7 @@ namespace TSlib
 		#ifdef _TS_DEBUG
 		if (Dims() < other.Dims())
 		{
-			throw BadShape("Must have less than or the same number of dimensions in each Tensor", other.Shape(), shape());
+			throw BadShape("Must have less than or the same number of dimensions in each Tensor", other.Shape(), Shape());
 		}
 
 		for (size_t i = 0; i < this->Dims(); i++)
@@ -609,7 +609,7 @@ namespace TSlib
 		#ifdef _TS_DEBUG
 		if (Dims() < other.Dims())
 		{
-			throw BadShape("Must have less than or the same number of dimensions in each Tensor", other.Shape(), shape());
+			throw BadShape("Must have less than or the same number of dimensions in each Tensor", other.Shape(), Shape());
 		}
 
 		for (size_t i = 0; i < this->Dims(); i++)
@@ -655,9 +655,36 @@ namespace TSlib
 		}
 		#endif
 
-		Tensor<RT, device> result(this->Shape());
+		Tensor<RT, device> result(Shape());
 
-		Compute([&](const T& val, const size_t& index) {result = comp_func(val, other[index]); });
+		Compute([&](const T& val, const size_t& index) {result[index] = comp_func(val, other[index]); });
+
+		return result;
+	}
+
+	template<typename T, Mode device>
+	template<typename RT, typename OT, Mode o_device>
+	inline Tensor<RT, device> Tensor<T, device>::compare(Tensor<OT, o_device>& other, bool(*comp_func)(const T&, const OT&))
+	{
+		MEASURE();
+		#ifdef _TS_DEBUG
+		if (Dims() != other.Dims())
+		{
+			throw BadShape("Must have the same number of dimensions in each Tensor", other.Shape(), Shape());
+		}
+
+		for (size_t i = 0; i < this->Dims(); i++)
+		{
+			if (Shape()[i] != other.Shape()[i])
+			{
+				throw BadShape("Must have same dimension length in each Tensor", other.Shape(), Shape());
+			}
+		}
+		#endif
+
+		Tensor<RT, device> result(Shape());
+
+		Compute([&](const T& val, const size_t& index) {result[index] = comp_func(val, other[index]); });
 
 		return result;
 	}
@@ -685,6 +712,33 @@ namespace TSlib
 		Tensor<RT, device> result(Shape());
 
 		Compute([&](const T& val, const size_t& index) {result[index] = comp_func(val, other); });
+
+		return result;
+	}
+
+	template<typename T, Mode device>
+	template<typename RT, typename OT, Mode o_device>
+	inline Tensor<RT, device> Tensor<T, device>::compare(TensorSlice<OT, o_device>& other, bool(*comp_func)(const T&, const OT&))
+	{
+		MEASURE();
+		#ifdef _TS_DEBUG
+		if (Dims() != other.Dims())
+		{
+			throw BadShape("Must have the same number of dimensions in each Tensor", other.Shape(), Shape());
+		}
+
+		for (size_t i = 0; i < this->Dims(); i++)
+		{
+			if (Shape()[i] != other.Shape()[i])
+			{
+				throw BadShape("Must have same dimension length in each Tensor", other.Shape(), Shape());
+			}
+		}
+		#endif
+
+		Tensor<RT, device> result(Shape());
+
+		Compute([&](const T& val, const size_t& index) {result[index] = comp_func(val, other[index]); });
 
 		return result;
 	}
