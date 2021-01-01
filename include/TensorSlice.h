@@ -158,7 +158,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename OT, Mode device_other>
-	void TSlib::TensorSlice<T, device>::Fill(const TensorSlice<OT, device_other>& other)
+	void TensorSlice<T, device>::Fill(const TensorSlice<OT, device_other>& other)
 	{
 		#ifdef DEBUG
 
@@ -206,7 +206,7 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	inline void TSlib::TensorSlice<T, device>::Fill(const std::vector<T>& vals)
+	inline void TensorSlice<T, device>::Fill(const std::vector<T>& vals)
 	{
 		#ifdef _TS_DEBUG
 		if (vals.size() != size())
@@ -307,7 +307,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename RT>
-	inline RT TSlib::TensorSlice<T, device>::sum()
+	inline RT TensorSlice<T, device>::sum()
 	{
 		RT sum = 0;
 
@@ -317,7 +317,7 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	inline size_t TSlib::TensorSlice<T, device>::get_real_size(const size_t& index) const
+	inline size_t TensorSlice<T, device>::get_real_size(const size_t& index) const
 	{
 		size_t r_size = 1;
 
@@ -936,7 +936,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename OT, Mode other_device>
-	inline Tensor<T, device> TSlib::TensorSlice<T, device>::operator+(const TensorSlice<OT, other_device>& other)
+	inline Tensor<T, device> TensorSlice<T, device>::operator+(const TensorSlice<OT, other_device>& other)
 	{
 		return add(other);
 	}
@@ -971,7 +971,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename OT, Mode other_device>
-	inline Tensor<T, device> TSlib::TensorSlice<T, device>::operator*(const Tensor<OT, other_device>& other)
+	inline Tensor<T, device> TensorSlice<T, device>::operator*(const Tensor<OT, other_device>& other)
 	{
 		return multiply(other);
 	}

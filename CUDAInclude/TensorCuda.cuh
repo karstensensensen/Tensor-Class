@@ -41,7 +41,7 @@ namespace TSlib
 	/// </summary>
 
 	template<typename T>
-	TSlib::CTBase<T>::CTBase(T* gpu_mem, size_t m_size, size_t* dim_arr, size_t dims)
+	CTBase<T>::CTBase(T* gpu_mem, size_t m_size, size_t* dim_arr, size_t dims)
 		:gpu_mem(gpu_mem), m_size(m_size), dim_arr(dim_arr), dims(dims)
 	{}
 
@@ -56,13 +56,13 @@ namespace TSlib
 	/// </summary>
 
 	template<typename T>
-	__device__ T* TSlib::CTBase<T>::get_gpu()
+	__device__ T* CTBase<T>::get_gpu()
 	{
 		return gpu_mem;
 	}
 
 	template<typename T>
-	__device__ const T* TSlib::CTBase<T>::get_gpu() const
+	__device__ const T* CTBase<T>::get_gpu() const
 	{
 		return gpu_mem;
 	}
@@ -329,7 +329,7 @@ namespace TSlib
 	}
 
 	template<typename T>
-	__device__ bool TSlib::CUDATensor1D<T>::offset_bounds(size_t x) const
+	__device__ bool CUDATensor1D<T>::offset_bounds(size_t x) const
 	{
 		return ((threadIdx.x + blockIdx.x * blockDim.x + x) < m_length);
 	}
@@ -382,7 +382,7 @@ namespace TSlib
 	}
 
 	template<typename T>
-	__device__ bool TSlib::CUDATensor2D<T>::offset_bounds(size_t x, size_t y) const
+	__device__ bool CUDATensor2D<T>::offset_bounds(size_t x, size_t y) const
 	{
 		return ((threadIdx.x + blockIdx.x * blockDim.x + x) < m_length) &&
 			((threadIdx.y + blockIdx.y * blockDim.y + y) < m_width);
@@ -441,7 +441,7 @@ namespace TSlib
 	}
 
 	template<typename T>
-	__device__ bool TSlib::CUDATensor3D<T>::offset_bounds(size_t x, size_t y, size_t z) const
+	__device__ bool CUDATensor3D<T>::offset_bounds(size_t x, size_t y, size_t z) const
 	{
 		return ((threadIdx.x + blockIdx.x * blockDim.x + x) < m_length) &&
 			((threadIdx.y + blockIdx.y * blockDim.y + y) < m_width) &&

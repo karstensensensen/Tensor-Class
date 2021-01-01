@@ -416,7 +416,7 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	inline void TSlib::Tensor<T, device>::Fill(std::function<T(const size_t&)> generator)
+	inline void Tensor<T, device>::Fill(std::function<T(const size_t&)> generator)
 	{
 		MEASURE();
 
@@ -855,7 +855,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename OT, Mode o_device>
-	inline void TSlib::Tensor<T, device>::Append(const Tensor<OT, o_device>& other, const size_t& dimension)
+	inline void Tensor<T, device>::Append(const Tensor<OT, o_device>& other, const size_t& dimension)
 	{
 		#ifdef _TS_DEBUG
 

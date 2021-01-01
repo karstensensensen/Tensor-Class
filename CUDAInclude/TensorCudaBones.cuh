@@ -1,9 +1,9 @@
 #pragma once
 
-#include "TensorBones.h"
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include <device_launch_parameters.h>
+#include "TensorBones.h"
 #include <type_traits>
 #include <tuple>
 
