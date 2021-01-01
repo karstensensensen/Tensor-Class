@@ -13,10 +13,8 @@
 
 namespace TSlib
 {
-
 	namespace
 	{
-
 		template<typename T>
 		struct is_tensor : std::false_type {};
 
@@ -32,8 +30,6 @@ namespace TSlib
 	#ifndef DEVICE_MAX_THREADS
 	#define DEVICE_MAX_THREADS 1024
 	#endif
-
-	
 
 	template<typename T>
 	class CTBase;
