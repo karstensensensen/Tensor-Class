@@ -148,7 +148,9 @@ namespace TSlib
 		void Replace(const T& target, const T& value);
 
 		template<typename ... Args>
-		T& Get(const Args& ... coords);
+		inline T& Get(const Args& ... coords);
+		template<typename ... Args>
+		inline T Get(const Args& ... coords) const;
 
 		TensorSlice<T, device> Slice(const std::vector<TSlice>& slices);
 
@@ -205,7 +207,9 @@ namespace TSlib
 		T* Data();
 
 		template<typename ... Args>
-		T& operator()(Args ... coords);
+		inline T& operator()(Args ... coords);
+		template<typename ... Args>
+		inline T operator()(Args ... coords) const;
 
 		T& operator[](size_t indx);
 		T operator[](size_t indx) const;

@@ -937,7 +937,21 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename ... Args>
-	inline T& Tensor<T, device>::Get(const Args& ... coords)
+	T& Tensor<T, device>::Get(const Args& ... coords)
+	{
+		MEASURE();
+		size_t index = 0;
+		size_t tmp_multiply = get_real_size(Dims() - 1);
+		size_t i = 0;
+
+		get_indx(index, i, tmp_multiply, coords...);
+
+		return m_vector.at(index);
+	}
+
+	template<typename T, Mode device>
+	template<typename ... Args>
+	T Tensor<T, device>::Get(const Args& ... coords) const
 	{
 		MEASURE();
 		size_t index = 0;
@@ -1029,9 +1043,16 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename ... Args>
-	inline T& Tensor<T, device>::operator()(Args ... coords)
+	T& Tensor<T, device>::operator()(Args ... coords)
 	{
 		MEASURE();
+		return Get(coords...);
+	}
+
+	template<typename T, Mode device>
+	template<typename ... Args>
+	T Tensor<T, device>::operator()(Args ... coords) const
+	{
 		return Get(coords...);
 	}
 
