@@ -456,7 +456,7 @@ namespace TSlib
 		Tensor<RT, device> compare(const Tensor<OT, o_device>& other, bool(*comp_func)(const T&, const OT&) = Equal) const;
 		template<typename RT = char, typename OT, Mode o_device>
 		Tensor<RT, device> compare(const TensorSlice<OT, o_device>& other, bool(*comp_func)(const T&, const OT&) = Equal) const;
-		template<typename RT = char, typename OT, std::enable_if<!is_tensor<OT>::value, int>::type = 0>
+		template<typename RT = char, typename OT, std::enable_if_t<!is_tensor<OT>::value, int> = 0>
 		Tensor<RT, device> compare(const OT& other, bool(*comp_func)(const T&, const OT&) = Equal) const;
 
 		template<typename OT>

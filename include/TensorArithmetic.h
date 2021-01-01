@@ -690,7 +690,7 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	template<typename RT, typename OT, std::enable_if<!is_tensor<OT>::value, int>::type>
+	template<typename RT, typename OT, std::enable_if_t<!is_tensor<OT>::value, int>>
 	inline Tensor<RT, device> Tensor<T, device>::compare(const OT& other, bool(*comp_func)(const T&, const OT&)) const
 	{
 		MEASURE();
