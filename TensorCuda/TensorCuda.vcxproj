@@ -210,7 +210,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\empty.cpp" />
-    <ClCompile Include="TensorCuda.cpp" />
+    <CudaCompile Include="TensorCuda.cpp" />
     <CudaCompile Include="..\src\main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -11,8 +11,6 @@
 
 namespace TSlib
 {
-	void CUDAInitialize(int device = 0);
-
 	namespace
 	{
 		static cudaDeviceProp props;
