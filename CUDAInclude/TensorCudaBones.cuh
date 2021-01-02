@@ -308,9 +308,9 @@ namespace TSlib
 	template<>
 	class CUDALayout<Mode::Plane>
 	{
-		double_t X_ratio;
-		double_t Y_ratio;
-		double_t Z_ratio;
+		double_t X_ratio = NULL;
+		double_t Y_ratio = NULL;
+		double_t Z_ratio = NULL;
 
 		unsigned int get_squared(size_t target_threads)
 		{
@@ -372,7 +372,8 @@ namespace TSlib
 			#ifdef _TS_DEBUG
 			if (double_t(length) * X_ratio != std::floor(double_t(length) * X_ratio))
 			{
-				throw BadValue("Length ratio does not divide cleanly into thread length", std::pair<std::string, double_t>("ratio", X_ratio), std::pair<std::string, double_t>("squared threads", threads_squared));
+				double_t ratio = X_ratio;
+				BadValue("Length ratio does not divide cleanly into thread length", ExceptValue("ratio", ratio), ExceptValue("squared threads", threads_squared));
 			}
 			#endif
 
@@ -381,7 +382,8 @@ namespace TSlib
 			#ifdef _TS_DEBUG
 			if (double_t(width) * Y_ratio != std::floor(double_t(width) * Y_ratio))
 			{
-				throw BadValue("Width ratio does not divide cleanly into thread width", std::pair<std::string, double_t>("ratio", Y_ratio), std::pair<std::string, double_t>("squared threads", threads_squared));
+				double_t ratio = X_ratio;
+				BadValue("Length ratio does not divide cleanly into thread width", ExceptValue("ratio", ratio), ExceptValue("squared threads", threads_squared));
 			}
 			#endif
 
@@ -390,7 +392,8 @@ namespace TSlib
 			#ifdef _TS_DEBUG
 			if (double_t(height) * Z_ratio != std::floor(double_t(height) * Z_ratio))
 			{
-				throw BadValue("Height ratio does not divide cleanly into thread height", std::pair<std::string, double_t>("ratio", Z_ratio), std::pair<std::string, double_t>("squared threads", threads_squared));
+				double_t ratio = X_ratio;
+				BadValue("Length ratio does not divide cleanly into thread height", ExceptValue("ratio", ratio), ExceptValue("squared threads", threads_squared));
 			}
 			#endif
 
@@ -433,7 +436,8 @@ namespace TSlib
 			#ifdef _TS_DEBUG
 			if (double_t(length) * X_ratio != std::floor(double_t(length) * X_ratio))
 			{
-				throw BadValue("Length ratio does not divide cleanly into thread length", std::pair<std::string, double_t>("ratio", X_ratio), std::pair<std::string, double_t>("target threads", target_threads));
+				double_t ratio = X_ratio;
+				BadValue("Length ratio does not divide cleanly into thread length", ExceptValue("ratio", ratio), ExceptValue("squared threads", target_threads));
 			}
 			#endif
 
@@ -442,7 +446,8 @@ namespace TSlib
 			#ifdef _TS_DEBUG
 			if (double_t(width) * Y_ratio != std::floor(double_t(width) * Y_ratio))
 			{
-				throw BadValue("Width ratio does not divide cleanly into thread width", std::pair<std::string, double_t>("ratio", Y_ratio), std::pair<std::string, double_t>("target threads", target_threads));
+				double_t ratio = X_ratio;
+				BadValue("Length ratio does not divide cleanly into thread width", ExceptValue("ratio", ratio), ExceptValue("squared threads", target_threads));
 			}
 			#endif
 
@@ -451,7 +456,8 @@ namespace TSlib
 			#ifdef _TS_DEBUG
 			if (double_t(height) * Z_ratio != std::floor(double_t(height) * Z_ratio))
 			{
-				throw BadValue("Height ratio does not divide cleanly into thread height", std::pair<std::string, double_t>("ratio", Z_ratio), std::pair<std::string, double_t>("target threads", target_threads));
+				double_t ratio = X_ratio;
+				BadValue("Length ratio does not divide cleanly into thread height", ExceptValue("ratio", ratio), ExceptValue("squared threads", target_threads));
 			}
 			#endif
 

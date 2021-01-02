@@ -238,14 +238,14 @@ namespace TSlib
 		BadValue(std::string message, ExceptValue<Args> ... args)
 			: err_msg(message)
 		{
-			append_info(args...);
+			//append_info(args...);
 		}
 
 		template<typename T>
 		BadValue(std::string message, T gotten_value)
 			: err_msg(message)
 		{
-			message += std::string("\nGot: ") + std::to_string(gotten_value);
+			err_msg += std::string("\nGot: ") + std::to_string(gotten_value);
 		}
 
 		BadValue(std::string message)
