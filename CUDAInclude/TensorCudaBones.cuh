@@ -16,14 +16,16 @@ namespace TSlib
 		static cudaDeviceProp props;
 		static int devcount;
 		#ifdef _TS_DEBUG
-		static bool CUDA_IS_INITIALIZED = false;
+		bool CUDA_IS_INITIALIZED = false;
 
 		#define CER(ans) { gpuAssert((ans), __FILE__, __LINE__); }
 		inline void gpuAssert(cudaError_t code, const char* file, int line)
 		{
 			#ifdef _TS_DEBUG
+			#if 0
 			if (!CUDA_IS_INITIALIZED)
 				std::cout << "WARNING: CUDA library has not been initialized. CUDA dependent functions are not guaranteed to work.\nUse the function TSlib::CUDAInitialize() to initialize the CUDA library\n";
+			#endif
 			#endif
 			if (code != cudaSuccess)
 			{
@@ -37,6 +39,8 @@ namespace TSlib
 		#define CER(ans) ans
 		#endif
 	}
+
+	void CUDAInitialize(int device = 0);
 
 	template<typename T>
 	class CUDATensor1D;

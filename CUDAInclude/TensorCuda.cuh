@@ -809,8 +809,6 @@ namespace TSlib
 		CER(cudaDeviceSynchronize());
 	}
 
-	void CUDAInitialize(int device = 0);
-
 	#else
 #pragma message("warning: cuda is not enabled, this header file should not be included.")
 #endif

@@ -91,13 +91,13 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="..\src\TSliceWrapper.cpp">
-      <Filter>Source Files</Filter>
-    </CudaCompile>
     <CudaCompile Include="..\src\main.cpp">
       <Filter>Source Files</Filter>
     </CudaCompile>
     <CudaCompile Include="..\src\TensorCuda.cu">
+      <Filter>Source Files</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\src\TSliceWrapper.cpp">
       <Filter>Source Files</Filter>
     </CudaCompile>
   </ItemGroup>

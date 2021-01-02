@@ -1,7 +1,8 @@
-#include "TensorCuda.cuh"
+#include "TensorCudaBones.cuh"
 
 namespace TSlib
 {
+
 	void CUDAInitialize(int device)
 	{
 		/*
