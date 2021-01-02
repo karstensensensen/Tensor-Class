@@ -8,15 +8,19 @@
 #include <tuple>
 
 #define __kernel__ __global__ void
+#define ROUND(x) 
 
 namespace TSlib
 {
+	
 	namespace
 	{
 		static cudaDeviceProp props;
 		static int devcount;
 		#ifdef _TS_DEBUG
 		bool CUDA_IS_INITIALIZED = false;
+
+		
 
 		#define CER(ans) { gpuAssert((ans), __FILE__, __LINE__); }
 		inline void gpuAssert(cudaError_t code, const char* file, int line)
@@ -40,6 +44,7 @@ namespace TSlib
 		#endif
 	}
 
+	double_t round(double_t x, double_t place);
 	void CUDAInitialize(int device = 0);
 
 	template<typename T>
@@ -223,16 +228,16 @@ namespace TSlib
 		double_t Y_ratio;
 		double_t Z_ratio;
 
-		unsigned int get_cubed(unsigned int target_threads)
+		double_t get_cubed(unsigned int target_threads)
 		{
-			unsigned int NT = NULL;
+			double_t NT = NULL;
 
 			for (unsigned int i = 0; target_threads - i != 0; i += 32)
 			{
 				double_t cube = std::cbrt(target_threads - i);
 				if (cube == std::floor(cube))
 				{
-					NT = (unsigned int)cube;
+					NT = cube;
 					break;
 				}
 			}
@@ -244,7 +249,9 @@ namespace TSlib
 					double_t cube = std::cbrt(target_threads + i);
 					if (cube == std::floor(cube))
 					{
-						NT = (unsigned int)cube;
+						//this value is one iteration too high
+
+						NT = std::sqrt(cube*2);
 						break;
 					}
 				}
@@ -272,40 +279,41 @@ namespace TSlib
 		template<typename T, Mode device>
 		std::tuple<unsigned int, unsigned int, unsigned int> apply(const Tensor<T, device>* tensor, unsigned int target_threads)
 		{
-			unsigned int threads_cubed = get_cubed(target_threads);
+			double_t threads_cubed = get_cubed(target_threads);
 
-			unsigned int length = threads_cubed;
-			unsigned int width = threads_cubed;
-			unsigned int height = threads_cubed;
+			double_t length = threads_cubed;
+			double_t width = threads_cubed;
+			double_t height = threads_cubed;
 
+			length *= double_t(length) * X_ratio;
 			#ifdef _TS_DEBUG
-			if (double_t(length) * X_ratio != std::floor(double_t(length) * X_ratio))
+			if (round(length * double_t(length) * X_ratio, 1000) != std::floor(round(length * double_t(length) * X_ratio, 1000)))
 			{
 				throw BadValue("Length ratio does not divide cleanly into thread length", ExceptValue<double_t>("ratio", X_ratio), ExceptValue<double_t>("cubed threads", threads_cubed));
 			}
 			#endif
 
-			length = unsigned int(double_t(length) * X_ratio);
+			
 
 			#ifdef _TS_DEBUG
-			if (double_t(width) * Y_ratio != std::floor(double_t(width) * Y_ratio))
+			if (round(width * double_t(width) * Y_ratio, 1000) != std::floor(round(width * double_t(width) * Y_ratio, 1000)))
 			{
 				throw BadValue("Width ratio does not divide cleanly into thread width", ExceptValue<double_t>("ratio", Y_ratio), ExceptValue<double_t>("cubed threads", threads_cubed));
 			}
 			#endif
 
-			width *= unsigned int(double_t(length) * Y_ratio);
+			width *= double_t(width) * Y_ratio;
 
 			#ifdef _TS_DEBUG
-			if (double_t(height) * Z_ratio != std::floor(double_t(height) * Z_ratio))
+			if (round(height * double_t(height) * Z_ratio, 1000) != std::floor(round(height * double_t(height) * Z_ratio, 1000)))
 			{
 				throw BadValue("Height ratio does not divide cleanly into thread height", ExceptValue<double_t>("ratio", Z_ratio), ExceptValue<double_t>("cubed threads", threads_cubed));
 			}
 			#endif
 
-			height *= unsigned int(double_t(length) * Z_ratio);
+			height *= double_t(height) * Z_ratio;
 
-			return { length, width, height };
+			return { unsigned int(length), unsigned int(width), unsigned int(height) };
 		}
 	};
 
@@ -316,16 +324,16 @@ namespace TSlib
 		double_t Y_ratio = NULL;
 		double_t Z_ratio = NULL;
 
-		unsigned int get_squared(size_t target_threads)
+		double_t get_squared(size_t target_threads)
 		{
-			unsigned int NT = NULL;
+			double_t NT = NULL;
 
 			for (unsigned int i = 0; target_threads - i != 0; i += 32)
 			{
 				double_t square = std::sqrt(target_threads - i);
 				if (square == std::floor(square))
 				{
-					NT = (unsigned int)square;
+					NT = square;
 					break;
 				}
 			}
@@ -337,7 +345,7 @@ namespace TSlib
 					double_t square = std::sqrt(target_threads + i);
 					if (square == std::floor(square))
 					{
-						NT = (unsigned int)square;
+						NT = std::sqrt(square)*2.0;
 						break;
 					}
 				}
@@ -367,43 +375,43 @@ namespace TSlib
 		{
 			#pragma warning(disable: 4244)
 
-			unsigned int threads_squared = get_squared(target_threads);
+			double_t threads_squared = get_squared(target_threads);
 
-			unsigned int length = threads_squared;
-			unsigned int width = threads_squared;
-			unsigned int height = 1;
+			double_t length = threads_squared;
+			double_t width = threads_squared;
+			double_t height = 1;
 
 			#ifdef _TS_DEBUG
-			if (double_t(length) * X_ratio != std::floor(double_t(length) * X_ratio))
+			if (round(length * length * X_ratio, 1000.0) != std::floor(round(length * length * X_ratio, 1000.0)))
 			{
 				double_t ratio = X_ratio;
 				BadValue("Length ratio does not divide cleanly into thread length", ExceptValue("ratio", ratio), ExceptValue("squared threads", threads_squared));
 			}
 			#endif
 
-			length *= unsigned int(double_t(length) * X_ratio);
+			length *= double_t(length) * X_ratio;
 
 			#ifdef _TS_DEBUG
-			if (double_t(width) * Y_ratio != std::floor(double_t(width) * Y_ratio))
+			if (round(width * width * Y_ratio, 1000.0) != std::floor(round(width * width * Y_ratio, 1000.0)))
 			{
-				double_t ratio = X_ratio;
+				double_t ratio = Y_ratio;
 				BadValue("Length ratio does not divide cleanly into thread width", ExceptValue("ratio", ratio), ExceptValue("squared threads", threads_squared));
 			}
 			#endif
 
-			width *= unsigned int(double_t(length) * Y_ratio);
+			width *= double_t(width) * Y_ratio;
 
 			#ifdef _TS_DEBUG
-			if (double_t(height) * Z_ratio != std::floor(double_t(height) * Z_ratio))
+			if (round(height * height * Z_ratio, 1000.0) != std::floor(round(height * height * Z_ratio, 1000.0)))
 			{
-				double_t ratio = X_ratio;
+				double_t ratio = Z_ratio;
 				BadValue("Length ratio does not divide cleanly into thread height", ExceptValue("ratio", ratio), ExceptValue("squared threads", threads_squared));
 			}
 			#endif
 
-			height *= unsigned int(double_t(length) * Z_ratio);
+			height *= double_t(height) * Z_ratio;
 
-			return { length, width, height };
+			return { unsigned int(length), unsigned int(width), unsigned int(height) };
 
 			#pragma warning(default: 4244)
 		}
@@ -450,22 +458,22 @@ namespace TSlib
 			#ifdef _TS_DEBUG
 			if (double_t(width) * Y_ratio != std::floor(double_t(width) * Y_ratio))
 			{
-				double_t ratio = X_ratio;
+				double_t ratio = Y_ratio;
 				BadValue("Length ratio does not divide cleanly into thread width", ExceptValue("ratio", ratio), ExceptValue("squared threads", target_threads));
 			}
 			#endif
 
-			width *= unsigned int(double_t(length) * Y_ratio);
+			width *= unsigned int(double_t(width) * Y_ratio);
 
 			#ifdef _TS_DEBUG
 			if (double_t(height) * Z_ratio != std::floor(double_t(height) * Z_ratio))
 			{
-				double_t ratio = X_ratio;
+				double_t ratio = Z_ratio;
 				BadValue("Length ratio does not divide cleanly into thread height", ExceptValue("ratio", ratio), ExceptValue("squared threads", target_threads));
 			}
 			#endif
 
-			height *= unsigned int(double_t(length) * Z_ratio);
+			height *= unsigned int(double_t(height) * Z_ratio);
 
 			return { length, width, height };
 			#pragma warning(default: 4244)
