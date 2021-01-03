@@ -28,6 +28,7 @@ typedef double double_t;
 #include "TensorArithmetic.h"
 #include "TensorSlice.h"
 #include "TensorTools.h"
+#include <filesystem>
 #include <functional>
 #include <algorithm>
 #include <math.h>
@@ -286,8 +287,9 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	inline Tensor<T, device>::Tensor()
-		: m_shape(0)
+		: m_shape(1)
 	{
+		Resize({ 0 });
 	}
 
 	template<typename T, Mode device>
@@ -393,6 +395,67 @@ namespace TSlib
 		}
 
 		#endif
+	}
+
+	template<typename T, Mode device>
+	inline void Tensor<T, device>::Save(std::string dir) const
+	{
+		// create directories
+		dir += ".tnsr";
+		std::filesystem::path path(dir);
+		std::filesystem::create_directories(path.parent_path());
+
+		std::fstream out_file(path, std::ios::out | std::ios::binary);
+		
+		size_t dims = Dims();
+
+		out_file.write((char*)&dims, sizeof(dims));
+
+		out_file.write((const char*)Shape().data(), sizeof(size_t) * dims);
+
+		size_t data_size = sizeof(T);
+
+		out_file.write((char*)&data_size, sizeof(data_size));
+
+		out_file.write((char*)Data(), sizeof(T) * size());
+
+		out_file.close();
+	}
+
+	template<typename T, Mode device>
+	Tensor<T, device>& Tensor<T, device>::Load(std::string dir)
+	{
+		dir += ".tnsr";
+		std::filesystem::path path(dir);
+
+		std::fstream in_file(path, std::ios::in | std::ios::binary);
+
+		size_t dims;
+		in_file.read((char*)&dims, sizeof(dims));
+		
+		std::vector<size_t> loaded_shape(dims);
+		in_file.read((char*)loaded_shape.data(), sizeof(size_t) * dims);
+		Resize(loaded_shape);
+
+		#ifdef _TS_DEBUG
+
+		size_t data_size;
+		in_file.read((char*)&data_size, sizeof(data_size));
+
+		if (data_size != sizeof(T))
+		{
+			throw BadValue("The data size stored in the file is not the same as the Tensor data type", ExceptValue("Tensor data size", sizeof(T)), ExceptValue("File data size", data_size), ExceptValue("File", dir));
+		}
+
+		#else
+		in_file.ignore(sizeof(size_t));
+		#endif
+
+		in_file.read((char*)Data(), sizeof(T) * size());
+
+		in_file.close();
+
+		return *this;
 	}
 
 	template<typename T, Mode device>

@@ -114,6 +114,9 @@ namespace TSlib
 
 		Tensor(const Tensor<T, device>& other);
 
+		void Save(std::string dir) const;
+		Tensor<T, device>& Load(std::string dir);
+
 		~Tensor();
 
 		void ResizeDim(const size_t& index, const size_t& amount, const T& pad_val = T());

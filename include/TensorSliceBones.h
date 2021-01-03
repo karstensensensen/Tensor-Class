@@ -15,6 +15,7 @@ namespace TSlib
 		Tensor<T, device>* source;
 		std::vector<TSlice> m_slice_shape;
 		std::vector<size_t> m_real_shape;
+		std::vector<size_t> m_projected_shape;
 		size_t m_offset;
 
 		#ifdef _TS_DEBUG
