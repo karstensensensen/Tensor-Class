@@ -406,7 +406,7 @@ namespace TSlib
 		std::filesystem::create_directories(path.parent_path());
 
 		std::fstream out_file(path, std::ios::out | std::ios::binary);
-		
+
 		size_t dims = Dims();
 
 		out_file.write((char*)&dims, sizeof(dims));
@@ -432,7 +432,7 @@ namespace TSlib
 
 		size_t dims;
 		in_file.read((char*)&dims, sizeof(dims));
-		
+
 		std::vector<size_t> loaded_shape(dims);
 		in_file.read((char*)loaded_shape.data(), sizeof(size_t) * dims);
 		Resize(loaded_shape);
@@ -849,7 +849,7 @@ namespace TSlib
 		m_shape.clear();
 		m_shape.reserve(shape.size());
 
-		for(size_t i = 0; i < shape.size(); i++)
+		for (size_t i = 0; i < shape.size(); i++)
 		{
 			m_shape.push_back(shape[i] * (i != unknown_pos) + unknown_value * (i == unknown_pos));
 		}

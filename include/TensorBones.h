@@ -21,19 +21,18 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	struct is_tensor_type<TensorSlice<T, device>> : std::true_type {};
-	
-	template<typename T>
-	struct is_tensor : std::false_type{};
-
-	template<typename T, Mode device>
-	struct is_tensor<Tensor<T, device>> : std::true_type{};
 
 	template<typename T>
-	struct is_tensor_slice : std::false_type{};
+	struct is_tensor : std::false_type {};
 
 	template<typename T, Mode device>
-	struct is_tensor_slice<TensorSlice<T, device>> : std::true_type{};
+	struct is_tensor<Tensor<T, device>> : std::true_type {};
 
+	template<typename T>
+	struct is_tensor_slice : std::false_type {};
+
+	template<typename T, Mode device>
+	struct is_tensor_slice<TensorSlice<T, device>> : std::true_type {};
 
 	#ifdef _CUDA
 

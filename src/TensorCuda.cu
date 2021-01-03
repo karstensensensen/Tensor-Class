@@ -2,7 +2,6 @@
 
 namespace TSlib
 {
-
 	void CUDAInitialize(int device)
 	{
 		/*

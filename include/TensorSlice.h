@@ -214,7 +214,7 @@ namespace TSlib
 			{
 				throw BadShape(Shape(), "The shapes passed must be the same", other.Shape());
 			}
-		}
+}
 		#endif
 
 		Compute([&](T& elem, const size_t& index) {elem = other[index]; });
@@ -379,7 +379,6 @@ namespace TSlib
 	template<typename T, Mode device>
 	TensorSlice<T, device>& TensorSlice<T, device>::Reshape(const std::vector<long long>& shape)
 	{
-
 		MEASURE();
 		#ifdef _TS_DEBUG
 		long long new_shape_size = 1;
@@ -431,7 +430,6 @@ namespace TSlib
 	template<typename T, Mode device>
 	size_t TensorSlice<T, device>::map_index(size_t index) const
 	{
-
 		MEASURE();
 		size_t tmp_multiply = m_slice_shape[Dims() - 1].width();
 		size_t new_index = 0;

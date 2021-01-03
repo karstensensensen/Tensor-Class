@@ -8,19 +8,16 @@
 #include <tuple>
 
 #define __kernel__ __global__ void
-#define ROUND(x) 
+#define ROUND(x)
 
 namespace TSlib
 {
-	
 	namespace
 	{
 		static cudaDeviceProp props;
 		static int devcount;
 		#ifdef _TS_DEBUG
 		bool CUDA_IS_INITIALIZED = false;
-
-		
 
 		#define CER(ans) { gpuAssert((ans), __FILE__, __LINE__); }
 		inline void gpuAssert(cudaError_t code, const char* file, int line)
@@ -251,7 +248,7 @@ namespace TSlib
 					{
 						//this value is one iteration too high
 
-						NT = std::sqrt(cube*2);
+						NT = std::sqrt(cube * 2);
 						break;
 					}
 				}
@@ -292,8 +289,6 @@ namespace TSlib
 				throw BadValue("Length ratio does not divide cleanly into thread length", ExceptValue<double_t>("ratio", X_ratio), ExceptValue<double_t>("cubed threads", threads_cubed));
 			}
 			#endif
-
-			
 
 			#ifdef _TS_DEBUG
 			if (round(width * double_t(width) * Y_ratio, 1000) != std::floor(round(width * double_t(width) * Y_ratio, 1000)))
@@ -345,7 +340,7 @@ namespace TSlib
 					double_t square = std::sqrt(target_threads + i);
 					if (square == std::floor(square))
 					{
-						NT = std::sqrt(square)*2.0;
+						NT = std::sqrt(square) * 2.0;
 						break;
 					}
 				}
