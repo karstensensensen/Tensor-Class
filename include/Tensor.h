@@ -34,6 +34,7 @@ typedef double double_t;
 #include <math.h>
 #include <cstdarg>
 #include <numeric>
+#include <fstream>
 #include <tuple>
 
 namespace TSlib
@@ -405,7 +406,7 @@ namespace TSlib
 		std::filesystem::path path(dir);
 		std::filesystem::create_directories(path.parent_path());
 
-		std::fstream out_file(path, std::ios::out | std::ios::binary);
+		std::ofstream out_file(path, std::ios::binary);
 
 		size_t dims = Dims();
 
@@ -428,7 +429,7 @@ namespace TSlib
 		dir += ".tnsr";
 		std::filesystem::path path(dir);
 
-		std::fstream in_file(path, std::ios::in | std::ios::binary);
+		std::ifstream in_file(path, std::ios::binary);
 
 		size_t dims;
 		in_file.read((char*)&dims, sizeof(dims));
