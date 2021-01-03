@@ -108,13 +108,14 @@ namespace TSlib
 			err_msg += "\nTensor shape sum was: " + std::to_string(tensor->size());
 		}
 
-		BadShape(std::string message, const std::vector<size_t>& target, const std::vector<size_t>& expected)
+		template<typename T1, typename T2>
+		BadShape(std::string message, const std::vector<T1>& target, const std::vector<T2>& expected)
 		{
 			err_msg = message + "\nGotten shape was: ";
 			size_t target_shape_sum = 1;
 			size_t expected_shape_sum = 1;
 
-			for (const size_t& shape_elem : target)
+			for (const T1& shape_elem : target)
 			{
 				err_msg += std::to_string(shape_elem) + ' ';
 				target_shape_sum *= shape_elem;
@@ -122,7 +123,7 @@ namespace TSlib
 
 			err_msg += "\nExpected shape was: ";
 
-			for (const size_t& shape_elem : expected)
+			for (const T2& shape_elem : expected)
 			{
 				err_msg += std::to_string(shape_elem) + ' ';
 				expected_shape_sum *= shape_elem;
@@ -132,7 +133,8 @@ namespace TSlib
 			err_msg += "\nExpected shape sum was: " + std::to_string(expected_shape_sum);
 		}
 
-		BadShape(std::string message, const std::vector<TSlice>& target, const std::vector<size_t>& expected)
+		template<typename T>
+		BadShape(std::string message, const std::vector<TSlice>& target, const std::vector<T>& expected)
 		{
 			err_msg = message + "\nGotten shape was: ";
 			size_t target_shape_sum = 1;
@@ -146,7 +148,7 @@ namespace TSlib
 
 			err_msg += "\nExpected shape was: ";
 
-			for (const size_t& shape_elem : expected)
+			for (const T& shape_elem : expected)
 			{
 				err_msg += std::to_string(shape_elem) + ' ';
 				expected_shape_sum *= shape_elem;

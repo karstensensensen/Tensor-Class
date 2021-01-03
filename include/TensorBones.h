@@ -123,8 +123,7 @@ namespace TSlib
 
 		void Resize(const std::vector<size_t>& sizes, const T& pad_val = T());
 
-		void Reshape(const std::initializer_list<size_t>& shape);
-		void Reshape(const std::vector<size_t>& shape);
+		void Reshape(const std::vector<long long>& shape);
 
 		void SetDims(const size_t& dims);
 

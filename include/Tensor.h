@@ -744,50 +744,51 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	void Tensor<T, device>::Reshape(const std::initializer_list<size_t>& shape)
+	void Tensor<T, device>::Reshape(const std::vector<long long>& shape)
 	{
 		MEASURE();
 		#ifdef _TS_DEBUG
-		size_t new_shape_size = 1;
-		for (const size_t& elem : shape)
+		long long new_shape_size = 1;
+		size_t unknown = 0;
+		for (const long long& elem : shape)
 		{
+			if (elem < 0)
+				unknown++;
 			new_shape_size *= elem;
 		}
 
-		if (size() != new_shape_size)
-			throw BadShape(this, "New shape does not fit the current tensor's dimensions", shape);
+		if (unknown > 1)
+			throw BadValue("There cannot be passed more than 1 unknown dimension when reshapeing a Tensor", unknown);
+		else if (size() != new_shape_size && unknown == 0)
+		{
+			throw BadShape("New shape does not fit the current tensor's dimensions", Shape(), shape);
+		}
 		#endif
 
-		m_shape.erase(m_shape.begin(), m_shape.end());
+		long long unknown_pos = -1;
+		size_t shape_product = 1;
 
-		for (const size_t& elem : shape)
+		for (size_t i = 0; i < shape.size(); i++)
 		{
-			m_shape.push_back(elem);
+			unknown_pos = i * (shape[i] < 0) + unknown_pos * (shape[i] >= 0);
+			shape_product *= shape[i] * (shape[i] >= 0) + (shape[i] < 0);
 		}
-	}
 
-	template<typename T, Mode device>
-	void Tensor<T, device>::Reshape(const std::vector<size_t>& shape)
-	{
-		MEASURE();
+		size_t unknown_value = size() / shape_product;
+
 		#ifdef _TS_DEBUG
-		size_t new_shape_size = 1;
-		for (const size_t& elem : shape)
+		if (double_t(unknown_value) != round(double_t(size()) / double_t(shape_product), 1000))
 		{
-			new_shape_size *= elem;
-		}
-
-		if (size() != new_shape_size)
-		{
-			throw BadShape(this, "New shape does not fit the current tensor's dimensions", shape);
+			throw BadShape("The unknown dimension is impossible to fit with the given shape", Shape(), shape);
 		}
 		#endif
 
-		m_shape.erase(m_shape.begin(), m_shape.end());
+		m_shape.clear();
+		m_shape.reserve(shape.size());
 
-		for (const size_t& elem : shape)
+		for(size_t i = 0; i < shape.size(); i++)
 		{
-			m_shape.push_back(elem);
+			m_shape.push_back(shape[i] * (i != unknown_pos) + unknown_value * (i == unknown_pos));
 		}
 	}
 
