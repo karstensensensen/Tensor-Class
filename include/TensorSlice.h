@@ -48,7 +48,7 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	TensorSlice<T, device>::TensorSlice(Tensor<T, device>* source, const std::vector<TSlice>& slices)
-		: source(source), m_slice_shape(slices), m_real_shape(source->Dims())
+		: source(source), m_slice_shape(slices), m_real_shape(source->Dims()), m_shape(m_real_shape)
 	{
 		MEASURE();
 
@@ -64,16 +64,49 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
+	template<typename First>
+	void TensorSlice<T, device>::get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord)
+	{
+		MEASURE();
+
+		#ifdef _TS_DEBUG
+		if (m_shape[iter] <= coord)
+			throw OutOfBounds(Shape(), "Exception was thrown, because an element outside the Tensor bounds was accsessed", iter, coord);
+		#endif
+
+		tmp_multiply /= m_shape[iter];
+		indx += coord * tmp_multiply;
+
+		iter++;
+	}
+
+	template<typename T, Mode device>
+	template<typename First, typename... Args>
+	void TensorSlice<T, device>::get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord, Args ... remaining)
+	{
+		MEASURE();
+
+		get_indx(indx, iter, tmp_multiply, coord);
+		get_indx(indx, iter, tmp_multiply, remaining...);
+	}
+
+	template<typename T, Mode device>
 	template<typename ... Args>
 	T& TensorSlice<T, device>::Get(Args ... coords)
 	{
 		MEASURE();
 		#ifdef _TS_DEBUG
-		size_t i = 0;
-		bounds_check(i, coords...);
+		size_t i_d = 0;
+		bounds_check(i_d, coords...);
 		#endif
 
-		return source->Get(coords...);
+		size_t index = 0;
+		size_t tmp_multiply = get_real_size(Dims() - 1);
+		size_t i = 0;
+
+		get_indx(index, i, tmp_multiply, coords...);
+
+		return At(map_index(index));
 	}
 
 	template<typename T, Mode device>
@@ -82,11 +115,17 @@ namespace TSlib
 	{
 		MEASURE();
 		#ifdef _TS_DEBUG
-		size_t i = 0;
-		bounds_check(i, coords...);
+		size_t i_d = 0;
+		bounds_check(i_d, coords...);
 		#endif
 
-		return source->Get(coords...);
+		size_t index = 0;
+		size_t tmp_multiply = get_real_size(Dims() - 1);
+		size_t i = 0;
+
+		get_indx(index, i, tmp_multiply, coords...);
+
+		return At(map_index(index));
 	}
 
 	template<typename T, Mode device>
@@ -123,11 +162,13 @@ namespace TSlib
 		#endif
 
 		m_slice_shape.resize(source->Dims(), All);
+		m_shape.resize(source->Dims());
 
 		for (size_t i = 0; i < Dims(); i++)
 		{
 			m_slice_shape[i].to_max = (uint32_t)source->Shape()[i];
 			m_real_shape[i] = m_slice_shape[i].width();
+			m_shape[i] = m_real_shape[i];
 		}
 
 		calc_offset();
@@ -288,11 +329,10 @@ namespace TSlib
 	size_t TensorSlice<T, device>::size() const
 	{
 		MEASURE();
-		m_slice_shape[0].width();
-		size_t size = m_slice_shape[0].width();
-		for (size_t i = 1; i < m_slice_shape.size(); i++)
+		size_t size = m_real_shape[0];
+		for (size_t i = 1; i < m_real_shape.size(); i++)
 		{
-			size *= (m_slice_shape[i].width());
+			size *= m_real_shape[i];
 		}
 
 		return size;
@@ -302,7 +342,7 @@ namespace TSlib
 	inline size_t TensorSlice<T, device>::Dims() const
 	{
 		MEASURE();
-		return m_slice_shape.size();
+		return m_shape.size();
 	}
 
 	template<typename T, Mode device>
@@ -323,7 +363,7 @@ namespace TSlib
 
 		for (size_t i = 0; i <= index; i++)
 		{
-			r_size *= m_slice_shape[Dims() - i - 1].width();
+			r_size *= m_shape[Dims() - i - 1];
 		}
 
 		return r_size;
@@ -333,12 +373,65 @@ namespace TSlib
 	const std::vector<size_t>& TensorSlice<T, device>::Shape() const
 	{
 		MEASURE();
-		return m_real_shape;
+		return m_shape;
+	}
+
+	template<typename T, Mode device>
+	TensorSlice<T, device>& TensorSlice<T, device>::Reshape(const std::vector<long long>& shape)
+	{
+
+		MEASURE();
+		#ifdef _TS_DEBUG
+		long long new_shape_size = 1;
+		size_t unknown = 0;
+		for (const long long& elem : shape)
+		{
+			if (elem < 0)
+				unknown++;
+			new_shape_size *= elem;
+		}
+
+		if (unknown > 1)
+			throw BadValue("There cannot be passed more than 1 unknown dimension when reshapeing a Tensor", unknown);
+		else if (size() != new_shape_size && unknown == 0)
+		{
+			throw BadShape("New shape does not fit the current tensor's dimensions", Shape(), shape);
+		}
+		#endif
+
+		long long unknown_pos = -1;
+		size_t shape_product = 1;
+
+		for (size_t i = 0; i < shape.size(); i++)
+		{
+			unknown_pos = i * (shape[i] < 0) + unknown_pos * (shape[i] >= 0);
+			shape_product *= shape[i] * (shape[i] >= 0) + (shape[i] < 0);
+		}
+
+		size_t unknown_value = size() / shape_product;
+
+		#ifdef _TS_DEBUG
+		if (double_t(unknown_value) != round(double_t(size()) / double_t(shape_product), 1000))
+		{
+			throw BadShape("The unknown dimension is impossible to fit with the given shape", Shape(), shape);
+		}
+		#endif
+
+		m_shape.clear();
+		m_shape.reserve(shape.size());
+
+		for (size_t i = 0; i < shape.size(); i++)
+		{
+			m_shape.push_back(shape[i] * (i != unknown_pos) + unknown_value * (i == unknown_pos));
+		}
+
+		return *this;
 	}
 
 	template<typename T, Mode device>
 	size_t TensorSlice<T, device>::map_index(size_t index) const
 	{
+
 		MEASURE();
 		size_t tmp_multiply = m_slice_shape[Dims() - 1].width();
 		size_t new_index = 0;
@@ -348,7 +441,7 @@ namespace TSlib
 			size_t rows = index / tmp_multiply;
 			index -= tmp_multiply * rows;
 
-			tmp_multiply *= m_slice_shape[i].width();
+			tmp_multiply *= m_real_shape[i];
 
 			new_index += rows * source->get_real_size(i);
 		}
@@ -1255,7 +1348,7 @@ namespace TSlib
 			max_length = std::max(std::to_string(At(i)).size(), max_length);
 		}
 
-		for (size_t i = 0; i < m_slice_shape[Dims() - 1].width(); i++)
+		for (size_t i = 0; i < m_shape[Dims() - 1]; i++)
 		{
 			stream << std::to_string(At(i));
 
@@ -1268,7 +1361,7 @@ namespace TSlib
 
 			stream << ',';
 
-			if (i % m_slice_shape[Dims() - 1].width() == m_slice_shape[Dims() - 1].width() - 1)
+			if (i % m_shape[Dims() - 1] == m_shape[Dims() - 1] - 1)
 			{
 				stream << '\n';
 			}
@@ -1290,7 +1383,7 @@ namespace TSlib
 
 				stream << ',';
 
-				if (i % m_slice_shape[Dims() - 1].width() == m_slice_shape[Dims() - 1].width() - 1)
+				if (i % m_shape[Dims() - 1] == m_shape[Dims() - 1] - 1)
 				{
 					stream << '\n';
 				}

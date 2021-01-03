@@ -15,7 +15,7 @@ namespace TSlib
 		Tensor<T, device>* source;
 		std::vector<TSlice> m_slice_shape;
 		std::vector<size_t> m_real_shape;
-		std::vector<size_t> m_projected_shape;
+		std::vector<size_t> m_shape;
 		size_t m_offset;
 
 		#ifdef _TS_DEBUG
@@ -35,6 +35,11 @@ namespace TSlib
 		T copy_generator(const size_t& index);
 
 		size_t get_real_size(const size_t& index) const;
+
+		template<typename First>
+		void get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord);
+		template<typename First, typename... Args>
+		void get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord, Args ... remaining);
 
 	public:
 		TensorSlice(Tensor<T, device>* source, const std::vector<TSlice>& slices);
@@ -69,7 +74,7 @@ namespace TSlib
 
 		const std::vector<size_t>& Shape() const;
 
-		void reshape(const std::vector<size_t> new_shape);
+		TensorSlice<T, device>& Reshape(const std::vector<long long>& shape);
 
 		template<typename ... Args>
 		T& Get(Args ... coords);
