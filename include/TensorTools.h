@@ -46,5 +46,34 @@ namespace TSlib
 
 			return result;
 		}
+
+		template<typename T1, typename T2, std::enable_if_t<is_tensor_type<T1>::value && is_tensor_type<T2>::value, int>>
+		bool fits(const T1& tensor1, const T2& tensor2)
+		{
+			if (tensor1.Dims() != tensor2.Dims())
+				return false;
+
+			for (size_t dim = 0; dim < tensor1.Dims(); dim++)
+			{
+				size_t dim1 = tensor1.Shape()[dim];
+				size_t dim2 = tensor2.Shape()[dim];
+
+				if (dim1 != dim2)
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		template<typename T1, typename T2, std::enable_if_t<is_tensor_type<T1>::value && is_tensor_type<T2>::value, int>>
+		void exceptFit(const T1& tensor1, const T2& tensor2)
+		{
+			if (!fits(tensor1, tensor2))
+			{
+				throw BadShape("The two Tensors could not fit into each other. They must have the same shape", tensor1.Shape(), tensor2.Shape());
+			}
+		}
 	}
 }

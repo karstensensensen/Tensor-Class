@@ -13,17 +13,27 @@
 
 namespace TSlib
 {
-	namespace
-	{
-		template<typename T>
-		struct is_tensor : std::false_type {};
+	template<typename T>
+	struct is_tensor_type : std::false_type {};
 
-		template<typename T, Mode device>
-		struct is_tensor<Tensor<T, device>> : std::true_type {};
+	template<typename T, Mode device>
+	struct is_tensor_type<Tensor<T, device>> : std::true_type {};
 
-		template<typename T, Mode device>
-		struct is_tensor<TensorSlice<T, device>> : std::true_type {};
-	}
+	template<typename T, Mode device>
+	struct is_tensor_type<TensorSlice<T, device>> : std::true_type {};
+	
+	template<typename T>
+	struct is_tensor : std::false_type{};
+
+	template<typename T, Mode device>
+	struct is_tensor<Tensor<T, device>> : std::true_type{};
+
+	template<typename T>
+	struct is_tensor_slice : std::false_type{};
+
+	template<typename T, Mode device>
+	struct is_tensor_slice<TensorSlice<T, device>> : std::true_type{};
+
 
 	#ifdef _CUDA
 
@@ -456,7 +466,7 @@ namespace TSlib
 		Tensor<RT, device> compare(const Tensor<OT, o_device>& other, bool(*comp_func)(const T&, const OT&) = Equal) const;
 		template<typename RT = char, typename OT, Mode o_device>
 		Tensor<RT, device> compare(const TensorSlice<OT, o_device>& other, bool(*comp_func)(const T&, const OT&) = Equal) const;
-		template<typename RT = char, typename OT, std::enable_if_t<!is_tensor<OT>::value, int> = 0>
+		template<typename RT = char, typename OT, std::enable_if_t<!is_tensor_type<OT>::value, int> = 0>
 		Tensor<RT, device> compare(const OT& other, bool(*comp_func)(const T&, const OT&) = Equal) const;
 
 		template<typename OT>
