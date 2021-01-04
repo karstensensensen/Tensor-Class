@@ -76,6 +76,9 @@ namespace TSlib
 
 		TensorSlice<T, device>& Reshape(const std::vector<long long>& shape);
 
+		TensorSlice<T, device>& exp();
+		TensorSlice<T, device>& normalize();
+
 		template<typename ... Args>
 		T& Get(Args ... coords);
 		template<typename ... Args>

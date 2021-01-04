@@ -118,41 +118,44 @@ namespace TSlib
 
 		~Tensor();
 
-		void ResizeDim(const size_t& index, const size_t& amount, const T& pad_val = T());
+		Tensor<T, device>& ResizeDim(const size_t& index, const size_t& amount, const T& pad_val = T());
 
 		std::vector<size_t> FlattenDims(size_t dims) const;
 		size_t FlattenDims() const;
 
-		void Resize(const std::vector<size_t>& sizes, const T& pad_val = T());
+		Tensor<T, device>& Resize(const std::vector<size_t>& sizes, const T& pad_val = T());
 
-		void Reshape(const std::vector<long long>& shape);
+		Tensor<T, device>& Reshape(const std::vector<long long>& shape);
 
-		void SetDims(const size_t& dims);
+		Tensor<T, device>& SetDims(const size_t& dims);
 
-		void AddDims(const size_t& dims = 1);
+		Tensor<T, device>& AddDims(const size_t& dims = 1);
 
-		void RemoveDims(const size_t& dims = 1);
+		Tensor<T, device>& RemoveDims(const size_t& dims = 1);
 
 		template<typename OT, Mode o_device>
-		void Append(const Tensor<OT, o_device>& other, const size_t& dimension);
+		Tensor<T, device>& Append(const Tensor<OT, o_device>& other, const size_t& dimension);
 
-		void Fill(const T& val = NULL);
-		void Fill(std::function<T(const size_t&)> generator);
-		void Fill(std::function<T(const std::vector<size_t>&)> generator);
-		void Fill(std::function<T(const std::vector<size_t>&, const size_t&)> generator);
-		void Fill(const std::vector<T>& vals);
+		Tensor<T, device>& Fill(const T& val = NULL);
+		Tensor<T, device>& Fill(std::function<T(const size_t&)> generator);
+		Tensor<T, device>& Fill(std::function<T(const std::vector<size_t>&)> generator);
+		Tensor<T, device>& Fill(std::function<T(const std::vector<size_t>&, const size_t&)> generator);
+		Tensor<T, device>& Fill(const std::vector<T>& vals);
 
-		inline void Compute(std::function<void(T&)> compute_func);
-		inline void Compute(std::function<void(T&, const size_t&)> compute_func);
-		inline void Compute(std::function<void(T&, const std::vector<size_t>&)> compute_func);
-		inline void Compute(std::function<void(T&, const std::vector<size_t>&, const size_t&)> compute_func);
+		inline Tensor<T, device>& Compute(std::function<void(T&)> compute_func);
+		inline Tensor<T, device>& Compute(std::function<void(T&, const size_t&)> compute_func);
+		inline Tensor<T, device>& Compute(std::function<void(T&, const std::vector<size_t>&)> compute_func);
+		inline Tensor<T, device>& Compute(std::function<void(T&, const std::vector<size_t>&, const size_t&)> compute_func);
 
-		inline void Compute(std::function<void(const T&)> compute_func) const;
-		inline void Compute(std::function<void(const T&, const size_t&)> compute_func) const;
-		inline void Compute(std::function<void(const T&, const std::vector<size_t>&)> compute_func) const;
-		inline void Compute(std::function<void(const T&, const std::vector<size_t>&, const size_t&)> compute_func) const;
+		inline Tensor<T, device>& Compute(std::function<void(const T&)> compute_func) const;
+		inline Tensor<T, device>& Compute(std::function<void(const T&, const size_t&)> compute_func) const;
+		inline Tensor<T, device>& Compute(std::function<void(const T&, const std::vector<size_t>&)> compute_func) const;
+		inline Tensor<T, device>& Compute(std::function<void(const T&, const std::vector<size_t>&, const size_t&)> compute_func) const;
 
-		void Replace(const T& target, const T& value);
+		Tensor<T, device>& Replace(const T& target, const T& value);
+
+		Tensor<T, device>& exp();
+		Tensor<T, device>& normalize();
 
 		template<typename ... Args>
 		inline T& Get(const Args& ... coords);

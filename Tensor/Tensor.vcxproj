@@ -287,6 +287,7 @@
     <ClInclude Include="..\include\TensorEnums.h" />
     <ClInclude Include="..\include\TensorExceptions.h" />
     <ClInclude Include="..\include\TensorArithmeticOperators.h" />
+    <ClInclude Include="..\include\TensorMath.h" />
     <ClInclude Include="..\include\TensorSlice.h" />
     <ClInclude Include="..\include\TensorSliceBones.h" />
     <ClInclude Include="..\include\TensorTools.h" />
