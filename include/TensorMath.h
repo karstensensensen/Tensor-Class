@@ -34,7 +34,7 @@ namespace TSlib
 	Tensor<T, device>& Tensor<T, device>::normalize()
 	{
 		T tensor_sum = sum();
-		Compute([=](T& elem) {elem = elem / tensor_sum});
+		Compute([=](T& elem) {elem = elem / tensor_sum; });
 
 		return *this;
 	}
@@ -43,7 +43,7 @@ namespace TSlib
 	TensorSlice<T, device>& TensorSlice<T, device>::normalize()
 	{
 		T tensor_sum = sum();
-		Compute([=](T& elem) {elem = elem / tensor_sum});
+		Compute([=](T& elem) {elem = elem / tensor_sum; });
 
 		return *this;
 	}

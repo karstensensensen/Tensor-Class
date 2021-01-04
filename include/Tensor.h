@@ -595,7 +595,7 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	inline Tensor<T, device>& Tensor<T, device>::Compute(std::function<void(const T&)> compute_func) const
+	inline void Tensor<T, device>::Compute(std::function<void(const T&)> compute_func) const
 	{
 		#pragma omp parallel for
 		for (long long index = 0; (size_t)index < size(); index++)
@@ -603,23 +603,20 @@ namespace TSlib
 			compute_func(At(index));
 		}
 
-		return *this;
 	}
 
 	template<typename T, Mode device>
-	inline Tensor<T, device>& Tensor<T, device>::Compute(std::function<void(const T&, const size_t&)> compute_func) const
+	void Tensor<T, device>::Compute(std::function<void(const T&, const size_t&)> compute_func) const
 	{
 		#pragma omp parallel for
 		for (long long index = 0; (size_t)index < size(); index++)
 		{
 			compute_func(At(index), index);
 		}
-
-		return *this;
 	}
 
 	template<typename T, Mode device>
-	inline Tensor<T, device>& Tensor<T, device>::Compute(std::function<void(const T&, const std::vector<size_t>&)> compute_func) const
+	void Tensor<T, device>::Compute(std::function<void(const T&, const std::vector<size_t>&)> compute_func) const
 	{
 		#pragma omp parallel for
 		for (long long index = 0; (size_t)index < size(); index++)
@@ -636,12 +633,10 @@ namespace TSlib
 
 			compute_func(At(index), coords);
 		}
-
-		return *this;
 	}
 
 	template<typename T, Mode device>
-	inline Tensor<T, device>& Tensor<T, device>::Compute(std::function<void(const T&, const std::vector<size_t>&, const size_t&)> compute_func) const
+	void Tensor<T, device>::Compute(std::function<void(const T&, const std::vector<size_t>&, const size_t&)> compute_func) const
 	{
 		#pragma omp parallel for
 		for (long long index = 0; (size_t)index < size(); index++)

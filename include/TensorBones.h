@@ -147,10 +147,10 @@ namespace TSlib
 		inline Tensor<T, device>& Compute(std::function<void(T&, const std::vector<size_t>&)> compute_func);
 		inline Tensor<T, device>& Compute(std::function<void(T&, const std::vector<size_t>&, const size_t&)> compute_func);
 
-		inline Tensor<T, device>& Compute(std::function<void(const T&)> compute_func) const;
-		inline Tensor<T, device>& Compute(std::function<void(const T&, const size_t&)> compute_func) const;
-		inline Tensor<T, device>& Compute(std::function<void(const T&, const std::vector<size_t>&)> compute_func) const;
-		inline Tensor<T, device>& Compute(std::function<void(const T&, const std::vector<size_t>&, const size_t&)> compute_func) const;
+		void Compute(std::function<void(const T&)> compute_func) const;
+		void Compute(std::function<void(const T&, const size_t&)> compute_func) const;
+		void Compute(std::function<void(const T&, const std::vector<size_t>&)> compute_func) const;
+		void Compute(std::function<void(const T&, const std::vector<size_t>&, const size_t&)> compute_func) const;
 
 		Tensor<T, device>& Replace(const T& target, const T& value);
 
