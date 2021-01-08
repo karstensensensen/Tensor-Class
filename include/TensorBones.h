@@ -103,6 +103,9 @@ namespace TSlib
 
 	public:
 
+		using Type = T;
+		static constexpr Mode Device = device;
+
 		Tensor();
 		Tensor(const std::vector<size_t>& sizes, const T& pad_val = T());
 		Tensor(const std::vector<size_t>& sizes, std::function<T()> generator);
@@ -125,7 +128,8 @@ namespace TSlib
 
 		Tensor<T, device>& Resize(const std::vector<size_t>& sizes, const T& pad_val = T());
 
-		Tensor<T, device>& Reshape(const std::vector<long long>& shape);
+		template<typename Ts, std::enable_if_t<std::is_integral<Ts>::value, int> = 0>
+		Tensor<T, device>& Reshape(const std::vector<Ts>& shape);
 
 		Tensor<T, device>& SetDims(const size_t& dims);
 
@@ -147,18 +151,35 @@ namespace TSlib
 		inline Tensor<T, device>& Compute(std::function<void(T&, const std::vector<size_t>&)> compute_func);
 		inline Tensor<T, device>& Compute(std::function<void(T&, const std::vector<size_t>&, const size_t&)> compute_func);
 
-		void Compute(std::function<void(const T&)> compute_func) const;
-		void Compute(std::function<void(const T&, const size_t&)> compute_func) const;
-		void Compute(std::function<void(const T&, const std::vector<size_t>&)> compute_func) const;
-		void Compute(std::function<void(const T&, const std::vector<size_t>&, const size_t&)> compute_func) const;
+		inline void Compute(std::function<void(const T&)> compute_func) const;
+		inline void Compute(std::function<void(const T&, const size_t&)> compute_func) const;
+		inline void Compute(std::function<void(const T&, const std::vector<size_t>&)> compute_func) const;
+		inline void Compute(std::function<void(const T&, const std::vector<size_t>&, const size_t&)> compute_func) const;
+
+		inline Tensor<T, device> Compute(std::function<T(const T&)> compute_func, size_t axis, bool keepDims = true) const;
+		inline Tensor<T, device> Compute(std::function<T(const T&, const size_t&)> compute_func, size_t axis, bool keepDims = true) const;
+		inline Tensor<T, device> Compute(std::function<T(const T&, const std::vector<size_t>&)> compute_func, size_t axis, bool keepDims = true) const;
+		inline Tensor<T, device> Compute(std::function<T(const T&, const std::vector<size_t>&, const size_t&)> compute_func, size_t axis, bool keepDims = true) const;
+
 
 		Tensor<T, device>& Replace(const T& target, const T& value);
 
+		//math functions
+
 		Tensor<T, device>& exp();
+
 		Tensor<T, device>& normalize();
 
+		T max() const;
+
+		T min() const;
+
+		
+		inline T& Get(const std::vector<size_t>& coords);
 		template<typename ... Args>
 		inline T& Get(const Args& ... coords);
+		
+		inline T Get(const std::vector<size_t>& coords) const;
 		template<typename ... Args>
 		inline T Get(const Args& ... coords) const;
 

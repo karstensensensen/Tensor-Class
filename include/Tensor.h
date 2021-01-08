@@ -553,11 +553,10 @@ namespace TSlib
 	template<typename T, Mode device>
 	inline Tensor<T, device>& Tensor<T, device>::Compute(std::function<void(T&, const std::vector<size_t>&)> compute_func)
 	{
+
 		#pragma omp parallel for
 		for (long long index = 0; (size_t)index < size(); index++)
 		{
-			compute_func(At(index), index);
-
 			std::vector<size_t> coords(Dims());
 
 			coords[0] = (index % get_real_size(0));
@@ -578,8 +577,6 @@ namespace TSlib
 		#pragma omp parallel for
 		for (long long index = 0; (size_t)index < size(); index++)
 		{
-			compute_func(At(index), index);
-
 			std::vector<size_t> coords(Dims());
 
 			coords[0] = (index % get_real_size(0));
@@ -595,7 +592,7 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	inline void Tensor<T, device>::Compute(std::function<void(const T&)> compute_func) const
+	void Tensor<T, device>::Compute(std::function<void(const T&)> compute_func) const
 	{
 		#pragma omp parallel for
 		for (long long index = 0; (size_t)index < size(); index++)
@@ -621,8 +618,6 @@ namespace TSlib
 		#pragma omp parallel for
 		for (long long index = 0; (size_t)index < size(); index++)
 		{
-			compute_func(At(index), index);
-
 			std::vector<size_t> coords(Dims());
 
 			coords[0] = (index % get_real_size(0));
@@ -641,8 +636,6 @@ namespace TSlib
 		#pragma omp parallel for
 		for (long long index = 0; (size_t)index < size(); index++)
 		{
-			compute_func(At(index), index);
-
 			std::vector<size_t> coords(Dims());
 
 			coords[0] = (index % get_real_size(0));
@@ -655,6 +648,158 @@ namespace TSlib
 		}
 
 		return *this;
+	}
+
+	template<typename T, Mode device>
+	inline Tensor<T, device> Tensor<T, device>::Compute(std::function<T(const T&)> compute_func, size_t axis, bool keepDims) const
+	{
+		std::vector<size_t> return_shape(Shape());
+
+		return_shape[axis] = 1;
+
+		Tensor<T, device> result(return_shape, 0);
+
+		result.Compute([&](T& elem, const std::vector<size_t>& coords)
+			{
+				std::vector<size_t> new_coords = coords;
+				new_coords[axis] = 0;
+				T new_elem = T();
+				
+				for (size_t i = 0; i < Shape()[axis]; i++)
+				{
+					new_elem += compute_func(Get(new_coords));
+					new_coords[axis]++;
+				}
+				elem = new_elem;
+			});
+
+		if (!keepDims)
+		{
+			return_shape.resize(result.Dims() - 1);
+
+			for (size_t i = 0; i < return_shape.size(); i++)
+			{
+				return_shape[i] = Shape()[i] * (i < axis - 1) + Shape()[i + 1] * (i >= axis - 1);
+			}
+
+			result.Reshape(return_shape);
+		}
+
+		return result;
+	}
+
+	template<typename T, Mode device>
+	inline Tensor<T, device> Tensor<T, device>::Compute(std::function<T(const T&, const size_t&)> compute_func, size_t axis, bool keepDims) const
+	{
+		std::vector<size_t> return_shape(Shape());
+
+		return_shape[axis] = 1;
+
+		Tensor<T, device> result(return_shape, 0);
+
+		result.Compute([&](T& elem, const std::vector<size_t>& coords, const size_t& index)
+			{
+				std::vector<size_t> new_coords = coords;
+				new_coords[axis] = 0;
+				T new_elem = T();
+
+				for (size_t i = 0; i < Shape()[axis]; i++)
+				{
+					new_elem += compute_func(Get(new_coords), index);
+					new_coords[axis]++;
+				}
+				elem = new_elem;
+			});
+
+		if (!keepDims)
+		{
+			return_shape.resize(result.Dims() - 1);
+
+			for (size_t i = 0; i < return_shape.size(); i++)
+			{
+				return_shape[i] = Shape()[i] * (i < axis - 1) + Shape()[i + 1] * (i >= axis - 1);
+			}
+
+			result.Reshape(return_shape);
+		}
+
+		return result;
+	}
+
+	template<typename T, Mode device>
+	inline Tensor<T, device> Tensor<T, device>::Compute(std::function<T(const T&, const std::vector<size_t>&)> compute_func, size_t axis, bool keepDims) const
+	{
+		std::vector<size_t> return_shape(Shape());
+
+		return_shape[axis] = 1;
+
+		Tensor<T, device> result(return_shape, 0);
+
+		result.Compute([&](T& elem, const std::vector<size_t>& coords)
+			{
+				std::vector<size_t> new_coords = coords;
+				new_coords[axis] = 0;
+				T new_elem = T();
+
+				for (size_t i = 0; i < Shape()[axis]; i++)
+				{
+					new_elem += compute_func(Get(new_coords), new_coords);
+					new_coords[axis]++;
+				}
+				elem = new_elem;
+			});
+
+		if (!keepDims)
+		{
+			return_shape.resize(result.Dims() - 1);
+
+			for (size_t i = 0; i < return_shape.size(); i++)
+			{
+				return_shape[i] = Shape()[i] * (i < axis - 1) + Shape()[i + 1] * (i >= axis - 1);
+			}
+
+			result.Reshape(return_shape);
+		}
+
+		return result;
+	}
+
+	template<typename T, Mode device>
+	inline Tensor<T, device> Tensor<T, device>::Compute(std::function<T(const T&, const std::vector<size_t>&, const size_t&)> compute_func, size_t axis, bool keepDims) const
+	{
+		std::vector<size_t> return_shape(Shape());
+
+		return_shape[axis] = 1;
+
+		Tensor<T, device> result(return_shape, 0);
+
+		result.Compute([&](T& elem, const std::vector<size_t>& coords, const size_t& index)
+			{
+				std::vector<size_t> new_coords = coords;
+				new_coords[axis] = 0;
+				T new_elem = T();
+
+				for (size_t i = 0; i < Shape()[axis]; i++)
+				{
+					new_elem += compute_func(Get(new_coords), new_coords, index);
+					new_coords[axis]++;
+				}
+				elem = new_elem;
+			});
+
+		if (!keepDims)
+		{
+			return_shape.resize(result.Dims() - 1);
+
+			for (size_t i = 0; i < return_shape.size(); i++)
+			{
+				return_shape[i] = Shape()[i] * (i < axis - 1) + Shape()[i + 1] * (i >= axis - 1);
+			}
+
+			result.Reshape(return_shape);
+		}
+
+		return result;
 	}
 
 	template<typename T, Mode device>
@@ -836,7 +981,8 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	Tensor<T, device>& Tensor<T, device>::Reshape(const std::vector<long long>& shape)
+	template<typename Ts, std::enable_if_t<std::is_integral<Ts>::value, int>>
+	Tensor<T, device>& Tensor<T, device>::Reshape(const std::vector<Ts>& shape)
 	{
 		MEASURE();
 		#ifdef _TS_DEBUG
@@ -857,15 +1003,17 @@ namespace TSlib
 		}
 		#endif
 
+
 		long long unknown_pos = -1;
 		size_t shape_product = 1;
-
-		for (size_t i = 0; i < shape.size(); i++)
+		if constexpr (std::is_unsigned<T>::value)
 		{
-			unknown_pos = i * (shape[i] < 0) + unknown_pos * (shape[i] >= 0);
-			shape_product *= shape[i] * (shape[i] >= 0) + (shape[i] < 0);
+			for (size_t i = 0; i < shape.size(); i++)
+			{
+				unknown_pos = i * (shape[i] < 0) + unknown_pos * (shape[i] >= 0);
+				shape_product *= shape[i] * (shape[i] >= 0) + (shape[i] < 0);
+			}
 		}
-
 		size_t unknown_value = size() / shape_product;
 
 		#ifdef _TS_DEBUG
@@ -1039,6 +1187,33 @@ namespace TSlib
 	#endif
 
 	template<typename T, Mode device>
+	inline T& TSlib::Tensor<T, device>::Get(const std::vector<size_t>& coords)
+	{
+		#ifdef _TS_DEBUG
+		if (Dims() != coords.size())
+		{
+			throw BadValue("Exception was thrown, because there were not the same nuumber of coordinates given as the number of dimensions in the Tensor", ExceptValue("Coords", coords.size()), ExceptValue("Dimensions", Dims()));
+		}
+		#endif
+
+		size_t index = 0;
+		size_t tmp_multiply = get_real_size(Dims() - 1);
+
+		for(size_t i = 0; i < Dims(); i++)
+		{
+			#ifdef _TS_DEBUG
+			if (Shape()[i] <= coords[i])
+				throw OutOfBounds(Shape(), "Exception was thrown, because an element outside the Tensor bounds was accsessed", i, coords[i]);
+			#endif
+
+			tmp_multiply /= Shape()[i];
+			index += coords[i] * tmp_multiply;
+		}
+
+		return At(index);
+	}
+
+	template<typename T, Mode device>
 	template<typename ... Args>
 	T& Tensor<T, device>::Get(const Args& ... coords)
 	{
@@ -1050,6 +1225,33 @@ namespace TSlib
 		get_indx(index, i, tmp_multiply, coords...);
 
 		return m_vector.at(index);
+	}
+
+	template<typename T, Mode device>
+	T TSlib::Tensor<T, device>::Get(const std::vector<size_t>& coords) const
+	{
+		#ifdef _TS_DEBUG
+		if (Dims() != coords.size())
+		{
+			throw BadValue("Exception was thrown, because there were not the same nuumber of coordinates given as the number of dimensions in the Tensor", ExceptValue("Coords", coords.size()), ExceptValue("Dimensions", Dims()));
+		}
+		#endif
+
+		size_t index = 0;
+		size_t tmp_multiply = get_real_size(Dims() - 1);
+
+		for(size_t i = 0; i < Dims(); i++)
+		{
+		#ifdef _TS_DEBUG
+		if (Shape()[i] <= coords[i])
+			throw OutOfBounds(Shape(), "Exception was thrown, because an element outside the Tensor bounds was accsessed", i, coords[i]);
+		#endif
+
+		tmp_multiply /= Shape()[i];
+		index += coords[i] * tmp_multiply;
+		}
+
+		return At(index);
 	}
 
 	template<typename T, Mode device>
