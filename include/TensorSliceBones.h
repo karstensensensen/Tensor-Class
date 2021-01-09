@@ -61,6 +61,11 @@ namespace TSlib
 		inline void Compute(std::function<void(T&, const std::vector<size_t>&)> compute_func);
 		inline void Compute(std::function<void(T&, const std::vector<size_t>&, const size_t&)> compute_func);
 
+		inline Tensor<T, device> Compute(std::function<T(const T&)> compute_func, size_t axis, bool keepDims = true)const;
+		inline Tensor<T, device> Compute(std::function<T(const T&, const size_t&)> compute_func, size_t axis, bool keepDims = true) const;
+		inline Tensor<T, device> Compute(std::function<T(const T&, const std::vector<size_t>&)> compute_func, size_t axis, bool keepDims = true) const;
+		inline Tensor<T, device> Compute(std::function<T(const T&, const std::vector<size_t>&, const size_t&)> compute_func, size_t axis, bool keepDims = true) const;
+
 		void Replace(const T& target, const T& value);
 
 		size_t size() const;
@@ -81,8 +86,10 @@ namespace TSlib
 
 		template<typename ... Args>
 		T& Get(Args ... coords);
+		T& Get(const std::vector<size_t>& coords);
 		template<typename ... Args>
 		T Get(Args ... coords) const;
+		T Get(const std::vector<size_t>& coords) const;
 
 		T& At(size_t index);
 		T At(size_t index) const;

@@ -110,6 +110,33 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
+	inline T& TSlib::TensorSlice<T, device>::Get(const std::vector<size_t>& coords)
+	{
+		#ifdef _TS_DEBUG
+		if (Dims() != coords.size())
+		{
+			throw BadValue("Exception was thrown, because there were not the same nuumber of coordinates given as the number of dimensions in the Tensor", ExceptValue("Coords", coords.size()), ExceptValue("Dimensions", Dims()));
+		}
+		#endif
+
+		size_t index = 0;
+		size_t tmp_multiply = get_real_size(Dims() - 1);
+
+		for (size_t i = 0; i < Dims(); i++)
+		{
+			#ifdef _TS_DEBUG
+			if (Shape()[i] <= coords[i])
+				throw OutOfBounds(Shape(), "Exception was thrown, because an element outside the Tensor bounds was accsessed", i, coords[i]);
+			#endif
+
+			tmp_multiply /= Shape()[i];
+			index += coords[i] * tmp_multiply;
+		}
+
+		return At(map_index(index));
+	}
+
+	template<typename T, Mode device>
 	template<typename ... Args>
 	T TensorSlice<T, device>::Get(Args ... coords) const
 	{
@@ -124,6 +151,34 @@ namespace TSlib
 		size_t i = 0;
 
 		get_indx(index, i, tmp_multiply, coords...);
+
+		return At(map_index(index));
+	}
+
+	template<typename T, Mode device>
+	inline T TSlib::TensorSlice<T, device>::Get(const std::vector<size_t>& coords) const
+	{
+		#ifdef _TS_DEBUG
+		if (Dims() != coords.size())
+		{
+			throw BadValue("Exception was thrown, because there were not the same nuumber of coordinates given as the number of dimensions in the Tensor", ExceptValue("Coords", coords.size()), ExceptValue("Dimensions", Dims()));
+		}
+
+		#endif
+
+		size_t index = 0;
+		size_t tmp_multiply = get_real_size(Dims() - 1);
+
+		for (size_t i = 0; i < Dims(); i++)
+		{
+			#ifdef _TS_DEBUG
+			if (Shape()[i] <= coords[i])
+				throw OutOfBounds(Shape(), "Exception was thrown, because an element outside the Tensor bounds was accsessed", i, coords[i]);
+			#endif
+
+			tmp_multiply /= Shape()[i];
+			index += coords[i] * tmp_multiply;
+		}
 
 		return At(map_index(index));
 	}
@@ -317,6 +372,158 @@ namespace TSlib
 
 			compute_func(At(index), coords, index);
 		}
+	}
+
+	template<typename T, Mode device>
+	inline Tensor<T, device> TSlib::TensorSlice<T, device>::Compute(std::function<T(const T&)> compute_func, size_t axis, bool keepDims) const
+	{
+		std::vector<size_t> return_shape(Shape());
+
+		return_shape[axis] = 1;
+
+		Tensor<T, device> result(return_shape, 0);
+
+		result.Compute([&](T& elem, const std::vector<size_t>& coords)
+			{
+				std::vector<size_t> new_coords = coords;
+				new_coords[axis] = 0;
+				T new_elem = T();
+
+				for (size_t i = 0; i < Shape()[axis]; i++)
+				{
+					new_elem += compute_func(Get(new_coords));
+					new_coords[axis]++;
+				}
+				elem = new_elem;
+			});
+
+		if (!keepDims)
+		{
+			return_shape.resize(result.Dims() - 1);
+
+			for (size_t i = 0; i < return_shape.size(); i++)
+			{
+				return_shape[i] = Shape()[i] * (i < axis) + Shape()[i + 1] * (i >= axis);
+			}
+
+			result.Reshape(return_shape);
+		}
+
+		return result;
+	}
+
+	template<typename T, Mode device>
+	inline Tensor<T, device> TSlib::TensorSlice<T, device>::Compute(std::function<T(const T&, const std::vector<size_t>&)> compute_func, size_t axis, bool keepDims) const
+	{
+		std::vector<size_t> return_shape(Shape());
+
+		return_shape[axis] = 1;
+
+		Tensor<T, device> result(return_shape, 0);
+
+		result.Compute([&](T& elem, const std::vector<size_t>& coords, const size_t& index)
+			{
+				std::vector<size_t> new_coords = coords;
+				new_coords[axis] = 0;
+				T new_elem = T();
+
+				for (size_t i = 0; i < Shape()[axis]; i++)
+				{
+					new_elem += compute_func(Get(new_coords), index);
+					new_coords[axis]++;
+				}
+				elem = new_elem;
+			});
+
+		if (!keepDims)
+		{
+			return_shape.resize(result.Dims() - 1);
+
+			for (size_t i = 0; i < return_shape.size(); i++)
+			{
+				return_shape[i] = Shape()[i] * (i < axis) + Shape()[i + 1] * (i >= axis);
+			}
+
+			result.Reshape(return_shape);
+		}
+
+		return result;
+	}
+
+	template<typename T, Mode device>
+	inline Tensor<T, device> TSlib::TensorSlice<T, device>::Compute(std::function<T(const T&, const size_t&)> compute_func, size_t axis, bool keepDims) const
+	{
+		std::vector<size_t> return_shape(Shape());
+
+		return_shape[axis] = 1;
+
+		Tensor<T, device> result(return_shape, 0);
+
+		result.Compute([&](T& elem, const std::vector<size_t>& coords, const size_t& index)
+			{
+				std::vector<size_t> new_coords = coords;
+				new_coords[axis] = 0;
+				T new_elem = T();
+
+				for (size_t i = 0; i < Shape()[axis]; i++)
+				{
+					new_elem += compute_func(Get(new_coords), index);
+					new_coords[axis]++;
+				}
+				elem = new_elem;
+			});
+
+		if (!keepDims)
+		{
+			return_shape.resize(result.Dims() - 1);
+
+			for (size_t i = 0; i < return_shape.size(); i++)
+			{
+				return_shape[i] = Shape()[i] * (i < axis) + Shape()[i + 1] * (i >= axis);
+			}
+
+			result.Reshape(return_shape);
+		}
+
+		return result;
+	}
+
+	template<typename T, Mode device>
+	inline Tensor<T, device> TSlib::TensorSlice<T, device>::Compute(std::function<T(const T&, const std::vector<size_t>&, const size_t&)> compute_func, size_t axis, bool keepDims) const
+	{
+		std::vector<size_t> return_shape(Shape());
+
+		return_shape[axis] = 1;
+
+		Tensor<T, device> result(return_shape, 0);
+
+		result.Compute([&](T& elem, const std::vector<size_t>& coords, const size_t& index)
+			{
+				std::vector<size_t> new_coords = coords;
+				new_coords[axis] = 0;
+				T new_elem = T();
+
+				for (size_t i = 0; i < Shape()[axis]; i++)
+				{
+					new_elem += compute_func(Get(new_coords), new_coords, index);
+					new_coords[axis]++;
+				}
+				elem = new_elem;
+			});
+
+		if (!keepDims)
+		{
+			return_shape.resize(result.Dims() - 1);
+
+			for (size_t i = 0; i < return_shape.size(); i++)
+			{
+				return_shape[i] = Shape()[i] * (i < axis) + Shape()[i + 1] * (i >= axis);
+			}
+
+			result.Reshape(return_shape);
+		}
+
+		return result;
 	}
 
 	template<typename T, Mode device>
