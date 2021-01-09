@@ -679,7 +679,7 @@ namespace TSlib
 
 			for (size_t i = 0; i < return_shape.size(); i++)
 			{
-				return_shape[i] = Shape()[i] * (i < axis - 1) + Shape()[i + 1] * (i >= axis - 1);
+				return_shape[i] = Shape()[i] * (i < axis) + Shape()[i + 1] * (i >= axis);
 			}
 
 			result.Reshape(return_shape);
@@ -717,7 +717,7 @@ namespace TSlib
 
 			for (size_t i = 0; i < return_shape.size(); i++)
 			{
-				return_shape[i] = Shape()[i] * (i < axis - 1) + Shape()[i + 1] * (i >= axis - 1);
+				return_shape[i] = Shape()[i] * (i < axis) + Shape()[i + 1] * (i >= axis);
 			}
 
 			result.Reshape(return_shape);
@@ -755,7 +755,7 @@ namespace TSlib
 
 			for (size_t i = 0; i < return_shape.size(); i++)
 			{
-				return_shape[i] = Shape()[i] * (i < axis - 1) + Shape()[i + 1] * (i >= axis - 1);
+				return_shape[i] = Shape()[i] * (i < axis) + Shape()[i + 1] * (i >= axis);
 			}
 
 			result.Reshape(return_shape);
@@ -793,7 +793,7 @@ namespace TSlib
 
 			for (size_t i = 0; i < return_shape.size(); i++)
 			{
-				return_shape[i] = Shape()[i] * (i < axis - 1) + Shape()[i + 1] * (i >= axis - 1);
+				return_shape[i] = Shape()[i] * (i < axis) + Shape()[i + 1] * (i >= axis);
 			}
 
 			result.Reshape(return_shape);
