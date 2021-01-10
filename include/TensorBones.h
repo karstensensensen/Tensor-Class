@@ -103,7 +103,7 @@ namespace TSlib
 
 	public:
 
-		using Type = T;
+		typedef T Type;
 		static constexpr Mode Device = device;
 
 		Tensor();
@@ -156,10 +156,10 @@ namespace TSlib
 		inline void Compute(std::function<void(const T&, const std::vector<size_t>&)> compute_func) const;
 		inline void Compute(std::function<void(const T&, const std::vector<size_t>&, const size_t&)> compute_func) const;
 
-		inline Tensor<T, device> Compute(std::function<T(const T&)> compute_func, size_t axis, bool keepDims = true) const;
-		inline Tensor<T, device> Compute(std::function<T(const T&, const size_t&)> compute_func, size_t axis, bool keepDims = true) const;
-		inline Tensor<T, device> Compute(std::function<T(const T&, const std::vector<size_t>&)> compute_func, size_t axis, bool keepDims = true) const;
-		inline Tensor<T, device> Compute(std::function<T(const T&, const std::vector<size_t>&, const size_t&)> compute_func, size_t axis, bool keepDims = true) const;
+		inline Tensor<T, device> Compute(std::function<void(T&, const T&)> compute_func, size_t axis, bool keepDims = true) const;
+		inline Tensor<T, device> Compute(std::function<void(T&, const T&, const size_t&)> compute_func, size_t axis, bool keepDims = true) const;
+		inline Tensor<T, device> Compute(std::function<void(T&, const T&, const std::vector<size_t>&)> compute_func, size_t axis, bool keepDims = true) const;
+		inline Tensor<T, device> Compute(std::function<void(T&, const T&, const std::vector<size_t>&, const size_t&)> compute_func, size_t axis, bool keepDims = true) const;
 
 
 		Tensor<T, device>& Replace(const T& target, const T& value);

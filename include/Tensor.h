@@ -559,10 +559,10 @@ namespace TSlib
 		{
 			std::vector<size_t> coords(Dims());
 
-			coords[0] = (index % get_real_size(0));
+			coords[0] = (index % get_real_size(Dims() - 1));
 			for (size_t j = 1; j < Dims(); j++)
 			{
-				coords[j] = (index / get_real_size(j - 1)) % get_real_size(j - 1);
+				coords[j] = (index / get_real_size(Dims() - j)) % get_real_size(Dims() - j);
 			}
 
 			compute_func(At(index), coords);
@@ -579,10 +579,10 @@ namespace TSlib
 		{
 			std::vector<size_t> coords(Dims());
 
-			coords[0] = (index % get_real_size(0));
+			coords[0] = (index % get_real_size(Dims() - 1));
 			for (size_t j = 1; j < Dims(); j++)
 			{
-				coords[j] = (index / get_real_size(j - 1)) % get_real_size(j - 1);
+				coords[j] = (index / get_real_size(Dims() - j)) % get_real_size(Dims() - j);
 			}
 
 			compute_func(At(index), coords, index);
@@ -620,10 +620,10 @@ namespace TSlib
 		{
 			std::vector<size_t> coords(Dims());
 
-			coords[0] = (index % get_real_size(0));
+			coords[0] = (index % get_real_size(Dims() - 1));
 			for (size_t j = 1; j < Dims(); j++)
 			{
-				coords[j] = (index / get_real_size(j - 1)) % get_real_size(j - 1);
+				coords[j] = (index / get_real_sizeDims() - j)) % get_real_size(Dims() - j);
 			}
 
 			compute_func(At(index), coords);
@@ -638,10 +638,10 @@ namespace TSlib
 		{
 			std::vector<size_t> coords(Dims());
 
-			coords[0] = (index % get_real_size(0));
+			coords[0] = (index % get_real_size(Dims()));
 			for (size_t j = 1; j < Dims(); j++)
 			{
-				coords[j] = (index / get_real_size(j - 1)) % get_real_size(j - 1);
+				coords[j] = (index / get_real_size(Dims() - j)) % get_real_size(Dims() - j);
 			}
 
 			compute_func(At(index), coords, index);
@@ -651,7 +651,7 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	inline Tensor<T, device> Tensor<T, device>::Compute(std::function<T(const T&)> compute_func, size_t axis, bool keepDims) const
+	inline Tensor<T, device> Tensor<T, device>::Compute(std::function<void(T&, const T&) > compute_func, size_t axis, bool keepDims) const
 	{
 		std::vector<size_t> return_shape(Shape());
 
@@ -663,14 +663,12 @@ namespace TSlib
 			{
 				std::vector<size_t> new_coords = coords;
 				new_coords[axis] = 0;
-				T new_elem = T();
 				
 				for (size_t i = 0; i < Shape()[axis]; i++)
 				{
-					new_elem += compute_func(Get(new_coords));
+					compute_func(elem, Get(new_coords));
 					new_coords[axis]++;
 				}
-				elem = new_elem;
 			});
 
 		if (!keepDims)
@@ -689,7 +687,7 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	inline Tensor<T, device> Tensor<T, device>::Compute(std::function<T(const T&, const size_t&)> compute_func, size_t axis, bool keepDims) const
+	inline Tensor<T, device> Tensor<T, device>::Compute(std::function<void(T&, const T&, const size_t&)> compute_func, size_t axis, bool keepDims) const
 	{
 		std::vector<size_t> return_shape(Shape());
 
@@ -701,14 +699,12 @@ namespace TSlib
 			{
 				std::vector<size_t> new_coords = coords;
 				new_coords[axis] = 0;
-				T new_elem = T();
 
 				for (size_t i = 0; i < Shape()[axis]; i++)
 				{
-					new_elem += compute_func(Get(new_coords), index);
+					compute_func(elem, Get(new_coords), index);
 					new_coords[axis]++;
 				}
-				elem = new_elem;
 			});
 
 		if (!keepDims)
@@ -727,7 +723,7 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	inline Tensor<T, device> Tensor<T, device>::Compute(std::function<T(const T&, const std::vector<size_t>&)> compute_func, size_t axis, bool keepDims) const
+	inline Tensor<T, device> Tensor<T, device>::Compute(std::function<void(T&, const T&, const std::vector<size_t>&)> compute_func, size_t axis, bool keepDims) const
 	{
 		std::vector<size_t> return_shape(Shape());
 
@@ -739,14 +735,12 @@ namespace TSlib
 			{
 				std::vector<size_t> new_coords = coords;
 				new_coords[axis] = 0;
-				T new_elem = T();
 
 				for (size_t i = 0; i < Shape()[axis]; i++)
 				{
-					new_elem += compute_func(Get(new_coords), new_coords);
+					compute_func(elem, Get(new_coords), new_coords);
 					new_coords[axis]++;
 				}
-				elem = new_elem;
 			});
 
 		if (!keepDims)
@@ -765,7 +759,7 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	inline Tensor<T, device> Tensor<T, device>::Compute(std::function<T(const T&, const std::vector<size_t>&, const size_t&)> compute_func, size_t axis, bool keepDims) const
+	inline Tensor<T, device> Tensor<T, device>::Compute(std::function<void(T&, const T&, const std::vector<size_t>&, const size_t&)> compute_func, size_t axis, bool keepDims) const
 	{
 		std::vector<size_t> return_shape(Shape());
 
@@ -777,14 +771,12 @@ namespace TSlib
 			{
 				std::vector<size_t> new_coords = coords;
 				new_coords[axis] = 0;
-				T new_elem = T();
 
 				for (size_t i = 0; i < Shape()[axis]; i++)
 				{
-					new_elem += compute_func(Get(new_coords), new_coords, index);
+					compute_func(elem, Get(new_coords), new_coords, index);
 					new_coords[axis]++;
 				}
-				elem = new_elem;
 			});
 
 		if (!keepDims)
