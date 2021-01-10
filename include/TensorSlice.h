@@ -269,7 +269,7 @@ namespace TSlib
 			{
 				throw BadShape(Shape(), "The shapes passed must be the same", other.Shape());
 			}
-}
+		}
 		#endif
 
 		Compute([&](T& elem, const size_t& index) {elem = other[index]; });

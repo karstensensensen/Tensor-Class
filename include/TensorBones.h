@@ -161,7 +161,6 @@ namespace TSlib
 		inline Tensor<T, device> Compute(std::function<void(T&, const T&, const std::vector<size_t>&)> compute_func, size_t axis, bool keepDims = true) const;
 		inline Tensor<T, device> Compute(std::function<void(T&, const T&, const std::vector<size_t>&, const size_t&)> compute_func, size_t axis, bool keepDims = true) const;
 
-
 		Tensor<T, device>& Replace(const T& target, const T& value);
 
 		//math functions
@@ -174,11 +173,10 @@ namespace TSlib
 
 		T min() const;
 
-		
 		inline T& Get(const std::vector<size_t>& coords);
 		template<typename ... Args>
 		inline T& Get(const Args& ... coords);
-		
+
 		inline T Get(const std::vector<size_t>& coords) const;
 		template<typename ... Args>
 		inline T Get(const Args& ... coords) const;
