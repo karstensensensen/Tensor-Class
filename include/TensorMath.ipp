@@ -113,9 +113,9 @@ namespace TSlib
 	{
 		T max_elem = At(0);
 
-		for(size_t i = 1; i < size(); i++)
+		for (size_t i = 1; i < size(); i++)
 		{
-		max_elem = std::max(max_elem, At(i));
+			max_elem = std::max(max_elem, At(i));
 		}
 
 		return max_elem;

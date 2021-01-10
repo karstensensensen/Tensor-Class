@@ -281,14 +281,18 @@
   <ItemGroup>
     <ClInclude Include="..\include\PerlinNoise.h" />
     <ClInclude Include="..\include\Tensor.h" />
+    <ClInclude Include="..\include\Tensor.ipp" />
     <ClInclude Include="..\include\TensorArithmetic.h" />
+    <ClInclude Include="..\include\TensorArithmeticOperators.ipp" />
     <ClInclude Include="..\include\TensorBones.h" />
     <ClInclude Include="..\include\TensorCompareOperators.h" />
     <ClInclude Include="..\include\TensorEnums.h" />
     <ClInclude Include="..\include\TensorExceptions.h" />
     <ClInclude Include="..\include\TensorArithmeticOperators.h" />
     <ClInclude Include="..\include\TensorMath.h" />
+    <ClInclude Include="..\include\TensorMath.ipp" />
     <ClInclude Include="..\include\TensorSlice.h" />
+    <ClInclude Include="..\include\TensorSlice.ipp" />
     <ClInclude Include="..\include\TensorSliceBones.h" />
     <ClInclude Include="..\include\TensorTools.h" />
     <ClInclude Include="..\include\TensorToolsBones.h" />

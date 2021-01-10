@@ -34,4 +34,3 @@ namespace TSlib
 }
 
 #include "TensorTools.ipp"
-

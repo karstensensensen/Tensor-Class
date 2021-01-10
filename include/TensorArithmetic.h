@@ -702,5 +702,3 @@ namespace TSlib
 		return result;
 	}
 }
-
-

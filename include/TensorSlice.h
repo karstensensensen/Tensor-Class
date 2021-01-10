@@ -315,5 +315,3 @@ namespace TSlib
 		bool operator>= (const OT& other);
 	};
 }
-
-
