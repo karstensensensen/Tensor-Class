@@ -1,10 +1,10 @@
 #pragma once
 
 #ifdef _CUDA
-#include "TensorCudaBones.cuh"
+#include "TensorCuda.cuh"
 #include "TensorOperatorKernels.cuh"
 #else
-#include "TensorBones.h"
+#include "Tensor.h"
 #endif
 #include <tuple>
 

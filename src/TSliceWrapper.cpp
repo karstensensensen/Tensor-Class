@@ -1,5 +1,5 @@
+#include "Tensor.h"
 #include "TSliceWrapper.h"
-#include "TensorExceptions.h"
 
 #ifdef TENSOR_PROFILING
 #include <Profiler.h>

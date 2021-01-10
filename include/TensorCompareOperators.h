@@ -1,5 +1,4 @@
 #pragma once
-#include "TensorBones.h"
 
 namespace TSlib
 {

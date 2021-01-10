@@ -1,6 +1,6 @@
 #pragma once
-#include "TensorBones.h"
-#include "TensorToolsBones.h"
+#include "Tensor.h"
+#include "TensorTools.h"
 
 namespace TSlib
 {
@@ -9,7 +9,7 @@ namespace TSlib
 		static constexpr double Euler = 2.71828182845904523536;
 	}
 
-	// takes every element of the tensor and sets e to a power of that element
+	// takes every element of the tensor and sets Euler's number to a power of that element
 	// elem = e^elem
 	template<typename T, Mode device>
 	Tensor<T, device>& Tensor<T, device>::exp()
@@ -38,7 +38,7 @@ namespace TSlib
 	}
 
 	template<typename T, Tools::enable_if_tensor<T>>
-	Tensor<typename T::Type, T::Device> Tools::exp(const T& source, size_t axis, bool KeepDims)
+	Tensor<typename T::Type, T::Device> Tools::exp(const T& source, size_t axis, bool keepDims)
 	{
 		std::vector<size_t> return_shape(source.Shape());
 
@@ -113,7 +113,7 @@ namespace TSlib
 	{
 		T max_elem = At(0);
 
-		for size_t i = 1; i < size(), i++)
+		for(size_t i = 1; i < size(); i++)
 		{
 		max_elem = std::max(max_elem, At(i));
 		}
@@ -126,7 +126,7 @@ namespace TSlib
 	{
 		T max_elem = At(0);
 
-		for (size_t i = 1; i < size(), i++)
+		for (size_t i = 1; i < size(); i++)
 		{
 			max_elem = std::max(max_elem, At(i));
 		}
@@ -135,7 +135,7 @@ namespace TSlib
 	}
 
 	template<typename T, Tools::enable_if_tensor<T>>
-	T Tools::max(const T& source, size_t axis, bool KeepDims)
+	T Tools::max(const T& source, size_t axis, bool keepDims)
 	{
 		T result = source;
 		result.Compute([](typename T::Type& new_elem, const typename T::Type& elem) {new_elem = std::max(new_elem, elem); }, axis, KeepDims);
@@ -150,7 +150,7 @@ namespace TSlib
 	{
 		T min_elem = At(0);
 
-		for (size_t i = 1; i < size(), i++)
+		for (size_t i = 1; i < size(); i++)
 		{
 			min_elem = std::min(min_elem, At(i));
 		}
@@ -163,16 +163,16 @@ namespace TSlib
 	{
 		T min_elem = At(0);
 
-		for (size_t i = 1; i < size(), i++)
+		for (size_t i = 1; i < size(); i++)
 		{
-			max_elem = std::min(min_elem, At(i));
+			min_elem = std::min(min_elem, At(i));
 		}
 
 		return min_elem;
 	}
 
 	template<typename T, Tools::enable_if_tensor<T>>
-	T Tools::min(const T& source, size_t axis, bool KeepDims)
+	T Tools::min(const T& source, size_t axis, bool keepDims)
 	{
 		T result = source;
 		result.Compute([](typename T::Type& new_elem, const typename T::Type& elem) {new_elem = std::min(new_elem, elem); }, axis, KeepDims);

@@ -1,5 +1,5 @@
 #pragma once
-#include "TensorBones.h"
+#include "Tensor.h"
 
 namespace TSlib
 {
@@ -702,3 +702,5 @@ namespace TSlib
 		return result;
 	}
 }
+
+

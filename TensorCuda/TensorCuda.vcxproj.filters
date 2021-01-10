@@ -44,28 +44,10 @@
     <ClInclude Include="..\Multrix\PerlinKernel.cuh">
       <Filter>Header Files\Noise</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\Tensor.h">
-      <Filter>Header Files\Tensor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\TensorBones.h">
-      <Filter>Header Files\Tensor</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\TensorEnums.h">
       <Filter>Header Files\Tensor</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\TensorSliceBones.h">
-      <Filter>Header Files\Tensor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\TensorSlice.h">
-      <Filter>Header Files\Tensor</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\TensorExceptions.h">
-      <Filter>Header Files\Tensor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\CUDAInclude\TensorCuda.cuh">
-      <Filter>Header Files\Tensor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\CUDAInclude\TensorCudaBones.cuh">
       <Filter>Header Files\Tensor</Filter>
     </ClInclude>
     <ClInclude Include="..\CUDAInclude\TensorOperatorKernels.cuh">
@@ -77,19 +59,37 @@
     <ClInclude Include="..\include\TensorCompareOperators.h">
       <Filter>Header Files\Tensor</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\TensorTools.h">
-      <Filter>Header Files\Tensor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\TensorToolsBones.h">
-      <Filter>Header Files\Tensor</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\TensorArithmetic.h">
       <Filter>Header Files\Tensor</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\TensorArithmeticOperators.h">
+    <ClInclude Include="..\include\Tensor.ipp">
       <Filter>Header Files\Tensor</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\TensorMath.h">
+    <ClInclude Include="..\include\Tensor.h">
+      <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\TensorArithmeticOperators.ipp">
+      <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CUDAInclude\TensorCuda.ipp">
+      <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CUDAInclude\TensorCuda.cuh">
+      <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\TensorMath.ipp">
+      <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\TensorSlice.ipp">
+      <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\TensorSlice.h">
+      <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\TensorTools.ipp">
+      <Filter>Header Files\Tensor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\TensorTools.h">
       <Filter>Header Files\Tensor</Filter>
     </ClInclude>
   </ItemGroup>
@@ -97,13 +97,13 @@
     <CudaCompile Include="..\src\main.cpp">
       <Filter>Source Files</Filter>
     </CudaCompile>
-    <CudaCompile Include="..\src\TensorCuda.cu">
-      <Filter>Source Files</Filter>
-    </CudaCompile>
     <CudaCompile Include="..\src\TSliceWrapper.cpp">
       <Filter>Source Files</Filter>
     </CudaCompile>
     <CudaCompile Include="..\src\Tensor.cpp">
+      <Filter>Source Files</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\src\TensorCuda.cu">
       <Filter>Source Files</Filter>
     </CudaCompile>
   </ItemGroup>

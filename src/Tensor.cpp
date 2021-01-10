@@ -1,4 +1,4 @@
-#include "TensorBones.h"
+#include "Tensor.h"
 
 namespace TSlib
 {

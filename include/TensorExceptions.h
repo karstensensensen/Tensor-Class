@@ -1,6 +1,7 @@
 #pragma once
 
-#include <TensorBones.h>
+#include "Tensor.h"
+#include "TensorEnums.h"
 #include <exception>
 #include <string>
 

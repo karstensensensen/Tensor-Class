@@ -2,6 +2,7 @@
 
 #ifdef _CUDA
 #include <cuda_runtime.h>
+#include "Tensor.h"
 
 namespace TSlib
 {
