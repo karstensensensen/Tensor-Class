@@ -4,7 +4,6 @@
 
 namespace TSlib
 {
-
 	namespace Consts
 	{
 		static constexpr double Euler = 2.71828182845904523536;
@@ -48,18 +47,18 @@ namespace TSlib
 		Tensor<typename T::Type, T::Device> result(return_shape, 0);
 
 		result.Compute([&](typename T::Type& elem, const std::vector<size_t>& coords)
-		{
-			std::vector<size_t> new_coords = coords;
-			new_coords[axis] = 0;
-
-			double new_elem = 0;
-			for (size_t i = 0; i < source.Shape()[axis]; i++)
 			{
-				new_elem += std::pow(Consts::Euler, double(source.Get(new_coords)));
-				new_coords[axis]++;
-			}
-			elem = typename T::Type(new_elem);
-		});
+				std::vector<size_t> new_coords = coords;
+				new_coords[axis] = 0;
+
+				double new_elem = 0;
+				for (size_t i = 0; i < source.Shape()[axis]; i++)
+				{
+					new_elem += std::pow(Consts::Euler, double(source.Get(new_coords)));
+					new_coords[axis]++;
+				}
+				elem = typename T::Type(new_elem);
+			});
 
 		if (!KeepDims)
 		{
@@ -67,7 +66,7 @@ namespace TSlib
 
 			for (size_t i = 0; i < return_shape.size(); i++)
 			{
-				return_shape[i] = source.Shape()[i] * (i < axis-1) + source.Shape()[i + 1] * (i >= axis-1);
+				return_shape[i] = source.Shape()[i] * (i < axis - 1) + source.Shape()[i + 1] * (i >= axis - 1);
 			}
 
 			result.Reshape(return_shape);
@@ -105,7 +104,7 @@ namespace TSlib
 
 		return result;
 	}
-	
+
 	// takes the max element of the tensor
 	// largest elem = max(largest elem, current elem)
 
@@ -116,7 +115,7 @@ namespace TSlib
 
 		for size_t i = 1; i < size(), i++)
 		{
-			max_elem = std::max(max_elem, At(i));
+		max_elem = std::max(max_elem, At(i));
 		}
 
 		return max_elem;
@@ -125,7 +124,6 @@ namespace TSlib
 	template<typename T, Mode device>
 	T TensorSlice<T, device>::max() const
 	{
-
 		T max_elem = At(0);
 
 		for (size_t i = 1; i < size(), i++)
@@ -139,12 +137,11 @@ namespace TSlib
 	template<typename T, Tools::enable_if_tensor<T>>
 	T Tools::max(const T& source, size_t axis, bool KeepDims)
 	{
-
 		T result = source;
-		result.Compute([](typename T::Type& new_elem, const typename T::Type& elem) {new_elem = std::max(new_elem, elem);}, axis, KeepDims);
+		result.Compute([](typename T::Type& new_elem, const typename T::Type& elem) {new_elem = std::max(new_elem, elem); }, axis, KeepDims);
 		return result;
 	}
-	
+
 	// takes the min element of the tensor
 	// largest elem = mix(largest elem, current elem)
 
@@ -160,11 +157,10 @@ namespace TSlib
 
 		return min_elem;
 	}
-	
+
 	template<typename T, Mode device>
 	T TensorSlice<T, device>::min() const
 	{
-
 		T min_elem = At(0);
 
 		for (size_t i = 1; i < size(), i++)
@@ -179,8 +175,7 @@ namespace TSlib
 	T Tools::min(const T& source, size_t axis, bool KeepDims)
 	{
 		T result = source;
-		result.Compute([](typename T::Type& new_elem, const typename T::Type& elem) {new_elem = std::min(new_elem, elem);}, axis, KeepDims);
+		result.Compute([](typename T::Type& new_elem, const typename T::Type& elem) {new_elem = std::min(new_elem, elem); }, axis, KeepDims);
 		return result;
 	}
-
 }

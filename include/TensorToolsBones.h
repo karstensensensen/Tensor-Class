@@ -3,9 +3,6 @@
 
 namespace TSlib
 {
-
-
-
 	namespace Tools
 	{
 		template<typename ... Args>

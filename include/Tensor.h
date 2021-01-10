@@ -553,7 +553,6 @@ namespace TSlib
 	template<typename T, Mode device>
 	inline Tensor<T, device>& Tensor<T, device>::Compute(std::function<void(T&, const std::vector<size_t>&)> compute_func)
 	{
-
 		#pragma omp parallel for
 		for (long long index = 0; (size_t)index < size(); index++)
 		{
@@ -599,7 +598,6 @@ namespace TSlib
 		{
 			compute_func(At(index));
 		}
-
 	}
 
 	template<typename T, Mode device>
@@ -663,7 +661,7 @@ namespace TSlib
 			{
 				std::vector<size_t> new_coords = coords;
 				new_coords[axis] = 0;
-				
+
 				for (size_t i = 0; i < Shape()[axis]; i++)
 				{
 					compute_func(elem, Get(new_coords));
@@ -995,7 +993,6 @@ namespace TSlib
 		}
 		#endif
 
-
 		long long unknown_pos = -1;
 		size_t shape_product = 1;
 		if constexpr (std::is_unsigned<T>::value)
@@ -1191,7 +1188,7 @@ namespace TSlib
 		size_t index = 0;
 		size_t tmp_multiply = get_real_size(Dims() - 1);
 
-		for(size_t i = 0; i < Dims(); i++)
+		for (size_t i = 0; i < Dims(); i++)
 		{
 			#ifdef _TS_DEBUG
 			if (Shape()[i] <= coords[i])
@@ -1232,15 +1229,15 @@ namespace TSlib
 		size_t index = 0;
 		size_t tmp_multiply = get_real_size(Dims() - 1);
 
-		for(size_t i = 0; i < Dims(); i++)
+		for (size_t i = 0; i < Dims(); i++)
 		{
-		#ifdef _TS_DEBUG
-		if (Shape()[i] <= coords[i])
-			throw OutOfBounds(Shape(), "Exception was thrown, because an element outside the Tensor bounds was accsessed", i, coords[i]);
-		#endif
+			#ifdef _TS_DEBUG
+			if (Shape()[i] <= coords[i])
+				throw OutOfBounds(Shape(), "Exception was thrown, because an element outside the Tensor bounds was accsessed", i, coords[i]);
+			#endif
 
-		tmp_multiply /= Shape()[i];
-		index += coords[i] * tmp_multiply;
+			tmp_multiply /= Shape()[i];
+			index += coords[i] * tmp_multiply;
 		}
 
 		return At(index);
