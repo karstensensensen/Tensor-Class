@@ -88,6 +88,9 @@ namespace TSlib
 		TensorSlice<T, device>& exp();
 		TensorSlice<T, device>& normalize();
 
+		T max() const;
+		T min() const;
+
 		template<typename ... Args>
 		T& Get(Args ... coords);
 		T& Get(const std::vector<size_t>& coords);

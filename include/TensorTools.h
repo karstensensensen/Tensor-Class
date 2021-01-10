@@ -47,7 +47,7 @@ namespace TSlib
 			return result;
 		}
 
-		template<typename T1, typename T2, std::enable_if_t<is_tensor_type<T1>::value&& is_tensor_type<T2>::value, int>>
+		template<typename T1, typename T2, enable_if_tensor<T1, T2>>
 		bool fits(const T1& tensor1, const T2& tensor2)
 		{
 			if (tensor1.Dims() != tensor2.Dims())
@@ -67,7 +67,7 @@ namespace TSlib
 			return true;
 		}
 
-		template<typename T1, typename T2, std::enable_if_t<is_tensor_type<T1>::value&& is_tensor_type<T2>::value, int>>
+		template<typename T1, typename T2, enable_if_tensor<T1, T2>>
 		void exceptFit(const T1& tensor1, const T2& tensor2)
 		{
 			if (!fits(tensor1, tensor2))
