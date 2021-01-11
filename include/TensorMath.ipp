@@ -178,4 +178,166 @@ namespace TSlib
 		result.Compute([](typename T::Type& new_elem, const typename T::Type& elem) {new_elem = std::min(new_elem, elem); }, axis, keepDims);
 		return result;
 	}
+
+	// takes the sine value of the element
+	// elem = sin(elem)
+
+	template<typename T, Mode device>
+	inline Tensor<T, device>& Tensor<T, device>::sin()
+	{
+		Compute([](T& elem) {elem = std::sin(elem); });
+
+		return *this;
+	}
+	
+	template<typename T, Mode device>
+	inline TensorSlice<T, device>& TensorSlice<T, device>::sin()
+	{
+		Compute([](T& elem) {elem = std::sin(elem); });
+		return *this;
+	}
+
+	template<typename T, Tools::enable_if_tensor<T>>
+	T Tools::sin(const T& source)
+	{
+		T result = source;
+		result.sin();
+		return result;
+	}
+
+	// takes the cosine value of the element
+	// elem = cos(elem)
+
+	template<typename T, Mode device>
+	inline Tensor<T, device>& Tensor<T, device>::cos()
+	{
+		
+		Compute([](T& elem) {elem = std::cos(elem); });
+
+		return *this;
+	}
+
+	template<typename T, Mode device>
+	inline TensorSlice<T, device>& TensorSlice<T, device>::cos()
+	{
+		Compute([](T& elem) {elem = std::cos(elem); });
+		return *this;
+	}
+
+	template<typename T, Tools::enable_if_tensor<T>>
+	T Tools::cos(const T& source)
+	{
+		T result = source;
+		result.cos();
+		return result;
+	}
+
+	// takes the tangent value of the element
+	// elem = tan(elem)
+
+	template<typename T, Mode device>
+	inline Tensor<T, device>& Tensor<T, device>::tan()
+	{
+		
+		Compute([](T& elem) {elem = std::tan(elem); });
+
+		return *this;
+	}
+
+	template<typename T, Mode device>
+	inline TensorSlice<T, device>& TensorSlice<T, device>::tan()
+	{
+		Compute([](T& elem) {elem = std::tan(elem); });
+		return *this;
+	}
+
+	template<typename T, Tools::enable_if_tensor<T>>
+	T Tools::tan(const T& source)
+	{
+		T result = source;
+		result.tan();
+		return result;
+	}
+	
+	// takes the arc sine / inverse sine value of the element
+	// elem = arcsin(elem)
+
+	template<typename T, Mode device>
+	inline Tensor<T, device>& Tensor<T, device>::arcsin()
+	{
+		
+		Compute([](T& elem) {elem = std::asin(elem); });
+
+		return *this;
+	}
+
+	template<typename T, Mode device>
+	inline TensorSlice<T, device>& TensorSlice<T, device>::arcsin()
+	{
+		Compute([](T& elem) {elem = std::asin(elem); });
+		return *this;
+	}
+
+	template<typename T, Tools::enable_if_tensor<T>>
+	T Tools::arcsin(const T& source)
+	{
+		T result = source;
+		result.arcsin();
+		return result;
+	}
+	
+	// takes the arc cosine / inverse cosine value of the element
+	// elem = cos(elem)
+
+	template<typename T, Mode device>
+	inline Tensor<T, device>& Tensor<T, device>::arccos()
+	{
+		
+		Compute([](T& elem) {elem = std::acos(elem); });
+
+		return *this;
+	}
+
+	template<typename T, Mode device>
+	inline TensorSlice<T, device>& TensorSlice<T, device>::arccos()
+	{
+		Compute([](T& elem) {elem = std::acos(elem); });
+		return *this;
+	}
+
+	template<typename T, Tools::enable_if_tensor<T>>
+	T Tools::arccos(const T& source)
+	{
+		T result = source;
+		result.arccos();
+		return result;
+	}
+	
+	// takes the arc tangent / inverse tangent value of the element
+	// elem = tan(elem)
+	
+	template<typename T, Mode device>
+	inline Tensor<T, device>& Tensor<T, device>::arctan()
+	{
+		
+		Compute([](T& elem) {elem = std::atan(elem); });
+
+		return *this;
+	}
+
+	template<typename T, Mode device>
+	inline TensorSlice<T, device>& TensorSlice<T, device>::arctan()
+	{
+		Compute([](T& elem) {elem = std::atan(elem); });
+		return *this;
+	}
+
+	template<typename T, Tools::enable_if_tensor<T>>
+	T Tools::arctan(const T& source)
+	{
+		T result = source;
+		result.arctan();
+		return result;
+	}
+
 }

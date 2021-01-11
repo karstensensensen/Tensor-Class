@@ -172,6 +172,14 @@ namespace TSlib
 
 		T min() const;
 
+		Tensor<T, device>& sin();
+		Tensor<T, device>& cos();
+		Tensor<T, device>& tan();
+
+		Tensor<T, device>& arcsin();
+		Tensor<T, device>& arccos();
+		Tensor<T, device>& arctan();
+
 		inline T& Get(const std::vector<size_t>& coords);
 		template<typename ... Args>
 		inline T& Get(const Args& ... coords);

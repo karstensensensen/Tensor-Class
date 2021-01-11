@@ -30,6 +30,24 @@ namespace TSlib
 
 		template<typename T, enable_if_tensor<T> = 0>
 		T min(const T& source, size_t axis, bool keepDims = false);
+
+		template<typename T, enable_if_tensor<T> = 0>
+		T sin(const T& source);
+
+		template<typename T, enable_if_tensor<T> = 0>
+		T cos(const T& source);
+
+		template<typename T, enable_if_tensor<T> = 0>
+		T tan(const T& source);
+
+		template<typename T, enable_if_tensor<T> = 0>
+		T arcsin(const T& source);
+
+		template<typename T, enable_if_tensor<T> = 0>
+		T arccos(const T& source);
+
+		template<typename T, enable_if_tensor<T> = 0>
+		T arctan(const T& source);
 	}
 }
 

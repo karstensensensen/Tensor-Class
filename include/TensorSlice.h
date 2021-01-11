@@ -91,6 +91,14 @@ namespace TSlib
 		T max() const;
 		T min() const;
 
+		TensorSlice<T, device>& sin();
+		TensorSlice<T, device>& cos();
+		TensorSlice<T, device>& tan();
+
+		TensorSlice<T, device>& arcsin();
+		TensorSlice<T, device>& arccos();
+		TensorSlice<T, device>& arctan();
+
 		template<typename ... Args>
 		T& Get(Args ... coords);
 		T& Get(const std::vector<size_t>& coords);
