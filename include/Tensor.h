@@ -164,6 +164,11 @@ namespace TSlib
 
 		//math functions
 
+		template<typename TReturn = T>
+		TReturn sum() const;
+		template<typename TReturn = T>
+		Tensor<TReturn, device> sum(size_t axis, bool keepDims = true) const;
+		
 		Tensor<T, device>& exp();
 
 		Tensor<T, device>& normalize();
@@ -179,6 +184,9 @@ namespace TSlib
 		Tensor<T, device>& arcsin();
 		Tensor<T, device>& arccos();
 		Tensor<T, device>& arctan();
+
+		Tensor<T, device>& convDeg();
+		Tensor<T, device>& convRad();
 
 		inline T& Get(const std::vector<size_t>& coords);
 		template<typename ... Args>
@@ -251,9 +259,6 @@ namespace TSlib
 		T operator[](size_t indx) const;
 
 		Tensor<T>& operator=(const std::vector<T>& other);
-
-		template<typename RT = T>
-		RT sum() const;
 
 		#ifdef _CUDA
 		operator T* ();

@@ -76,8 +76,6 @@ namespace TSlib
 
 		size_t Dims() const;
 
-		template<typename RT = T>
-		RT sum();
 
 		size_t map_index(size_t index) const;
 
@@ -88,6 +86,11 @@ namespace TSlib
 		TensorSlice<T, device>& exp();
 		TensorSlice<T, device>& normalize();
 
+		template<typename TReturn = T>
+		TReturn sum() const;
+		template<typename TReturn = T>
+		Tensor<TReturn, device> sum(size_t axis, bool keepDims = false) const;
+		
 		T max() const;
 		T min() const;
 
@@ -98,6 +101,9 @@ namespace TSlib
 		TensorSlice<T, device>& arcsin();
 		TensorSlice<T, device>& arccos();
 		TensorSlice<T, device>& arctan();
+
+		TensorSlice<T, device>& convDeg();
+		TensorSlice<T, device>& convRad();
 
 		template<typename ... Args>
 		T& Get(Args ... coords);

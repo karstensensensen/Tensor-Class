@@ -48,6 +48,13 @@ namespace TSlib
 
 		template<typename T, enable_if_tensor<T> = 0>
 		T arctan(const T& source);
+
+
+		template<typename T, enable_if_tensor<T> = 0>
+		T convDeg(const T& source);
+
+		template<typename T, enable_if_tensor<T> = 0>
+		T convRad(const T& source);
 	}
 }
 

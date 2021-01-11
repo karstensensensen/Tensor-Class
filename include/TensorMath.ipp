@@ -7,6 +7,52 @@ namespace TSlib
 	namespace Consts
 	{
 		static constexpr double Euler = 2.71828182845904523536;
+		static constexpr double PI = 3.14159265358979323846;
+	}
+
+	// takes the sum of the elements
+	// elem += current_elem
+
+
+	template<typename T, Mode device>
+	template<typename TReturn>
+	TReturn TensorSlice<T, device>::sum() const
+	{
+		TReturn sum_val = 0;
+		for (const T& elem : *this)
+		{
+			sum_val += elem;
+		}
+
+		return sum_val;
+	}
+
+	template<typename T, Mode device>
+	template<typename TReturn>
+	Tensor<TReturn, device> TensorSlice<T, device>::sum(size_t axis, bool keepDims) const
+	{
+
+		return Compute([&](T& sum_elem, const T& elem) {sum_elem += elem; }, axis, keepDims);
+	}
+	
+	template<typename T, Mode device>
+	template<typename TReturn>
+	TReturn Tensor<T, device>::sum() const
+	{
+		TReturn sum_val = 0;
+		for (const T& elem : *this)
+		{
+			sum_val += elem;
+		}
+
+		return sum_val;
+	}
+
+	template<typename T, Mode device>
+	template<typename TReturn>
+	Tensor<TReturn, device> Tensor<T, device>::sum(size_t axis, bool keepDims) const
+	{
+		return Compute([&](T& sum_elem, const T& elem) {sum_elem += elem; }, axis, keepDims);
 	}
 
 	// takes every element of the tensor and sets Euler's number to a power of that element
@@ -14,7 +60,9 @@ namespace TSlib
 	template<typename T, Mode device>
 	Tensor<T, device>& Tensor<T, device>::exp()
 	{
-		Compute([](T& elem) {elem = T(std::pow(Consts::Euler, double(elem))); });
+		Compute([](T& elem) {
+			elem = T(std::pow(Consts::Euler, double(elem)));
+			});
 
 		return *this;
 	}
@@ -338,6 +386,55 @@ namespace TSlib
 		T result = source;
 		result.arctan();
 		return result;
+	}
+	
+
+	//converts radians to degrees
+	// elem = 360/pi * elem
+
+	template<typename T, Mode device>
+	inline Tensor<T, device>& Tensor<T, device>::convDeg()
+	{
+		Compute([](T& elem) {elem = T(360.0 / Consts::PI * elem); });
+		return *this;
+	}
+
+	template<typename T, Mode device>
+	inline TensorSlice<T, device>& TensorSlice<T, device>::convDeg()
+	{
+		Compute([](T& elem) {elem = T(360.0 / Consts::PI * elem); });
+		return *this;
+	}
+
+	template<typename T, Tools::enable_if_tensor<T>>
+	T Tools::convDeg(const T& source)
+	{
+		T result = source;
+		return result.convDeg();
+	}
+
+	//converts degrees to radians
+	// elem = pi/360 * elem
+
+	template<typename T, Mode device>
+	inline Tensor<T, device>& Tensor<T, device>::convRad()
+	{
+		Compute([](T& elem) {elem = T(Consts::PI / 360.0 * elem); });
+		return *this;
+	}
+
+	template<typename T, Mode device>
+	inline TensorSlice<T, device>& TensorSlice<T, device>::convRad()
+	{
+		Compute([](T& elem) {elem = T(Consts::PI / 360.0 * elem); });
+		return *this;
+	}
+
+	template<typename T, Tools::enable_if_tensor<T>>
+	T Tools::convRad(const T& source)
+	{
+		T result = source;
+		return result.convRad();
 	}
 
 }
