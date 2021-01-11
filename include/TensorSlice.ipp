@@ -343,10 +343,10 @@ namespace TSlib
 
 			std::vector<size_t> coords(Dims());
 
-			coords[0] = (index % get_real_size(Dims() - 1));
+			coords[Dims() - 1] = (index % get_real_size(Dims() - 1));
 			for (size_t j = 1; j < Dims(); j++)
 			{
-				coords[j] = (index / get_real_size(Dims() - j)) % get_real_size(Dims() - j);
+				coords[Dims() - j - 1] = (index / get_real_size(Dims() - j)) % get_real_size(Dims() - j);
 			}
 
 			compute_func(At(index), coords);
@@ -363,10 +363,10 @@ namespace TSlib
 
 			std::vector<size_t> coords(Dims());
 
-			coords[0] = (index % get_real_size(Dims() - 1));
+			coords[Dims() - 1] = (index % get_real_size(Dims() - 1));
 			for (size_t j = 1; j < Dims(); j++)
 			{
-				coords[j] = (index / get_real_size(Dims() - j)) % get_real_size(Dims() - j);
+				coords[Dims() - j - 1] = (index / get_real_size(Dims() - j)) % get_real_size(Dims() - j);
 			}
 
 			compute_func(At(index), coords, index);
@@ -541,17 +541,6 @@ namespace TSlib
 	{
 		MEASURE();
 		return m_shape.size();
-	}
-
-	template<typename T, Mode device>
-	template<typename RT>
-	inline RT TensorSlice<T, device>::sum()
-	{
-		RT sum = 0;
-
-		Compute([&](T& val) {sum += val; });
-
-		return sum;
 	}
 
 	template<typename T, Mode device>

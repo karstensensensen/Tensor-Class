@@ -558,10 +558,10 @@ namespace TSlib
 		{
 			std::vector<size_t> coords(Dims());
 
-			coords[0] = (index % get_real_size(Dims() - 1));
+			coords[Dims() - 1] = (index % get_real_size(Dims() - 1));
 			for (size_t j = 1; j < Dims(); j++)
 			{
-				coords[j] = (index / get_real_size(Dims() - j)) % get_real_size(Dims() - j);
+				coords[Dims() - j - 1] = (index / get_real_size(Dims() - j)) % get_real_size(Dims() - j);
 			}
 
 			compute_func(At(index), coords);
@@ -578,10 +578,10 @@ namespace TSlib
 		{
 			std::vector<size_t> coords(Dims());
 
-			coords[0] = (index % get_real_size(Dims() - 1));
+			coords[Dims() - 1] = (index % get_real_size(Dims() - 1));
 			for (size_t j = 1; j < Dims(); j++)
 			{
-				coords[j] = (index / get_real_size(Dims() - j)) % get_real_size(Dims() - j);
+				coords[Dims() - j - 1] = (index / get_real_size(Dims() - j)) % get_real_size(Dims() - j);
 			}
 
 			compute_func(At(index), coords, index);
@@ -618,10 +618,10 @@ namespace TSlib
 		{
 			std::vector<size_t> coords(Dims());
 
-			coords[0] = (index % get_real_size(Dims() - 1));
+			coords[Dims() - 1] = (index % get_real_size(Dims() - 1));
 			for (size_t j = 1; j < Dims(); j++)
 			{
-				coords[j] = (index / get_real_size(Dims() - j)) % get_real_size(Dims() - j);
+				coords[Dims() - j - 1] = (index / get_real_size(Dims() - j)) % get_real_size(Dims() - j);
 			}
 
 			compute_func(At(index), coords);
@@ -636,10 +636,10 @@ namespace TSlib
 		{
 			std::vector<size_t> coords(Dims());
 
-			coords[0] = (index % get_real_size(Dims()));
+			coords[Dims() - 1] = (index % get_real_size(Dims()));
 			for (size_t j = 1; j < Dims(); j++)
 			{
-				coords[j] = (index / get_real_size(Dims() - j)) % get_real_size(Dims() - j);
+				coords[Dims() - j - 1] = (index / get_real_size(Dims() - j)) % get_real_size(Dims() - j);
 			}
 
 			compute_func(At(index), coords, index);
@@ -1373,20 +1373,6 @@ namespace TSlib
 	#pragma message("warning: Cannot use both cuda and amp at the same time defaulting to cuda")
 	#endif
 
-	/// Tensor math functions
-
-	template<typename T, Mode device>
-	template<typename RT>
-	RT Tensor<T, device>::sum() const
-	{
-		MEASURE();
-
-		RT result = RT();
-
-		Compute([&](const T& elem) {result += elem; });
-
-		return result;
-	}
 }
 
 #ifdef _CUDA
