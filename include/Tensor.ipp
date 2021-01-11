@@ -1389,7 +1389,9 @@ namespace TSlib
 	}
 }
 
+#ifdef _CUDA
 #include "TensorCuda.ipp"
+#endif
 #include "TensorArithmeticOperators.ipp"
 #include "TensorMath.ipp"
 #include "TensorSlice.ipp"

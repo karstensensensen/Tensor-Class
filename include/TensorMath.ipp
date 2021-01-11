@@ -60,7 +60,7 @@ namespace TSlib
 				elem = typename T::Type(new_elem);
 			});
 
-		if (!KeepDims)
+		if (!keepDims)
 		{
 			return_shape.resize(result.Dims() - 1);
 
@@ -138,7 +138,7 @@ namespace TSlib
 	T Tools::max(const T& source, size_t axis, bool keepDims)
 	{
 		T result = source;
-		result.Compute([](typename T::Type& new_elem, const typename T::Type& elem) {new_elem = std::max(new_elem, elem); }, axis, KeepDims);
+		result.Compute([](typename T::Type& new_elem, const typename T::Type& elem) {new_elem = std::max(new_elem, elem); }, axis, keepDims);
 		return result;
 	}
 
@@ -175,7 +175,7 @@ namespace TSlib
 	T Tools::min(const T& source, size_t axis, bool keepDims)
 	{
 		T result = source;
-		result.Compute([](typename T::Type& new_elem, const typename T::Type& elem) {new_elem = std::min(new_elem, elem); }, axis, KeepDims);
+		result.Compute([](typename T::Type& new_elem, const typename T::Type& elem) {new_elem = std::min(new_elem, elem); }, axis, keepDims);
 		return result;
 	}
 }

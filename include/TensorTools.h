@@ -20,16 +20,16 @@ namespace TSlib
 		template<typename T, enable_if_tensor<T> = 0>
 		Tensor<typename T::Type, T::Device> exp(const T& source);
 		template<typename T, enable_if_tensor<T> = 0>
-		Tensor<typename T::Type, T::Device> exp(const T& source, size_t axis, bool KeepDims = false);
+		Tensor<typename T::Type, T::Device> exp(const T& source, size_t axis, bool keepDims = false);
 
 		template<typename T, enable_if_tensor<T> = 0>
 		Tensor<typename T::Type, T::Device> normalize(const T& source);
 
 		template<typename T, enable_if_tensor<T> = 0>
-		T max(const T& source, size_t axis, bool KeepDims = false);
+		T max(const T& source, size_t axis, bool keepDims = false);
 
 		template<typename T, enable_if_tensor<T> = 0>
-		T min(const T& source, size_t axis, bool KeepDims = false);
+		T min(const T& source, size_t axis, bool keepDims = false);
 	}
 }
 
