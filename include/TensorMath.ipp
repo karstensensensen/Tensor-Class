@@ -32,7 +32,7 @@ namespace TSlib
 	Tensor<TReturn, device> TensorSlice<T, device>::sum(size_t axis, bool keepDims) const
 	{
 
-		return Compute([&](T& sum_elem, const T& elem) {sum_elem += elem; }, axis, keepDims);
+		return Compute([&](T& sum_elem, const T& elem) {sum_elem += elem; }, axis, 0, keepDims);
 	}
 	
 	template<typename T, Mode device>
@@ -52,8 +52,77 @@ namespace TSlib
 	template<typename TReturn>
 	Tensor<TReturn, device> Tensor<T, device>::sum(size_t axis, bool keepDims) const
 	{
-		return Compute([&](T& sum_elem, const T& elem) {sum_elem += elem; }, axis, keepDims);
+		return Compute([&](T& sum_elem, const T& elem) {sum_elem += elem; }, axis, 0, keepDims);
 	}
+
+	template<typename T, Tools::enable_if_tensor<T>>
+	typename T::Type Tools::sum(const T& source)
+	{
+		return source.sum();
+	}
+
+	template<typename T, Tools::enable_if_tensor<T>>
+	T Tools::sum(const T& source, size_t axis, bool keep_dims)
+	{
+		return source.sum(axis, keep_dims);
+	}
+
+	// takes the product of the elements
+	// elem *= current_elem
+
+	template<typename T, Mode device>
+	template<typename TReturn>
+	TReturn TensorSlice<T, device>::prod() const
+	{
+		TReturn prod_val = 1;
+		for (const T& elem : *this)
+		{
+			prod_val *= elem;
+		}
+
+		return prod_val;
+	}
+
+	template<typename T, Mode device>
+	template<typename TReturn>
+	Tensor<TReturn, device> TensorSlice<T, device>::prod(size_t axis, bool keepDims) const
+	{
+
+		return Compute([&](T& prod_elem, const T& elem) {prod_elem *= elem; }, axis, 1, keepDims);
+	}
+
+	template<typename T, Mode device>
+	template<typename TReturn>
+	TReturn Tensor<T, device>::prod() const
+	{
+		TReturn prod_val = 1;
+		for (const T& elem : *this)
+		{
+			prod_val *= elem;
+		}
+
+		return prod_val;
+	}
+
+	template<typename T, Mode device>
+	template<typename TReturn>
+	Tensor<TReturn, device> Tensor<T, device>::prod(size_t axis, bool keepDims) const
+	{
+		return Compute([&](T& prod_elem, const T& elem) {prod_elem *= elem; }, axis, 1, keepDims);
+	}
+
+	template<typename T, Tools::enable_if_tensor<T>>
+	typename T::Type Tools::prod(const T& source)
+	{
+		return source.prod();
+	}
+
+	template<typename T, Tools::enable_if_tensor<T>>
+	T Tools::prod(const T& source, size_t axis, bool keep_dims)
+	{
+		return source.prod(axis, keep_dims);
+	}
+
 
 	// takes every element of the tensor and sets Euler's number to a power of that element
 	// elem = e^elem
@@ -76,9 +145,9 @@ namespace TSlib
 	}
 
 	template<typename T, Tools::enable_if_tensor<T>>
-	Tensor<typename T::Type, T::Device> Tools::exp(const T& source)
+	T Tools::exp(const T& source)
 	{
-		Tensor<typename T::Type, T::Device> result = source;
+		T result = source;
 
 		result.exp();
 
@@ -86,13 +155,13 @@ namespace TSlib
 	}
 
 	template<typename T, Tools::enable_if_tensor<T>>
-	Tensor<typename T::Type, T::Device> Tools::exp(const T& source, size_t axis, bool keepDims)
+	T Tools::exp(const T& source, size_t axis, bool keepDims)
 	{
 		std::vector<size_t> return_shape(source.Shape());
 
 		return_shape[axis] = 1;
 
-		Tensor<typename T::Type, T::Device> result(return_shape, 0);
+		T result(return_shape, 0);
 
 		result.Compute([&](typename T::Type& elem, const std::vector<size_t>& coords)
 			{
@@ -145,9 +214,9 @@ namespace TSlib
 	}
 
 	template<typename T, Tools::enable_if_tensor<T>>
-	Tensor<typename T::Type, T::Device> Tools::normalize(const T& source)
+	T Tools::normalize(const T& source)
 	{
-		Tensor<typename T::Type, T::Device> result = source;
+		T result = source;
 		result.normalize();
 
 		return result;

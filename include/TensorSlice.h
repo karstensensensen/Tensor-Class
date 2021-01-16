@@ -65,10 +65,10 @@ namespace TSlib
 		inline void Compute(std::function<void(T&, const std::vector<size_t>&)> compute_func);
 		inline void Compute(std::function<void(T&, const std::vector<size_t>&, const size_t&)> compute_func);
 
-		inline Tensor<T, device> Compute(std::function<void(T&, const T&)> compute_func, size_t axis, bool keepDims = true)const;
-		inline Tensor<T, device> Compute(std::function<void(T&, const T&, const size_t&)> compute_func, size_t axis, bool keepDims = true) const;
-		inline Tensor<T, device> Compute(std::function<void(T&, const T&, const std::vector<size_t>&)> compute_func, size_t axis, bool keepDims = true) const;
-		inline Tensor<T, device> Compute(std::function<void(T&, const T&, const std::vector<size_t>&, const size_t&)> compute_func, size_t axis, bool keepDims = true) const;
+		inline Tensor<T, device> Compute(std::function<void(T&, const T&)> compute_func, size_t axis, T pad_val = T(), bool keepDims = true)const;
+		inline Tensor<T, device> Compute(std::function<void(T&, const T&, const size_t&)> compute_func, size_t axis, T pad_val = T(), bool keepDims = true) const;
+		inline Tensor<T, device> Compute(std::function<void(T&, const T&, const std::vector<size_t>&)> compute_func, size_t axis, T pad_val = T(), bool keepDims = true) const;
+		inline Tensor<T, device> Compute(std::function<void(T&, const T&, const std::vector<size_t>&, const size_t&)> compute_func, size_t axis, T pad_val = T(), bool keepDims = true) const;
 
 		void Replace(const T& target, const T& value);
 
@@ -90,6 +90,11 @@ namespace TSlib
 		TReturn sum() const;
 		template<typename TReturn = T>
 		Tensor<TReturn, device> sum(size_t axis, bool keepDims = false) const;
+
+		template<typename TReturn = T>
+		TReturn prod() const;
+		template<typename TReturn = T>
+		Tensor<TReturn, device> prod(size_t axis, bool keepDims = true) const;
 		
 		T max() const;
 		T min() const;

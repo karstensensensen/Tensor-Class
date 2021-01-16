@@ -374,13 +374,13 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	inline Tensor<T, device> TSlib::TensorSlice<T, device>::Compute(std::function<void(T&, const T&)> compute_func, size_t axis, bool keepDims) const
+	inline Tensor<T, device> TSlib::TensorSlice<T, device>::Compute(std::function<void(T&, const T&)> compute_func, size_t axis, T pad_val, bool keepDims) const
 	{
 		std::vector<size_t> return_shape(Shape());
 
 		return_shape[axis] = 1;
 
-		Tensor<T, device> result(return_shape, 0);
+		Tensor<T, device> result(return_shape, pad_val);
 
 		result.Compute([&](T& elem, const std::vector<size_t>& coords)
 			{
@@ -410,13 +410,13 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	inline Tensor<T, device> TSlib::TensorSlice<T, device>::Compute(std::function<void(T&, const T&, const std::vector<size_t>&)> compute_func, size_t axis, bool keepDims) const
+	inline Tensor<T, device> TSlib::TensorSlice<T, device>::Compute(std::function<void(T&, const T&, const std::vector<size_t>&)> compute_func, size_t axis, T pad_val, bool keepDims) const
 	{
 		std::vector<size_t> return_shape(Shape());
 
 		return_shape[axis] = 1;
 
-		Tensor<T, device> result(return_shape, 0);
+		Tensor<T, device> result(return_shape, pad_val);
 
 		result.Compute([&](T& elem, const std::vector<size_t>& coords, const size_t& index)
 			{
@@ -446,13 +446,13 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	inline Tensor<T, device> TSlib::TensorSlice<T, device>::Compute(std::function<void(T&, const T&, const size_t&)> compute_func, size_t axis, bool keepDims) const
+	inline Tensor<T, device> TSlib::TensorSlice<T, device>::Compute(std::function<void(T&, const T&, const size_t&)> compute_func, size_t axis, T pad_val, bool keepDims) const
 	{
 		std::vector<size_t> return_shape(Shape());
 
 		return_shape[axis] = 1;
 
-		Tensor<T, device> result(return_shape, 0);
+		Tensor<T, device> result(return_shape, pad_val);
 
 		result.Compute([&](T& elem, const std::vector<size_t>& coords, const size_t& index)
 			{
@@ -482,13 +482,13 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	inline Tensor<T, device> TSlib::TensorSlice<T, device>::Compute(std::function<void(T&, const T&, const std::vector<size_t>&, const size_t&)> compute_func, size_t axis, bool keepDims) const
+	inline Tensor<T, device> TSlib::TensorSlice<T, device>::Compute(std::function<void(T&, const T&, const std::vector<size_t>&, const size_t&)> compute_func, size_t axis, T pad_val, bool keepDims) const
 	{
 		std::vector<size_t> return_shape(Shape());
 
 		return_shape[axis] = 1;
 
-		Tensor<T, device> result(return_shape, 0);
+		Tensor<T, device> result(return_shape, pad_val);
 
 		result.Compute([&](T& elem, const std::vector<size_t>& coords, const size_t& index)
 			{
