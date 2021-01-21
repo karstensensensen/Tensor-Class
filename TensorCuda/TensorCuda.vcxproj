@@ -193,32 +193,20 @@
     <ClInclude Include="..\CUDAInclude\TensorCuda.ipp" />
     <ClInclude Include="..\CUDAInclude\TensorCuda.cuh" />
     <ClInclude Include="..\CUDAInclude\TensorOperatorKernels.cuh" />
-    <ClInclude Include="..\include\Tensor.ipp" />
-    <ClInclude Include="..\include\TensorArithmetic.h" />
-    <ClInclude Include="..\include\TensorArithmeticOperators.ipp" />
-    <ClInclude Include="..\include\Tensor.h" />
-    <ClInclude Include="..\include\TensorCompareOperators.h" />
-    <ClInclude Include="..\include\TensorEnums.h" />
-    <ClInclude Include="..\include\TensorExceptions.h" />
-    <ClInclude Include="..\include\TensorMath.ipp" />
-    <ClInclude Include="..\include\TensorSlice.ipp" />
-    <ClInclude Include="..\include\TensorSlice.h" />
-    <ClInclude Include="..\include\TensorTools.ipp" />
-    <ClInclude Include="..\include\TensorTools.h" />
-    <ClInclude Include="..\include\TSliceWrapper.h" />
     <ClInclude Include="..\Multrix\PerlinKernel.cuh" />
     <ClInclude Include="..\Multrix\PerlinNoise.h" />
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="..\src\TSliceWrapper.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="..\src\empty.cpp" />
-    <CudaCompile Include="..\src\Tensor.cpp" />
     <CudaCompile Include="..\src\TensorCuda.cu">
       <FileType>Document</FileType>
     </CudaCompile>
     <CudaCompile Include="..\src\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Tensor\Tensor.vcxproj">
+      <Project>{e563cedf-70ff-4de5-a812-eb497bba3c55}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
