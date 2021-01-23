@@ -37,7 +37,7 @@ namespace TSlib
 
 		OutOfBounds(std::vector<size_t> shape, std::string message, size_t dim, size_t index)
 		{
-			err_msg += message + "\nTarget dimension: " + std::to_string(dim + 1) + " Target Index: " + std::to_string(index);
+			err_msg = message + "\nTarget dimension: " + std::to_string(dim + 1) + " Target Index: " + std::to_string(index);
 
 			err_msg += "\nTensor bounds was: ";
 
