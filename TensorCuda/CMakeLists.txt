@@ -12,9 +12,9 @@ add_library(${PROJECT_NAME}
     ${INCLUDE_FILES}
 )
 
-source_group("Header Files" FILES ${INCLUDE_FILES})
+target_compile_definitions(${PROJECT_NAME} PUBLIC _CUDA)
 
-add_compile_definitions(_CUDA)
+source_group("Header Files" FILES ${INCLUDE_FILES})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 
