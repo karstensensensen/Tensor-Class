@@ -35,6 +35,7 @@ namespace TSlib
 		T copy_generator(const size_t& index);
 
 		size_t get_real_size(const size_t& index) const;
+		size_t get_dim_length(const size_t& index) const;
 
 		template<typename First>
 		void get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord);

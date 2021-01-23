@@ -343,10 +343,10 @@ namespace TSlib
 
 			std::vector<size_t> coords(Dims());
 
-			coords[Dims() - 1] = (index % get_real_size(Dims() - 1));
+			coords[Dims() - 1] = (index % get_dim_length(Dims() - 1));
 			for (size_t j = 1; j < Dims(); j++)
 			{
-				coords[Dims() - j - 1] = (index / get_real_size(Dims() - j)) % get_real_size(Dims() - j);
+				coords[Dims() - j - 1] = (index / get_dim_length(Dims() - j)) % get_dim_length(Dims() - j);
 			}
 
 			compute_func(At(index), coords);
@@ -363,10 +363,10 @@ namespace TSlib
 
 			std::vector<size_t> coords(Dims());
 
-			coords[Dims() - 1] = (index % get_real_size(Dims() - 1));
+			coords[Dims() - 1] = (index % get_dim_length(Dims() - 1));
 			for (size_t j = 1; j < Dims(); j++)
 			{
-				coords[Dims() - j - 1] = (index / get_real_size(Dims() - j)) % get_real_size(Dims() - j);
+				coords[Dims() - j - 1] = (index / get_dim_length(Dims() - j)) % get_dim_length(Dims() - j);
 			}
 
 			compute_func(At(index), coords, index);
@@ -549,6 +549,21 @@ namespace TSlib
 		size_t r_size = 1;
 
 		for (size_t i = 0; i <= index; i++)
+		{
+			r_size *= m_shape[Dims() - i - 1];
+		}
+
+		return r_size;
+	}
+
+	template<typename T, Mode device>
+	size_t TensorSlice<T, device>::get_dim_length(const size_t& index) const
+	{
+		MEASURE();
+
+		size_t r_size = 1;
+
+		for (size_t i = index; i < m_shape.size(); i++)
 		{
 			r_size *= m_shape[Dims() - i - 1];
 		}
