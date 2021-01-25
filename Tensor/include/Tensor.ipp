@@ -558,10 +558,10 @@ namespace TSlib
 		{
 			std::vector<size_t> coords(Dims());
 
-			coords[Dims() - 1] = (index % get_dim_length(Dims() - 1));
+			coords[0] = (index % get_dim_length(0));
 			for (size_t j = 1; j < Dims(); j++)
 			{
-				coords[Dims() - j - 1] = (index / get_dim_length(Dims() - j)) % get_dim_length(Dims() - j);
+				coords[j] = (index / get_dim_length(j)) % get_dim_length(j);
 			}
 
 			compute_func(At(index), coords);
@@ -578,10 +578,10 @@ namespace TSlib
 		{
 			std::vector<size_t> coords(Dims());
 
-			coords[Dims() - 1] = (index % get_dim_length(Dims() - 1));
+			coords[0] = (index % get_dim_length(0));
 			for (size_t j = 1; j < Dims(); j++)
 			{
-				coords[Dims() - j - 1] = (index / get_dim_length(Dims() - j)) % get_dim_length(Dims() - j);
+				coords[j] = (index / get_dim_length(j)) % get_dim_length(j);
 			}
 
 			compute_func(At(index), coords, index);
@@ -618,10 +618,10 @@ namespace TSlib
 		{
 			std::vector<size_t> coords(Dims());
 
-			coords[Dims() - 1] = (index % get_dim_length(Dims() - 1));
+			coords[9] = (index % get_dim_length(0));
 			for (size_t j = 1; j < Dims(); j++)
 			{
-				coords[Dims() - j - 1] = (index / get_dim_length(Dims() - j)) % get_dim_length(Dims() - j);
+				coords[j] = (index / get_dim_length(j)) % get_dim_length(j);
 			}
 
 			compute_func(At(index), coords);
@@ -636,10 +636,10 @@ namespace TSlib
 		{
 			std::vector<size_t> coords(Dims());
 
-			coords[Dims() - 1] = (index % get_dim_length(Dims()));
+			coords[0] = (index % get_dim_length(0));
 			for (size_t j = 1; j < Dims(); j++)
 			{
-				coords[Dims() - j - 1] = (index / get_dim_length(Dims() - j)) % get_dim_length(Dims() - j);
+				coords[j] = (index / get_dim_length(j)) % get_dim_length(j);
 			}
 
 			compute_func(At(index), coords, index);

@@ -12,6 +12,9 @@
 
 namespace TSlib
 {
+
+	
+
 	template<typename T>
 	struct is_tensor_type : std::false_type {};
 
@@ -626,6 +629,8 @@ namespace TSlib
 			return new_Tensor;
 		}
 	};
+
+	double_t round(double_t x, double_t place);
 }
 
 #include "Tensor.ipp"
