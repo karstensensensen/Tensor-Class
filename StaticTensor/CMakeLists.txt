@@ -5,7 +5,7 @@ set(INCLUDE_FILES
     include/StaticTensor.ipp
 )
 
-add_library(${PROJECT_NAME} STATIC
+add_executable(${PROJECT_NAME}
     src/StaticTensor.cpp
 
     ${INCLUDE_FILES}
@@ -18,5 +18,7 @@ if(ENABLE_OPENMP)
 endif()
 
 source_group("Header Files" FILES ${INCLUDE_FILES})
+
+target_link_libraries(${PROJECT_NAME} Tensor)
 
 target_include_directories(${PROJECT_NAME} PUBLIC include)
