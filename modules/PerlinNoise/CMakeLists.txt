@@ -5,7 +5,7 @@ set(INCLUDE_FILES
     include/TensorPerlin.ipp
 )
 
-add_library(${PROJECT_NAME}
+add_executable(${PROJECT_NAME}
     src/TensorPerlin.cpp
 
     ${INCLUDE_FILES}
