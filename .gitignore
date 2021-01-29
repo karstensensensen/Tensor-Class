@@ -15,7 +15,7 @@ src/main.cpp
 src/empty.cpp
 .DS_Store
 lib
-modules\PerlinNoise
+modules/PerlinNoise
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
