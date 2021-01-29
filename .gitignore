@@ -15,9 +15,11 @@ src/main.cpp
 src/empty.cpp
 .DS_Store
 lib
+modules/PerlinNoise
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
+
 
 # Build results
 [Dd]ebug/
@@ -33,6 +35,7 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
+
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
