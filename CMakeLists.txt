@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0.0)
 project(Tensor)
 
 option(ENABLE_CUDA "build support for computation on NVidia GPUs (CUDA also needs to be installed)" OFF)
-option(PERLIN_MODULE "build PerlinNoise lib" ON)
+#option(PERLIN_MODULE "build PerlinNoise lib" ON)
 option(ENABLE_OPENMP "add /openmp flag to compiler to enable multithreaded computing" OFF)
 option(STATIC_MODULE "build a static version that might be faster, but not able to be resized (work in progress)" OFF)
 
@@ -22,9 +22,9 @@ if(ENABLE_CUDA)
     add_subdirectory(${PROJECT_SOURCE_DIR}/TensorCuda TensorCuda)
 endif()
 
-if(PERLIN_MODULE)
-    add_subdirectory(${PROJECT_SOURCE_DIR}/modules/PerlinNoise)
-endif()
+# if(PERLIN_MODULE)
+#     add_subdirectory(${PROJECT_SOURCE_DIR}/modules/PerlinNoise)
+# endif()
 
 if(STATIC_MODULE)
     add_subdirectory(${PROJECT_SOURCE_DIR}/StaticTensor)
