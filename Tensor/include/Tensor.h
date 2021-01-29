@@ -12,9 +12,6 @@
 
 namespace TSlib
 {
-
-	
-
 	template<typename T>
 	struct is_tensor_type : std::false_type {};
 

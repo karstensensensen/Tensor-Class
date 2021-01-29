@@ -19,6 +19,14 @@ constexpr int add()
 	return a + b;
 }
 
+using namespace TSlib;
+
+template<typename T, size_t dimensions, const std::array<size_t, dimensions>& var_shape>
+std::ostream& operator << (std::ostream& stream, const StaticTensor<T, dimensions, var_shape>& tensor)
+{
+	return tensor.printable(stream);
+}
+
 int main()
 {
 	//static auto arr = make_arr<3, 3, 3>();
@@ -27,11 +35,14 @@ int main()
 	constexpr auto a = add<5, 2>();
 	static auto arr = make_shape<3, 3, 3>;
 
-	std::cout << typeid(arr).name() << '\n';
+	make_tensor<int, 256, 256> tensor('Z');
 
-	make_tensor<int, 3, 3, 3> tensor;
+	tensor.Compute([](int& elem) {elem = rand(); });
+	
+	make_tensor<size_t, 256, 256> tensor2 = tensor;
+	tensor2.Compute([](size_t& elem) {elem = std::sqrt(elem) + std::pow(elem, 4); });
 
-	std::cout << product<size_t, 3, make_shape<3, 3, 3>>();
+	std::cout << tensor;
 
 	std::cin.get();
 }
