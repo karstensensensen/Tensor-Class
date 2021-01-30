@@ -2,7 +2,8 @@
 
 namespace TSlib {
 	namespace Tools {
-		template<typename T, Mode device = default_device>
+
+		template<typename T, Mode device>
 		Tensor<T, device> MatToTensor(const cv::Mat& source)
 		{
 			Tensor<T, device> return_tensor({ source.rows, source.cols, source.channels() });
