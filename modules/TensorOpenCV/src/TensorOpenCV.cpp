@@ -141,18 +141,3 @@ cv::Mat TSlib::Tools::TensorToMat(const Tensor<double, device>& source)
 
 	return return_mat;
 }
-
-int main()
-{
-	std::uniform_int_distribution<unsigned long long> udist(0, 255);
-	std::mt19937 rng;
-
-	TSlib::Tensor<unsigned char> img({ 1024, 1024, 1 }, [&](const size_t& index) {return char(udist(rng)); });
-
-	cv::Mat mat_tensor = TSlib::Tools::TensorToMat(img);
-
-	cv::imwrite("test.png", mat_tensor);
-
-	std::cout << "Done\n";
-	std::cin.get();
-}

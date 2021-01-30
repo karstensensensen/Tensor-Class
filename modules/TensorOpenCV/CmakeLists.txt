@@ -15,7 +15,7 @@ set (CVLibs
 
 find_package( OpenCV REQUIRED)
 
-add_executable(${PROJECT_NAME}
+add_library(${PROJECT_NAME} STATIC
     ${SRC_FILES}
     ${INCLUDE_FILES}
 )
