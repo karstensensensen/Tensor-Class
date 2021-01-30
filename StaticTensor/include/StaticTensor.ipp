@@ -2,7 +2,6 @@
 
 namespace TSlib
 {
-
 	template<typename T, size_t dimensions, const std::array<size_t, dimensions>& var_shape>
 	StaticTensor<T, dimensions, var_shape>::StaticTensor(T init_val)
 	{
@@ -19,7 +18,6 @@ namespace TSlib
 			at(i) = other[i];
 		}
 	}
-
 
 	template<typename T, size_t dimensions, const std::array<size_t, dimensions>& var_shape>
 	T& StaticTensor<T, dimensions, var_shape>::at(size_t index)
@@ -47,7 +45,7 @@ namespace TSlib
 			#ifdef _TS_DEBUG
 			if (var_shape[i] <= coords[i])
 				assert(false);
-				/*throw OutOfBounds(Shape(), "Exception was thrown, because an element outside the Tensor bounds was accsessed", i, coords[i]);*/
+			/*throw OutOfBounds(Shape(), "Exception was thrown, because an element outside the Tensor bounds was accsessed", i, coords[i]);*/
 			#endif
 
 			tmp_multiply /= var_shape[i];
@@ -64,14 +62,14 @@ namespace TSlib
 		std::array<size_t, dimensions> coords = { var_coords... };
 
 		size_t index = 0;
-		size_t tmp_multiply = get_real_size<dimensions-1>();
+		size_t tmp_multiply = get_real_size<dimensions - 1>();
 
 		for (size_t i = 0; i < Dims(); i++)
 		{
 			#ifdef _TS_DEBUG
 			if (var_shape[i] <= coords[i])
 				assert(false);
-				/*throw OutOfBounds(Shape(), "Exception was thrown, because an element outside the Tensor bounds was accsessed", i, coords[i]);*/
+			/*throw OutOfBounds(Shape(), "Exception was thrown, because an element outside the Tensor bounds was accsessed", i, coords[i]);*/
 			#endif
 
 			tmp_multiply /= var_shape[i];
@@ -80,7 +78,6 @@ namespace TSlib
 
 		return at(index);
 	}
-
 
 	template<typename T, size_t dimensions, const std::array<size_t, dimensions>& var_shape>
 	template<size_t axis>
@@ -109,7 +106,6 @@ namespace TSlib
 		return r_size;
 	}
 
-
 	template<typename T, size_t dimensions, const std::array<size_t, dimensions>& var_shape>
 	constexpr const size_t StaticTensor<T, dimensions, var_shape>::size()
 	{
@@ -121,7 +117,7 @@ namespace TSlib
 
 		return prod;
 	}
-	
+
 	template<typename T, size_t axis, size_t n, const std::array<T, n>& arr>
 	static constexpr std::array<T, n - 1> flatten()
 	{
@@ -142,7 +138,6 @@ namespace TSlib
 		return new_arr;
 	}
 
-
 	template<typename T, size_t dimensions, const std::array<size_t, dimensions>& var_shape>
 	StaticTensor<T, dimensions, var_shape>& StaticTensor<T, dimensions, var_shape>::Compute(std::function<void(T&)> compute_func)
 	{
@@ -155,7 +150,6 @@ namespace TSlib
 		return *this;
 	}
 
-
 	template<typename T, size_t dimensions, const std::array<size_t, dimensions>& var_shape>
 	T& StaticTensor<T, dimensions, var_shape>::operator[](size_t index)
 	{
@@ -167,7 +161,7 @@ namespace TSlib
 	{
 		return at(index);
 	}
-	
+
 	template<typename T, size_t dimensions, const std::array<size_t, dimensions>& var_shape>
 	template<typename ...Tcoords, std::enable_if_t<sizeof...(Tcoords) == dimensions, int>>
 	T& StaticTensor<T, dimensions, var_shape>::operator()(Tcoords ...coords)
@@ -181,7 +175,6 @@ namespace TSlib
 	{
 		return get(coords...);
 	}
-
 
 	template<typename T, size_t dimensions, const std::array<size_t, dimensions>& var_shape>
 	std::ostream& StaticTensor<T, dimensions, var_shape>::printable(std::ostream& stream) const
@@ -238,5 +231,3 @@ namespace TSlib
 		return stream;
 	}
 }
-
-

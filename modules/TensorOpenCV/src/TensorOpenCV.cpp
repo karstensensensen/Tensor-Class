@@ -5,7 +5,6 @@
 template<TSlib::Mode device>
 cv::Mat TSlib::Tools::TensorToMat(const Tensor<unsigned char, device>& source)
 {
-
 	if (source.Dims() != 3)
 	{
 		throw TSlib::BadShape("Shape must have excactly 3 dimensions (width, height, channels)", source.Shape());
@@ -26,7 +25,6 @@ cv::Mat TSlib::Tools::TensorToMat(const Tensor<unsigned char, device>& source)
 template<TSlib::Mode device>
 cv::Mat TSlib::Tools::TensorToMat(const Tensor<signed char, device>& source)
 {
-
 	if (source.Dims() != 3)
 	{
 		throw TSlib::BadShape("Shape must have excactly 3 dimensions (width, height, channels)", source.Shape());
@@ -47,7 +45,6 @@ cv::Mat TSlib::Tools::TensorToMat(const Tensor<signed char, device>& source)
 template<TSlib::Mode device>
 cv::Mat TSlib::Tools::TensorToMat(const Tensor<unsigned short, device>& source)
 {
-
 	if (source.Dims() != 3)
 	{
 		throw TSlib::BadShape("Shape must have excactly 3 dimensions (width, height, channels)", source.Shape());
@@ -68,7 +65,6 @@ cv::Mat TSlib::Tools::TensorToMat(const Tensor<unsigned short, device>& source)
 template<TSlib::Mode device>
 cv::Mat TSlib::Tools::TensorToMat(const Tensor<short, device>& source)
 {
-
 	if (source.Dims() != 3)
 	{
 		throw TSlib::BadShape("Shape must have excactly 3 dimensions (width, height, channels)", source.Shape());
@@ -89,7 +85,6 @@ cv::Mat TSlib::Tools::TensorToMat(const Tensor<short, device>& source)
 template<TSlib::Mode device>
 cv::Mat TSlib::Tools::TensorToMat(const Tensor<int, device>& source)
 {
-
 	if (source.Dims() != 3)
 	{
 		throw TSlib::BadShape("Shape must have excactly 3 dimensions (width, height, channels)", source.Shape());
@@ -110,7 +105,6 @@ cv::Mat TSlib::Tools::TensorToMat(const Tensor<int, device>& source)
 template<TSlib::Mode device>
 cv::Mat TSlib::Tools::TensorToMat(const Tensor<float, device>& source)
 {
-
 	if (source.Dims() != 3)
 	{
 		throw TSlib::BadShape("Shape must have excactly 3 dimensions (width, height, channels)", source.Shape());
@@ -131,7 +125,6 @@ cv::Mat TSlib::Tools::TensorToMat(const Tensor<float, device>& source)
 template<TSlib::Mode device>
 cv::Mat TSlib::Tools::TensorToMat(const Tensor<double, device>& source)
 {
-
 	if (source.Dims() != 3)
 	{
 		throw TSlib::BadShape("Shape must have excactly 3 dimensions (width, height, channels)", source.Shape());
@@ -151,7 +144,6 @@ cv::Mat TSlib::Tools::TensorToMat(const Tensor<double, device>& source)
 
 int main()
 {
-
 	std::uniform_int_distribution<unsigned long long> udist(0, 255);
 	std::mt19937 rng;
 
@@ -163,5 +155,4 @@ int main()
 
 	std::cout << "Done\n";
 	std::cin.get();
-
 }

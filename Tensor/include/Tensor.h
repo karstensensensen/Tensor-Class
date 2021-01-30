@@ -168,12 +168,12 @@ namespace TSlib
 		TReturn sum() const;
 		template<typename TReturn = T>
 		Tensor<TReturn, device> sum(size_t axis, bool keepDims = true) const;
-		
+
 		template<typename TReturn = T>
 		TReturn prod() const;
 		template<typename TReturn = T>
 		Tensor<TReturn, device> prod(size_t axis, bool keepDims = true) const;
-		
+
 		Tensor<T, device>& exp();
 
 		Tensor<T, device>& normalize();

@@ -77,7 +77,6 @@ namespace TSlib
 
 		size_t Dims() const;
 
-
 		size_t map_index(size_t index) const;
 
 		const std::vector<size_t>& Shape() const;
@@ -96,7 +95,7 @@ namespace TSlib
 		TReturn prod() const;
 		template<typename TReturn = T>
 		Tensor<TReturn, device> prod(size_t axis, bool keepDims = true) const;
-		
+
 		T max() const;
 		T min() const;
 

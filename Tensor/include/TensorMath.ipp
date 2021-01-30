@@ -13,7 +13,6 @@ namespace TSlib
 	// takes the sum of the elements
 	// elem += current_elem
 
-
 	template<typename T, Mode device>
 	template<typename TReturn>
 	TReturn TensorSlice<T, device>::sum() const
@@ -31,10 +30,9 @@ namespace TSlib
 	template<typename TReturn>
 	Tensor<TReturn, device> TensorSlice<T, device>::sum(size_t axis, bool keepDims) const
 	{
-
 		return Compute([&](T& sum_elem, const T& elem) {sum_elem += elem; }, axis, 0, keepDims);
 	}
-	
+
 	template<typename T, Mode device>
 	template<typename TReturn>
 	TReturn Tensor<T, device>::sum() const
@@ -87,7 +85,6 @@ namespace TSlib
 	template<typename TReturn>
 	Tensor<TReturn, device> TensorSlice<T, device>::prod(size_t axis, bool keepDims) const
 	{
-
 		return Compute([&](T& prod_elem, const T& elem) {prod_elem *= elem; }, axis, 1, keepDims);
 	}
 
@@ -122,7 +119,6 @@ namespace TSlib
 	{
 		return source.prod(axis, keep_dims);
 	}
-
 
 	// takes every element of the tensor and sets Euler's number to a power of that element
 	// elem = e^elem
@@ -306,7 +302,7 @@ namespace TSlib
 
 		return *this;
 	}
-	
+
 	template<typename T, Mode device>
 	inline TensorSlice<T, device>& TensorSlice<T, device>::sin()
 	{
@@ -328,7 +324,6 @@ namespace TSlib
 	template<typename T, Mode device>
 	inline Tensor<T, device>& Tensor<T, device>::cos()
 	{
-		
 		Compute([](T& elem) {elem = std::cos(elem); });
 
 		return *this;
@@ -355,7 +350,6 @@ namespace TSlib
 	template<typename T, Mode device>
 	inline Tensor<T, device>& Tensor<T, device>::tan()
 	{
-		
 		Compute([](T& elem) {elem = std::tan(elem); });
 
 		return *this;
@@ -375,14 +369,13 @@ namespace TSlib
 		result.tan();
 		return result;
 	}
-	
+
 	// takes the arc sine / inverse sine value of the element
 	// elem = arcsin(elem)
 
 	template<typename T, Mode device>
 	inline Tensor<T, device>& Tensor<T, device>::arcsin()
 	{
-		
 		Compute([](T& elem) {elem = std::asin(elem); });
 
 		return *this;
@@ -402,14 +395,13 @@ namespace TSlib
 		result.arcsin();
 		return result;
 	}
-	
+
 	// takes the arc cosine / inverse cosine value of the element
 	// elem = cos(elem)
 
 	template<typename T, Mode device>
 	inline Tensor<T, device>& Tensor<T, device>::arccos()
 	{
-		
 		Compute([](T& elem) {elem = std::acos(elem); });
 
 		return *this;
@@ -429,14 +421,13 @@ namespace TSlib
 		result.arccos();
 		return result;
 	}
-	
+
 	// takes the arc tangent / inverse tangent value of the element
 	// elem = tan(elem)
-	
+
 	template<typename T, Mode device>
 	inline Tensor<T, device>& Tensor<T, device>::arctan()
 	{
-		
 		Compute([](T& elem) {elem = std::atan(elem); });
 
 		return *this;
@@ -456,7 +447,6 @@ namespace TSlib
 		result.arctan();
 		return result;
 	}
-	
 
 	//converts radians to degrees
 	// elem = 360/pi * elem
@@ -505,5 +495,4 @@ namespace TSlib
 		T result = source;
 		return result.convRad();
 	}
-
 }

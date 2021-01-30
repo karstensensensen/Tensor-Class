@@ -1372,7 +1372,6 @@ namespace TSlib
 	#if defined(_CUDA) && defined(_AMP)
 	#pragma message("warning: Cannot use both cuda and amp at the same time defaulting to cuda")
 	#endif
-
 }
 
 #ifdef _CUDA

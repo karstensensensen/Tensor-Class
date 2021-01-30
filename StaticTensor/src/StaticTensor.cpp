@@ -12,7 +12,6 @@ constexpr std::array<T, N1 + N2> append_arr(std::array<T, N1> arr1, std::array<T
 	return arr;
 }
 
-
 template<int a, int b>
 constexpr int add()
 {
@@ -38,7 +37,7 @@ int main()
 	make_tensor<int, 256, 256> tensor('Z');
 
 	tensor.Compute([](int& elem) {elem = rand(); });
-	
+
 	make_tensor<size_t, 256, 256> tensor2 = tensor;
 	tensor2.Compute([](size_t& elem) {elem = std::sqrt(elem) + std::pow(elem, 4); });
 
