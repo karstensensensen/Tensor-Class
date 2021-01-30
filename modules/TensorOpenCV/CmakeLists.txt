@@ -1,0 +1,27 @@
+project(TensorOpenCV)
+
+set(INCLUDE_FILES
+    include/TensorOpenCV.h
+    include/TensorOpenCV.ipp
+)
+
+set(SRC_FILES
+    src/TensorOpenCV.cpp
+)
+
+set (CVLibs
+
+)
+
+find_package( OpenCV REQUIRED)
+
+add_executable(${PROJECT_NAME}
+    ${SRC_FILES}
+    ${INCLUDE_FILES}
+)
+
+source_group("Header Files" FILES ${INCLUDE_FILES})
+
+target_include_directories( ${PROJECT_NAME} PUBLIC include ${OpenCV_INCLUDE_DIRS} )
+
+target_link_libraries(${PROJECT_NAME} Tensor ${OpenCV_LIBS})
