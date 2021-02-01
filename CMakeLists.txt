@@ -8,7 +8,7 @@ option(STATIC_MODULE    "build a static version that might be faster, but not ab
 option(OPENCV_MODULE    "build a static library with helpful functions for OpenCV (like converting a tensor to an image)" OFF)
 
 if (NOT ${CMAKE_SIZEOF_VOID_P} EQUAL "8" AND ENABLE_CUDA)
-    message(FATAL_ERROR "only x64 architecture is avaliable")
+    message(FATAL_ERROR "only x64 architecture is avaliable when compiling with CUDA")
 endif()
 
 set(CMAKE_CXX_STANDARD 20)
