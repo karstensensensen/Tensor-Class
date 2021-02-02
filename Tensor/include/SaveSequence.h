@@ -11,17 +11,17 @@ namespace TSlib
 				std::ofstream out_file;
 				std::vector<size_t> shape;
 			
-			public;
+		public:
 
-				tnsr_sequence(std::string dir, std::vector<size_t> storage_shape);
-
-				template<Mode device>
-				tnsr_sequence(std::string dir, const Tensor<T, device>& base);
-
-				begin_sequence();
+				otnsr_sequence(std::string dir, std::vector<size_t> storage_shape);
 
 				template<Mode device>
-				append(const Tensor<T, device>& source);
+				otnsr_sequence(std::string dir, const Tensor<T, device>& base);
+
+				void begin_sequence();
+
+				template<Mode device>
+				void append(const Tensor<T, device>& source);
 
 		};
 
@@ -32,12 +32,12 @@ namespace TSlib
 			std::vector<size_t> shape;
 			size_t length;
 
-			public;
+		public:
 
-			tnsr_sequence(std::string dir, std::vector<size_t> storage_shape);
+			itnsr_sequence(std::string dir, std::vector<size_t> storage_shape);
 
 			template<Mode device>
-			tnsr_sequence(std::string dir, const Tensor<T, device>& base);
+			itnsr_sequence(std::string dir, const Tensor<T, device>& base);
 
 			template<Mode device>
 			void read(Tensor<T, device>& source);
