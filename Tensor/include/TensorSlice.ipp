@@ -339,14 +339,14 @@ namespace TSlib
 		#pragma omp parallel for
 		for (long long index = 0; (size_t)index < size(); index++)
 		{
-			compute_func(At(index), index);
-
 			std::vector<size_t> coords(Dims());
 
-			coords[0] = (index % get_dim_length(0));
-			for (size_t j = 1; j < Dims(); j++)
+			size_t tmp_indx = index;
+
+			for (size_t j = 0; j < Dims(); j++)
 			{
-				coords[j] = (index / get_dim_length(j)) % get_dim_length(j);
+				coords[Dims() - j - 1] = tmp_indx % Shape()[Dims() - j - 1];
+				tmp_indx /= Shape()[Dims() - j - 1];
 			}
 
 			compute_func(At(index), coords);
@@ -359,14 +359,14 @@ namespace TSlib
 		#pragma omp parallel for
 		for (long long index = 0; (size_t)index < size(); index++)
 		{
-			compute_func(At(index), index);
-
 			std::vector<size_t> coords(Dims());
 
-			coords[0] = (index % get_dim_length(0));
-			for (size_t j = 1; j < Dims(); j++)
+			size_t tmp_indx = index;
+
+			for (size_t j = 0; j < Dims(); j++)
 			{
-				coords[j] = (index / get_dim_length(j)) % get_dim_length(j);
+				coords[Dims() - j - 1] = tmp_indx % Shape()[Dims() - j - 1];
+				tmp_indx /= Shape()[Dims() - j - 1];
 			}
 
 			compute_func(At(index), coords, index);
