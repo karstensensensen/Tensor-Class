@@ -182,6 +182,9 @@ namespace TSlib
 
 		T min() const;
 
+		template<typename RT = T>
+		RT avg() const;
+
 		Tensor<T, device>& sin();
 		Tensor<T, device>& cos();
 		Tensor<T, device>& tan();

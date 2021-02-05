@@ -97,7 +97,11 @@ namespace TSlib
 		Tensor<TReturn, device> prod(size_t axis, bool keepDims = true) const;
 
 		T max() const;
+		
 		T min() const;
+
+		template<typename RT = T>
+		RT avg() const;
 
 		TensorSlice<T, device>& sin();
 		TensorSlice<T, device>& cos();

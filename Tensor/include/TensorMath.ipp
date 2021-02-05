@@ -18,9 +18,9 @@ namespace TSlib
 	TReturn TensorSlice<T, device>::sum() const
 	{
 		TReturn sum_val = 0;
-		for (const T& elem : *this)
+		for (size_t i = 0; i < size(); i++)
 		{
-			sum_val += elem;
+			sum_val += At(i);
 		}
 
 		return sum_val;
@@ -38,9 +38,9 @@ namespace TSlib
 	TReturn Tensor<T, device>::sum() const
 	{
 		TReturn sum_val = 0;
-		for (const T& elem : *this)
+		for (size_t i = 0; i < size(); i++)
 		{
-			sum_val += elem;
+			sum_val += At(i);
 		}
 
 		return sum_val;
@@ -73,9 +73,9 @@ namespace TSlib
 	TReturn TensorSlice<T, device>::prod() const
 	{
 		TReturn prod_val = 1;
-		for (const T& elem : *this)
+		for (size_t i = 0; i < size(); i++)
 		{
-			prod_val *= elem;
+			prod_val *= At(i);
 		}
 
 		return prod_val;
@@ -93,9 +93,9 @@ namespace TSlib
 	TReturn Tensor<T, device>::prod() const
 	{
 		TReturn prod_val = 1;
-		for (const T& elem : *this)
+		for (size_t i = 0; i < size(); i++)
 		{
-			prod_val *= elem;
+			prod_val *= At(i);
 		}
 
 		return prod_val;
@@ -250,8 +250,7 @@ namespace TSlib
 	template<typename T, Tools::enable_if_tensor<T>>
 	T Tools::max(const T& source, size_t axis, bool keepDims)
 	{
-		T result = source;
-		result.Compute([](typename T::Type& new_elem, const typename T::Type& elem) {new_elem = std::max(new_elem, elem); }, axis, keepDims);
+		T result = source.Compute([](typename T::Type& new_elem, const typename T::Type& elem) {new_elem = std::max(new_elem, elem); }, axis, keepDims);
 		return result;
 	}
 
@@ -287,9 +286,35 @@ namespace TSlib
 	template<typename T, Tools::enable_if_tensor<T>>
 	T Tools::min(const T& source, size_t axis, bool keepDims)
 	{
-		T result = source;
-		result.Compute([](typename T::Type& new_elem, const typename T::Type& elem) {new_elem = std::min(new_elem, elem); }, axis, keepDims);
+		T result = source.Compute([](typename T::Type& new_elem, const typename T::Type& elem) {new_elem = std::min(new_elem, elem); }, axis, keepDims);
 		return result;
+	}
+
+	// sums the elements and divides them by the number of elements, thus taking the average value of the tensor
+	// sum_elem += elem
+	// avg = sum_elem / elem_count
+
+	template<typename T, Mode device>
+	template<typename RT>
+	RT TensorSlice<T, device>::avg() const
+	{
+		return sum<RT>() / (RT)size();
+	}
+
+	template<typename T, Mode device>
+	template<typename RT>
+	RT Tensor<T, device>::avg() const
+	{
+		return sum<RT>() / (RT)size();
+	}
+	
+	template<typename T, Tools::enable_if_tensor<T>>
+	T Tools::avg(const T& source, size_t axis, bool keepDims)
+	{
+		T result = source.Compute([](typename T::Type& new_elem, const typename T::Type& elem) {new_elem += elem; }, axis, keepDims);
+		result.Compute([axis, &source](typename T::Type& elem) {elem /= (T)source.Shape()[axis]; });
+		return result;
+
 	}
 
 	// takes the sine value of the element

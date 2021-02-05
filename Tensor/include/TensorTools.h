@@ -42,6 +42,9 @@ namespace TSlib
 		T min(const T& source, size_t axis, bool keepDims = false);
 
 		template<typename T, enable_if_tensor<T> = 0>
+		T avg(const T& source, size_t axis, bool keepDims = false);
+
+		template<typename T, enable_if_tensor<T> = 0>
 		T sin(const T& source);
 
 		template<typename T, enable_if_tensor<T> = 0>
