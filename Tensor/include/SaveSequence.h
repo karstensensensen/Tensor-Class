@@ -1,27 +1,49 @@
 #pragma once
 #include "Tensor.h"
+#include <filesystem>
 
 namespace TSlib
 {
 	namespace Tools
 	{
+
+		template<size_t gb>
+		size_t gigabytes = gb * 1024ULL * 1024ULL * 1024ULL;
+
+		template<size_t mb>
+		size_t megabytes = mb * 1024ULL * 1024ULL;
+
+		template<size_t kb>
+		size_t kilobytes = kb * 1024ULL;
+
 		template<typename T>
 		class otnsr_sequence
 		{
+				std::filesystem::path dir;
 				std::ofstream out_file;
 				std::vector<size_t> shape;
-			
+				const size_t dimensions;
+				size_t size;
+				size_t buffer_size;
+				char* buffer;
+				
+				void write_header();
+
 		public:
 
-				otnsr_sequence(std::string dir, std::vector<size_t> storage_shape);
-
+				otnsr_sequence(std::string dir, std::vector<size_t> storage_shape, size_t buffer_size = 8192);
 				template<Mode device>
-				otnsr_sequence(std::string dir, const Tensor<T, device>& base);
+				otnsr_sequence(std::string dir, const Tensor<T, device>& base, size_t buffer_size = 8192);
+				~otnsr_sequence();
 
 				void begin_sequence();
 
+				void reset_sequence();
+
 				template<Mode device>
 				void append(const Tensor<T, device>& source);
+
+				void close();
 
 		};
 
