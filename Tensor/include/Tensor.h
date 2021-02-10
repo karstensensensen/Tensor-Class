@@ -538,29 +538,29 @@ namespace TSlib
 		inline Tensor<T, device> operator%(const OT& other);
 
 		template<typename OT>
-		inline Tensor<T, device> operator+=(OT& other);
+		inline void operator+=(OT& other);
 		template<typename OT>
-		inline Tensor<T, device> operator+=(const OT& other);
+		inline void operator+=(const OT& other);
 
 		template<typename OT>
-		inline Tensor<T, device> operator-=(OT& other);
+		inline void operator-=(OT& other);
 		template<typename OT>
-		inline Tensor<T, device> operator-=(const OT& other);
+		inline void operator-=(const OT& other);
 
 		template<typename OT>
-		inline Tensor<T, device> operator*=(OT& other);
+		inline void operator*=(OT& other);
 		template<typename OT>
-		inline Tensor<T, device> operator*=(const OT& other);
+		inline void operator*=(const OT& other);
 
 		template<typename OT>
-		inline Tensor<T, device> operator/=(OT& other);
+		inline void operator/=(OT& other);
 		template<typename OT>
-		inline Tensor<T, device> operator/=(const OT& other);
+		inline void operator/=(const OT& other);
 
 		template<typename OT>
-		inline Tensor<T, device> operator%=(OT& other);
+		inline void operator%=(OT& other);
 		template<typename OT>
-		inline Tensor<T, device> operator%=(const OT& other);
+		inline void operator%=(const OT& other);
 
 		template<typename OT>
 		inline bool operator==(OT& other);
