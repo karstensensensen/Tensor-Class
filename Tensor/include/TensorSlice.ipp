@@ -94,6 +94,14 @@ namespace TSlib
 	T& TensorSlice<T, device>::Get(Args ... coords)
 	{
 		MEASURE();
+
+		#ifdef _TS_DEBUG
+		if (Dims() != sizeof...(coords))
+		{
+			throw BadValue("Exception was thrown, because there were not the same nuumber of coordinates given as the number of dimensions in the Tensor", ExceptValue("Coords", sizeof...(coords)), ExceptValue("Dimensions", Dims()));
+		}
+		#endif
+
 		#ifdef _TS_DEBUG
 		size_t i_d = 0;
 		bounds_check(i_d, coords...);

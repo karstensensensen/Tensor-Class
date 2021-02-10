@@ -1215,6 +1215,14 @@ namespace TSlib
 	T& Tensor<T, device>::Get(const Args& ... coords)
 	{
 		MEASURE();
+
+		#ifdef _TS_DEBUG
+		if (Dims() != sizeof...(coords))
+		{
+			throw BadValue("Exception was thrown, because there were not the same nuumber of coordinates given as the number of dimensions in the Tensor", ExceptValue("Coords", sizeof...(coords)), ExceptValue("Dimensions", Dims()));
+		}
+		#endif
+
 		size_t index = 0;
 		size_t tmp_multiply = get_real_size(Dims() - 1);
 		size_t i = 0;
