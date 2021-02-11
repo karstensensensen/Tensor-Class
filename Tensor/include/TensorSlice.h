@@ -296,6 +296,41 @@ namespace TSlib
 		Tensor<T, device> operator% (const OT& other);
 
 		template<typename OT, Mode other_device>
+		void operator+= (const Tensor<OT, other_device>& other);
+		template<typename OT, Mode other_device>
+		void operator+= (const TensorSlice<OT, other_device>& other);
+		template<typename OT>
+		void operator+= (const OT& other);
+
+		template<typename OT, Mode other_device>
+		void operator-= (const Tensor<OT, other_device>& other);
+		template<typename OT, Mode other_device>
+		void operator-= (const TensorSlice<OT, other_device>& other);
+		template<typename OT>
+		void operator-= (const OT& other);
+
+		template<typename OT, Mode other_device>
+		void operator*= (const Tensor<OT, other_device>& other);
+		template<typename OT, Mode other_device>
+		void operator*= (const TensorSlice<OT, other_device>& other);
+		template<typename OT>
+		void operator*= (const OT& other);
+
+		template<typename OT, Mode other_device>
+		void operator/= (const Tensor<OT, other_device>& other);
+		template<typename OT, Mode other_device>
+		void operator/= (const TensorSlice<OT, other_device>& other);
+		template<typename OT>
+		void operator/= (const OT& other);
+
+		template<typename OT, Mode other_device>
+		void operator%= (const Tensor<OT, other_device>& other);
+		template<typename OT, Mode other_device>
+		void operator%= (const TensorSlice<OT, other_device>& other);
+		template<typename OT>
+		void operator%= (const OT& other);
+
+		template<typename OT, Mode other_device>
 		bool operator== (const Tensor<OT, other_device>& other);
 		template<typename OT, Mode other_device>
 		bool operator== (const TensorSlice<OT, other_device>& other);
