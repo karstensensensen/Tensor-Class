@@ -25,7 +25,7 @@ namespace TSlib {
 		template<Device device>
 		cv::Mat TensorToMat(const Tensor<double, device>& source);
 
-		template<typename T, Mode device = default_device>
+		template<typename T, Device device = default_device>
 		Tensor<T, device> MatToTensor(const cv::Mat& source);
 	}
 }
