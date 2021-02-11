@@ -63,7 +63,7 @@ namespace TSlib
 			err_msg = "Bad shape exception was thrown, wihtout additional information";
 		}
 
-		template<typename T, Mode device>
+		template<typename T, Device device>
 		BadShape(Tensor<T, device>* tensor, std::string message, const std::vector<size_t>& shape)
 		{
 			err_msg = message + "\nTarget shape was: ";
@@ -86,7 +86,7 @@ namespace TSlib
 			err_msg += "\nTensor shape sum was: " + std::to_string(tensor->size());
 		}
 
-		template<typename T, Mode device>
+		template<typename T, Device device>
 		BadShape(Tensor<T, device>* tensor, std::string message, const std::vector<TSlice>& shape)
 		{
 			err_msg = message + "\nTarget shape was: ";
