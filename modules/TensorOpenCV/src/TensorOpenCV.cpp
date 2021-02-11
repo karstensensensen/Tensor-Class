@@ -3,7 +3,7 @@
 #include <random>
 
 template<>
-cv::Mat TSlib::Tools::TensorToMat(const Tensor<unsigned char, Mode::CPU>& source)
+cv::Mat TSlib::Tools::TensorToMat(const Tensor<unsigned char, Device::CPU>& source)
 {
 	if (source.Dims() != 3)
 	{
@@ -22,7 +22,7 @@ cv::Mat TSlib::Tools::TensorToMat(const Tensor<unsigned char, Mode::CPU>& source
 	return return_mat;
 }
 template<>
-cv::Mat TSlib::Tools::TensorToMat(const Tensor<unsigned char, Mode::GPU>& source)
+cv::Mat TSlib::Tools::TensorToMat(const Tensor<unsigned char, Device::GPU>& source)
 {
 	if (source.Dims() != 3)
 	{
@@ -42,7 +42,7 @@ cv::Mat TSlib::Tools::TensorToMat(const Tensor<unsigned char, Mode::GPU>& source
 }
 
 template<>
-cv::Mat TSlib::Tools::TensorToMat(const Tensor<signed char, Mode::CPU>& source)
+cv::Mat TSlib::Tools::TensorToMat(const Tensor<signed char, Device::CPU>& source)
 {
 	if (source.Dims() != 3)
 	{
@@ -61,7 +61,7 @@ cv::Mat TSlib::Tools::TensorToMat(const Tensor<signed char, Mode::CPU>& source)
 	return return_mat;
 }
 template<>
-cv::Mat TSlib::Tools::TensorToMat(const Tensor<signed char, Mode::GPU>& source)
+cv::Mat TSlib::Tools::TensorToMat(const Tensor<signed char, Device::GPU>& source)
 {
 	if (source.Dims() != 3)
 	{
@@ -81,7 +81,7 @@ cv::Mat TSlib::Tools::TensorToMat(const Tensor<signed char, Mode::GPU>& source)
 }
 
 template<>
-cv::Mat TSlib::Tools::TensorToMat(const Tensor<unsigned short, Mode::CPU>& source)
+cv::Mat TSlib::Tools::TensorToMat(const Tensor<unsigned short, Device::CPU>& source)
 {
 	if (source.Dims() != 3)
 	{
@@ -100,7 +100,7 @@ cv::Mat TSlib::Tools::TensorToMat(const Tensor<unsigned short, Mode::CPU>& sourc
 	return return_mat;
 }
 template<>
-cv::Mat TSlib::Tools::TensorToMat(const Tensor<unsigned short, Mode::GPU>& source)
+cv::Mat TSlib::Tools::TensorToMat(const Tensor<unsigned short, Device::GPU>& source)
 {
 	if (source.Dims() != 3)
 	{
@@ -120,7 +120,7 @@ cv::Mat TSlib::Tools::TensorToMat(const Tensor<unsigned short, Mode::GPU>& sourc
 }
 
 template<>
-cv::Mat TSlib::Tools::TensorToMat(const Tensor<short, Mode::CPU>& source)
+cv::Mat TSlib::Tools::TensorToMat(const Tensor<short, Device::CPU>& source)
 {
 	if (source.Dims() != 3)
 	{
@@ -139,7 +139,7 @@ cv::Mat TSlib::Tools::TensorToMat(const Tensor<short, Mode::CPU>& source)
 	return return_mat;
 }
 template<>
-cv::Mat TSlib::Tools::TensorToMat(const Tensor<short, Mode::GPU>& source)
+cv::Mat TSlib::Tools::TensorToMat(const Tensor<short, Device::GPU>& source)
 {
 	if (source.Dims() != 3)
 	{
@@ -159,7 +159,7 @@ cv::Mat TSlib::Tools::TensorToMat(const Tensor<short, Mode::GPU>& source)
 }
 
 template<>
-cv::Mat TSlib::Tools::TensorToMat(const Tensor<int, Mode::CPU>& source)
+cv::Mat TSlib::Tools::TensorToMat(const Tensor<int, Device::CPU>& source)
 {
 	if (source.Dims() != 3)
 	{
@@ -178,7 +178,7 @@ cv::Mat TSlib::Tools::TensorToMat(const Tensor<int, Mode::CPU>& source)
 	return return_mat;
 }
 template<>
-cv::Mat TSlib::Tools::TensorToMat(const Tensor<int, Mode::GPU>& source)
+cv::Mat TSlib::Tools::TensorToMat(const Tensor<int, Device::GPU>& source)
 {
 	if (source.Dims() != 3)
 	{
@@ -198,7 +198,7 @@ cv::Mat TSlib::Tools::TensorToMat(const Tensor<int, Mode::GPU>& source)
 }
 
 template<>
-cv::Mat TSlib::Tools::TensorToMat(const Tensor<float, Mode::CPU>& source)
+cv::Mat TSlib::Tools::TensorToMat(const Tensor<float, Device::CPU>& source)
 {
 	if (source.Dims() != 3)
 	{
@@ -217,7 +217,7 @@ cv::Mat TSlib::Tools::TensorToMat(const Tensor<float, Mode::CPU>& source)
 	return return_mat;
 }
 template<>
-cv::Mat TSlib::Tools::TensorToMat(const Tensor<float, Mode::GPU>& source)
+cv::Mat TSlib::Tools::TensorToMat(const Tensor<float, Device::GPU>& source)
 {
 	if (source.Dims() != 3)
 	{
@@ -237,7 +237,7 @@ cv::Mat TSlib::Tools::TensorToMat(const Tensor<float, Mode::GPU>& source)
 }
 
 template<>
-cv::Mat TSlib::Tools::TensorToMat(const Tensor<double, Mode::CPU>& source)
+cv::Mat TSlib::Tools::TensorToMat(const Tensor<double, Device::CPU>& source)
 {
 	if (source.Dims() != 3)
 	{
@@ -256,7 +256,7 @@ cv::Mat TSlib::Tools::TensorToMat(const Tensor<double, Mode::CPU>& source)
 	return return_mat;
 }
 template<>
-cv::Mat TSlib::Tools::TensorToMat(const Tensor<double, Mode::GPU>& source)
+cv::Mat TSlib::Tools::TensorToMat(const Tensor<double, Device::GPU>& source)
 {
 	if (source.Dims() != 3)
 	{
