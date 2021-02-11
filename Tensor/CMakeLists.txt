@@ -5,8 +5,6 @@ set(INCLUDE_FILES
     include/PerlinNoise.h
     include/Tensor.h
     include/Tensor.ipp
-    include/TensorBase.h
-    include/TensorBase.ipp
     include/TensorArithmetic.h
     include/TensorArithmeticOperators.ipp
     include/TensorCompareOperators.h
