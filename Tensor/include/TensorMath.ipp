@@ -13,15 +13,14 @@ namespace TSlib
 	// takes the sum of the elements
 	// elem += current_elem
 
-
 	template<typename T, Mode device>
 	template<typename TReturn>
 	TReturn TensorSlice<T, device>::sum() const
 	{
 		TReturn sum_val = 0;
-		for (const T& elem : *this)
+		for (size_t i = 0; i < size(); i++)
 		{
-			sum_val += elem;
+			sum_val += At(i);
 		}
 
 		return sum_val;
@@ -31,18 +30,17 @@ namespace TSlib
 	template<typename TReturn>
 	Tensor<TReturn, device> TensorSlice<T, device>::sum(size_t axis, bool keepDims) const
 	{
-
-		return Compute([&](T& sum_elem, const T& elem) {sum_elem += elem; }, axis, keepDims);
+		return Compute([&](T& sum_elem, const T& elem) {sum_elem += elem; }, axis, 0, keepDims);
 	}
-	
+
 	template<typename T, Mode device>
 	template<typename TReturn>
 	TReturn Tensor<T, device>::sum() const
 	{
 		TReturn sum_val = 0;
-		for (const T& elem : *this)
+		for (size_t i = 0; i < size(); i++)
 		{
-			sum_val += elem;
+			sum_val += At(i);
 		}
 
 		return sum_val;
@@ -52,7 +50,74 @@ namespace TSlib
 	template<typename TReturn>
 	Tensor<TReturn, device> Tensor<T, device>::sum(size_t axis, bool keepDims) const
 	{
-		return Compute([&](T& sum_elem, const T& elem) {sum_elem += elem; }, axis, keepDims);
+		return Compute([&](T& sum_elem, const T& elem) {sum_elem += elem; }, axis, 0, keepDims);
+	}
+
+	template<typename T, Tools::enable_if_tensor<T>>
+	typename T::Type Tools::sum(const T& source)
+	{
+		return source.sum();
+	}
+
+	template<typename T, Tools::enable_if_tensor<T>>
+	T Tools::sum(const T& source, size_t axis, bool keep_dims)
+	{
+		return source.sum(axis, keep_dims);
+	}
+
+	// takes the product of the elements
+	// elem *= current_elem
+
+	template<typename T, Mode device>
+	template<typename TReturn>
+	TReturn TensorSlice<T, device>::prod() const
+	{
+		TReturn prod_val = 1;
+		for (size_t i = 0; i < size(); i++)
+		{
+			prod_val *= At(i);
+		}
+
+		return prod_val;
+	}
+
+	template<typename T, Mode device>
+	template<typename TReturn>
+	Tensor<TReturn, device> TensorSlice<T, device>::prod(size_t axis, bool keepDims) const
+	{
+		return Compute([&](T& prod_elem, const T& elem) {prod_elem *= elem; }, axis, 1, keepDims);
+	}
+
+	template<typename T, Mode device>
+	template<typename TReturn>
+	TReturn Tensor<T, device>::prod() const
+	{
+		TReturn prod_val = 1;
+		for (size_t i = 0; i < size(); i++)
+		{
+			prod_val *= At(i);
+		}
+
+		return prod_val;
+	}
+
+	template<typename T, Mode device>
+	template<typename TReturn>
+	Tensor<TReturn, device> Tensor<T, device>::prod(size_t axis, bool keepDims) const
+	{
+		return Compute([&](T& prod_elem, const T& elem) {prod_elem *= elem; }, axis, 1, keepDims);
+	}
+
+	template<typename T, Tools::enable_if_tensor<T>>
+	typename T::Type Tools::prod(const T& source)
+	{
+		return source.prod();
+	}
+
+	template<typename T, Tools::enable_if_tensor<T>>
+	T Tools::prod(const T& source, size_t axis, bool keep_dims)
+	{
+		return source.prod(axis, keep_dims);
 	}
 
 	// takes every element of the tensor and sets Euler's number to a power of that element
@@ -76,9 +141,9 @@ namespace TSlib
 	}
 
 	template<typename T, Tools::enable_if_tensor<T>>
-	Tensor<typename T::Type, T::Device> Tools::exp(const T& source)
+	T Tools::exp(const T& source)
 	{
-		Tensor<typename T::Type, T::Device> result = source;
+		T result = source;
 
 		result.exp();
 
@@ -86,13 +151,13 @@ namespace TSlib
 	}
 
 	template<typename T, Tools::enable_if_tensor<T>>
-	Tensor<typename T::Type, T::Device> Tools::exp(const T& source, size_t axis, bool keepDims)
+	T Tools::exp(const T& source, size_t axis, bool keepDims)
 	{
 		std::vector<size_t> return_shape(source.Shape());
 
 		return_shape[axis] = 1;
 
-		Tensor<typename T::Type, T::Device> result(return_shape, 0);
+		T result(return_shape, 0);
 
 		result.Compute([&](typename T::Type& elem, const std::vector<size_t>& coords)
 			{
@@ -145,9 +210,9 @@ namespace TSlib
 	}
 
 	template<typename T, Tools::enable_if_tensor<T>>
-	Tensor<typename T::Type, T::Device> Tools::normalize(const T& source)
+	T Tools::normalize(const T& source)
 	{
-		Tensor<typename T::Type, T::Device> result = source;
+		T result = source;
 		result.normalize();
 
 		return result;
@@ -185,8 +250,7 @@ namespace TSlib
 	template<typename T, Tools::enable_if_tensor<T>>
 	T Tools::max(const T& source, size_t axis, bool keepDims)
 	{
-		T result = source;
-		result.Compute([](typename T::Type& new_elem, const typename T::Type& elem) {new_elem = std::max(new_elem, elem); }, axis, keepDims);
+		T result = source.Compute([](typename T::Type& new_elem, const typename T::Type& elem) {new_elem = std::max(new_elem, elem); }, axis, keepDims);
 		return result;
 	}
 
@@ -222,9 +286,35 @@ namespace TSlib
 	template<typename T, Tools::enable_if_tensor<T>>
 	T Tools::min(const T& source, size_t axis, bool keepDims)
 	{
-		T result = source;
-		result.Compute([](typename T::Type& new_elem, const typename T::Type& elem) {new_elem = std::min(new_elem, elem); }, axis, keepDims);
+		T result = source.Compute([](typename T::Type& new_elem, const typename T::Type& elem) {new_elem = std::min(new_elem, elem); }, axis, keepDims);
 		return result;
+	}
+
+	// sums the elements and divides them by the number of elements, thus taking the average value of the tensor
+	// sum_elem += elem
+	// avg = sum_elem / elem_count
+
+	template<typename T, Mode device>
+	template<typename RT>
+	RT TensorSlice<T, device>::avg() const
+	{
+		return sum<RT>() / (RT)size();
+	}
+
+	template<typename T, Mode device>
+	template<typename RT>
+	RT Tensor<T, device>::avg() const
+	{
+		return sum<RT>() / (RT)size();
+	}
+	
+	template<typename T, Tools::enable_if_tensor<T>>
+	T Tools::avg(const T& source, size_t axis, bool keepDims)
+	{
+		T result = source.Compute([](typename T::Type& new_elem, const typename T::Type& elem) {new_elem += elem; }, axis, keepDims);
+		result.Compute([axis, &source](typename T::Type& elem) {elem /= (T)source.Shape()[axis]; });
+		return result;
+
 	}
 
 	// takes the sine value of the element
@@ -237,7 +327,7 @@ namespace TSlib
 
 		return *this;
 	}
-	
+
 	template<typename T, Mode device>
 	inline TensorSlice<T, device>& TensorSlice<T, device>::sin()
 	{
@@ -259,7 +349,6 @@ namespace TSlib
 	template<typename T, Mode device>
 	inline Tensor<T, device>& Tensor<T, device>::cos()
 	{
-		
 		Compute([](T& elem) {elem = std::cos(elem); });
 
 		return *this;
@@ -286,7 +375,6 @@ namespace TSlib
 	template<typename T, Mode device>
 	inline Tensor<T, device>& Tensor<T, device>::tan()
 	{
-		
 		Compute([](T& elem) {elem = std::tan(elem); });
 
 		return *this;
@@ -306,14 +394,13 @@ namespace TSlib
 		result.tan();
 		return result;
 	}
-	
+
 	// takes the arc sine / inverse sine value of the element
 	// elem = arcsin(elem)
 
 	template<typename T, Mode device>
 	inline Tensor<T, device>& Tensor<T, device>::arcsin()
 	{
-		
 		Compute([](T& elem) {elem = std::asin(elem); });
 
 		return *this;
@@ -333,14 +420,13 @@ namespace TSlib
 		result.arcsin();
 		return result;
 	}
-	
+
 	// takes the arc cosine / inverse cosine value of the element
 	// elem = cos(elem)
 
 	template<typename T, Mode device>
 	inline Tensor<T, device>& Tensor<T, device>::arccos()
 	{
-		
 		Compute([](T& elem) {elem = std::acos(elem); });
 
 		return *this;
@@ -360,14 +446,13 @@ namespace TSlib
 		result.arccos();
 		return result;
 	}
-	
+
 	// takes the arc tangent / inverse tangent value of the element
 	// elem = tan(elem)
-	
+
 	template<typename T, Mode device>
 	inline Tensor<T, device>& Tensor<T, device>::arctan()
 	{
-		
 		Compute([](T& elem) {elem = std::atan(elem); });
 
 		return *this;
@@ -387,7 +472,6 @@ namespace TSlib
 		result.arctan();
 		return result;
 	}
-	
 
 	//converts radians to degrees
 	// elem = 360/pi * elem
@@ -436,5 +520,4 @@ namespace TSlib
 		T result = source;
 		return result.convRad();
 	}
-
 }

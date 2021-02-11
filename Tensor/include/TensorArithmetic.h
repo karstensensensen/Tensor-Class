@@ -369,7 +369,7 @@ namespace TSlib
 		}
 		#endif
 
-		Compute([&](const T& val, const size_t& index) {val += other[index]; });
+		Compute([&](T& val, const size_t& index) {val += other[index]; });
 	}
 
 	template<typename T, Mode device>
@@ -404,7 +404,7 @@ namespace TSlib
 	{
 		MEASURE();
 
-		Compute([&](const T& val) {val += other; });
+		Compute([&](T& val) {val += other; });
 	}
 
 	template<typename T, Mode device>
@@ -427,7 +427,7 @@ namespace TSlib
 		}
 		#endif
 
-		Compute([&](const T& val, const size_t& index) {val -= other[index]; });
+		Compute([&](T& val, const size_t& index) {val -= other[index]; });
 	}
 
 	template<typename T, Mode device>
@@ -461,7 +461,7 @@ namespace TSlib
 	inline void Tensor<T, device>::subtractionAsgmt(const OT& other)
 	{
 		MEASURE();
-		Compute([&](const T& val, const size_t& index) {val -= other; });
+		Compute([&](T& val, const size_t& index) {val -= other; });
 	}
 
 	template<typename T, Mode device>
@@ -484,7 +484,7 @@ namespace TSlib
 		}
 		#endif
 
-		Compute([&](const T& val, const size_t& index) {val *= other[index]; });
+		Compute([&](T& val, const size_t& index) {val *= other[index]; });
 	}
 
 	template<typename T, Mode device>
@@ -541,7 +541,7 @@ namespace TSlib
 		}
 		#endif
 
-		Compute([&](const T& val, const size_t& index) {val /= other[index]; });
+		Compute([&](T& val, const size_t& index) {val /= other[index]; });
 	}
 
 	template<typename T, Mode device>
@@ -575,7 +575,7 @@ namespace TSlib
 	inline void Tensor<T, device>::divisionAsgmt(const OT& other)
 	{
 		MEASURE();
-		Compute([&](const T& val, const size_t& index) {val /= other; });
+		Compute([&](T& val, const size_t& index) {val /= other; });
 	}
 
 	template<typename T, Mode device>
@@ -598,7 +598,7 @@ namespace TSlib
 		}
 		#endif
 
-		Compute([&](const T& val, const size_t& index) {val %= other[index]; });
+		Compute([&](T& val, const size_t& index) {val %= other[index]; });
 	}
 
 	template<typename T, Mode device>
@@ -632,7 +632,7 @@ namespace TSlib
 	inline void Tensor<T, device>::modulouAsgmt(const OT& other)
 	{
 		MEASURE();
-		Compute([&](const T& val, const size_t& index) {val %= other; });
+		Compute([&](T& val, const size_t& index) {val %= other; });
 	}
 
 	template<typename T, Mode device>

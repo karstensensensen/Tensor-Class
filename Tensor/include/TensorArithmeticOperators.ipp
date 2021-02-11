@@ -123,112 +123,112 @@ namespace TSlib
 
 	template<typename T, Mode device>
 	template<typename OT>
-	Tensor<T, device> Tensor<T, device>::operator+=(OT& other)
+	void Tensor<T, device>::operator+=(OT& other)
 	{
 		if constexpr (device == Mode::GPU)
 		{
-			return CaddAsgmt(other);
+			CadditionAsgmt(other);
 		}
 
-		return addAsgmt(other);
+		additionAsgmt(other);
 	}
 	template<typename T, Mode device>
 	template<typename OT>
-	Tensor<T, device> Tensor<T, device>::operator+=(const OT& other)
+	void Tensor<T, device>::operator+=(const OT& other)
 	{
 		if constexpr (device == Mode::GPU)
 		{
-			return CaddAsgmt(other);
+			CadditionAsgmt(other);
 		}
-		return addAsgmt(other);
-	}
-
-	template<typename T, Mode device>
-	template<typename OT>
-	Tensor<T, device> Tensor<T, device>::operator-=(OT& other)
-	{
-		if constexpr (device == Mode::GPU)
-		{
-			return CsubtractAsgmt(other);
-		}
-
-		return subtractAsgmt(other);
-	}
-	template<typename T, Mode device>
-	template<typename OT>
-	Tensor<T, device> Tensor<T, device>::operator-=(const OT& other)
-	{
-		if constexpr (device == Mode::GPU)
-		{
-			return CsubtractAsgmt(other);
-		}
-		return subtractAsgmt(other);
+		additionAsgmt(other);
 	}
 
 	template<typename T, Mode device>
 	template<typename OT>
-	Tensor<T, device> Tensor<T, device>::operator*=(OT& other)
+	void Tensor<T, device>::operator-=(OT& other)
 	{
 		if constexpr (device == Mode::GPU)
 		{
-			return CmultiplyAsgmt(other);
+			CsubtractionAsgmt(other);
 		}
 
-		return multiplyAsgmt(other);
+		subtractionAsgmt(other);
 	}
 	template<typename T, Mode device>
 	template<typename OT>
-	Tensor<T, device> Tensor<T, device>::operator*=(const OT& other)
+	void Tensor<T, device>::operator-=(const OT& other)
 	{
 		if constexpr (device == Mode::GPU)
 		{
-			return CmultiplyAsgmt(other);
+			CsubtractionAsgmt(other);
 		}
-		return multiplyAsgmt(other);
-	}
-
-	template<typename T, Mode device>
-	template<typename OT>
-	Tensor<T, device> Tensor<T, device>::operator/=(OT& other)
-	{
-		if constexpr (device == Mode::GPU)
-		{
-			return CdivideAsgmt(other);
-		}
-
-		return divideAsgmt(other);
-	}
-	template<typename T, Mode device>
-	template<typename OT>
-	Tensor<T, device> Tensor<T, device>::operator/=(const OT& other)
-	{
-		if constexpr (device == Mode::GPU)
-		{
-			return CdivideAsgmt(other);
-		}
-		return divideAsgmt(other);
+		subtractionAsgmt(other);
 	}
 
 	template<typename T, Mode device>
 	template<typename OT>
-	Tensor<T, device> Tensor<T, device>::operator%=(OT& other)
+	void Tensor<T, device>::operator*=(OT& other)
 	{
 		if constexpr (device == Mode::GPU)
 		{
-			return CmodulousAsgmt(other);
+			CmultiplicationAsgmt(other);
 		}
 
-		return modulousAsgmt(other);
+		multiplicationAsgmt(other);
 	}
 	template<typename T, Mode device>
 	template<typename OT>
-	Tensor<T, device> Tensor<T, device>::operator%=(const OT& other)
+	void Tensor<T, device>::operator*=(const OT& other)
 	{
 		if constexpr (device == Mode::GPU)
 		{
-			return CmodulousAsgmt(other);
+			CmultiplicationAsgmt(other);
 		}
-		return modulousAsgmt(other);
+		multiplicationAsgmt(other);
+	}
+
+	template<typename T, Mode device>
+	template<typename OT>
+	void Tensor<T, device>::operator/=(OT& other)
+	{
+		if constexpr (device == Mode::GPU)
+		{
+			CdivisionAsgmt(other);
+		}
+
+		divisionAsgmt(other);
+	}
+	template<typename T, Mode device>
+	template<typename OT>
+	void Tensor<T, device>::operator/=(const OT& other)
+	{
+		if constexpr (device == Mode::GPU)
+		{
+			CdivisionAsgmt(other);
+		}
+		divisionAsgmt(other);
+	}
+
+	template<typename T, Mode device>
+	template<typename OT>
+	void Tensor<T, device>::operator%=(OT& other)
+	{
+		if constexpr (device == Mode::GPU)
+		{
+			CmodulouAsgmt(other);
+		}
+
+		modulouAsgmt(other);
+	}
+	template<typename T, Mode device>
+	template<typename OT>
+	void Tensor<T, device>::operator%=(const OT& other)
+	{
+		if constexpr (device == Mode::GPU)
+		{
+			CmodulouAsgmt(other);
+		}
+		modulouAsgmt(other);
 	}
 
 	#ifdef _CUDA

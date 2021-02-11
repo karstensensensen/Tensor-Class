@@ -1,0 +1,37 @@
+project(TensorOpenCV)
+
+set(INCLUDE_FILES
+    include/TensorOpenCV.h
+    include/TensorOpenCV.ipp
+)
+
+set(SRC_FILES
+    src/TensorOpenCV.cpp
+)
+
+set (CVLibs
+
+)
+
+find_package( OpenCV REQUIRED)
+
+add_library(${PROJECT_NAME}
+    ${SRC_FILES}
+    ${INCLUDE_FILES}
+)
+
+set_target_properties(${PROJECT_NAME}
+    PROPERTIES
+    OUTPUT_NAME ${PROJECT_NAME}_$<CONFIG>
+    ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/bin/
+    ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/bin/
+    ARCHIVE_OUTPUT_DIRECTORY_RELWITHDEBINFO ${CMAKE_BINARY_DIR}/bin/
+    ARCHIVE_OUTPUT_DIRECTORY_MINSIZEREL ${CMAKE_BINARY_DIR}/bin/
+)
+
+
+source_group("Header Files" FILES ${INCLUDE_FILES})
+
+target_include_directories( ${PROJECT_NAME} PUBLIC include ${OpenCV_INCLUDE_DIRS} )
+
+target_link_libraries(${PROJECT_NAME} Tensor ${OpenCV_LIBS})

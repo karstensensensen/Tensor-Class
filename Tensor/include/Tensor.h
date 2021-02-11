@@ -155,10 +155,10 @@ namespace TSlib
 		inline void Compute(std::function<void(const T&, const std::vector<size_t>&)> compute_func) const;
 		inline void Compute(std::function<void(const T&, const std::vector<size_t>&, const size_t&)> compute_func) const;
 
-		inline Tensor<T, device> Compute(std::function<void(T&, const T&)> compute_func, size_t axis, bool keepDims = true) const;
-		inline Tensor<T, device> Compute(std::function<void(T&, const T&, const size_t&)> compute_func, size_t axis, bool keepDims = true) const;
-		inline Tensor<T, device> Compute(std::function<void(T&, const T&, const std::vector<size_t>&)> compute_func, size_t axis, bool keepDims = true) const;
-		inline Tensor<T, device> Compute(std::function<void(T&, const T&, const std::vector<size_t>&, const size_t&)> compute_func, size_t axis, bool keepDims = true) const;
+		inline Tensor<T, device> Compute(std::function<void(T&, const T&)> compute_func, size_t axis, T pad_val = T(), bool keepDims = true) const;
+		inline Tensor<T, device> Compute(std::function<void(T&, const T&, const size_t&)> compute_func, size_t axis, T pad_val = T(), bool keepDims = true) const;
+		inline Tensor<T, device> Compute(std::function<void(T&, const T&, const std::vector<size_t>&)> compute_func, size_t axis, T pad_val = T(), bool keepDims = true) const;
+		inline Tensor<T, device> Compute(std::function<void(T&, const T&, const std::vector<size_t>&, const size_t&)> compute_func, size_t axis, T pad_val = T(), bool keepDims = true) const;
 
 		Tensor<T, device>& Replace(const T& target, const T& value);
 
@@ -168,7 +168,12 @@ namespace TSlib
 		TReturn sum() const;
 		template<typename TReturn = T>
 		Tensor<TReturn, device> sum(size_t axis, bool keepDims = true) const;
-		
+
+		template<typename TReturn = T>
+		TReturn prod() const;
+		template<typename TReturn = T>
+		Tensor<TReturn, device> prod(size_t axis, bool keepDims = true) const;
+
 		Tensor<T, device>& exp();
 
 		Tensor<T, device>& normalize();
@@ -176,6 +181,9 @@ namespace TSlib
 		T max() const;
 
 		T min() const;
+
+		template<typename RT = T>
+		RT avg() const;
 
 		Tensor<T, device>& sin();
 		Tensor<T, device>& cos();
@@ -530,29 +538,29 @@ namespace TSlib
 		inline Tensor<T, device> operator%(const OT& other);
 
 		template<typename OT>
-		inline Tensor<T, device> operator+=(OT& other);
+		inline void operator+=(OT& other);
 		template<typename OT>
-		inline Tensor<T, device> operator+=(const OT& other);
+		inline void operator+=(const OT& other);
 
 		template<typename OT>
-		inline Tensor<T, device> operator-=(OT& other);
+		inline void operator-=(OT& other);
 		template<typename OT>
-		inline Tensor<T, device> operator-=(const OT& other);
+		inline void operator-=(const OT& other);
 
 		template<typename OT>
-		inline Tensor<T, device> operator*=(OT& other);
+		inline void operator*=(OT& other);
 		template<typename OT>
-		inline Tensor<T, device> operator*=(const OT& other);
+		inline void operator*=(const OT& other);
 
 		template<typename OT>
-		inline Tensor<T, device> operator/=(OT& other);
+		inline void operator/=(OT& other);
 		template<typename OT>
-		inline Tensor<T, device> operator/=(const OT& other);
+		inline void operator/=(const OT& other);
 
 		template<typename OT>
-		inline Tensor<T, device> operator%=(OT& other);
+		inline void operator%=(OT& other);
 		template<typename OT>
-		inline Tensor<T, device> operator%=(const OT& other);
+		inline void operator%=(const OT& other);
 
 		template<typename OT>
 		inline bool operator==(OT& other);
@@ -621,6 +629,8 @@ namespace TSlib
 			return new_Tensor;
 		}
 	};
+
+	double_t round(double_t x, double_t place);
 }
 
 #include "Tensor.ipp"

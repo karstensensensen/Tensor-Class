@@ -558,10 +558,12 @@ namespace TSlib
 		{
 			std::vector<size_t> coords(Dims());
 
-			coords[Dims() - 1] = (index % get_real_size(Dims() - 1));
-			for (size_t j = 1; j < Dims(); j++)
+			size_t tmp_indx = index;
+			
+			for (size_t j = 0; j < Dims(); j++)
 			{
-				coords[Dims() - j - 1] = (index / get_real_size(Dims() - j)) % get_real_size(Dims() - j);
+				coords[Dims() - j - 1] = tmp_indx % Shape()[Dims() - j - 1];
+				tmp_indx /= Shape()[Dims() - j - 1];
 			}
 
 			compute_func(At(index), coords);
@@ -578,10 +580,12 @@ namespace TSlib
 		{
 			std::vector<size_t> coords(Dims());
 
-			coords[Dims() - 1] = (index % get_real_size(Dims() - 1));
-			for (size_t j = 1; j < Dims(); j++)
+			size_t tmp_indx = index;
+
+			for (size_t j = 0; j < Dims(); j++)
 			{
-				coords[Dims() - j - 1] = (index / get_real_size(Dims() - j)) % get_real_size(Dims() - j);
+				coords[Dims() - j - 1] = tmp_indx % Shape()[Dims() - j - 1];
+				tmp_indx /= Shape()[Dims() - j - 1];
 			}
 
 			compute_func(At(index), coords, index);
@@ -618,10 +622,12 @@ namespace TSlib
 		{
 			std::vector<size_t> coords(Dims());
 
-			coords[Dims() - 1] = (index % get_real_size(Dims() - 1));
-			for (size_t j = 1; j < Dims(); j++)
+			size_t tmp_indx = index;
+
+			for (size_t j = 0; j < Dims(); j++)
 			{
-				coords[Dims() - j - 1] = (index / get_real_size(Dims() - j)) % get_real_size(Dims() - j);
+				coords[Dims() - j - 1] = tmp_indx % Shape()[Dims() - j - 1];
+				tmp_indx /= Shape()[Dims() - j - 1];
 			}
 
 			compute_func(At(index), coords);
@@ -636,10 +642,12 @@ namespace TSlib
 		{
 			std::vector<size_t> coords(Dims());
 
-			coords[Dims() - 1] = (index % get_real_size(Dims()));
-			for (size_t j = 1; j < Dims(); j++)
+			size_t tmp_indx = index;
+
+			for (size_t j = 0; j < Dims(); j++)
 			{
-				coords[Dims() - j - 1] = (index / get_real_size(Dims() - j)) % get_real_size(Dims() - j);
+				coords[Dims() - j - 1] = tmp_indx % Shape()[Dims() - j - 1];
+				tmp_indx /= Shape()[Dims() - j - 1];
 			}
 
 			compute_func(At(index), coords, index);
@@ -649,13 +657,13 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	inline Tensor<T, device> Tensor<T, device>::Compute(std::function<void(T&, const T&) > compute_func, size_t axis, bool keepDims) const
+	inline Tensor<T, device> Tensor<T, device>::Compute(std::function<void(T&, const T&) > compute_func, size_t axis, T pad_val, bool keepDims) const
 	{
 		std::vector<size_t> return_shape(Shape());
 
 		return_shape[axis] = 1;
 
-		Tensor<T, device> result(return_shape, 0);
+		Tensor<T, device> result(return_shape, pad_val);
 
 		result.Compute([&](T& elem, const std::vector<size_t>& coords)
 			{
@@ -685,13 +693,13 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	inline Tensor<T, device> Tensor<T, device>::Compute(std::function<void(T&, const T&, const size_t&)> compute_func, size_t axis, bool keepDims) const
+	inline Tensor<T, device> Tensor<T, device>::Compute(std::function<void(T&, const T&, const size_t&)> compute_func, size_t axis, T pad_val, bool keepDims) const
 	{
 		std::vector<size_t> return_shape(Shape());
 
 		return_shape[axis] = 1;
 
-		Tensor<T, device> result(return_shape, 0);
+		Tensor<T, device> result(return_shape, pad_val);
 
 		result.Compute([&](T& elem, const std::vector<size_t>& coords, const size_t& index)
 			{
@@ -721,13 +729,13 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	inline Tensor<T, device> Tensor<T, device>::Compute(std::function<void(T&, const T&, const std::vector<size_t>&)> compute_func, size_t axis, bool keepDims) const
+	inline Tensor<T, device> Tensor<T, device>::Compute(std::function<void(T&, const T&, const std::vector<size_t>&)> compute_func, size_t axis, T pad_val, bool keepDims) const
 	{
 		std::vector<size_t> return_shape(Shape());
 
 		return_shape[axis] = 1;
 
-		Tensor<T, device> result(return_shape, 0);
+		Tensor<T, device> result(return_shape, pad_val);
 
 		result.Compute([&](T& elem, const std::vector<size_t>& coords)
 			{
@@ -757,13 +765,13 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	inline Tensor<T, device> Tensor<T, device>::Compute(std::function<void(T&, const T&, const std::vector<size_t>&, const size_t&)> compute_func, size_t axis, bool keepDims) const
+	inline Tensor<T, device> Tensor<T, device>::Compute(std::function<void(T&, const T&, const std::vector<size_t>&, const size_t&)> compute_func, size_t axis, T pad_val, bool keepDims) const
 	{
 		std::vector<size_t> return_shape(Shape());
 
 		return_shape[axis] = 1;
 
-		Tensor<T, device> result(return_shape, 0);
+		Tensor<T, device> result(return_shape, pad_val);
 
 		result.Compute([&](T& elem, const std::vector<size_t>& coords, const size_t& index)
 			{
@@ -1207,6 +1215,14 @@ namespace TSlib
 	T& Tensor<T, device>::Get(const Args& ... coords)
 	{
 		MEASURE();
+
+		#ifdef _TS_DEBUG
+		if (Dims() != sizeof...(coords))
+		{
+			throw BadValue("Exception was thrown, because there were not the same nuumber of coordinates given as the number of dimensions in the Tensor", ExceptValue("Coords", sizeof...(coords)), ExceptValue("Dimensions", Dims()));
+		}
+		#endif
+
 		size_t index = 0;
 		size_t tmp_multiply = get_real_size(Dims() - 1);
 		size_t i = 0;
@@ -1372,7 +1388,6 @@ namespace TSlib
 	#if defined(_CUDA) && defined(_AMP)
 	#pragma message("warning: Cannot use both cuda and amp at the same time defaulting to cuda")
 	#endif
-
 }
 
 #ifdef _CUDA

@@ -35,6 +35,7 @@ namespace TSlib
 		T copy_generator(const size_t& index);
 
 		size_t get_real_size(const size_t& index) const;
+		size_t get_dim_length(const size_t& index) const;
 
 		template<typename First>
 		void get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord);
@@ -65,17 +66,16 @@ namespace TSlib
 		inline void Compute(std::function<void(T&, const std::vector<size_t>&)> compute_func);
 		inline void Compute(std::function<void(T&, const std::vector<size_t>&, const size_t&)> compute_func);
 
-		inline Tensor<T, device> Compute(std::function<void(T&, const T&)> compute_func, size_t axis, bool keepDims = true)const;
-		inline Tensor<T, device> Compute(std::function<void(T&, const T&, const size_t&)> compute_func, size_t axis, bool keepDims = true) const;
-		inline Tensor<T, device> Compute(std::function<void(T&, const T&, const std::vector<size_t>&)> compute_func, size_t axis, bool keepDims = true) const;
-		inline Tensor<T, device> Compute(std::function<void(T&, const T&, const std::vector<size_t>&, const size_t&)> compute_func, size_t axis, bool keepDims = true) const;
+		inline Tensor<T, device> Compute(std::function<void(T&, const T&)> compute_func, size_t axis, T pad_val = T(), bool keepDims = true)const;
+		inline Tensor<T, device> Compute(std::function<void(T&, const T&, const size_t&)> compute_func, size_t axis, T pad_val = T(), bool keepDims = true) const;
+		inline Tensor<T, device> Compute(std::function<void(T&, const T&, const std::vector<size_t>&)> compute_func, size_t axis, T pad_val = T(), bool keepDims = true) const;
+		inline Tensor<T, device> Compute(std::function<void(T&, const T&, const std::vector<size_t>&, const size_t&)> compute_func, size_t axis, T pad_val = T(), bool keepDims = true) const;
 
 		void Replace(const T& target, const T& value);
 
 		size_t size() const;
 
 		size_t Dims() const;
-
 
 		size_t map_index(size_t index) const;
 
@@ -90,9 +90,18 @@ namespace TSlib
 		TReturn sum() const;
 		template<typename TReturn = T>
 		Tensor<TReturn, device> sum(size_t axis, bool keepDims = false) const;
-		
+
+		template<typename TReturn = T>
+		TReturn prod() const;
+		template<typename TReturn = T>
+		Tensor<TReturn, device> prod(size_t axis, bool keepDims = true) const;
+
 		T max() const;
+		
 		T min() const;
+
+		template<typename RT = T>
+		RT avg() const;
 
 		TensorSlice<T, device>& sin();
 		TensorSlice<T, device>& cos();
@@ -285,6 +294,41 @@ namespace TSlib
 		Tensor<T, device> operator% (const TensorSlice<OT, other_device>& other);
 		template<typename OT>
 		Tensor<T, device> operator% (const OT& other);
+
+		template<typename OT, Mode other_device>
+		void operator+= (const Tensor<OT, other_device>& other);
+		template<typename OT, Mode other_device>
+		void operator+= (const TensorSlice<OT, other_device>& other);
+		template<typename OT>
+		void operator+= (const OT& other);
+
+		template<typename OT, Mode other_device>
+		void operator-= (const Tensor<OT, other_device>& other);
+		template<typename OT, Mode other_device>
+		void operator-= (const TensorSlice<OT, other_device>& other);
+		template<typename OT>
+		void operator-= (const OT& other);
+
+		template<typename OT, Mode other_device>
+		void operator*= (const Tensor<OT, other_device>& other);
+		template<typename OT, Mode other_device>
+		void operator*= (const TensorSlice<OT, other_device>& other);
+		template<typename OT>
+		void operator*= (const OT& other);
+
+		template<typename OT, Mode other_device>
+		void operator/= (const Tensor<OT, other_device>& other);
+		template<typename OT, Mode other_device>
+		void operator/= (const TensorSlice<OT, other_device>& other);
+		template<typename OT>
+		void operator/= (const OT& other);
+
+		template<typename OT, Mode other_device>
+		void operator%= (const Tensor<OT, other_device>& other);
+		template<typename OT, Mode other_device>
+		void operator%= (const TensorSlice<OT, other_device>& other);
+		template<typename OT>
+		void operator%= (const OT& other);
 
 		template<typename OT, Mode other_device>
 		bool operator== (const Tensor<OT, other_device>& other);

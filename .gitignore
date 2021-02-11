@@ -3,6 +3,8 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+[Bb][Uu][Ii][Ll][Dd]/
+
 # User-specific files
 *.rsuser
 *.suo
@@ -13,9 +15,11 @@ src/main.cpp
 src/empty.cpp
 .DS_Store
 lib
+modules/PerlinNoise
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
+
 
 # Build results
 [Dd]ebug/
@@ -31,6 +35,7 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
+
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
@@ -343,3 +348,15 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps

@@ -94,6 +94,14 @@ namespace TSlib
 	T& TensorSlice<T, device>::Get(Args ... coords)
 	{
 		MEASURE();
+
+		#ifdef _TS_DEBUG
+		if (Dims() != sizeof...(coords))
+		{
+			throw BadValue("Exception was thrown, because there were not the same nuumber of coordinates given as the number of dimensions in the Tensor", ExceptValue("Coords", sizeof...(coords)), ExceptValue("Dimensions", Dims()));
+		}
+		#endif
+
 		#ifdef _TS_DEBUG
 		size_t i_d = 0;
 		bounds_check(i_d, coords...);
@@ -339,14 +347,14 @@ namespace TSlib
 		#pragma omp parallel for
 		for (long long index = 0; (size_t)index < size(); index++)
 		{
-			compute_func(At(index), index);
-
 			std::vector<size_t> coords(Dims());
 
-			coords[Dims() - 1] = (index % get_real_size(Dims() - 1));
-			for (size_t j = 1; j < Dims(); j++)
+			size_t tmp_indx = index;
+
+			for (size_t j = 0; j < Dims(); j++)
 			{
-				coords[Dims() - j - 1] = (index / get_real_size(Dims() - j)) % get_real_size(Dims() - j);
+				coords[Dims() - j - 1] = tmp_indx % Shape()[Dims() - j - 1];
+				tmp_indx /= Shape()[Dims() - j - 1];
 			}
 
 			compute_func(At(index), coords);
@@ -359,14 +367,14 @@ namespace TSlib
 		#pragma omp parallel for
 		for (long long index = 0; (size_t)index < size(); index++)
 		{
-			compute_func(At(index), index);
-
 			std::vector<size_t> coords(Dims());
 
-			coords[Dims() - 1] = (index % get_real_size(Dims() - 1));
-			for (size_t j = 1; j < Dims(); j++)
+			size_t tmp_indx = index;
+
+			for (size_t j = 0; j < Dims(); j++)
 			{
-				coords[Dims() - j - 1] = (index / get_real_size(Dims() - j)) % get_real_size(Dims() - j);
+				coords[Dims() - j - 1] = tmp_indx % Shape()[Dims() - j - 1];
+				tmp_indx /= Shape()[Dims() - j - 1];
 			}
 
 			compute_func(At(index), coords, index);
@@ -374,13 +382,13 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	inline Tensor<T, device> TSlib::TensorSlice<T, device>::Compute(std::function<void(T&, const T&)> compute_func, size_t axis, bool keepDims) const
+	inline Tensor<T, device> TSlib::TensorSlice<T, device>::Compute(std::function<void(T&, const T&)> compute_func, size_t axis, T pad_val, bool keepDims) const
 	{
 		std::vector<size_t> return_shape(Shape());
 
 		return_shape[axis] = 1;
 
-		Tensor<T, device> result(return_shape, 0);
+		Tensor<T, device> result(return_shape, pad_val);
 
 		result.Compute([&](T& elem, const std::vector<size_t>& coords)
 			{
@@ -410,13 +418,13 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	inline Tensor<T, device> TSlib::TensorSlice<T, device>::Compute(std::function<void(T&, const T&, const std::vector<size_t>&)> compute_func, size_t axis, bool keepDims) const
+	inline Tensor<T, device> TSlib::TensorSlice<T, device>::Compute(std::function<void(T&, const T&, const std::vector<size_t>&)> compute_func, size_t axis, T pad_val, bool keepDims) const
 	{
 		std::vector<size_t> return_shape(Shape());
 
 		return_shape[axis] = 1;
 
-		Tensor<T, device> result(return_shape, 0);
+		Tensor<T, device> result(return_shape, pad_val);
 
 		result.Compute([&](T& elem, const std::vector<size_t>& coords, const size_t& index)
 			{
@@ -446,13 +454,13 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	inline Tensor<T, device> TSlib::TensorSlice<T, device>::Compute(std::function<void(T&, const T&, const size_t&)> compute_func, size_t axis, bool keepDims) const
+	inline Tensor<T, device> TSlib::TensorSlice<T, device>::Compute(std::function<void(T&, const T&, const size_t&)> compute_func, size_t axis, T pad_val, bool keepDims) const
 	{
 		std::vector<size_t> return_shape(Shape());
 
 		return_shape[axis] = 1;
 
-		Tensor<T, device> result(return_shape, 0);
+		Tensor<T, device> result(return_shape, pad_val);
 
 		result.Compute([&](T& elem, const std::vector<size_t>& coords, const size_t& index)
 			{
@@ -482,13 +490,13 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	inline Tensor<T, device> TSlib::TensorSlice<T, device>::Compute(std::function<void(T&, const T&, const std::vector<size_t>&, const size_t&)> compute_func, size_t axis, bool keepDims) const
+	inline Tensor<T, device> TSlib::TensorSlice<T, device>::Compute(std::function<void(T&, const T&, const std::vector<size_t>&, const size_t&)> compute_func, size_t axis, T pad_val, bool keepDims) const
 	{
 		std::vector<size_t> return_shape(Shape());
 
 		return_shape[axis] = 1;
 
-		Tensor<T, device> result(return_shape, 0);
+		Tensor<T, device> result(return_shape, pad_val);
 
 		result.Compute([&](T& elem, const std::vector<size_t>& coords, const size_t& index)
 			{
@@ -549,6 +557,21 @@ namespace TSlib
 		size_t r_size = 1;
 
 		for (size_t i = 0; i <= index; i++)
+		{
+			r_size *= m_shape[Dims() - i - 1];
+		}
+
+		return r_size;
+	}
+
+	template<typename T, Mode device>
+	size_t TensorSlice<T, device>::get_dim_length(const size_t& index) const
+	{
+		MEASURE();
+
+		size_t r_size = 1;
+
+		for (size_t i = index; i < m_shape.size(); i++)
 		{
 			r_size *= m_shape[Dims() - i - 1];
 		}
@@ -755,42 +778,30 @@ namespace TSlib
 	template<typename OT, Mode other_device>
 	void TensorSlice<T, device>::addAsgmt(const Tensor<OT, other_device>& other)
 	{
-		Tensor<T, device> r_val(*this);
-
 		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) += other[i];
 		}
-
-		return r_val;
 	}
 
 	template<typename T, Mode device>
 	template<typename OT, Mode other_device>
 	void TensorSlice<T, device>::addAsgmt(const TensorSlice<OT, other_device>& other)
 	{
-		Tensor<T, device> r_val(*this);
-
 		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) += other[i];
 		}
-
-		return r_val;
 	}
 
 	template<typename T, Mode device>
 	template<typename OT>
 	void TensorSlice<T, device>::addAsgmt(const OT& other)
 	{
-		Tensor<T, device> r_val(*this);
-
 		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) += other;
 		}
-
-		return r_val;
 	}
 
 	template<typename T, Mode device>
@@ -839,42 +850,30 @@ namespace TSlib
 	template<typename OT, Mode other_device>
 	void TensorSlice<T, device>::subtractAsgmt(const Tensor<OT, other_device>& other)
 	{
-		Tensor<T, device> r_val(*this);
-
 		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) -= other[i];
 		}
-
-		return r_val;
 	}
 
 	template<typename T, Mode device>
 	template<typename OT, Mode other_device>
 	void TensorSlice<T, device>::subtractAsgmt(const TensorSlice<OT, other_device>& other)
 	{
-		Tensor<T, device> r_val(*this);
-
 		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) -= other[i];
 		}
-
-		return r_val;
 	}
 
 	template<typename T, Mode device>
 	template<typename OT>
 	void TensorSlice<T, device>::subtractAsgmt(const OT& other)
 	{
-		Tensor<T, device> r_val(*this);
-
 		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) -= other;
 		}
-
-		return r_val;
 	}
 
 	template<typename T, Mode device>
@@ -923,42 +922,30 @@ namespace TSlib
 	template<typename OT, Mode other_device>
 	void TensorSlice<T, device>::multiplyAsgmt(const Tensor<OT, other_device>& other)
 	{
-		Tensor<T, device> r_val(*this);
-
 		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) *= other[i];
 		}
-
-		return r_val;
 	}
 
 	template<typename T, Mode device>
 	template<typename OT, Mode other_device>
 	void TensorSlice<T, device>::multiplyAsgmt(const TensorSlice<OT, other_device>& other)
 	{
-		Tensor<T, device> r_val(*this);
-
 		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) *= other[i];
 		}
-
-		return r_val;
 	}
 
 	template<typename T, Mode device>
 	template<typename OT>
 	void TensorSlice<T, device>::multiplyAsgmt(const OT& other)
 	{
-		Tensor<T, device> r_val(*this);
-
 		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) *= other;
 		}
-
-		return r_val;
 	}
 
 	template<typename T, Mode device>
@@ -1007,42 +994,30 @@ namespace TSlib
 	template<typename OT, Mode other_device>
 	void TensorSlice<T, device>::divideAsgmt(const Tensor<OT, other_device>& other)
 	{
-		Tensor<T, device> r_val(*this);
-
 		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) /= other[i];
 		}
-
-		return r_val;
 	}
 
 	template<typename T, Mode device>
 	template<typename OT, Mode other_device>
 	void TensorSlice<T, device>::divideAsgmt(const TensorSlice<OT, other_device>& other)
 	{
-		Tensor<T, device> r_val(*this);
-
 		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) /= other[i];
 		}
-
-		return r_val;
 	}
 
 	template<typename T, Mode device>
 	template<typename OT>
 	void TensorSlice<T, device>::divideAsgmt(const OT& other)
 	{
-		Tensor<T, device> r_val(*this);
-
 		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) /= other;
 		}
-
-		return r_val;
 	}
 
 	template<typename T, Mode device>
@@ -1091,42 +1066,30 @@ namespace TSlib
 	template<typename OT, Mode other_device>
 	void TensorSlice<T, device>::modulouAsgmt(const Tensor<OT, other_device>& other)
 	{
-		Tensor<T, device> r_val(*this);
-
 		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) %= other[i];
 		}
-
-		return r_val;
 	}
 
 	template<typename T, Mode device>
 	template<typename OT, Mode other_device>
 	void TensorSlice<T, device>::modulouAsgmt(const TensorSlice<OT, other_device>& other)
 	{
-		Tensor<T, device> r_val(*this);
-
 		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) %= other[i];
 		}
-
-		return r_val;
 	}
 
 	template<typename T, Mode device>
 	template<typename OT>
 	void TensorSlice<T, device>::modulouAsgmt(const OT& other)
 	{
-		Tensor<T, device> r_val(*this);
-
 		for (size_t i = 0; i < size(); i++)
 		{
 			At(i) %= other;
 		}
-
-		return r_val;
 	}
 
 	template<typename T, Mode device>
@@ -1304,10 +1267,108 @@ namespace TSlib
 	}
 
 	template<typename T, Mode device>
-	template<typename OT>
-	inline Tensor<T, device> TensorSlice<T, device>::operator%(const OT& other)
+	template<typename OT, Mode other_device>
+	inline void TensorSlice<T, device>::operator+=(const Tensor<OT, other_device>& other)
 	{
-		return modulou(other);
+		addAsgmt(other);
+	}
+
+	template<typename T, Mode device>
+	template<typename OT, Mode other_device>
+	inline void TensorSlice<T, device>::operator+=(const TensorSlice<OT, other_device>& other)
+	{
+		addAsgmt(other);
+	}
+
+	template<typename T, Mode device>
+	template<typename OT>
+	inline void TensorSlice<T, device>::operator+=(const OT& other)
+	{
+		addAsgmt(other);
+	}
+
+	template<typename T, Mode device>
+	template<typename OT, Mode other_device>
+	inline void TensorSlice<T, device>::operator-=(const Tensor<OT, other_device>& other)
+	{
+		subtractAsgmt(other);
+	}
+
+	template<typename T, Mode device>
+	template<typename OT, Mode other_device>
+	inline void TensorSlice<T, device>::operator-=(const TensorSlice<OT, other_device>& other)
+	{
+		subtractAsgmt(other);
+	}
+
+	template<typename T, Mode device>
+	template<typename OT>
+	inline void TensorSlice<T, device>::operator-=(const OT& other)
+	{
+		subtractAsgmt(other);
+	}
+
+	template<typename T, Mode device>
+	template<typename OT, Mode other_device>
+	inline void TensorSlice<T, device>::operator*=(const Tensor<OT, other_device>& other)
+	{
+		multiplyAsgmt(other);
+	}
+
+	template<typename T, Mode device>
+	template<typename OT, Mode other_device>
+	inline void TensorSlice<T, device>::operator*=(const TensorSlice<OT, other_device>& other)
+	{
+		multiplyAsgmt(other);
+	}
+
+	template<typename T, Mode device>
+	template<typename OT>
+	inline void TensorSlice<T, device>::operator*=(const OT& other)
+	{
+		multiplyAsgmt(other);
+	}
+
+	template<typename T, Mode device>
+	template<typename OT, Mode other_device>
+	inline void TensorSlice<T, device>::operator/=(const Tensor<OT, other_device>& other)
+	{
+		divideAsgmt(other);
+	}
+
+	template<typename T, Mode device>
+	template<typename OT, Mode other_device>
+	inline void TensorSlice<T, device>::operator/=(const TensorSlice<OT, other_device>& other)
+	{
+		divideAsgmt(other);
+	}
+
+	template<typename T, Mode device>
+	template<typename OT>
+	inline void TensorSlice<T, device>::operator/=(const OT& other)
+	{
+		divideAsgmt(other);
+	}
+
+	template<typename T, Mode device>
+	template<typename OT, Mode other_device>
+	inline void TensorSlice<T, device>::operator%=(const Tensor<OT, other_device>& other)
+	{
+		modulouAsgmt(other);
+	}
+
+	template<typename T, Mode device>
+	template<typename OT, Mode other_device>
+	inline void TensorSlice<T, device>::operator%=(const TensorSlice<OT, other_device>& other)
+	{
+		modulouAsgmt(other);
+	}
+
+	template<typename T, Mode device>
+	template<typename OT>
+	inline void TensorSlice<T, device>::operator%=(const OT& other)
+	{
+		modulouAsgmt(other);
 	}
 
 	template<typename T, Mode device>

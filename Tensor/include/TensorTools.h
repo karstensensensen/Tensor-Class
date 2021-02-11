@@ -18,18 +18,31 @@ namespace TSlib
 		void exceptFit(const T1& tensor1, const T2& tensor2);
 
 		template<typename T, enable_if_tensor<T> = 0>
-		Tensor<typename T::Type, T::Device> exp(const T& source);
+		typename T::Type sum(const T& source);
 		template<typename T, enable_if_tensor<T> = 0>
-		Tensor<typename T::Type, T::Device> exp(const T& source, size_t axis, bool keepDims = false);
+		T sum(const T& source, size_t axis, bool keepDims = false);
 
 		template<typename T, enable_if_tensor<T> = 0>
-		Tensor<typename T::Type, T::Device> normalize(const T& source);
+		typename T::Type prod(const T& source);
+		template<typename T, enable_if_tensor<T> = 0>
+		T prod(const T& source, size_t axis, bool keepDims = false);
+
+		template<typename T, enable_if_tensor<T> = 0>
+		T exp(const T& source);
+		template<typename T, enable_if_tensor<T> = 0>
+		T exp(const T& source, size_t axis, bool keepDims = false);
+
+		template<typename T, enable_if_tensor<T> = 0>
+		T normalize(const T& source);
 
 		template<typename T, enable_if_tensor<T> = 0>
 		T max(const T& source, size_t axis, bool keepDims = false);
 
 		template<typename T, enable_if_tensor<T> = 0>
 		T min(const T& source, size_t axis, bool keepDims = false);
+
+		template<typename T, enable_if_tensor<T> = 0>
+		T avg(const T& source, size_t axis, bool keepDims = false);
 
 		template<typename T, enable_if_tensor<T> = 0>
 		T sin(const T& source);
@@ -48,7 +61,6 @@ namespace TSlib
 
 		template<typename T, enable_if_tensor<T> = 0>
 		T arctan(const T& source);
-
 
 		template<typename T, enable_if_tensor<T> = 0>
 		T convDeg(const T& source);

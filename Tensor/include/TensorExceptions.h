@@ -37,7 +37,7 @@ namespace TSlib
 
 		OutOfBounds(std::vector<size_t> shape, std::string message, size_t dim, size_t index)
 		{
-			err_msg += message + "\nTarget dimension: " + std::to_string(dim + 1) + " Target Index: " + std::to_string(index);
+			err_msg = message + "\nTarget dimension: " + std::to_string(dim + 1) + " Target Index: " + std::to_string(index);
 
 			err_msg += "\nTensor bounds was: ";
 
@@ -170,7 +170,29 @@ namespace TSlib
 			err_msg += '\n';
 		}
 
+		BadShape(std::string message, const std::vector<size_t>& shape)
+		{
+			err_msg = message;
+
+			for (const size_t& shape_elem : shape)
+			{
+				err_msg += std::to_string(shape_elem) + ", ";
+			}
+			err_msg += '\n';
+		}
+
 		BadShape(std::string message, const std::initializer_list<double_t>& shape)
+		{
+			err_msg = message;
+
+			for (const double_t& shape_elem : shape)
+			{
+				err_msg += std::to_string(shape_elem) + ", ";
+			}
+			err_msg += '\n';
+		}
+
+		BadShape(std::string message, const std::vector<double_t>& shape)
 		{
 			err_msg = message;
 
