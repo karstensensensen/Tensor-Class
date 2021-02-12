@@ -20,7 +20,7 @@ TSlib::Tools::otnsr_sequence<T>::~otnsr_sequence()
 }
 
 template<typename T>
-inline void TSlib::Tools::otnsr_sequence<T>::begin_sequence(const std::vector<size_t>& storage_shape, size_t buf_size)
+void TSlib::Tools::otnsr_sequence<T>::begin_sequence(const std::vector<size_t>& storage_shape, size_t buf_size)
 {
 	if (!std::filesystem::exists(dir))
 	{
@@ -56,7 +56,7 @@ inline void TSlib::Tools::otnsr_sequence<T>::begin_sequence(const std::vector<si
 
 template<typename T>
 template<TSlib::Device device>
-inline void TSlib::Tools::otnsr_sequence<T>::begin_sequence(const Tensor<T, device>& base, size_t buf_size)
+void TSlib::Tools::otnsr_sequence<T>::begin_sequence(const Tensor<T, device>& base, size_t buf_size)
 {
 	
 	if (is_open)
@@ -101,7 +101,7 @@ void TSlib::Tools::otnsr_sequence<T>::write_header()
 }
 
 template<typename T>
-inline void TSlib::Tools::otnsr_sequence<T>::reset_sequence()
+void TSlib::Tools::otnsr_sequence<T>::reset_sequence()
 {
 	out_file.close();
 
@@ -135,7 +135,7 @@ void TSlib::Tools::otnsr_sequence<T>::append(const Tensor<T, device>& source)
 }
 
 template<typename T>
-inline void TSlib::Tools::otnsr_sequence<T>::open_sequence(size_t buf_size)
+void TSlib::Tools::otnsr_sequence<T>::open_sequence(size_t buf_size)
 {
 	if (is_open)
 	{
@@ -184,7 +184,7 @@ inline void TSlib::Tools::otnsr_sequence<T>::open_sequence(size_t buf_size)
 
 template<typename T>
 template<TSlib::Device device>
-inline void TSlib::Tools::otnsr_sequence<T>::open_sequence(const Tensor<T, device>& base, size_t buf_size)
+void TSlib::Tools::otnsr_sequence<T>::open_sequence(const Tensor<T, device>& base, size_t buf_size)
 {
 	if (is_open)
 	{
@@ -245,3 +245,17 @@ void TSlib::Tools::otnsr_sequence<T>::close()
 	delete[] buffer;
 
 }
+
+template<typename T>
+TSlib::Tools::itnsr_sequence<T>::itnsr_sequence(std::string path)
+	: dir(path)
+{
+	if (!dir.has_extension())
+	{
+		dir += ".tnsrs";
+	}
+
+}
+
+}
+

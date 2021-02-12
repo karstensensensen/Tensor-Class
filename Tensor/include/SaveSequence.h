@@ -55,16 +55,19 @@ namespace TSlib
 		template<typename T>
 		class itnsr_sequence
 		{
+			std::filesystem::path dir;
 			std::ofstream in_file;
 			std::vector<size_t> shape;
-			size_t length;
+			size_t dimensions = 0;
+			size_t size = 0;
+			size_t length = 0;
+
+			bool is_open = false;
 
 		public:
 
-			itnsr_sequence(std::string dir, std::vector<size_t> storage_shape);
-
-			template<Device device>
-			itnsr_sequence(std::string dir, const Tensor<T, device>& base);
+			
+			itnsr_sequence(std::string path);
 
 			template<Device device>
 			void read(Tensor<T, device>& source);
