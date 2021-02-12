@@ -10,22 +10,22 @@
 
 namespace TSlib
 {
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
 	Tensor<T, device> Tensor<T, device>::operator+(OT& other)
 	{
-		if constexpr (device == Mode::GPU)
+		if constexpr (device == Device::GPU)
 		{
 			return Cadd(other);
 		}
 
 		return add(other);
 	}
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
 	Tensor<T, device> Tensor<T, device>::operator+(const OT& other)
 	{
-		if constexpr (device == Mode::GPU)
+		if constexpr (device == Device::GPU)
 		{
 			return Cadd(other);
 		}
@@ -33,202 +33,202 @@ namespace TSlib
 		return add(other);
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
 	Tensor<T, device> Tensor<T, device>::operator-(OT& other)
 	{
-		if constexpr (device == Mode::GPU)
+		if constexpr (device == Device::GPU)
 		{
 			return Csubtract(other);
 		}
 
 		return subtract(other);
 	}
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
 	Tensor<T, device> Tensor<T, device>::operator-(const OT& other)
 	{
-		if constexpr (device == Mode::GPU)
+		if constexpr (device == Device::GPU)
 		{
 			return Csubtract(other);
 		}
 		return subtract(other);
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
 	Tensor<T, device> Tensor<T, device>::operator*(OT& other)
 	{
-		if constexpr (device == Mode::GPU)
+		if constexpr (device == Device::GPU)
 		{
 			return Cmultiply(other);
 		}
 
 		return multiply(other);
 	}
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
 	Tensor<T, device> Tensor<T, device>::operator*(const OT& other)
 	{
-		if constexpr (device == Mode::GPU)
+		if constexpr (device == Device::GPU)
 		{
 			return Cmultiply(other);
 		}
 		return multiply(other);
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
 	Tensor<T, device> Tensor<T, device>::operator/(OT& other)
 	{
-		if constexpr (device == Mode::GPU)
+		if constexpr (device == Device::GPU)
 		{
 			return Cdivide(other);
 		}
 
 		return divide(other);
 	}
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
 	Tensor<T, device> Tensor<T, device>::operator/(const OT& other)
 	{
-		if constexpr (device == Mode::GPU)
+		if constexpr (device == Device::GPU)
 		{
 			return Cdivide(other);
 		}
 		return divide(other);
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
 	Tensor<T, device> Tensor<T, device>::operator%(OT& other)
 	{
-		if constexpr (device == Mode::GPU)
+		if constexpr (device == Device::GPU)
 		{
 			return Cmodulous(other);
 		}
 
 		return modulous(other);
 	}
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
 	Tensor<T, device> Tensor<T, device>::operator%(const OT& other)
 	{
-		if constexpr (device == Mode::GPU)
+		if constexpr (device == Device::GPU)
 		{
 			return Cmodulous(other);
 		}
 		return modulous(other);
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
-	Tensor<T, device> Tensor<T, device>::operator+=(OT& other)
+	void Tensor<T, device>::operator+=(OT& other)
 	{
-		if constexpr (device == Mode::GPU)
+		if constexpr (device == Device::GPU)
 		{
-			return CaddAsgmt(other);
+			CadditionAsgmt(other);
 		}
 
-		return addAsgmt(other);
+		additionAsgmt(other);
 	}
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
-	Tensor<T, device> Tensor<T, device>::operator+=(const OT& other)
+	void Tensor<T, device>::operator+=(const OT& other)
 	{
-		if constexpr (device == Mode::GPU)
+		if constexpr (device == Device::GPU)
 		{
-			return CaddAsgmt(other);
+			CadditionAsgmt(other);
 		}
-		return addAsgmt(other);
-	}
-
-	template<typename T, Mode device>
-	template<typename OT>
-	Tensor<T, device> Tensor<T, device>::operator-=(OT& other)
-	{
-		if constexpr (device == Mode::GPU)
-		{
-			return CsubtractAsgmt(other);
-		}
-
-		return subtractAsgmt(other);
-	}
-	template<typename T, Mode device>
-	template<typename OT>
-	Tensor<T, device> Tensor<T, device>::operator-=(const OT& other)
-	{
-		if constexpr (device == Mode::GPU)
-		{
-			return CsubtractAsgmt(other);
-		}
-		return subtractAsgmt(other);
+		additionAsgmt(other);
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
-	Tensor<T, device> Tensor<T, device>::operator*=(OT& other)
+	void Tensor<T, device>::operator-=(OT& other)
 	{
-		if constexpr (device == Mode::GPU)
+		if constexpr (device == Device::GPU)
 		{
-			return CmultiplyAsgmt(other);
+			CsubtractionAsgmt(other);
 		}
 
-		return multiplyAsgmt(other);
+		subtractionAsgmt(other);
 	}
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
-	Tensor<T, device> Tensor<T, device>::operator*=(const OT& other)
+	void Tensor<T, device>::operator-=(const OT& other)
 	{
-		if constexpr (device == Mode::GPU)
+		if constexpr (device == Device::GPU)
 		{
-			return CmultiplyAsgmt(other);
+			CsubtractionAsgmt(other);
 		}
-		return multiplyAsgmt(other);
-	}
-
-	template<typename T, Mode device>
-	template<typename OT>
-	Tensor<T, device> Tensor<T, device>::operator/=(OT& other)
-	{
-		if constexpr (device == Mode::GPU)
-		{
-			return CdivideAsgmt(other);
-		}
-
-		return divideAsgmt(other);
-	}
-	template<typename T, Mode device>
-	template<typename OT>
-	Tensor<T, device> Tensor<T, device>::operator/=(const OT& other)
-	{
-		if constexpr (device == Mode::GPU)
-		{
-			return CdivideAsgmt(other);
-		}
-		return divideAsgmt(other);
+		subtractionAsgmt(other);
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
-	Tensor<T, device> Tensor<T, device>::operator%=(OT& other)
+	void Tensor<T, device>::operator*=(OT& other)
 	{
-		if constexpr (device == Mode::GPU)
+		if constexpr (device == Device::GPU)
 		{
-			return CmodulousAsgmt(other);
+			CmultiplicationAsgmt(other);
 		}
 
-		return modulousAsgmt(other);
+		multiplicationAsgmt(other);
 	}
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
-	Tensor<T, device> Tensor<T, device>::operator%=(const OT& other)
+	void Tensor<T, device>::operator*=(const OT& other)
 	{
-		if constexpr (device == Mode::GPU)
+		if constexpr (device == Device::GPU)
 		{
-			return CmodulousAsgmt(other);
+			CmultiplicationAsgmt(other);
 		}
-		return modulousAsgmt(other);
+		multiplicationAsgmt(other);
+	}
+
+	template<typename T, Device device>
+	template<typename OT>
+	void Tensor<T, device>::operator/=(OT& other)
+	{
+		if constexpr (device == Device::GPU)
+		{
+			CdivisionAsgmt(other);
+		}
+
+		divisionAsgmt(other);
+	}
+	template<typename T, Device device>
+	template<typename OT>
+	void Tensor<T, device>::operator/=(const OT& other)
+	{
+		if constexpr (device == Device::GPU)
+		{
+			CdivisionAsgmt(other);
+		}
+		divisionAsgmt(other);
+	}
+
+	template<typename T, Device device>
+	template<typename OT>
+	void Tensor<T, device>::operator%=(OT& other)
+	{
+		if constexpr (device == Device::GPU)
+		{
+			CmodulouAsgmt(other);
+		}
+
+		modulouAsgmt(other);
+	}
+	template<typename T, Device device>
+	template<typename OT>
+	void Tensor<T, device>::operator%=(const OT& other)
+	{
+		if constexpr (device == Device::GPU)
+		{
+			CmodulouAsgmt(other);
+		}
+		modulouAsgmt(other);
 	}
 
 	#ifdef _CUDA
@@ -236,8 +236,8 @@ namespace TSlib
 	/// Tensor class cuda specific operator call functions
 	/// </summary>
 
-	template<typename T, Mode device>
-	template<typename RT, typename OT, Mode o_device>
+	template<typename T, Device device>
+	template<typename RT, typename OT, Device o_device>
 	Tensor<RT, device> Tensor<T, device>::Cadd(Tensor<OT, o_device>& other)
 	{
 		bool this_alloc = isDeallocated();
@@ -277,8 +277,8 @@ namespace TSlib
 		return result;
 	}
 
-	template<typename T, Mode device>
-	template<typename RT, typename OT, Mode o_device>
+	template<typename T, Device device>
+	template<typename RT, typename OT, Device o_device>
 	Tensor<RT, device> Tensor<T, device>::Cadd(const Tensor<OT, o_device>& other)
 	{
 		bool this_alloc = isDeallocated();
@@ -312,7 +312,7 @@ namespace TSlib
 		return result;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename RT, typename OT>
 	Tensor<RT, device> Tensor<T, device>::Cadd(const OT& other)
 	{
@@ -334,8 +334,8 @@ namespace TSlib
 		return result;
 	}
 
-	template<typename T, Mode device>
-	template<typename RT, typename OT, Mode o_device>
+	template<typename T, Device device>
+	template<typename RT, typename OT, Device o_device>
 	Tensor<RT, device> Tensor<T, device>::Csubtract(Tensor<OT, o_device>& other)
 	{
 		bool this_alloc = isDeallocated();
@@ -375,8 +375,8 @@ namespace TSlib
 		return result;
 	}
 
-	template<typename T, Mode device>
-	template<typename RT, typename OT, Mode o_device>
+	template<typename T, Device device>
+	template<typename RT, typename OT, Device o_device>
 	Tensor<RT, device> Tensor<T, device>::Csubtract(const Tensor<OT, o_device>& other)
 	{
 		bool this_alloc = isDeallocated();
@@ -410,7 +410,7 @@ namespace TSlib
 		return result;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename RT, typename OT>
 	Tensor<RT, device> Tensor<T, device>::Csubtract(const OT& other)
 	{
@@ -432,8 +432,8 @@ namespace TSlib
 		return result;
 	}
 
-	template<typename T, Mode device>
-	template<typename RT, typename OT, Mode o_device>
+	template<typename T, Device device>
+	template<typename RT, typename OT, Device o_device>
 	Tensor<RT, device> Tensor<T, device>::Cmultiply(Tensor<OT, o_device>& other)
 	{
 		bool this_alloc = isDeallocated();
@@ -472,8 +472,8 @@ namespace TSlib
 
 		return result;
 	}
-	template<typename T, Mode device>
-	template<typename RT, typename OT, Mode o_device>
+	template<typename T, Device device>
+	template<typename RT, typename OT, Device o_device>
 	Tensor<RT, device> Tensor<T, device>::Cmultiply(const Tensor<OT, o_device>& other)
 	{
 		bool this_alloc = isDeallocated();
@@ -506,7 +506,7 @@ namespace TSlib
 
 		return result;
 	}
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename RT, typename OT>
 	Tensor<RT, device> Tensor<T, device>::Cmultiply(const OT& other)
 	{
@@ -528,8 +528,8 @@ namespace TSlib
 		return result;
 	}
 
-	template<typename T, Mode device>
-	template<typename RT, typename OT, Mode o_device>
+	template<typename T, Device device>
+	template<typename RT, typename OT, Device o_device>
 	Tensor<RT, device> Tensor<T, device>::Cdivide(Tensor<OT, o_device>& other)
 	{
 		bool this_alloc = isDeallocated();
@@ -568,8 +568,8 @@ namespace TSlib
 
 		return result;
 	}
-	template<typename T, Mode device>
-	template<typename RT, typename OT, Mode o_device>
+	template<typename T, Device device>
+	template<typename RT, typename OT, Device o_device>
 	Tensor<RT, device> Tensor<T, device>::Cdivide(const Tensor<OT, o_device>& other)
 	{
 		bool this_alloc = isDeallocated();
@@ -602,7 +602,7 @@ namespace TSlib
 
 		return result;
 	}
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename RT, typename OT>
 	Tensor<RT, device> Tensor<T, device>::Cdivide(const OT& other)
 	{
@@ -624,8 +624,8 @@ namespace TSlib
 		return result;
 	}
 
-	template<typename T, Mode device>
-	template<typename RT, typename OT, Mode o_device>
+	template<typename T, Device device>
+	template<typename RT, typename OT, Device o_device>
 	Tensor<RT, device> Tensor<T, device>::Cmodulous(Tensor<OT, o_device>& other)
 	{
 		bool this_alloc = isDeallocated();
@@ -664,8 +664,8 @@ namespace TSlib
 
 		return result;
 	}
-	template<typename T, Mode device>
-	template<typename RT, typename OT, Mode o_device>
+	template<typename T, Device device>
+	template<typename RT, typename OT, Device o_device>
 	Tensor<RT, device> Tensor<T, device>::Cmodulous(const Tensor<OT, o_device>& other)
 	{
 		bool this_alloc = isDeallocated();
@@ -699,7 +699,7 @@ namespace TSlib
 		return result;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename RT, typename OT>
 	Tensor<RT, device> Tensor<T, device>::Cmodulous(const OT& other)
 	{
@@ -721,8 +721,8 @@ namespace TSlib
 		return result;
 	}
 
-	template<typename T, Mode device>
-	template<typename OT, Mode o_device>
+	template<typename T, Device device>
+	template<typename OT, Device o_device>
 	void Tensor<T, device>::CadditionAsgmt(Tensor<OT, o_device>& other)
 	{
 		bool this_alloc = isDeallocated();
@@ -760,8 +760,8 @@ namespace TSlib
 		}
 	}
 
-	template<typename T, Mode device>
-	template<typename OT, Mode o_device>
+	template<typename T, Device device>
+	template<typename OT, Device o_device>
 	void Tensor<T, device>::CadditionAsgmt(const Tensor<OT, o_device>& other)
 	{
 		bool this_alloc = isDeallocated();
@@ -793,7 +793,7 @@ namespace TSlib
 		}
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
 	void Tensor<T, device>::CadditionAsgmt(const OT& other)
 	{
@@ -813,8 +813,8 @@ namespace TSlib
 		}
 	}
 
-	template<typename T, Mode device>
-	template<typename OT, Mode o_device>
+	template<typename T, Device device>
+	template<typename OT, Device o_device>
 	void Tensor<T, device>::CsubtractionAsgmt(Tensor<OT, o_device>& other)
 	{
 		bool this_alloc = isDeallocated();
@@ -852,8 +852,8 @@ namespace TSlib
 		}
 	}
 
-	template<typename T, Mode device>
-	template<typename OT, Mode o_device>
+	template<typename T, Device device>
+	template<typename OT, Device o_device>
 	void Tensor<T, device>::CsubtractionAsgmt(const Tensor<OT, o_device>& other)
 	{
 		bool this_alloc = isDeallocated();
@@ -884,7 +884,7 @@ namespace TSlib
 			pull();
 		}
 	}
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
 	void Tensor<T, device>::CsubtractionAsgmt(const OT& other)
 	{
@@ -904,8 +904,8 @@ namespace TSlib
 		}
 	}
 
-	template<typename T, Mode device>
-	template<typename OT, Mode o_device>
+	template<typename T, Device device>
+	template<typename OT, Device o_device>
 	void Tensor<T, device>::CmultiplicationAsgmt(Tensor<OT, o_device>& other)
 	{
 		bool this_alloc = isDeallocated();
@@ -943,8 +943,8 @@ namespace TSlib
 		}
 	}
 
-	template<typename T, Mode device>
-	template<typename OT, Mode o_device>
+	template<typename T, Device device>
+	template<typename OT, Device o_device>
 	void Tensor<T, device>::CmultiplicationAsgmt(const Tensor<OT, o_device>& other)
 	{
 		bool this_alloc = isDeallocated();
@@ -976,7 +976,7 @@ namespace TSlib
 		}
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
 	void Tensor<T, device>::CmultiplicationAsgmt(const OT& other)
 	{
@@ -996,8 +996,8 @@ namespace TSlib
 		}
 	}
 
-	template<typename T, Mode device>
-	template<typename OT, Mode o_device>
+	template<typename T, Device device>
+	template<typename OT, Device o_device>
 	void Tensor<T, device>::CdivisionAsgmt(Tensor<OT, o_device>& other)
 	{
 		bool this_alloc = isDeallocated();
@@ -1035,8 +1035,8 @@ namespace TSlib
 		}
 	}
 
-	template<typename T, Mode device>
-	template<typename OT, Mode o_device>
+	template<typename T, Device device>
+	template<typename OT, Device o_device>
 	void Tensor<T, device>::CdivisionAsgmt(const Tensor<OT, o_device>& other)
 	{
 		bool this_alloc = isDeallocated();
@@ -1068,7 +1068,7 @@ namespace TSlib
 		}
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
 	void Tensor<T, device>::CdivisionAsgmt(const OT& other)
 	{
@@ -1088,8 +1088,8 @@ namespace TSlib
 		}
 	}
 
-	template<typename T, Mode device>
-	template<typename OT, Mode o_device>
+	template<typename T, Device device>
+	template<typename OT, Device o_device>
 	void Tensor<T, device>::CmodulouAsgmt(Tensor<OT, o_device>& other)
 	{
 		bool this_alloc = isDeallocated();
@@ -1127,8 +1127,8 @@ namespace TSlib
 		}
 	}
 
-	template<typename T, Mode device>
-	template<typename OT, Mode o_device>
+	template<typename T, Device device>
+	template<typename OT, Device o_device>
 	void Tensor<T, device>::CmodulouAsgmt(const Tensor<OT, o_device>& other)
 	{
 		bool this_alloc = isDeallocated();
@@ -1160,7 +1160,7 @@ namespace TSlib
 		}
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
 	void Tensor<T, device>::CmodulouAsgmt(const OT& other)
 	{
@@ -1180,8 +1180,8 @@ namespace TSlib
 		}
 	}
 
-	template<typename T, Mode device>
-	template<typename RT, typename OT, Mode o_device>
+	template<typename T, Device device>
+	template<typename RT, typename OT, Device o_device>
 	inline Tensor<RT, device> Tensor<T, device>::Ccompare(const Tensor<OT, o_device>& other)
 	{
 		bool this_alloc = isDeallocated();
@@ -1215,7 +1215,7 @@ namespace TSlib
 		return result;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename RT, typename OT>
 	Tensor<RT, device> Tensor<T, device>::Ccompare(const OT& other)
 	{
@@ -1237,8 +1237,8 @@ namespace TSlib
 		return result;
 	}
 
-	template<typename T, Mode device>
-	template<typename RT, typename OT, Mode o_device>
+	template<typename T, Device device>
+	template<typename RT, typename OT, Device o_device>
 	Tensor<RT, device> Tensor<T, device>::ClessThan(const Tensor<OT, o_device>& other)
 	{
 		bool this_alloc = isDeallocated();
@@ -1272,7 +1272,7 @@ namespace TSlib
 		return result;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename RT, typename OT>
 	Tensor<RT, device> Tensor<T, device>::ClessThan(const OT& other)
 	{
@@ -1294,8 +1294,8 @@ namespace TSlib
 		return result;
 	}
 
-	template<typename T, Mode device>
-	template<typename RT, typename OT, Mode o_device>
+	template<typename T, Device device>
+	template<typename RT, typename OT, Device o_device>
 	Tensor<RT, device> Tensor<T, device>::CgreaterThan(const Tensor<OT, o_device>& other)
 	{
 		bool this_alloc = isDeallocated();
@@ -1339,7 +1339,7 @@ namespace TSlib
 		return result;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename RT, typename OT>
 	Tensor<RT, device> Tensor<T, device>::CgreaterThan(const OT& other)
 	{
@@ -1361,8 +1361,8 @@ namespace TSlib
 		return result;
 	}
 
-	template<typename T, Mode device>
-	template<typename RT, typename OT, Mode o_device>
+	template<typename T, Device device>
+	template<typename RT, typename OT, Device o_device>
 	Tensor<RT, device> Tensor<T, device>::ClessThanEqual(const Tensor<OT, o_device>& other)
 	{
 		bool this_alloc = isDeallocated();
@@ -1406,7 +1406,7 @@ namespace TSlib
 		return result;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename RT, typename OT>
 	Tensor<RT, device> Tensor<T, device>::ClessThanEqual(const OT& other)
 	{
@@ -1428,8 +1428,8 @@ namespace TSlib
 		return result;
 	}
 
-	template<typename T, Mode device>
-	template<typename RT, typename OT, Mode o_device>
+	template<typename T, Device device>
+	template<typename RT, typename OT, Device o_device>
 	Tensor<RT, device> Tensor<T, device>::CgreaterThanEqual(const Tensor<OT, o_device>& other)
 	{
 		bool this_alloc = isDeallocated();
@@ -1473,7 +1473,7 @@ namespace TSlib
 		return result;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename RT, typename OT>
 	Tensor<RT, device> Tensor<T, device>::CgreaterThanEqual(const OT& other)
 	{
@@ -1496,55 +1496,55 @@ namespace TSlib
 	}
 	#endif
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
 	bool Tensor<T, device>::operator==(OT& other)
 	{
-		if constexpr (device == Mode::GPU)
+		if constexpr (device == Device::GPU)
 		{
 			return (bool)Ccompare(other).sum<size_t>();
 		}
 
 		return (bool)compare(other).sum<size_t>();
 	}
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
 	bool Tensor<T, device>::operator==(const OT& other)
 	{
-		if constexpr (device == Mode::GPU)
+		if constexpr (device == Device::GPU)
 		{
 			return (bool)Ccompare(other).sum<size_t>();
 		}
 		return (bool)compare(other).sum<size_t>();
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
 	bool Tensor<T, device>::operator!=(OT& other)
 	{
-		if constexpr (device == Mode::GPU)
+		if constexpr (device == Device::GPU)
 		{
 			return !(bool)Ccompare(other).sum<size_t>();
 		}
 
 		return !(bool)compare(other).sum<size_t>();
 	}
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
 	bool Tensor<T, device>::operator!=(const OT& other)
 	{
-		if constexpr (device == Mode::GPU)
+		if constexpr (device == Device::GPU)
 		{
 			return !(bool)Ccompare(other).sum<size_t>();
 		}
 		return !(bool)compare(other).sum<size_t>();
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
 	bool Tensor<T, device>::operator<(OT& other)
 	{
-		if constexpr (device == Mode::GPU)
+		if constexpr (device == Device::GPU)
 		{
 			return (bool)ClessThan(other).sum<size_t>();
 		}
@@ -1552,77 +1552,77 @@ namespace TSlib
 		return (bool)compare(other, LessThan).sum<size_t>();
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
 	bool Tensor<T, device>::operator<(const OT& other)
 	{
-		if constexpr (device == Mode::GPU)
+		if constexpr (device == Device::GPU)
 		{
 			return (bool)ClessThan(other).sum<size_t>();
 		}
 		return (bool)compare(other, LessThan).sum<size_t>();
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
 	bool Tensor<T, device>::operator>(OT& other)
 	{
-		if constexpr (device == Mode::GPU)
+		if constexpr (device == Device::GPU)
 		{
 			return (bool)CgreaterThan(other).sum<size_t>();
 		}
 
 		return (bool)compare(other, GreaterThan).sum<size_t>();
 	}
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
 	bool Tensor<T, device>::operator>(const OT& other)
 	{
-		if constexpr (device == Mode::GPU)
+		if constexpr (device == Device::GPU)
 		{
 			return (bool)CgreaterThan(other).sum<size_t>();
 		}
 		return (bool)compare(other, GreaterThan).sum<size_t>();
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
 	bool Tensor<T, device>::operator<=(OT& other)
 	{
-		if constexpr (device == Mode::GPU)
+		if constexpr (device == Device::GPU)
 		{
 			return (bool)ClessThanEqual(other).sum<size_t>();
 		}
 
 		return (bool)compare(other, LessThanEqual).sum<size_t>();
 	}
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
 	bool Tensor<T, device>::operator<=(const OT& other)
 	{
-		if constexpr (device == Mode::GPU)
+		if constexpr (device == Device::GPU)
 		{
 			return (bool)ClessThanEqual(other).sum<size_t>();
 		}
 		return (bool)compare(other, LessThanEqual).sum<size_t>();
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
 	bool Tensor<T, device>::operator>=(OT& other)
 	{
-		if constexpr (device == Mode::GPU)
+		if constexpr (device == Device::GPU)
 		{
 			return (bool)CgreaterThanEqual(other).sum<size_t>();
 		}
 
 		return (bool)compare(other, GreaterThanEqual).sum<size_t>();
 	}
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename OT>
 	bool Tensor<T, device>::operator>=(const OT& other)
 	{
-		if constexpr (device == Mode::GPU)
+		if constexpr (device == Device::GPU)
 		{
 			return (bool)CgreaterThanEqual(other).sum<size_t>();
 		}
@@ -1630,14 +1630,14 @@ namespace TSlib
 	}
 }
 
-template<typename T, TSlib::Mode device>
+template<typename T, TSlib::Device device>
 std::ostream& operator<< (std::ostream& stream, const TSlib::TensorSlice<T, device>& slice)
 {
 	stream << slice.printable();
 	return stream;
 }
 
-template<typename T, TSlib::Mode device>
+template<typename T, TSlib::Device device>
 std::ostream& operator<< (std::ostream& stream, const TSlib::Tensor<T, device>& Tensor)
 {
 	stream << Tensor.printable();

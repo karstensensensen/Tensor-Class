@@ -42,7 +42,7 @@ namespace TSlib
 {
 	/// Tensor private functions
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	size_t Tensor<T, device>::get_real_size(const size_t& index) const
 	{
 		MEASURE();
@@ -57,7 +57,7 @@ namespace TSlib
 		return r_size;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	size_t Tensor<T, device>::get_dim_length(const size_t& index) const
 	{
 		MEASURE();
@@ -72,7 +72,7 @@ namespace TSlib
 		return r_size;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	std::vector<size_t> Tensor<T, device>::FlattenDims(size_t dims) const
 	{
 		MEASURE();
@@ -93,7 +93,7 @@ namespace TSlib
 		return new_dim;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	size_t Tensor<T, device>::FlattenDims() const
 	{
 		MEASURE();
@@ -108,7 +108,7 @@ namespace TSlib
 		return new_dim;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	size_t Tensor<T, device>::get_dim_offset(const size_t& index) const
 	{
 		MEASURE();
@@ -121,7 +121,7 @@ namespace TSlib
 		return result;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename First>
 	void Tensor<T, device>::get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord)
 	{
@@ -138,7 +138,7 @@ namespace TSlib
 		iter++;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename First, typename... Args>
 	void Tensor<T, device>::get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord, Args ... remaining)
 	{
@@ -148,14 +148,14 @@ namespace TSlib
 		get_indx(indx, iter, tmp_multiply, remaining...);
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename First>
 	void Tensor<T, device>::to_vector(std::vector<TSlice>& vec, const std::initializer_list<First>& first)
 	{
 		vec.push_back(TSlice(first));
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename ... Args, typename First>
 	void Tensor<T, device>::to_vector(std::vector<TSlice>& vec, const std::initializer_list<First>& first, const std::initializer_list<Args>& ... args)
 	{
@@ -175,7 +175,7 @@ namespace TSlib
 		to_vector(vec, args...);
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	std::string Tensor<T, device>::printable() const
 	{
 		size_t max_length = 0;
@@ -264,7 +264,7 @@ namespace TSlib
 		};
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	std::vector<size_t> Tensor<T, device>::based_sort(const std::vector<size_t>& target)
 	{
 		std::vector<size_t> new_indexes(target.size());
@@ -276,7 +276,7 @@ namespace TSlib
 		return new_indexes;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	std::vector<size_t> Tensor<T, device>::based_sort(const std::vector<TSlice>& target)
 	{
 		std::vector<size_t> new_indexes(target.size());
@@ -287,14 +287,14 @@ namespace TSlib
 		return new_indexes;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline Tensor<T, device>::Tensor()
 		: m_shape(1)
 	{
 		Resize({ 0 });
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, const T& pad_val)
 		: m_shape(sizes.size())
 	{
@@ -304,7 +304,7 @@ namespace TSlib
 
 	//generator functions take an index / coordinate or nothing as parameters and returns a value with the containter type
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T()> generator)
 
 		: m_shape(sizes.size())
@@ -317,7 +317,7 @@ namespace TSlib
 		}
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(const size_t&)> generator)
 
 		: m_shape(sizes.size())
@@ -330,7 +330,7 @@ namespace TSlib
 		}
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(const std::vector<size_t>&)> generator)
 		: m_shape(sizes.size())
 	{
@@ -349,7 +349,7 @@ namespace TSlib
 		}
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(const std::vector<size_t>&, const size_t&)> generator)
 		: m_shape(sizes.size())
 	{
@@ -368,7 +368,7 @@ namespace TSlib
 		}
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	Tensor<T, device>::Tensor(const TensorSlice<T, device>& slice)
 		: m_shape(slice.Shape().size())
 	{
@@ -382,7 +382,7 @@ namespace TSlib
 		}
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	Tensor<T, device>::Tensor(const Tensor<T, device>& other)
 		: m_vector(other.asVector()), m_shape(other.Shape())
 	{
@@ -399,7 +399,7 @@ namespace TSlib
 		#endif
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline void Tensor<T, device>::Save(std::string dir) const
 	{
 		// create directories
@@ -424,7 +424,7 @@ namespace TSlib
 		out_file.close();
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	Tensor<T, device>& Tensor<T, device>::Load(std::string dir)
 	{
 		dir += ".tnsr";
@@ -460,7 +460,7 @@ namespace TSlib
 		return *this;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	Tensor<T, device>::~Tensor()
 	{
 		#ifdef _CUDA
@@ -473,7 +473,7 @@ namespace TSlib
 
 	/// Tensor public functions
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	Tensor<T, device>& Tensor<T, device>::Fill(const T& val)
 	{
 		MEASURE();
@@ -482,7 +482,7 @@ namespace TSlib
 		return *this;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline Tensor<T, device>& Tensor<T, device>::Fill(std::function<T(const size_t&)> generator)
 	{
 		MEASURE();
@@ -492,7 +492,7 @@ namespace TSlib
 		return *this;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline Tensor<T, device>& Tensor<T, device>::Fill(std::function<T(const std::vector<size_t>&)> generator)
 	{
 		MEASURE();
@@ -501,7 +501,7 @@ namespace TSlib
 		return *this;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline Tensor<T, device>& Tensor<T, device>::Fill(std::function<T(const std::vector<size_t>&, const size_t&)> generator)
 	{
 		MEASURE();
@@ -511,7 +511,7 @@ namespace TSlib
 		return *this;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline Tensor<T, device>& Tensor<T, device>::Fill(const std::vector<T>& vals)
 	{
 		#ifdef _TS_DEBUG
@@ -526,7 +526,7 @@ namespace TSlib
 		return *this;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline Tensor<T, device>& Tensor<T, device>::Compute(std::function<void(T&)> compute_func)
 	{
 		#pragma omp parallel for
@@ -538,7 +538,7 @@ namespace TSlib
 		return *this;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline Tensor<T, device>& Tensor<T, device>::Compute(std::function<void(T&, const size_t&) > compute_func)
 	{
 		#pragma omp parallel for
@@ -550,7 +550,7 @@ namespace TSlib
 		return *this;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline Tensor<T, device>& Tensor<T, device>::Compute(std::function<void(T&, const std::vector<size_t>&)> compute_func)
 	{
 		#pragma omp parallel for
@@ -558,10 +558,12 @@ namespace TSlib
 		{
 			std::vector<size_t> coords(Dims());
 
-			coords[0] = (index % get_dim_length(0));
-			for (size_t j = 1; j < Dims(); j++)
+			size_t tmp_indx = index;
+			
+			for (size_t j = 0; j < Dims(); j++)
 			{
-				coords[j] = (index / get_dim_length(j)) % get_dim_length(j);
+				coords[Dims() - j - 1] = tmp_indx % Shape()[Dims() - j - 1];
+				tmp_indx /= Shape()[Dims() - j - 1];
 			}
 
 			compute_func(At(index), coords);
@@ -570,7 +572,7 @@ namespace TSlib
 		return *this;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline Tensor<T, device>& Tensor<T, device>::Compute(std::function<void(T&, const std::vector<size_t>&, const size_t&)> compute_func)
 	{
 		#pragma omp parallel for
@@ -578,10 +580,12 @@ namespace TSlib
 		{
 			std::vector<size_t> coords(Dims());
 
-			coords[0] = (index % get_dim_length(0));
-			for (size_t j = 1; j < Dims(); j++)
+			size_t tmp_indx = index;
+
+			for (size_t j = 0; j < Dims(); j++)
 			{
-				coords[j] = (index / get_dim_length(j)) % get_dim_length(j);
+				coords[Dims() - j - 1] = tmp_indx % Shape()[Dims() - j - 1];
+				tmp_indx /= Shape()[Dims() - j - 1];
 			}
 
 			compute_func(At(index), coords, index);
@@ -590,7 +594,7 @@ namespace TSlib
 		return *this;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	void Tensor<T, device>::Compute(std::function<void(const T&)> compute_func) const
 	{
 		#pragma omp parallel for
@@ -600,7 +604,7 @@ namespace TSlib
 		}
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	void Tensor<T, device>::Compute(std::function<void(const T&, const size_t&)> compute_func) const
 	{
 		#pragma omp parallel for
@@ -610,7 +614,7 @@ namespace TSlib
 		}
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	void Tensor<T, device>::Compute(std::function<void(const T&, const std::vector<size_t>&)> compute_func) const
 	{
 		#pragma omp parallel for
@@ -618,17 +622,19 @@ namespace TSlib
 		{
 			std::vector<size_t> coords(Dims());
 
-			coords[9] = (index % get_dim_length(0));
-			for (size_t j = 1; j < Dims(); j++)
+			size_t tmp_indx = index;
+
+			for (size_t j = 0; j < Dims(); j++)
 			{
-				coords[j] = (index / get_dim_length(j)) % get_dim_length(j);
+				coords[Dims() - j - 1] = tmp_indx % Shape()[Dims() - j - 1];
+				tmp_indx /= Shape()[Dims() - j - 1];
 			}
 
 			compute_func(At(index), coords);
 		}
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	void Tensor<T, device>::Compute(std::function<void(const T&, const std::vector<size_t>&, const size_t&)> compute_func) const
 	{
 		#pragma omp parallel for
@@ -636,10 +642,12 @@ namespace TSlib
 		{
 			std::vector<size_t> coords(Dims());
 
-			coords[0] = (index % get_dim_length(0));
-			for (size_t j = 1; j < Dims(); j++)
+			size_t tmp_indx = index;
+
+			for (size_t j = 0; j < Dims(); j++)
 			{
-				coords[j] = (index / get_dim_length(j)) % get_dim_length(j);
+				coords[Dims() - j - 1] = tmp_indx % Shape()[Dims() - j - 1];
+				tmp_indx /= Shape()[Dims() - j - 1];
 			}
 
 			compute_func(At(index), coords, index);
@@ -648,7 +656,7 @@ namespace TSlib
 		return *this;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline Tensor<T, device> Tensor<T, device>::Compute(std::function<void(T&, const T&) > compute_func, size_t axis, T pad_val, bool keepDims) const
 	{
 		std::vector<size_t> return_shape(Shape());
@@ -684,7 +692,7 @@ namespace TSlib
 		return result;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline Tensor<T, device> Tensor<T, device>::Compute(std::function<void(T&, const T&, const size_t&)> compute_func, size_t axis, T pad_val, bool keepDims) const
 	{
 		std::vector<size_t> return_shape(Shape());
@@ -720,7 +728,7 @@ namespace TSlib
 		return result;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline Tensor<T, device> Tensor<T, device>::Compute(std::function<void(T&, const T&, const std::vector<size_t>&)> compute_func, size_t axis, T pad_val, bool keepDims) const
 	{
 		std::vector<size_t> return_shape(Shape());
@@ -756,7 +764,7 @@ namespace TSlib
 		return result;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline Tensor<T, device> Tensor<T, device>::Compute(std::function<void(T&, const T&, const std::vector<size_t>&, const size_t&)> compute_func, size_t axis, T pad_val, bool keepDims) const
 	{
 		std::vector<size_t> return_shape(Shape());
@@ -792,7 +800,7 @@ namespace TSlib
 		return result;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline Tensor<T, device>& Tensor<T, device>::Replace(const T& target, const T& value)
 	{
 		for (size_t i = 0; i < size(); i++)
@@ -808,7 +816,7 @@ namespace TSlib
 
 	/// resize functions
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	void Tensor<T, device>::upscale_dim(const size_t& index, const size_t& row_size, const size_t& amount, const T& pad_val)
 	{
 		MEASURE();
@@ -824,7 +832,7 @@ namespace TSlib
 		}
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	void Tensor<T, device>::downscale_dim(const size_t& index, const size_t& row_size, const size_t& amount)
 	{
 		MEASURE();
@@ -841,7 +849,7 @@ namespace TSlib
 		}
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	Tensor<T, device>& Tensor<T, device>::ResizeDim(const size_t& dim, const size_t& amount, const T& pad_val)
 	{
 		MEASURE();
@@ -882,7 +890,7 @@ namespace TSlib
 		return *this;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline size_t Tensor<T, device>::calc_new_size(const std::initializer_list<size_t>& sizes)
 	{
 		MEASURE();
@@ -897,7 +905,7 @@ namespace TSlib
 		return new_size;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline size_t Tensor<T, device>::calc_new_size(const std::vector<size_t>& sizes)
 	{
 		MEASURE();
@@ -909,7 +917,7 @@ namespace TSlib
 		return new_size;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	Tensor<T, device>& Tensor<T, device>::Resize(const std::vector<size_t>& sizes, const T& pad_val)
 	{
 		MEASURE();
@@ -970,7 +978,7 @@ namespace TSlib
 		return *this;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename Ts, std::enable_if_t<std::is_integral<Ts>::value, int>>
 	Tensor<T, device>& Tensor<T, device>::Reshape(const std::vector<Ts>& shape)
 	{
@@ -1023,7 +1031,7 @@ namespace TSlib
 		return *this;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	Tensor<T, device>& Tensor<T, device>::SetDims(const size_t& dims)
 	{
 		MEASURE();
@@ -1045,7 +1053,7 @@ namespace TSlib
 		return *this;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	Tensor<T, device>& Tensor<T, device>::AddDims(const size_t& dims)
 	{
 		MEASURE();
@@ -1061,7 +1069,7 @@ namespace TSlib
 		return *this;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	Tensor<T, device>& Tensor<T, device>::RemoveDims(const size_t& dims)
 	{
 		MEASURE();
@@ -1091,8 +1099,8 @@ namespace TSlib
 		return *this;
 	}
 
-	template<typename T, Mode device>
-	template<typename OT, Mode o_device>
+	template<typename T, Device device>
+	template<typename OT, Device o_device>
 	inline Tensor<T, device>& Tensor<T, device>::Append(const Tensor<OT, o_device>& other, const size_t& dimension)
 	{
 		#ifdef _TS_DEBUG
@@ -1130,14 +1138,14 @@ namespace TSlib
 		return *this;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline TensorSlice<T, device> Tensor<T, device>::Slice(const std::vector<TSlice>& slices)
 	{
 		MEASURE();
 		return TensorSlice<T, device>(this, slices);
 	}
 
-	//template<typename T, Mode device>
+	//template<typename T, Device device>
 	//template<typename ... Args>
 	//TensorSlice<T, device> Tensor<T, device>::Slice(const std::initializer_list<Args>& ... slices)
 	//{
@@ -1160,14 +1168,14 @@ namespace TSlib
 	/// Element access functions
 
 	#ifdef _CUDA
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	Tensor<T, device>::operator T* ()
 	{
 		MEASURE();
 		return gpu_mem;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	Tensor<T, device>::operator const T* () const
 	{
 		MEASURE();
@@ -1175,7 +1183,7 @@ namespace TSlib
 	}
 	#endif
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline T& TSlib::Tensor<T, device>::Get(const std::vector<size_t>& coords)
 	{
 		#ifdef _TS_DEBUG
@@ -1202,11 +1210,19 @@ namespace TSlib
 		return At(index);
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename ... Args>
 	T& Tensor<T, device>::Get(const Args& ... coords)
 	{
 		MEASURE();
+
+		#ifdef _TS_DEBUG
+		if (Dims() != sizeof...(coords))
+		{
+			throw BadValue("Exception was thrown, because there were not the same nuumber of coordinates given as the number of dimensions in the Tensor", ExceptValue("Coords", sizeof...(coords)), ExceptValue("Dimensions", Dims()));
+		}
+		#endif
+
 		size_t index = 0;
 		size_t tmp_multiply = get_real_size(Dims() - 1);
 		size_t i = 0;
@@ -1216,7 +1232,7 @@ namespace TSlib
 		return m_vector.at(index);
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	T TSlib::Tensor<T, device>::Get(const std::vector<size_t>& coords) const
 	{
 		#ifdef _TS_DEBUG
@@ -1243,7 +1259,7 @@ namespace TSlib
 		return At(index);
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename ... Args>
 	T Tensor<T, device>::Get(const Args& ... coords) const
 	{
@@ -1257,25 +1273,25 @@ namespace TSlib
 		return m_vector.at(index);
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline T& Tensor<T, device>::At(size_t indx)
 	{
 		return m_vector[indx];
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline T Tensor<T, device>::At(size_t indx) const
 	{
 		return m_vector[indx];
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline const T* Tensor<T, device>::Data() const
 	{
 		return m_vector.data();
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline T* Tensor<T, device>::Data()
 	{
 		return m_vector.data();
@@ -1283,19 +1299,19 @@ namespace TSlib
 
 	/// Tensor info / get functions
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline size_t Tensor<T, device>::Dims() const
 	{
 		return m_shape.size();
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline const std::vector<size_t>& Tensor<T, device>::Shape() const
 	{
 		return m_shape;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline size_t Tensor<T, device>::size() const
 	{
 		return m_vector.size();
@@ -1303,31 +1319,31 @@ namespace TSlib
 
 	/// Tensor iterator funtions
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline typename std::vector<T>::const_iterator Tensor<T, device>::begin() const
 	{
 		return m_vector.begin();
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline typename std::vector<T>::iterator Tensor<T, device>::begin()
 	{
 		return m_vector.begin();
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline typename std::vector<T>::const_iterator Tensor<T, device>::end() const
 	{
 		return m_vector.end();
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline typename std::vector<T>::iterator Tensor<T, device>::end()
 	{
 		return m_vector.end();
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline const std::vector<T>& Tensor<T, device>::asVector() const
 	{
 		return m_vector;
@@ -1335,7 +1351,7 @@ namespace TSlib
 
 	/// Tensor access operators
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename ... Args>
 	T& Tensor<T, device>::operator()(Args ... coords)
 	{
@@ -1343,26 +1359,26 @@ namespace TSlib
 		return Get(coords...);
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<typename ... Args>
 	T Tensor<T, device>::operator()(Args ... coords) const
 	{
 		return Get(coords...);
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline T& Tensor<T, device>::operator[](size_t indx)
 	{
 		return At(indx);
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline T Tensor<T, device>::operator[](size_t indx) const
 	{
 		return At(indx);
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	Tensor<T>& Tensor<T, device>::operator=(const std::vector<T>& other)
 	{
 		Fill(other);

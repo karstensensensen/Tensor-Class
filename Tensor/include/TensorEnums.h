@@ -2,10 +2,9 @@
 
 namespace TSlib
 {
+
 	enum class Mode
 	{
-		GPU,
-		CPU,
 		Multiply,
 		Divide,
 		Cube,
@@ -13,9 +12,15 @@ namespace TSlib
 		Line
 	};
 
+	enum class Device
+	{
+		GPU,
+		CPU
+	};
+
 	#ifdef _CUDA
-	constexpr Mode default_device = Mode::GPU;
+	constexpr Device default_device = Device::GPU;
 	#else
-	constexpr Mode default_device = Mode::CPU;
+	constexpr Device default_device = Device::CPU;
 	#endif
 }
