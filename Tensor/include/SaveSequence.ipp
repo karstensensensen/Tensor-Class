@@ -21,7 +21,7 @@ TSlib::Tools::otnsr_sequence<T>::otnsr_sequence(std::string dir, std::vector<siz
 }
 
 template<typename T>
-template<TSlib::Mode device>
+template<TSlib::Device device>
 TSlib::Tools::otnsr_sequence<T>::otnsr_sequence(std::string dir, const Tensor<T, device>& base, size_t buffer_size)
 	: dir(dir + ".tnsrs"), out_file(dir, std::ios::app | std::ios::binary), shape(base.Shape()), dimensions(shape.size()), buffer_size(buffer_size), buffer(new char[buffer_size])
 {
@@ -61,7 +61,7 @@ void TSlib::Tools::otnsr_sequence<T>::write_header()
 }
 
 template<typename T>
-template<TSlib::Mode device>
+template<TSlib::Device device>
 void TSlib::Tools::otnsr_sequence<T>::append(const Tensor<T, device>& source)
 {
 

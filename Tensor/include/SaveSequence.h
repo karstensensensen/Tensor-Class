@@ -32,7 +32,7 @@ namespace TSlib
 		public:
 
 				otnsr_sequence(std::string dir, std::vector<size_t> storage_shape, size_t buffer_size = 8192);
-				template<Mode device>
+				template<Device device>
 				otnsr_sequence(std::string dir, const Tensor<T, device>& base, size_t buffer_size = 8192);
 				~otnsr_sequence();
 
@@ -40,7 +40,7 @@ namespace TSlib
 
 				void reset_sequence();
 
-				template<Mode device>
+				template<Device device>
 				void append(const Tensor<T, device>& source);
 
 				void close();
@@ -58,13 +58,13 @@ namespace TSlib
 
 			itnsr_sequence(std::string dir, std::vector<size_t> storage_shape);
 
-			template<Mode device>
+			template<Device device>
 			itnsr_sequence(std::string dir, const Tensor<T, device>& base);
 
-			template<Mode device>
+			template<Device device>
 			void read(Tensor<T, device>& source);
 
-			template<Mode device = default_device>
+			template<Device device = default_device>
 			Tensor<T, device> read();
 
 		};
