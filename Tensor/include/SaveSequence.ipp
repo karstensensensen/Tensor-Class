@@ -2,7 +2,7 @@
 
 template<typename T>
 TSlib::Tools::otnsr_sequence<T>::otnsr_sequence(std::string dir, std::vector<size_t> storage_shape, size_t buffer_size)
-	: dir(dir + ".tnsrs"), out_file(dir, std::ios::app | std::ios::binary), shape(storage_shape), dimensions(shape.size()), buffer_size(buffer_size), buffer(new char[buffer_size])
+	: dir(dir + ".tnsrs"), out_file(this->dir, std::ios::app | std::ios::binary), shape(storage_shape), dimensions(shape.size()), buffer_size(buffer_size), buffer(new char[buffer_size])
 {
 
 	out_file.rdbuf()->pubsetbuf(buffer, buffer_size);
@@ -23,7 +23,7 @@ TSlib::Tools::otnsr_sequence<T>::otnsr_sequence(std::string dir, std::vector<siz
 template<typename T>
 template<TSlib::Device device>
 TSlib::Tools::otnsr_sequence<T>::otnsr_sequence(std::string dir, const Tensor<T, device>& base, size_t buffer_size)
-	: dir(dir + ".tnsrs"), out_file(dir, std::ios::app | std::ios::binary), shape(base.Shape()), dimensions(shape.size()), buffer_size(buffer_size), buffer(new char[buffer_size])
+	: dir(dir + ".tnsrs"), out_file(this->dir, std::ios::app | std::ios::binary), shape(base.Shape()), dimensions(shape.size()), buffer_size(buffer_size), buffer(new char[buffer_size])
 {
 	out_file.rdbuf()->pubsetbuf(buffer, buffer_size);
 
@@ -61,6 +61,16 @@ void TSlib::Tools::otnsr_sequence<T>::write_header()
 }
 
 template<typename T>
+inline void TSlib::Tools::otnsr_sequence<T>::reset_sequence()
+{
+	out_file.close();
+
+	out_file.open(dir, std::ios::out |std::ios::trunc);
+	
+	write_header();
+}
+
+template<typename T>
 template<TSlib::Device device>
 void TSlib::Tools::otnsr_sequence<T>::append(const Tensor<T, device>& source)
 {
@@ -75,7 +85,7 @@ void TSlib::Tools::otnsr_sequence<T>::append(const Tensor<T, device>& source)
 	}
 	#endif
 
-	out_file.write((char*)source.Data(), sizeof(T) * size);
+	out_file.write((const char*)source.Data(), sizeof(T) * size);
 }
 
 template<typename T>
