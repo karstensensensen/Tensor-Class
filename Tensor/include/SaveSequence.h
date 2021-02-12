@@ -22,27 +22,32 @@ namespace TSlib
 				std::filesystem::path dir;
 				std::ofstream out_file;
 				std::vector<size_t> shape;
-				const size_t dimensions;
-				size_t size;
-				size_t buffer_size;
-				char* buffer;
+				size_t dimensions = 0;
+				size_t size = 0;
+				size_t buffer_size = 0;
+				char* buffer = nullptr;
+
+				bool is_open = false;
 				
 				void write_header();
 
 		public:
 
-				otnsr_sequence(std::string dir, std::vector<size_t> storage_shape, size_t buffer_size = 8192);
-				template<Device device>
-				otnsr_sequence(std::string dir, const Tensor<T, device>& base, size_t buffer_size = 8192);
+				otnsr_sequence(std::string dir);
 				~otnsr_sequence();
 
-				void begin_sequence();
+				void begin_sequence(const std::vector<size_t>& storage_shape, size_t buf_size = 8192);
+				template<Device device>
+				void begin_sequence(const Tensor<T, device>& base, size_t buf_size = 8192);
 
 				void reset_sequence();
 
 				template<Device device>
 				void append(const Tensor<T, device>& source);
 
+				void open_sequence(size_t buf_size = 8192);
+				template<Device device>
+				void open_sequence(const Tensor<T, device>& base, size_t buf_size = 8192);
 				void close();
 
 		};
@@ -66,6 +71,8 @@ namespace TSlib
 
 			template<Device device = default_device>
 			Tensor<T, device> read();
+
+			void skip(size_t amount = 1);
 
 		};
 	}

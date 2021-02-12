@@ -1,16 +1,45 @@
 #include "SaveSequence.h"
 
 template<typename T>
-TSlib::Tools::otnsr_sequence<T>::otnsr_sequence(std::string dir, std::vector<size_t> storage_shape, size_t buffer_size)
-	: dir(dir + ".tnsrs"), out_file(this->dir, std::ios::app | std::ios::binary), shape(storage_shape), dimensions(shape.size()), buffer_size(buffer_size), buffer(new char[buffer_size])
+TSlib::Tools::otnsr_sequence<T>::otnsr_sequence(std::string dir)
+	: dir(dir + ".tnsrs")
+{}
+
+template<typename T>
+TSlib::Tools::otnsr_sequence<T>::~otnsr_sequence()
 {
+	if (is_open)
+	{
+		close();
+	}
+}
 
-	out_file.rdbuf()->pubsetbuf(buffer, buffer_size);
-
+template<typename T>
+inline void TSlib::Tools::otnsr_sequence<T>::begin_sequence(const std::vector<size_t>& storage_shape, size_t buf_size)
+{
 	if (!std::filesystem::exists(dir))
 	{
 		write_header();
 	}
+
+	if (is_open)
+	{
+		throw std::runtime_error("Directory is already open\n");
+	}
+
+	is_open = true;
+
+	buffer_size = buf_size;
+
+	buffer = new char[buffer_size];
+
+	out_file.rdbuf()->pubsetbuf(buffer, buffer_size);
+	out_file.open(dir, std::ios::binary | std::ios::trunc);
+
+	dimensions = storage_shape.size();
+	shape = storage_shape;
+
+	write_header();
 
 	size = 1;
 
@@ -22,16 +51,28 @@ TSlib::Tools::otnsr_sequence<T>::otnsr_sequence(std::string dir, std::vector<siz
 
 template<typename T>
 template<TSlib::Device device>
-TSlib::Tools::otnsr_sequence<T>::otnsr_sequence(std::string dir, const Tensor<T, device>& base, size_t buffer_size)
-	: dir(dir + ".tnsrs"), out_file(this->dir, std::ios::app | std::ios::binary), shape(base.Shape()), dimensions(shape.size()), buffer_size(buffer_size), buffer(new char[buffer_size])
+inline void TSlib::Tools::otnsr_sequence<T>::begin_sequence(const Tensor<T, device>& base, size_t buf_size)
 {
-	out_file.rdbuf()->pubsetbuf(buffer, buffer_size);
-
-	if (!std::filesystem::exists(dir))
+	
+	if (is_open)
 	{
-		write_header();
+		throw std::runtime_error("Directory is already open\n");
 	}
 
+	is_open = true;
+	
+	buffer_size = buf_size;
+
+	buffer = new char[buffer_size];
+
+	out_file.rdbuf()->pubsetbuf(buffer, buffer_size);
+	out_file.open(dir, std::ios::binary | std::ios::trunc);
+
+	dimensions = base.Dims();
+	shape = base.Shape();
+
+	write_header();
+	
 	size = 1;
 
 	for (size_t& dim : shape)
@@ -41,23 +82,17 @@ TSlib::Tools::otnsr_sequence<T>::otnsr_sequence(std::string dir, const Tensor<T,
 }
 
 template<typename T>
-TSlib::Tools::otnsr_sequence<T>::~otnsr_sequence()
-{
-	close();
-}
-
-template<typename T>
 void TSlib::Tools::otnsr_sequence<T>::write_header()
 {
 	std::filesystem::create_directories(dir.parent_path());
 
-	out_file.write((char*)&dimensions, sizeof(dimensions));
+	out_file.write((char*)&dimensions, sizeof(size_t));
 
 	out_file.write((const char*)shape.data(), sizeof(size_t) * dimensions);
 
 	size_t data_size = sizeof(T);
 
-	out_file.write((char*)&data_size, sizeof(data_size));
+	out_file.write((char*)&data_size, sizeof(size_t));
 }
 
 template<typename T>
@@ -65,7 +100,7 @@ inline void TSlib::Tools::otnsr_sequence<T>::reset_sequence()
 {
 	out_file.close();
 
-	out_file.open(dir, std::ios::out |std::ios::trunc);
+	out_file.open(dir, std::ios::binary | std::ios::trunc);
 	
 	write_header();
 }
@@ -83,13 +118,125 @@ void TSlib::Tools::otnsr_sequence<T>::append(const Tensor<T, device>& source)
 			throw BadShape("The source tensor must have the same shape as the storage shape", shape, source.Shape());
 		}
 	}
+
+	if (!is_open)
+	{
+		throw std::runtime_error("Directory is not open\n");
+	}
+
 	#endif
 
 	out_file.write((const char*)source.Data(), sizeof(T) * size);
 }
 
 template<typename T>
+inline void TSlib::Tools::otnsr_sequence<T>::open_sequence(size_t buf_size)
+{
+	if (is_open)
+	{
+		throw std::runtime_error("Sequence is already open\nDirectory: \"" + dir.string() + "\"\n");
+	}
+
+	if (!std::filesystem::exists(dir))
+	{
+		throw std::runtime_error("The directory \"" + dir.string() + "\" Does not exist\nTo create the directory, run the \'begin_sequence\' function\n");
+	}
+
+
+	is_open = true;
+
+	buffer_size = buf_size;
+	buffer = new char[buffer_size];
+
+	out_file.rdbuf()->pubsetbuf(buffer, buffer_size);
+	out_file.open(dir, std::ios::out | std::ios::binary | std::ios::app);
+
+
+	std::ifstream in_file(dir);
+
+	in_file.read((char*)&dimensions, sizeof(size_t));
+
+	shape.resize(dimensions);
+
+	in_file.read((char*)shape.data(), sizeof(size_t) * dimensions);
+
+	size_t data_size;
+
+	in_file.read((char*)&data_size, sizeof(size_t));
+
+	if (data_size != sizeof(T))
+	{
+		throw TSlib::BadType("The data size of the sequence and the file must be the same\nGot: " + std::to_string(data_size) + " Expected: " + std::to_string(sizeof(T)) + "\n");
+	}
+
+	size = 1;
+
+	for (size_t& dim : shape)
+	{
+		size *= dim;
+	}
+}
+
+template<typename T>
+template<TSlib::Device device>
+inline void TSlib::Tools::otnsr_sequence<T>::open_sequence(const Tensor<T, device>& base, size_t buf_size)
+{
+	if (is_open)
+	{
+		throw std::runtime_error("Sequence is already open\nDirectory: \"" + dir.string() + "\"\n");
+	}
+
+	if (!std::filesystem::exists(dir)) [[unlikely]]
+	{
+		begin_sequence(base, buf_size);
+	}
+	else [[likely]]
+	{
+		is_open = true;
+
+		buffer_size = buf_size;
+		buffer = new char[buffer_size];
+
+		out_file.rdbuf()->pubsetbuf(buffer, buffer_size);
+		out_file.open(dir, std::ios::out | std::ios::binary | std::ios::app);
+
+
+		std::ifstream in_file(dir);
+
+		in_file.read((char*)&dimensions, sizeof(size_t));
+
+		shape.resize(dimensions);
+
+		in_file.read((char*)shape.data(), sizeof(size_t) * dimensions);
+
+		size_t data_size;
+
+		in_file.read((char*)&data_size, sizeof(size_t));
+
+		if (data_size != sizeof(T))
+		{
+			throw TSlib::BadType("The data size of the sequence and the file must be the same\nGot: " + std::to_string(data_size) + " Expected: " + std::to_string(sizeof(T)) + "\n");
+		}
+
+		size = 1;
+
+		for (size_t& dim : shape)
+		{
+			size *= dim;
+		}
+	}
+}
+
+template<typename T>
 void TSlib::Tools::otnsr_sequence<T>::close()
 {
+	if (!is_open)
+	{
+		throw std::runtime_error("Directory is already closed \n");
+	}
+
+	is_open = false;
 	out_file.close();
+	delete[] buffer;
+
 }
