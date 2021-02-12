@@ -33,7 +33,7 @@ namespace TSlib
 
 		public:
 
-				otnsr_sequence(std::string dir);
+				otnsr_sequence(std::string path);
 				~otnsr_sequence();
 
 				void begin_sequence(const std::vector<size_t>& storage_shape, size_t buf_size = 8192);
@@ -73,6 +73,9 @@ namespace TSlib
 			Tensor<T, device> read();
 
 			void skip(size_t amount = 1);
+
+			void open();
+			void close(); 
 
 		};
 	}

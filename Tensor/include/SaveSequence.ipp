@@ -1,9 +1,14 @@
 #include "SaveSequence.h"
 
 template<typename T>
-TSlib::Tools::otnsr_sequence<T>::otnsr_sequence(std::string dir)
-	: dir(dir + ".tnsrs")
-{}
+TSlib::Tools::otnsr_sequence<T>::otnsr_sequence(std::string path)
+	: dir(path)
+{
+	if (!dir.has_extension())
+	{
+		dir += ".tnsrs";
+	}
+}
 
 template<typename T>
 TSlib::Tools::otnsr_sequence<T>::~otnsr_sequence()
