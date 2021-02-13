@@ -9,7 +9,7 @@ namespace TSlib
 		template<typename ... Args>
 		using enable_if_tensor = std::enable_if_t<(... && is_tensor_type<Args>::value), int>;
 
-		template<typename T, Mode device, typename OT, Mode o_device>
+		template<typename T, Device device, typename OT, Device o_device>
 		Tensor<T, device> merge(Tensor<T, device> tensor1, Tensor<OT, o_device> tensor2, const size_t& dimension);
 
 		template<typename T1, typename T2, enable_if_tensor<T1, T2> = 0>

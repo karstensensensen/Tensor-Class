@@ -295,7 +295,7 @@ void TSlib::Tools::itnsr_sequence<T>::read(Tensor<T, device>& source)
 		throw TSlib::BadShape("Destination Tensor must have the same shape as the stored Tensor", source.Shape(), shape);
 	}
 	
-	for (size_t i = 0; i < dimensions)
+	for (size_t i = 0; i < dimensions; i++)
 	{
 		if (shape[i] != source.Shape()[i])
 		{
