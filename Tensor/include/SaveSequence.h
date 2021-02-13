@@ -56,7 +56,7 @@ namespace TSlib
 		class itnsr_sequence
 		{
 			std::filesystem::path dir;
-			std::ofstream in_file;
+			std::ifstream in_file;
 			std::vector<size_t> shape;
 			size_t dimensions = 0;
 			size_t size = 0;
@@ -71,9 +71,14 @@ namespace TSlib
 
 			template<Device device>
 			void read(Tensor<T, device>& source);
-
 			template<Device device = default_device>
 			Tensor<T, device> read();
+
+			template<Device device>
+			void read_seq(Tensor<T, device>& source);
+			template<Device device = default_device>
+			Tensor<T, device> read_seq(size_t seq_length);
+
 
 			void skip(size_t amount = 1);
 
