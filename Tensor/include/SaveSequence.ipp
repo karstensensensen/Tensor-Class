@@ -255,7 +255,65 @@ TSlib::Tools::itnsr_sequence<T>::itnsr_sequence(std::string path)
 		dir += ".tnsrs";
 	}
 
+	if (!std::filesystem::exists(dir))
+	{
+		throw std::runtime_error("The directory \"" + dir + "\" does not exist\n");
+	}
+
+	in_file.open(dir, std::ios::binary);
+
+	in_file.read((char*)&dimensions, sizeof(size_t));
+
+	shape.resize(dimensions);
+
+	in_file.read((char*)shape.data(), sizeof(size_t) * dimensions);
+
+	size_t data_size;
+
+	in_file.read((char*)&data_size, sizeof(size_t));
+
+	if (data_size != sizeof(T))
+	{
+		throw TSlib::BadType("The data size of the sequence and the file must be the same\nGot: " + std::to_string(data_size) + " Expected: " + std::to_string(sizeof(T)) + "\n");
+	}
+
+	size = 1;
+
+	for (size_t& dim : shape)
+	{
+		size *= dim;
+	}
 }
 
+template<typename T>
+template<TSlib::Device device>
+void TSlib::Tools::itnsr_sequence<T>::read(Tensor<T, device>& source)
+{
+	#ifndef _TS_NO_FILE_CHECK
+	if (source.Dims() != dimensions)
+	{
+		throw TSlib::BadShape("Destination Tensor must have the same shape as the stored Tensor", source.Shape(), shape);
+	}
+	
+	for (size_t i = 0; i < dimensions)
+	{
+		if (shape[i] != source.Shape()[i])
+		{
+			throw TSlib::BadShape("Destination Tensor must have the same shape as the stored Tensor", source.Shape(), shape);
+		}
+	}
+	#endif
+
+	in_file.read((char*)source.Data(), sizeof(T) * size);
 }
 
+template<typename T>
+template<TSlib::Device device>
+TSlib::Tensor<T, device> TSlib::Tools::itnsr_sequence<T>::read()
+{
+	Tensor<T, device> result(shape);
+
+	in_file.read((char*)result.Data(), sizeof(T) * size);
+
+	return result;
+}
