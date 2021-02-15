@@ -136,6 +136,33 @@ void TSlib::Tools::otnsr_sequence<T>::append(const Tensor<T, device>& source)
 }
 
 template<typename T>
+template<TSlib::Device device>
+void TSlib::Tools::otnsr_sequence<T>::append_seq(const TSlib::Tensor<T, device>& source_seq)
+{
+	#ifndef _TS_NO_FILE_CHECK
+	if (!is_open)
+	{
+		throw std::runtime_error("Directory is not open\n");
+	}
+
+	if (source_seq.Dims() != dimensions + 1)
+	{
+		throw TSlib::BadShape("Source Tensor must have one more dimension than the stored Tensor", source_seq.Shape(), shape);
+	}
+	
+	for (size_t i = 1; i < dimensions + 1; i++)
+	{
+		if (shape[i - 1] != source_seq.Shape()[i])
+		{
+			throw TSlib::BadShape("Destination Tensor must have the same shape as the stored Tensor, except for the last dimension", source_seq.Shape(), shape);
+		}
+	}
+	#endif
+
+	out_file.write((char*)source_seq.Data(), sizeof(T) * size * source_seq.Shape()[0]);
+}
+
+template<typename T>
 void TSlib::Tools::otnsr_sequence<T>::open_sequence(size_t buf_size)
 {
 	if (is_open)
