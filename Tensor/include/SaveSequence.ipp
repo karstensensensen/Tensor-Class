@@ -328,6 +328,21 @@ TSlib::Tensor<T, device> TSlib::Tools::itnsr_sequence<T>::read()
 }
 
 template<typename T>
+void TSlib::Tools::itnsr_sequence<T>::skip(size_t amount)
+{
+
+	#ifdef _TS_NO_FILE_CHECK
+	if(amount > length)
+	{
+		throw std::runtime_error("Cannot skip more of the sequence than what is left\nSequence length: " + std::to_string(length) + "\nSkip amount: " + std::to_string(amount));
+	}
+	#endif
+
+	in_file.ignore(size * sizeof(T) * amount);
+	length -= amount;
+}
+
+template<typename T>
 void TSlib::Tools::itnsr_sequence<T>::open()
 {
 	#ifndef _TS_NO_FILE_CHECK
@@ -371,7 +386,6 @@ void TSlib::Tools::itnsr_sequence<T>::open()
 
 	//divide by the type size to get the number of elements instead of bytes
 	length /= sizeof(T) * size;
-
 }
 
 template<typename T>
