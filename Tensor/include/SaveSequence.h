@@ -76,7 +76,7 @@ namespace TSlib
 			Tensor<T, device> read();
 
 			template<Device device>
-			void read_seq(Tensor<T, device>& source);
+			void read_seq(Tensor<T, device>& dest);
 			template<Device device = default_device>
 			Tensor<T, device> read_seq(size_t seq_length);
 

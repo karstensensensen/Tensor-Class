@@ -328,6 +328,62 @@ TSlib::Tensor<T, device> TSlib::Tools::itnsr_sequence<T>::read()
 }
 
 template<typename T>
+template<TSlib::Device device>
+void TSlib::Tools::itnsr_sequence<T>::read_seq(Tensor<T, device>& dest)
+{
+	#ifndef _TS_NO_FILE_CHECK
+	if (dest.Dims() != dimensions + 1)
+	{
+		throw TSlib::BadShape("Destination Tensor must have one more dimension than the stored Tensor", dest.Shape(), shape);
+	}
+	
+	for (size_t i = 1; i < dimensions + 1; i++)
+	{
+		if (shape[i - 1] != dest.Shape()[i])
+		{
+			throw TSlib::BadShape("Destination Tensor must have the same shape as the stored Tensor, except for the last dimension", dest.Shape(), shape);
+		}
+	}
+	
+	if(length < dest.Shape()[0])
+	{
+		throw std::runtime_error("sequence is not long enough for the destination tensor!");
+	}
+
+	#endif
+
+	length -= dest.Shape()[0];
+
+	in_file.read((char*)dest.Data(), sizeof(T) * size * dest.Shape()[0]);
+}
+
+template<typename T>
+template<TSlib::Device device>
+TSlib::Tensor<T, device> TSlib::Tools::itnsr_sequence<T>::read_seq(size_t seq_length)
+{
+	#ifndef _TS_NO_FILE_CHECK
+	if(length < seq_length)
+	{
+		throw std::runtime_error("sequence is not long enough for the destination tensor!");
+	}
+	#endif
+
+	std::vector<size_t> seq_shape(dimensions + 1);
+
+	memcpy(seq_shape.data() + 1, shape.data(), sizeof(size_t) * dimensions);
+
+	seq_shape[0] = seq_length;
+
+	Tensor<T, device> seq(seq_shape);
+
+	length -= seq_length;
+
+	in_file.read((char*)seq.Data(), sizeof(T) * size * seq_length);
+
+	return seq;
+}
+
+template<typename T>
 void TSlib::Tools::itnsr_sequence<T>::skip(size_t amount)
 {
 
