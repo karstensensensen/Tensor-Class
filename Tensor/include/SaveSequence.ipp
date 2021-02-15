@@ -260,6 +260,62 @@ TSlib::Tools::itnsr_sequence<T>::itnsr_sequence(std::string path)
 	{
 		throw std::runtime_error("The directory \"" + dir.string() + "\" does not exist\n");
 	}
+}
+
+template<typename T>
+template<TSlib::Device device>
+void TSlib::Tools::itnsr_sequence<T>::read(Tensor<T, device>& dest)
+{
+	if(!is_open)
+	{
+		throw std::runtime_error("The file must be open before data can be read");
+	}
+
+	#ifndef _TS_NO_FILE_CHECK
+	if (dest.Dims() != dimensions)
+	{
+		throw TSlib::BadShape("Destination Tensor must have the same shape as the stored Tensor", dest.Shape(), shape);
+	}
+	
+	for (size_t i = 0; i < dimensions; i++)
+	{
+		if (shape[i] != dest.Shape()[i])
+		{
+			throw TSlib::BadShape("Destination Tensor must have the same shape as the stored Tensor", dest.Shape(), shape);
+		}
+	}
+	#endif
+
+	in_file.read((char*)dest.Data(), sizeof(T) * size);
+}
+
+template<typename T>
+template<TSlib::Device device>
+TSlib::Tensor<T, device> TSlib::Tools::itnsr_sequence<T>::read()
+{
+	if(!is_open)
+	{
+		throw std::runtime_error("The file must be open before data can be read");
+	}
+
+	Tensor<T, device> result(shape);
+
+	in_file.read((char*)result.Data(), sizeof(T) * size);
+
+	return result;
+}
+
+template<typename T>
+void TSlib::Tools::itnsr_sequence<T>::open()
+{
+	#ifndef _TS_NO_FILE_CHECK
+	if(is_open)
+	{
+		throw std::runtime_error("Sequence is already open\nDirectory: \"" + dir.string() + "\"\n");
+	}
+	#endif
+
+	is_open = true;
 
 	in_file.open(dir, std::ios::binary);
 
@@ -287,44 +343,16 @@ TSlib::Tools::itnsr_sequence<T>::itnsr_sequence(std::string path)
 }
 
 template<typename T>
-template<TSlib::Device device>
-void TSlib::Tools::itnsr_sequence<T>::read(Tensor<T, device>& source)
+void TSlib::Tools::itnsr_sequence<T>::close()
 {
+	#ifndef _TS_NO_FILE_CHECK
 	if(!is_open)
 	{
-		throw std::runtime_error("The file must be open before data can be read");
-	}
-
-	#ifndef _TS_NO_FILE_CHECK
-	if (source.Dims() != dimensions)
-	{
-		throw TSlib::BadShape("Destination Tensor must have the same shape as the stored Tensor", source.Shape(), shape);
-	}
-	
-	for (size_t i = 0; i < dimensions; i++)
-	{
-		if (shape[i] != source.Shape()[i])
-		{
-			throw TSlib::BadShape("Destination Tensor must have the same shape as the stored Tensor", source.Shape(), shape);
-		}
+		throw std::runtime_error("Sequence is already closed\nDirectory: \"" + dir.string() + "\"\n");
 	}
 	#endif
 
-	in_file.read((char*)source.Data(), sizeof(T) * size);
-}
+	is_open = false;
 
-template<typename T>
-template<TSlib::Device device>
-TSlib::Tensor<T, device> TSlib::Tools::itnsr_sequence<T>::read()
-{
-	if(!is_open)
-	{
-		throw std::runtime_error("The file must be open before data can be read");
-	}
-
-	Tensor<T, device> result(shape);
-
-	in_file.read((char*)result.Data(), sizeof(T) * size);
-
-	return result;
+	in_file.close();
 }

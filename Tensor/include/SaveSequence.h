@@ -71,7 +71,7 @@ namespace TSlib
 			itnsr_sequence(std::string path);
 
 			template<Device device>
-			void read(Tensor<T, device>& source);
+			void read(Tensor<T, device>& dest);
 			template<Device device = default_device>
 			Tensor<T, device> read();
 
