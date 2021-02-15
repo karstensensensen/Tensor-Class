@@ -258,7 +258,7 @@ TSlib::Tools::itnsr_sequence<T>::itnsr_sequence(std::string path)
 
 	if (!std::filesystem::exists(dir))
 	{
-		throw std::runtime_error("The directory \"" + dir + "\" does not exist\n");
+		throw std::runtime_error("The directory \"" + dir.string() + "\" does not exist\n");
 	}
 
 	in_file.open(dir, std::ios::binary);
