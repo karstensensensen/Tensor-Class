@@ -45,6 +45,8 @@ namespace TSlib
 
 				template<Device device>
 				void append(const Tensor<T, device>& source);
+				template<Device device>
+				void append_seq(const Tensor<T, device>& source_seq);
 
 				void open_sequence(size_t buf_size = 8192);
 				template<Device device>
@@ -66,8 +68,6 @@ namespace TSlib
 			bool is_open = false;
 
 		public:
-
-			
 			itnsr_sequence(std::string path);
 
 			template<Device device>
@@ -80,11 +80,12 @@ namespace TSlib
 			template<Device device = default_device>
 			Tensor<T, device> read_seq(size_t seq_length);
 
-
 			void skip(size_t amount = 1);
 
 			void open();
 			void close(); 
+
+			size_t get_length();
 
 		};
 	}

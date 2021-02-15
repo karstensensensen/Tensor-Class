@@ -260,6 +260,7 @@ TSlib::Tools::itnsr_sequence<T>::itnsr_sequence(std::string path)
 	{
 		throw std::runtime_error("The directory \"" + dir.string() + "\" does not exist\n");
 	}
+
 }
 
 template<typename T>
@@ -284,7 +285,17 @@ void TSlib::Tools::itnsr_sequence<T>::read(Tensor<T, device>& dest)
 			throw TSlib::BadShape("Destination Tensor must have the same shape as the stored Tensor", dest.Shape(), shape);
 		}
 	}
+	
+	if(!length)
+	{
+		throw std::runtime_error("Cannot read more of the sequence!\nEnd of sequence reached!");
+	}
+
 	#endif
+
+
+
+	length--;
 
 	in_file.read((char*)dest.Data(), sizeof(T) * size);
 }
@@ -297,6 +308,17 @@ TSlib::Tensor<T, device> TSlib::Tools::itnsr_sequence<T>::read()
 	{
 		throw std::runtime_error("The file must be open before data can be read");
 	}
+
+	#ifndef _TS_NO_FILE_CHECK
+	
+	if(!length)
+	{
+		throw std::runtime_error("Cannot read more of the sequence!\nEnd of sequence reached!");
+	}
+
+	#endif
+
+	length--;
 
 	Tensor<T, device> result(shape);
 
@@ -340,6 +362,16 @@ void TSlib::Tools::itnsr_sequence<T>::open()
 	{
 		size *= dim;
 	}
+
+	
+	length = std::filesystem::file_size(dir);
+
+	//subtract header length
+	length -= (dimensions + 2) * sizeof(size_t);
+
+	//divide by the type size to get the number of elements instead of bytes
+	length /= sizeof(T) * size;
+
 }
 
 template<typename T>
@@ -355,4 +387,10 @@ void TSlib::Tools::itnsr_sequence<T>::close()
 	is_open = false;
 
 	in_file.close();
+}
+
+template<typename T>
+size_t TSlib::Tools::itnsr_sequence<T>::get_length()
+{
+	return length;
 }
