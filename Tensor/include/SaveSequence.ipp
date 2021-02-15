@@ -58,7 +58,6 @@ template<typename T>
 template<TSlib::Device device>
 void TSlib::Tools::otnsr_sequence<T>::begin_sequence(const Tensor<T, device>& base, size_t buf_size)
 {
-	
 	if (is_open)
 	{
 		throw std::runtime_error("Directory is already open\n");
@@ -77,7 +76,7 @@ void TSlib::Tools::otnsr_sequence<T>::begin_sequence(const Tensor<T, device>& ba
 	shape = base.Shape();
 
 	write_header();
-	
+
 	size = 1;
 
 	for (size_t& dim : shape)
@@ -89,7 +88,10 @@ void TSlib::Tools::otnsr_sequence<T>::begin_sequence(const Tensor<T, device>& ba
 template<typename T>
 void TSlib::Tools::otnsr_sequence<T>::write_header()
 {
-	std::filesystem::create_directories(dir.parent_path());
+	if(dir.has_parent_path())
+	{
+		std::filesystem::create_directories(dir.parent_path());
+	}
 
 	out_file.write((char*)&dimensions, sizeof(size_t));
 
@@ -114,7 +116,6 @@ template<typename T>
 template<TSlib::Device device>
 void TSlib::Tools::otnsr_sequence<T>::append(const Tensor<T, device>& source)
 {
-
 	#ifdef _TS_DEBUG
 	for (size_t i = 0; i < dimensions; i++)
 	{
@@ -289,6 +290,11 @@ template<typename T>
 template<TSlib::Device device>
 void TSlib::Tools::itnsr_sequence<T>::read(Tensor<T, device>& source)
 {
+	if(!is_open)
+	{
+		throw std::runtime_error("The file must be open before data can be read");
+	}
+
 	#ifndef _TS_NO_FILE_CHECK
 	if (source.Dims() != dimensions)
 	{
@@ -311,6 +317,11 @@ template<typename T>
 template<TSlib::Device device>
 TSlib::Tensor<T, device> TSlib::Tools::itnsr_sequence<T>::read()
 {
+	if(!is_open)
+	{
+		throw std::runtime_error("The file must be open before data can be read");
+	}
+
 	Tensor<T, device> result(shape);
 
 	in_file.read((char*)result.Data(), sizeof(T) * size);
