@@ -22,15 +22,17 @@ TSlib::Tools::otnsr_sequence<T>::~otnsr_sequence()
 template<typename T>
 void TSlib::Tools::otnsr_sequence<T>::begin_sequence(const std::vector<size_t>& storage_shape, size_t buf_size)
 {
-	if (!std::filesystem::exists(dir))
-	{
-		write_header();
-	}
-
+	#ifndef _TS_NO_FILE_CHECK
 	if (is_open)
 	{
 		throw std::runtime_error("Directory is already open\n");
 	}
+
+	if (!std::filesystem::exists(dir))
+	{
+		write_header();
+	}
+	#endif
 
 	is_open = true;
 
@@ -58,10 +60,12 @@ template<typename T>
 template<TSlib::Device device>
 void TSlib::Tools::otnsr_sequence<T>::begin_sequence(const Tensor<T, device>& base, size_t buf_size)
 {
+	#ifndef _TS_NO_FILE_CHECK
 	if (is_open)
 	{
 		throw std::runtime_error("Directory is already open\n");
 	}
+	#endif
 
 	is_open = true;
 	
@@ -105,6 +109,14 @@ void TSlib::Tools::otnsr_sequence<T>::write_header()
 template<typename T>
 void TSlib::Tools::otnsr_sequence<T>::reset_sequence()
 {
+
+	#ifndef _TS_NO_FILE_CHECK
+	if (!is_open)
+	{
+		throw std::runtime_error("Directory must be open before sequence can be reset");
+	}
+	#endif
+
 	out_file.close();
 
 	out_file.open(dir, std::ios::binary | std::ios::trunc);
@@ -116,7 +128,12 @@ template<typename T>
 template<TSlib::Device device>
 void TSlib::Tools::otnsr_sequence<T>::append(const Tensor<T, device>& source)
 {
-	#ifdef _TS_DEBUG
+	#ifndef _TS_NO_FILE_CHECK
+	if (!is_open)
+	{
+		throw std::runtime_error("Directory is not open\n");
+	}
+	
 	for (size_t i = 0; i < dimensions; i++)
 	{
 		if (shape[i] != source.Shape()[i])
@@ -124,12 +141,6 @@ void TSlib::Tools::otnsr_sequence<T>::append(const Tensor<T, device>& source)
 			throw BadShape("The source tensor must have the same shape as the storage shape", shape, source.Shape());
 		}
 	}
-
-	if (!is_open)
-	{
-		throw std::runtime_error("Directory is not open\n");
-	}
-
 	#endif
 
 	out_file.write((const char*)source.Data(), sizeof(T) * size);
@@ -165,6 +176,7 @@ void TSlib::Tools::otnsr_sequence<T>::append_seq(const TSlib::Tensor<T, device>&
 template<typename T>
 void TSlib::Tools::otnsr_sequence<T>::open_sequence(size_t buf_size)
 {
+	#ifdef _TS_NO_FILE_CHECK
 	if (is_open)
 	{
 		throw std::runtime_error("Sequence is already open\nDirectory: \"" + dir.string() + "\"\n");
@@ -174,7 +186,7 @@ void TSlib::Tools::otnsr_sequence<T>::open_sequence(size_t buf_size)
 	{
 		throw std::runtime_error("The directory \"" + dir.string() + "\" Does not exist\nTo create the directory, run the \'begin_sequence\' function\n");
 	}
-
+	#endif
 
 	is_open = true;
 
@@ -197,10 +209,12 @@ void TSlib::Tools::otnsr_sequence<T>::open_sequence(size_t buf_size)
 
 	in_file.read((char*)&data_size, sizeof(size_t));
 
+	#ifdef _TS_NO_FILE_CHECK
 	if (data_size != sizeof(T))
 	{
 		throw TSlib::BadType("The data size of the sequence and the file must be the same\nGot: " + std::to_string(data_size) + " Expected: " + std::to_string(sizeof(T)) + "\n");
 	}
+	#endif
 
 	size = 1;
 
@@ -214,10 +228,12 @@ template<typename T>
 template<TSlib::Device device>
 void TSlib::Tools::otnsr_sequence<T>::open_sequence(const Tensor<T, device>& base, size_t buf_size)
 {
+	#ifndef _TS_NO_FILE_CHECK
 	if (is_open)
 	{
 		throw std::runtime_error("Sequence is already open\nDirectory: \"" + dir.string() + "\"\n");
 	}
+	#endif
 
 	if (!std::filesystem::exists(dir)) [[unlikely]]
 	{
@@ -245,11 +261,13 @@ void TSlib::Tools::otnsr_sequence<T>::open_sequence(const Tensor<T, device>& bas
 		size_t data_size;
 
 		in_file.read((char*)&data_size, sizeof(size_t));
-
+		
+		#ifndef _TS_NO_FILE_CHECK
 		if (data_size != sizeof(T))
 		{
 			throw TSlib::BadType("The data size of the sequence and the file must be the same\nGot: " + std::to_string(data_size) + " Expected: " + std::to_string(sizeof(T)) + "\n");
 		}
+		#endif
 
 		size = 1;
 
@@ -263,10 +281,12 @@ void TSlib::Tools::otnsr_sequence<T>::open_sequence(const Tensor<T, device>& bas
 template<typename T>
 void TSlib::Tools::otnsr_sequence<T>::close()
 {
+	#ifndef _TS_NO_FILE_CHECK
 	if (!is_open)
 	{
 		throw std::runtime_error("Directory is already closed \n");
 	}
+	#endif
 
 	is_open = false;
 	out_file.close();
@@ -283,11 +303,12 @@ TSlib::Tools::itnsr_sequence<T>::itnsr_sequence(std::string path)
 		dir += ".tnsrs";
 	}
 
+	#ifndef _TS_NO_FILE_CHECK
 	if (!std::filesystem::exists(dir))
 	{
 		throw std::runtime_error("The directory \"" + dir.string() + "\" does not exist\n");
 	}
-
+	#endif
 }
 
 template<typename T>
@@ -331,12 +352,12 @@ template<typename T>
 template<TSlib::Device device>
 TSlib::Tensor<T, device> TSlib::Tools::itnsr_sequence<T>::read()
 {
+
+	#ifndef _TS_NO_FILE_CHECK
 	if(!is_open)
 	{
 		throw std::runtime_error("The file must be open before data can be read");
 	}
-
-	#ifndef _TS_NO_FILE_CHECK
 	
 	if(!length)
 	{
@@ -359,6 +380,11 @@ template<TSlib::Device device>
 void TSlib::Tools::itnsr_sequence<T>::read_seq(Tensor<T, device>& dest)
 {
 	#ifndef _TS_NO_FILE_CHECK
+	if (!is_open)
+	{
+		throw std::runtime_error("The file must be open before data can be read");
+	}
+
 	if (dest.Dims() != dimensions + 1)
 	{
 		throw TSlib::BadShape("Destination Tensor must have one more dimension than the stored Tensor", dest.Shape(), shape);
@@ -376,7 +402,6 @@ void TSlib::Tools::itnsr_sequence<T>::read_seq(Tensor<T, device>& dest)
 	{
 		throw std::runtime_error("sequence is not long enough for the destination tensor!");
 	}
-
 	#endif
 
 	length -= dest.Shape()[0];
@@ -389,6 +414,11 @@ template<TSlib::Device device>
 TSlib::Tensor<T, device> TSlib::Tools::itnsr_sequence<T>::read_seq(size_t seq_length)
 {
 	#ifndef _TS_NO_FILE_CHECK
+	if (!is_open)
+	{
+		throw std::runtime_error("The file must be open before data can be read");
+	}
+
 	if(length < seq_length)
 	{
 		throw std::runtime_error("sequence is not long enough for the destination tensor!");
@@ -414,7 +444,12 @@ template<typename T>
 void TSlib::Tools::itnsr_sequence<T>::skip(size_t amount)
 {
 
-	#ifdef _TS_NO_FILE_CHECK
+	#ifndef _TS_NO_FILE_CHECK
+	if (!is_open)
+	{
+		throw std::runtime_error("The file must be open before data can be read");
+	}
+
 	if(amount > length)
 	{
 		throw std::runtime_error("Cannot skip more of the sequence than what is left\nSequence length: " + std::to_string(length) + "\nSkip amount: " + std::to_string(amount));
@@ -449,10 +484,12 @@ void TSlib::Tools::itnsr_sequence<T>::open()
 
 	in_file.read((char*)&data_size, sizeof(size_t));
 
+	#ifndef _TS_NO_FILE_CHECK
 	if (data_size != sizeof(T))
 	{
 		throw TSlib::BadType("The data size of the sequence and the file must be the same\nGot: " + std::to_string(data_size) + " Expected: " + std::to_string(sizeof(T)) + "\n");
 	}
+	#endif
 
 	size = 1;
 
