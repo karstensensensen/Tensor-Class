@@ -1,12 +1,10 @@
 project(Tensor)
 
 set(INCLUDE_FILES
-    include/PerlinKernel.cuh
-    include/PerlinNoise.h
+    include/SaveSequence.h
+    include/SaveSequence.ipp
     include/Tensor.h
     include/Tensor.ipp
-    include/TensorBase.h
-    include/TensorBase.ipp
     include/TensorArithmetic.h
     include/TensorArithmeticOperators.ipp
     include/TensorCompareOperators.h

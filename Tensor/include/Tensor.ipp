@@ -1142,7 +1142,20 @@ namespace TSlib
 	inline TensorSlice<T, device> Tensor<T, device>::Slice(const std::vector<TSlice>& slices)
 	{
 		MEASURE();
-		return TensorSlice<T, device>(this, slices);
+
+		TensorSlice<T, device> slice(this, slices);
+
+		#ifdef _TS_DEBUG
+		for(size_t i = 0; i < Dims(); i++)
+		{
+			if(slice.TSliceShape()[i].get_from() + slice.Shape()[i] > Shape()[i])
+			{
+				throw TSlib::BadShape("Slice must be within Tensor borders", slice.Shape(), Shape());
+			}
+		}
+		#endif
+
+		return slice;
 	}
 
 	//template<typename T, Device device>

@@ -10,6 +10,12 @@
 #include "TensorEnums.h"
 #include "TensorSlice.h"
 
+#if (defined(_DEBUG) || defined(DEBUG)) && !defined(_TS_DEBUG)
+#ifndef _TS_NO_DEB_WARN
+#pragma message("Warning: build is running in debug mode but the marco \"_TS_DEBUG\" has not been defined for the Tensor library.\nDisable this warning by defining \"_TS_NO_DEB_WARN\"")
+#endif
+#endif
+
 namespace TSlib
 {
 	template<typename T>

@@ -1502,10 +1502,10 @@ namespace TSlib
 	{
 		if constexpr (device == Device::GPU)
 		{
-			return (bool)Ccompare(other).sum<size_t>();
+			return (bool)Ccompare(other).template sum<size_t>();
 		}
 
-		return (bool)compare(other).sum<size_t>();
+		return (bool)compare(other).template sum<size_t>();
 	}
 	template<typename T, Device device>
 	template<typename OT>
@@ -1513,9 +1513,9 @@ namespace TSlib
 	{
 		if constexpr (device == Device::GPU)
 		{
-			return (bool)Ccompare(other).sum<size_t>();
+			return (bool)Ccompare(other).template sum<size_t>();
 		}
-		return (bool)compare(other).sum<size_t>();
+		return (bool)compare(other).template sum<size_t>();
 	}
 
 	template<typename T, Device device>
@@ -1524,10 +1524,10 @@ namespace TSlib
 	{
 		if constexpr (device == Device::GPU)
 		{
-			return !(bool)Ccompare(other).sum<size_t>();
+			return !(bool)Ccompare(other).template sum<size_t>();
 		}
 
-		return !(bool)compare(other).sum<size_t>();
+		return !(bool)compare(other).template sum<size_t>();
 	}
 	template<typename T, Device device>
 	template<typename OT>
@@ -1535,9 +1535,9 @@ namespace TSlib
 	{
 		if constexpr (device == Device::GPU)
 		{
-			return !(bool)Ccompare(other).sum<size_t>();
+			return !(bool)Ccompare(other).template sum<size_t>();
 		}
-		return !(bool)compare(other).sum<size_t>();
+		return !(bool)compare(other).template sum<size_t>();
 	}
 
 	template<typename T, Device device>
@@ -1546,10 +1546,10 @@ namespace TSlib
 	{
 		if constexpr (device == Device::GPU)
 		{
-			return (bool)ClessThan(other).sum<size_t>();
+			return (bool)ClessThan(other).template sum<size_t>();
 		}
 
-		return (bool)compare(other, LessThan).sum<size_t>();
+		return (bool)compare(other, LessThan).template sum<size_t>();
 	}
 
 	template<typename T, Device device>
@@ -1558,9 +1558,9 @@ namespace TSlib
 	{
 		if constexpr (device == Device::GPU)
 		{
-			return (bool)ClessThan(other).sum<size_t>();
+			return (bool)ClessThan(other).template sum<size_t>();
 		}
-		return (bool)compare(other, LessThan).sum<size_t>();
+		return (bool)compare(other, LessThan).template sum<size_t>();
 	}
 
 	template<typename T, Device device>
@@ -1569,10 +1569,10 @@ namespace TSlib
 	{
 		if constexpr (device == Device::GPU)
 		{
-			return (bool)CgreaterThan(other).sum<size_t>();
+			return (bool)CgreaterThan(other).template sum<size_t>();
 		}
 
-		return (bool)compare(other, GreaterThan).sum<size_t>();
+		return (bool)compare(other, GreaterThan).template sum<size_t>();
 	}
 	template<typename T, Device device>
 	template<typename OT>
@@ -1580,9 +1580,9 @@ namespace TSlib
 	{
 		if constexpr (device == Device::GPU)
 		{
-			return (bool)CgreaterThan(other).sum<size_t>();
+			return (bool)CgreaterThan(other).template sum<size_t>();
 		}
-		return (bool)compare(other, GreaterThan).sum<size_t>();
+		return (bool)compare(other, GreaterThan).template sum<size_t>();
 	}
 
 	template<typename T, Device device>
@@ -1591,10 +1591,10 @@ namespace TSlib
 	{
 		if constexpr (device == Device::GPU)
 		{
-			return (bool)ClessThanEqual(other).sum<size_t>();
+			return (bool)ClessThanEqual(other).template sum<size_t>();
 		}
 
-		return (bool)compare(other, LessThanEqual).sum<size_t>();
+		return (bool)compare(other, LessThanEqual).template sum<size_t>();
 	}
 	template<typename T, Device device>
 	template<typename OT>
@@ -1602,9 +1602,9 @@ namespace TSlib
 	{
 		if constexpr (device == Device::GPU)
 		{
-			return (bool)ClessThanEqual(other).sum<size_t>();
+			return (bool)ClessThanEqual(other).template sum<size_t>();
 		}
-		return (bool)compare(other, LessThanEqual).sum<size_t>();
+		return (bool)compare(other, LessThanEqual).template sum<size_t>();
 	}
 
 	template<typename T, Device device>
@@ -1613,10 +1613,10 @@ namespace TSlib
 	{
 		if constexpr (device == Device::GPU)
 		{
-			return (bool)CgreaterThanEqual(other).sum<size_t>();
+			return (bool)CgreaterThanEqual(other).template sum<size_t>();
 		}
 
-		return (bool)compare(other, GreaterThanEqual).sum<size_t>();
+		return (bool)compare(other, GreaterThanEqual).template sum<size_t>();
 	}
 	template<typename T, Device device>
 	template<typename OT>
@@ -1624,9 +1624,9 @@ namespace TSlib
 	{
 		if constexpr (device == Device::GPU)
 		{
-			return (bool)CgreaterThanEqual(other).sum<size_t>();
+			return (bool)CgreaterThanEqual(other).template sum<size_t>();
 		}
-		return (bool)compare(other, GreaterThanEqual).sum<size_t>();
+		return (bool)compare(other, GreaterThanEqual).template sum<size_t>();
 	}
 }
 
