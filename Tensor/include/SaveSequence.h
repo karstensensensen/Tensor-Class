@@ -7,7 +7,6 @@ namespace TSlib
 {
 	namespace Tools
 	{
-
 		template<size_t gb>
 		size_t gigabytes = gb * 1024ULL * 1024ULL * 1024ULL;
 
@@ -20,39 +19,38 @@ namespace TSlib
 		template<typename T>
 		class otnsr_sequence
 		{
-				std::filesystem::path dir;
-				std::ofstream out_file;
-				std::vector<size_t> shape;
-				size_t dimensions = 0;
-				size_t size = 0;
-				size_t buffer_size = 0;
-				char* buffer = nullptr;
+			std::filesystem::path dir;
+			std::ofstream out_file;
+			std::vector<size_t> shape;
+			size_t dimensions = 0;
+			size_t size = 0;
+			size_t buffer_size = 0;
+			char* buffer = nullptr;
 
-				bool is_open = false;
-				
-				void write_header();
+			bool is_open = false;
+
+			void write_header();
 
 		public:
 
-				otnsr_sequence(std::string path);
-				~otnsr_sequence();
+			otnsr_sequence(std::string path);
+			~otnsr_sequence();
 
-				void begin_sequence(const std::vector<size_t>& storage_shape, size_t buf_size = 8192);
-				template<Device device>
-				void begin_sequence(const Tensor<T, device>& base, size_t buf_size = 8192);
+			void begin_sequence(const std::vector<size_t>& storage_shape, size_t buf_size = 8192);
+			template<Device device>
+			void begin_sequence(const Tensor<T, device>& base, size_t buf_size = 8192);
 
-				void reset_sequence();
+			void reset_sequence();
 
-				template<Device device>
-				void append(const Tensor<T, device>& source);
-				template<Device device>
-				void append_seq(const Tensor<T, device>& source_seq);
+			template<Device device>
+			void append(const Tensor<T, device>& source);
+			template<Device device>
+			void append_seq(const Tensor<T, device>& source_seq);
 
-				void open_sequence(size_t buf_size = 8192);
-				template<Device device>
-				void open_sequence(const Tensor<T, device>& base, size_t buf_size = 8192);
-				void close();
-
+			void open_sequence(size_t buf_size = 8192);
+			template<Device device>
+			void open_sequence(const Tensor<T, device>& base, size_t buf_size = 8192);
+			void close();
 		};
 
 		template<typename T>
@@ -83,10 +81,9 @@ namespace TSlib
 			void skip(size_t amount = 1);
 
 			void open();
-			void close(); 
+			void close();
 
 			size_t get_length();
-
 		};
 	}
 }

@@ -2,7 +2,6 @@
 
 namespace TSlib {
 	namespace Tools {
-
 		template<typename T, Mode device>
 		Tensor<T, device> MatToTensor(const cv::Mat& source)
 		{

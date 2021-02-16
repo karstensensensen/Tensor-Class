@@ -559,7 +559,7 @@ namespace TSlib
 			std::vector<size_t> coords(Dims());
 
 			size_t tmp_indx = index;
-			
+
 			for (size_t j = 0; j < Dims(); j++)
 			{
 				coords[Dims() - j - 1] = tmp_indx % Shape()[Dims() - j - 1];
@@ -1034,7 +1034,6 @@ namespace TSlib
 	template<typename T, Device device>
 	inline TensorSlice<T, device> TSlib::Tensor<T, device>::AsShape(const std::vector<long long>& shape)
 	{
-
 		TensorSlice<T, device> slice = Slice();
 		slice.Reshape(shape);
 
@@ -1156,9 +1155,9 @@ namespace TSlib
 		TensorSlice<T, device> slice(this, slices);
 
 		#ifdef _TS_DEBUG
-		for(size_t i = 0; i < Dims(); i++)
+		for (size_t i = 0; i < Dims(); i++)
 		{
-			if(slice.TSliceShape()[i].get_from() + slice.Shape()[i] > Shape()[i])
+			if (slice.TSliceShape()[i].get_from() + slice.Shape()[i] > Shape()[i])
 			{
 				throw TSlib::BadShape("Slice must be within Tensor borders", slice.Shape(), Shape());
 			}

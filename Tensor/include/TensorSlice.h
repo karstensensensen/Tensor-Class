@@ -98,7 +98,7 @@ namespace TSlib
 		Tensor<TReturn, device> prod(size_t axis, bool keepDims = true) const;
 
 		T max() const;
-		
+
 		T min() const;
 
 		template<typename RT = T>

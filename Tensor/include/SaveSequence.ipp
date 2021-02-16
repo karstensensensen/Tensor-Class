@@ -68,7 +68,7 @@ void TSlib::Tools::otnsr_sequence<T>::begin_sequence(const Tensor<T, device>& ba
 	#endif
 
 	is_open = true;
-	
+
 	buffer_size = buf_size;
 
 	buffer = new char[buffer_size];
@@ -92,7 +92,7 @@ void TSlib::Tools::otnsr_sequence<T>::begin_sequence(const Tensor<T, device>& ba
 template<typename T>
 void TSlib::Tools::otnsr_sequence<T>::write_header()
 {
-	if(dir.has_parent_path())
+	if (dir.has_parent_path())
 	{
 		std::filesystem::create_directories(dir.parent_path());
 	}
@@ -109,7 +109,6 @@ void TSlib::Tools::otnsr_sequence<T>::write_header()
 template<typename T>
 void TSlib::Tools::otnsr_sequence<T>::reset_sequence()
 {
-
 	#ifndef _TS_NO_FILE_CHECK
 	if (!is_open)
 	{
@@ -120,7 +119,7 @@ void TSlib::Tools::otnsr_sequence<T>::reset_sequence()
 	out_file.close();
 
 	out_file.open(dir, std::ios::binary | std::ios::trunc);
-	
+
 	write_header();
 }
 
@@ -133,7 +132,7 @@ void TSlib::Tools::otnsr_sequence<T>::append(const Tensor<T, device>& source)
 	{
 		throw std::runtime_error("Directory is not open\n");
 	}
-	
+
 	for (size_t i = 0; i < dimensions; i++)
 	{
 		if (shape[i] != source.Shape()[i])
@@ -160,7 +159,7 @@ void TSlib::Tools::otnsr_sequence<T>::append_seq(const TSlib::Tensor<T, device>&
 	{
 		throw TSlib::BadShape("Source Tensor must have one more dimension than the stored Tensor", source_seq.Shape(), shape);
 	}
-	
+
 	for (size_t i = 1; i < dimensions + 1; i++)
 	{
 		if (shape[i - 1] != source_seq.Shape()[i])
@@ -195,7 +194,6 @@ void TSlib::Tools::otnsr_sequence<T>::open_sequence(size_t buf_size)
 
 	out_file.rdbuf()->pubsetbuf(buffer, buffer_size);
 	out_file.open(dir, std::ios::out | std::ios::binary | std::ios::app);
-
 
 	std::ifstream in_file(dir);
 
@@ -249,7 +247,6 @@ void TSlib::Tools::otnsr_sequence<T>::open_sequence(const Tensor<T, device>& bas
 		out_file.rdbuf()->pubsetbuf(buffer, buffer_size);
 		out_file.open(dir, std::ios::out | std::ios::binary | std::ios::app);
 
-
 		std::ifstream in_file(dir);
 
 		in_file.read((char*)&dimensions, sizeof(size_t));
@@ -261,7 +258,7 @@ void TSlib::Tools::otnsr_sequence<T>::open_sequence(const Tensor<T, device>& bas
 		size_t data_size;
 
 		in_file.read((char*)&data_size, sizeof(size_t));
-		
+
 		#ifndef _TS_NO_FILE_CHECK
 		if (data_size != sizeof(T))
 		{
@@ -291,7 +288,6 @@ void TSlib::Tools::otnsr_sequence<T>::close()
 	is_open = false;
 	out_file.close();
 	delete[] buffer;
-
 }
 
 template<typename T>
@@ -315,7 +311,7 @@ template<typename T>
 template<TSlib::Device device>
 void TSlib::Tools::itnsr_sequence<T>::read(Tensor<T, device>& dest)
 {
-	if(!is_open)
+	if (!is_open)
 	{
 		throw std::runtime_error("The file must be open before data can be read");
 	}
@@ -325,7 +321,7 @@ void TSlib::Tools::itnsr_sequence<T>::read(Tensor<T, device>& dest)
 	{
 		throw TSlib::BadShape("Destination Tensor must have the same shape as the stored Tensor", dest.Shape(), shape);
 	}
-	
+
 	for (size_t i = 0; i < dimensions; i++)
 	{
 		if (shape[i] != dest.Shape()[i])
@@ -333,15 +329,13 @@ void TSlib::Tools::itnsr_sequence<T>::read(Tensor<T, device>& dest)
 			throw TSlib::BadShape("Destination Tensor must have the same shape as the stored Tensor", dest.Shape(), shape);
 		}
 	}
-	
-	if(!length)
+
+	if (!length)
 	{
 		throw std::runtime_error("Cannot read more of the sequence!\nEnd of sequence reached!");
 	}
 
 	#endif
-
-
 
 	length--;
 
@@ -352,14 +346,13 @@ template<typename T>
 template<TSlib::Device device>
 TSlib::Tensor<T, device> TSlib::Tools::itnsr_sequence<T>::read()
 {
-
 	#ifndef _TS_NO_FILE_CHECK
-	if(!is_open)
+	if (!is_open)
 	{
 		throw std::runtime_error("The file must be open before data can be read");
 	}
-	
-	if(!length)
+
+	if (!length)
 	{
 		throw std::runtime_error("Cannot read more of the sequence!\nEnd of sequence reached!");
 	}
@@ -389,7 +382,7 @@ void TSlib::Tools::itnsr_sequence<T>::read_seq(Tensor<T, device>& dest)
 	{
 		throw TSlib::BadShape("Destination Tensor must have one more dimension than the stored Tensor", dest.Shape(), shape);
 	}
-	
+
 	for (size_t i = 1; i < dimensions + 1; i++)
 	{
 		if (shape[i - 1] != dest.Shape()[i])
@@ -397,8 +390,8 @@ void TSlib::Tools::itnsr_sequence<T>::read_seq(Tensor<T, device>& dest)
 			throw TSlib::BadShape("Destination Tensor must have the same shape as the stored Tensor, except for the last dimension", dest.Shape(), shape);
 		}
 	}
-	
-	if(length < dest.Shape()[0])
+
+	if (length < dest.Shape()[0])
 	{
 		throw std::runtime_error("sequence is not long enough for the destination tensor!");
 	}
@@ -419,7 +412,7 @@ TSlib::Tensor<T, device> TSlib::Tools::itnsr_sequence<T>::read_seq(size_t seq_le
 		throw std::runtime_error("The file must be open before data can be read");
 	}
 
-	if(length < seq_length)
+	if (length < seq_length)
 	{
 		throw std::runtime_error("sequence is not long enough for the destination tensor!");
 	}
@@ -443,14 +436,13 @@ TSlib::Tensor<T, device> TSlib::Tools::itnsr_sequence<T>::read_seq(size_t seq_le
 template<typename T>
 void TSlib::Tools::itnsr_sequence<T>::skip(size_t amount)
 {
-
 	#ifndef _TS_NO_FILE_CHECK
 	if (!is_open)
 	{
 		throw std::runtime_error("The file must be open before data can be read");
 	}
 
-	if(amount > length)
+	if (amount > length)
 	{
 		throw std::runtime_error("Cannot skip more of the sequence than what is left\nSequence length: " + std::to_string(length) + "\nSkip amount: " + std::to_string(amount));
 	}
@@ -464,7 +456,7 @@ template<typename T>
 void TSlib::Tools::itnsr_sequence<T>::open()
 {
 	#ifndef _TS_NO_FILE_CHECK
-	if(is_open)
+	if (is_open)
 	{
 		throw std::runtime_error("Sequence is already open\nDirectory: \"" + dir.string() + "\"\n");
 	}
@@ -498,7 +490,6 @@ void TSlib::Tools::itnsr_sequence<T>::open()
 		size *= dim;
 	}
 
-	
 	length = std::filesystem::file_size(dir);
 
 	//subtract header length
@@ -512,7 +503,7 @@ template<typename T>
 void TSlib::Tools::itnsr_sequence<T>::close()
 {
 	#ifndef _TS_NO_FILE_CHECK
-	if(!is_open)
+	if (!is_open)
 	{
 		throw std::runtime_error("Sequence is already closed\nDirectory: \"" + dir.string() + "\"\n");
 	}

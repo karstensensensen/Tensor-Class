@@ -585,7 +585,7 @@ namespace TSlib
 		MEASURE();
 		return m_shape;
 	}
-	
+
 	template<typename T, Device device>
 	const std::vector<TSlice>& TensorSlice<T, device>::TSliceShape() const
 	{
