@@ -1,8 +1,8 @@
 project(Tensor)
 
 set(INCLUDE_FILES
-    include/PerlinKernel.cuh
-    include/PerlinNoise.h
+    include/SaveSequence.h
+    include/SaveSequence.ipp
     include/Tensor.h
     include/Tensor.ipp
     include/TensorArithmetic.h
@@ -16,6 +16,7 @@ set(INCLUDE_FILES
     include/TensorTools.h
     include/TensorTools.ipp
     include/TSliceWrapper.h
+
 )
 
 add_library(${PROJECT_NAME} STATIC

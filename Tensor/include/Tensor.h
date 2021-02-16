@@ -10,27 +10,33 @@
 #include "TensorEnums.h"
 #include "TensorSlice.h"
 
+#if (defined(_DEBUG) || defined(DEBUG)) && !defined(_TS_DEBUG)
+#ifndef _TS_NO_DEB_WARN
+#pragma message("Warning: build is running in debug mode but the marco \"_TS_DEBUG\" has not been defined for the Tensor library.\nDisable this warning by defining \"_TS_NO_DEB_WARN\"")
+#endif
+#endif
+
 namespace TSlib
 {
 	template<typename T>
 	struct is_tensor_type : std::false_type {};
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	struct is_tensor_type<Tensor<T, device>> : std::true_type {};
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	struct is_tensor_type<TensorSlice<T, device>> : std::true_type {};
 
 	template<typename T>
 	struct is_tensor : std::false_type {};
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	struct is_tensor<Tensor<T, device>> : std::true_type {};
 
 	template<typename T>
 	struct is_tensor_slice : std::false_type {};
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	struct is_tensor_slice<TensorSlice<T, device>> : std::true_type {};
 
 	#ifdef _CUDA
@@ -55,7 +61,7 @@ namespace TSlib
 	class CUDALayout;
 	#endif
 
-	template<typename T, Mode device = default_device>
+	template<typename T, Device device = default_device>
 	class Tensor
 	{
 		friend TensorSlice<T, device>;
@@ -103,7 +109,7 @@ namespace TSlib
 	public:
 
 		typedef T Type;
-		static constexpr Mode Device = device;
+		static constexpr Device processor = device;
 
 		Tensor();
 		Tensor(const std::vector<size_t>& sizes, const T& pad_val = T());
@@ -130,13 +136,15 @@ namespace TSlib
 		template<typename Ts, std::enable_if_t<std::is_integral<Ts>::value, int> = 0>
 		Tensor<T, device>& Reshape(const std::vector<Ts>& shape);
 
+		TensorSlice<T, device> AsShape(const std::vector<long long>& shape);
+
 		Tensor<T, device>& SetDims(const size_t& dims);
 
 		Tensor<T, device>& AddDims(const size_t& dims = 1);
 
 		Tensor<T, device>& RemoveDims(const size_t& dims = 1);
 
-		template<typename OT, Mode o_device>
+		template<typename OT, Device o_device>
 		Tensor<T, device>& Append(const Tensor<OT, o_device>& other, const size_t& dimension);
 
 		Tensor<T, device>& Fill(const T& val = NULL);
@@ -266,7 +274,7 @@ namespace TSlib
 		T& operator[](size_t indx);
 		T operator[](size_t indx) const;
 
-		Tensor<T>& operator=(const std::vector<T>& other);
+		Tensor<T, device>& operator=(const std::vector<T>& other);
 
 		#ifdef _CUDA
 		operator T* ();
@@ -274,91 +282,91 @@ namespace TSlib
 		operator const T* () const;
 		#endif
 
-		template<typename RT = T, typename OT, Mode o_device>
+		template<typename RT = T, typename OT, Device o_device>
 		Tensor<RT, device> add(const Tensor<OT, o_device>& other) const;
 
-		template<typename RT = T, typename OT, Mode o_device>
+		template<typename RT = T, typename OT, Device o_device>
 		Tensor<RT, device> add(const TensorSlice<OT, o_device>& other) const;
 
 		template<typename RT = T, typename OT>
 		Tensor<RT, device> add(const OT& other) const;
 
-		template<typename RT = T, typename OT, Mode o_device>
+		template<typename RT = T, typename OT, Device o_device>
 		Tensor<RT, device> subtract(const Tensor<OT, o_device>& other) const;
 
-		template<typename RT = T, typename OT, Mode o_device>
+		template<typename RT = T, typename OT, Device o_device>
 		Tensor<RT, device> subtract(const TensorSlice<OT, o_device>& other) const;
 
 		template<typename RT = T, typename OT>
 		Tensor<RT, device> subtract(const OT& other) const;
 
-		template<typename RT = T, typename OT, Mode o_device>
+		template<typename RT = T, typename OT, Device o_device>
 		Tensor<RT, device> multiply(const Tensor<OT, o_device>& other) const;
 
-		template<typename RT = T, typename OT, Mode o_device>
+		template<typename RT = T, typename OT, Device o_device>
 		Tensor<RT, device> multiply(const TensorSlice<OT, o_device>& other) const;
 
 		template<typename RT = T, typename OT>
 		Tensor<RT, device> multiply(const OT& other) const;
 
-		template<typename RT = T, typename OT, Mode o_device>
+		template<typename RT = T, typename OT, Device o_device>
 		Tensor<RT, device> divide(const Tensor<OT, o_device>& other) const;
 
-		template<typename RT = T, typename OT, Mode o_device>
+		template<typename RT = T, typename OT, Device o_device>
 		Tensor<RT, device> divide(const TensorSlice<OT, o_device>& other) const;
 
 		template<typename RT = T, typename OT>
 		Tensor<RT, device> divide(const OT& other) const;
 
-		template<typename RT = T, typename OT, Mode o_device>
+		template<typename RT = T, typename OT, Device o_device>
 		Tensor<RT, device> modulous(const Tensor<OT, o_device>& other) const;
 
-		template<typename RT = T, typename OT, Mode o_device>
+		template<typename RT = T, typename OT, Device o_device>
 		Tensor<RT, device> modulous(const TensorSlice<OT, o_device>& other) const;
 
 		template<typename RT = T, typename OT>
 		Tensor<RT, device> modulous(const OT& other) const;
 
-		template<typename OT, Mode o_device>
+		template<typename OT, Device o_device>
 		void additionAsgmt(const Tensor<OT, o_device>& other);
 
-		template<typename OT, Mode o_device>
+		template<typename OT, Device o_device>
 		void additionAsgmt(const TensorSlice<OT, o_device>& other);
 
 		template<typename OT>
 		void additionAsgmt(const OT& other);
 
-		template<typename OT, Mode o_device>
+		template<typename OT, Device o_device>
 		void subtractionAsgmt(const Tensor<OT, o_device>& other);
 
-		template<typename OT, Mode o_device>
+		template<typename OT, Device o_device>
 		void subtractionAsgmt(const TensorSlice<OT, o_device>& other);
 
 		template<typename OT>
 		void subtractionAsgmt(const OT& other);
 
-		template<typename OT, Mode o_device>
+		template<typename OT, Device o_device>
 		void multiplicationAsgmt(const Tensor<OT, o_device>& other);
 
-		template<typename OT, Mode o_device>
+		template<typename OT, Device o_device>
 		void multiplicationAsgmt(const TensorSlice<OT, o_device>& other);
 
 		template<typename OT>
 		void multiplicationAsgmt(const OT& other);
 
-		template<typename OT, Mode o_device>
+		template<typename OT, Device o_device>
 		void divisionAsgmt(const Tensor<OT, o_device>& other);
 
-		template<typename OT, Mode o_device>
+		template<typename OT, Device o_device>
 		void divisionAsgmt(const TensorSlice<OT, o_device>& other);
 
 		template<typename OT>
 		void divisionAsgmt(const OT& other);
 
-		template<typename OT, Mode o_device>
+		template<typename OT, Device o_device>
 		void modulouAsgmt(const Tensor<OT, o_device>& other);
 
-		template<typename OT, Mode o_device>
+		template<typename OT, Device o_device>
 		void modulouAsgmt(const TensorSlice<OT, o_device>& other);
 
 		template<typename OT>
@@ -383,121 +391,121 @@ namespace TSlib
 		template<Mode L, typename FT, typename ... Args>
 		void Kernel3D(CUDALayout<L> layout, FT(kernel_p), Args&& ... args);
 
-		template<typename RT = T, typename OT, Mode o_device>
+		template<typename RT = T, typename OT, Device o_device>
 		Tensor<RT, device> Cadd(Tensor<OT, o_device>& other);
 
-		template<typename RT = T, typename OT, Mode o_device>
+		template<typename RT = T, typename OT, Device o_device>
 		Tensor<RT, device> Cadd(const Tensor<OT, o_device>& other);
 
 		template<typename RT = T, typename OT>
 		Tensor<RT, device> Cadd(const OT& other);
 
-		template<typename RT = T, typename OT, Mode o_device>
+		template<typename RT = T, typename OT, Device o_device>
 		Tensor<RT, device> Csubtract(Tensor<OT, o_device>& other);
 
-		template<typename RT = T, typename OT, Mode o_device>
+		template<typename RT = T, typename OT, Device o_device>
 		Tensor<RT, device> Csubtract(const Tensor<OT, o_device>& other);
 
 		template<typename RT = T, typename OT>
 		Tensor<RT, device> Csubtract(const OT& other);
 
-		template<typename RT = T, typename OT, Mode o_device>
+		template<typename RT = T, typename OT, Device o_device>
 		Tensor<RT, device> Cmultiply(Tensor<OT, o_device>& other);
 
-		template<typename RT = T, typename OT, Mode o_device>
+		template<typename RT = T, typename OT, Device o_device>
 		Tensor<RT, device> Cmultiply(const Tensor<OT, o_device>& other);
 
 		template<typename RT = T, typename OT>
 		Tensor<RT, device> Cmultiply(const OT& other);
 
-		template<typename RT = T, typename OT, Mode o_device>
+		template<typename RT = T, typename OT, Device o_device>
 		Tensor<RT, device> Cdivide(Tensor<OT, o_device>& other);
 
-		template<typename RT = T, typename OT, Mode o_device>
+		template<typename RT = T, typename OT, Device o_device>
 		Tensor<RT, device> Cdivide(const Tensor<OT, o_device>& other);
 
 		template<typename RT = T, typename OT>
 		Tensor<RT, device> Cdivide(const OT& other);
 
-		template<typename RT = T, typename OT, Mode o_device>
+		template<typename RT = T, typename OT, Device o_device>
 		Tensor<RT, device> Cmodulous(Tensor<OT, o_device>& other);
 
-		template<typename RT = T, typename OT, Mode o_device>
+		template<typename RT = T, typename OT, Device o_device>
 		Tensor<RT, device> Cmodulous(const Tensor<OT, o_device>& other);
 
 		template<typename RT = T, typename OT>
 		Tensor<RT, device> Cmodulous(const OT& other);
 
-		template<typename OT, Mode o_device>
+		template<typename OT, Device o_device>
 		void CadditionAsgmt(Tensor<OT, o_device>& other);
 
-		template<typename OT, Mode o_device>
+		template<typename OT, Device o_device>
 		void CadditionAsgmt(const Tensor<OT, o_device>& other);
 
 		template<typename OT>
 		void CadditionAsgmt(const OT& other);
 
-		template<typename OT, Mode o_device>
+		template<typename OT, Device o_device>
 		void CsubtractionAsgmt(Tensor<OT, o_device>& other);
 
-		template<typename OT, Mode o_device>
+		template<typename OT, Device o_device>
 		void CsubtractionAsgmt(const Tensor<OT, o_device>& other);
 
 		template<typename OT>
 		void CsubtractionAsgmt(const OT& other);
 
-		template<typename OT, Mode o_device>
+		template<typename OT, Device o_device>
 		void CmultiplicationAsgmt(Tensor<OT, o_device>& other);
 
-		template<typename OT, Mode o_device>
+		template<typename OT, Device o_device>
 		void CmultiplicationAsgmt(const Tensor<OT, o_device>& other);
 
 		template<typename OT>
 		void CmultiplicationAsgmt(const OT& other);
 
-		template<typename OT, Mode o_device>
+		template<typename OT, Device o_device>
 		void CdivisionAsgmt(Tensor<OT, o_device>& other);
 
-		template<typename OT, Mode o_device>
+		template<typename OT, Device o_device>
 		void CdivisionAsgmt(const Tensor<OT, o_device>& other);
 
 		template<typename OT>
 		void CdivisionAsgmt(const OT& other);
 
-		template<typename OT, Mode o_device>
+		template<typename OT, Device o_device>
 		void CmodulouAsgmt(Tensor<OT, o_device>& other);
 
-		template<typename OT, Mode o_device>
+		template<typename OT, Device o_device>
 		void CmodulouAsgmt(const Tensor<OT, o_device>& other);
 
 		template<typename OT>
 		void CmodulouAsgmt(const OT& other);
 
-		template<typename RT = char, typename OT, Mode o_device>
+		template<typename RT = char, typename OT, Device o_device>
 		Tensor<RT, device> Ccompare(const Tensor<OT, o_device>& other);
 
 		template<typename RT = char, typename OT>
 		Tensor<RT, device> Ccompare(const OT& other);
 
-		template<typename RT = char, typename OT, Mode o_device>
+		template<typename RT = char, typename OT, Device o_device>
 		Tensor<RT, device> ClessThan(const Tensor<OT, o_device>& other);
 
 		template<typename RT = char, typename OT>
 		Tensor<RT, device> ClessThan(const OT& other);
 
-		template<typename RT = char, typename OT, Mode o_device>
+		template<typename RT = char, typename OT, Device o_device>
 		Tensor<RT, device> CgreaterThan(const Tensor<OT, o_device>& other);
 
 		template<typename RT = char, typename OT>
 		Tensor<RT, device> CgreaterThan(const OT& other);
 
-		template<typename RT = char, typename OT, Mode o_device>
+		template<typename RT = char, typename OT, Device o_device>
 		Tensor<RT, device> ClessThanEqual(const Tensor<OT, o_device>& other);
 
 		template<typename RT = char, typename OT>
 		Tensor<RT, device> ClessThanEqual(const OT& other);
 
-		template<typename RT = char, typename OT, Mode o_device>
+		template<typename RT = char, typename OT, Device o_device>
 		Tensor<RT, device> CgreaterThanEqual(const Tensor<OT, o_device>& other);
 
 		template<typename RT = char, typename OT>
@@ -505,9 +513,9 @@ namespace TSlib
 
 		#endif
 
-		template<typename RT = char, typename OT, Mode o_device>
+		template<typename RT = char, typename OT, Device o_device>
 		Tensor<RT, device> compare(const Tensor<OT, o_device>& other, bool(*comp_func)(const T&, const OT&) = Equal) const;
-		template<typename RT = char, typename OT, Mode o_device>
+		template<typename RT = char, typename OT, Device o_device>
 		Tensor<RT, device> compare(const TensorSlice<OT, o_device>& other, bool(*comp_func)(const T&, const OT&) = Equal) const;
 		template<typename RT = char, typename OT, std::enable_if_t<!is_tensor_type<OT>::value, int> = 0>
 		Tensor<RT, device> compare(const OT& other, bool(*comp_func)(const T&, const OT&) = Equal) const;
@@ -603,7 +611,7 @@ namespace TSlib
 		operator const CUDATensor3D<T>() const;
 		#endif
 
-		template<typename CT, Mode o_device>
+		template<typename CT, Device o_device>
 		operator Tensor<CT, o_device>() const
 		{
 			Tensor<CT, device> new_Tensor(Shape(), CT());
@@ -616,7 +624,7 @@ namespace TSlib
 			return new_Tensor;
 		}
 
-		template<typename CT, Mode o_device>
+		template<typename CT, Device o_device>
 		operator Tensor<CT, o_device>()
 		{
 			Tensor<CT, o_device> new_Tensor(Shape(), CT());
