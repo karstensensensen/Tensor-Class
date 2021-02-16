@@ -274,7 +274,7 @@ namespace TSlib
 		T& operator[](size_t indx);
 		T operator[](size_t indx) const;
 
-		Tensor<T, Device::CPU>& operator=(const std::vector<T>& other);
+		Tensor<T, device>& operator=(const std::vector<T>& other);
 
 		#ifdef _CUDA
 		operator T* ();

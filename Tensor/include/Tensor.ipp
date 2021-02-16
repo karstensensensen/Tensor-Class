@@ -1402,7 +1402,7 @@ namespace TSlib
 	}
 
 	template<typename T, Device device>
-	Tensor<T>& Tensor<T, device>::operator=(const std::vector<T>& other)
+	Tensor<T, device>& Tensor<T, device>::operator=(const std::vector<T>& other)
 	{
 		Fill(other);
 		return *this;

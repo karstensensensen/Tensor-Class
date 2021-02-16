@@ -110,9 +110,9 @@ namespace TSlib
 
 		__device__ size_t get_length();
 
-		template<Mode device>
+		template<Device device>
 		CUDATensor1D(Tensor<T, device>& tensor);
-		template<Mode device>
+		template<Device device>
 		CUDATensor1D(const Tensor<T, device>& tensor);
 		CUDATensor1D(const CUDATensor1D<T>& other);
 
@@ -148,9 +148,9 @@ namespace TSlib
 		__device__ size_t get_length();
 		__device__ size_t get_width();
 
-		template<Mode device>
+		template<Device device>
 		CUDATensor2D(Tensor<T, device>& tensor);
-		template<Mode device>
+		template<Device device>
 		CUDATensor2D(const Tensor<T, device>& tensor);
 		CUDATensor2D(const CUDATensor2D<T>& other);
 
@@ -189,9 +189,9 @@ namespace TSlib
 		__device__ size_t get_width();
 		__device__ size_t get_height();
 
-		template<Mode device>
+		template<Device device>
 		CUDATensor3D(Tensor<T, device>& tensor);
-		template<Mode device>
+		template<Device device>
 		CUDATensor3D(const Tensor<T, device>& tensor);
 		CUDATensor3D(const CUDATensor3D<T>& other);
 
@@ -272,7 +272,7 @@ namespace TSlib
 			#endif
 		}
 
-		template<typename T, Mode device>
+		template<typename T, Device device>
 		std::tuple<unsigned int, unsigned int, unsigned int> apply(const Tensor<T, device>* tensor, unsigned int target_threads)
 		{
 			double_t threads_cubed = get_cubed(target_threads);
@@ -364,7 +364,7 @@ namespace TSlib
 			#endif
 		}
 
-		template<typename T, Mode device>
+		template<typename T, Device device>
 		std::tuple<unsigned int, unsigned int, unsigned int> apply(const Tensor<T, device>* tensor, unsigned int target_threads)
 		{
 			#pragma warning(disable: 4244)
@@ -430,7 +430,7 @@ namespace TSlib
 			#endif
 		}
 
-		template<typename T, Mode device>
+		template<typename T, Device device>
 		std::tuple<unsigned int, unsigned int, unsigned int> apply(const Tensor<T, device>* tensor, unsigned int target_threads)
 		{
 			#pragma warning(disable: 4244)
