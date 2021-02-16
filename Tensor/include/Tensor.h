@@ -130,6 +130,8 @@ namespace TSlib
 		template<typename Ts, std::enable_if_t<std::is_integral<Ts>::value, int> = 0>
 		Tensor<T, device>& Reshape(const std::vector<Ts>& shape);
 
+		TensorSlice<T, device> AsShape(const std::vector<long long>& shape);
+
 		Tensor<T, device>& SetDims(const size_t& dims);
 
 		Tensor<T, device>& AddDims(const size_t& dims = 1);

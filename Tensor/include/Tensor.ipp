@@ -1032,6 +1032,16 @@ namespace TSlib
 	}
 
 	template<typename T, Device device>
+	inline TensorSlice<T, device> TSlib::Tensor<T, device>::AsShape(const std::vector<long long>& shape)
+	{
+
+		TensorSlice<T, device> slice = Slice();
+		slice.Reshape(shape);
+
+		return slice;
+	}
+
+	template<typename T, Device device>
 	Tensor<T, device>& Tensor<T, device>::SetDims(const size_t& dims)
 	{
 		MEASURE();
