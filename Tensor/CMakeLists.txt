@@ -5,6 +5,8 @@ set(INCLUDE_FILES
     include/SaveSequence.ipp
     include/Tensor.h
     include/Tensor.ipp
+    include/TensorBool.h
+    include/TensorBool.ipp
     include/TensorArithmetic.h
     include/TensorArithmeticOperators.ipp
     include/TensorCompareOperators.h
@@ -21,6 +23,7 @@ set(INCLUDE_FILES
 
 add_library(${PROJECT_NAME} STATIC
     src/Tensor.cpp
+    src/TensorBool.cpp
     src/TSliceWrapper.cpp
 
     ${INCLUDE_FILES}
