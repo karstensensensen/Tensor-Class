@@ -149,7 +149,7 @@ namespace TSlib
 	/// </summary>
 
 	template<typename T>
-	template<Mode device>
+	template<Device device>
 	CUDATensor1D<T>::CUDATensor1D(Tensor<T, device>& tensor)
 		: CTBase(tensor.gpu_mem, tensor.size(), nullptr, tensor.Dims())
 	{
@@ -160,7 +160,7 @@ namespace TSlib
 	}
 
 	template<typename T>
-	template<Mode device>
+	template<Device device>
 	CUDATensor1D<T>::CUDATensor1D(const Tensor<T, device>& tensor) const
 		: CTBase(tensor.gpu_mem, tensor.size(), nullptr, tensor.Dims())
 	{
@@ -179,7 +179,7 @@ namespace TSlib
 	}
 
 	template<typename T>
-	template<Mode device>
+	template<Device device>
 	CUDATensor2D<T>::CUDATensor2D(Tensor<T, device>& tensor)
 		: CTBase(tensor.gpu_mem, tensor.size(), nullptr, tensor.Dims())
 	{
@@ -192,7 +192,7 @@ namespace TSlib
 	}
 
 	template<typename T>
-	template<Mode device>
+	template<Device device>
 	CUDATensor2D<T>::CUDATensor2D(const Tensor<T, device>& tensor)
 		: CTBase(tensor.gpu_mem, tensor.size(), nullptr, tensor.Dims())
 	{
@@ -213,7 +213,7 @@ namespace TSlib
 	}
 
 	template<typename T>
-	template<Mode device>
+	template<Device device>
 	CUDATensor3D<T>::CUDATensor3D(Tensor<T, device>& tensor)
 		:CTBase(tensor.gpu_mem, tensor.size(), nullptr, tensor.Dims())
 	{
@@ -227,7 +227,7 @@ namespace TSlib
 	}
 
 	template<typename T>
-	template<Mode device>
+	template<Device device>
 	CUDATensor3D<T>::CUDATensor3D(const Tensor<T, device>& tensor)
 		:CTBase(tensor.gpu_mem, tensor.size(), nullptr, tensor.Dims())
 	{
@@ -450,37 +450,37 @@ namespace TSlib
 
 	/// Tensor class CUDATensor cast operators
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	Tensor<T, device>::operator CUDATensor1D<T>()
 	{
 		return CUDATensor1D<T>(*this);
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	Tensor<T, device>::operator const CUDATensor1D<T>() const
 	{
 		return const CUDATensor1D<T>(*this);
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	Tensor<T, device>::operator CUDATensor2D<T>()
 	{
 		return CUDATensor2D<T>(*this);
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	Tensor<T, device>::operator const CUDATensor2D<T>() const
 	{
 		return const CUDATensor2D<T>(*this);
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	Tensor<T, device>::operator CUDATensor3D<T>()
 	{
 		return CUDATensor3D<T>(*this);
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	Tensor<T, device>::operator const CUDATensor3D<T>() const
 	{
 		return const CUDATensor3D<T>(*this);
@@ -488,7 +488,7 @@ namespace TSlib
 
 	/// Tensor class cuda specific functions
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline __host__ void Tensor<T, device>::allocate()
 	{
 		//Allocate the cpu memory on the gpu
@@ -503,7 +503,7 @@ namespace TSlib
 		allocated = true;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	void Tensor<T, device>::deallocate()
 	{
 		//Deallocate the gpu memmorry
@@ -517,19 +517,19 @@ namespace TSlib
 		allocated = false;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	bool Tensor<T, device>::isAllocated() const
 	{
 		return allocated;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	bool Tensor<T, device>::isDeallocated() const
 	{
 		return !allocated;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline void Tensor<T, device>::copyGPU()
 	{
 		//assert if memory is not allocated on gpu
@@ -542,7 +542,7 @@ namespace TSlib
 		CER(cudaMemcpy(gpu_mem, Data(), size() * sizeof(T), cudaMemcpyHostToDevice));
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	void Tensor<T, device>::copyCPU()
 	{
 		//assert if memory is not allocated on gpu
@@ -555,33 +555,33 @@ namespace TSlib
 		CER(cudaMemcpy(Data(), gpu_mem, size() * sizeof(T), cudaMemcpyDeviceToHost));
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	inline void Tensor<T, device>::push()
 	{
 		allocate();
 		copyGPU();
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	void Tensor<T, device>::pull()
 	{
 		copyCPU();
 		deallocate();
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	__host__ __device__ T* Tensor<T, device>::getGPU()
 	{
 		return gpu_mem;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	__host__ __device__ const T* Tensor<T, device>::getGPU() const
 	{
 		return gpu_mem;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	void Tensor<T, device>::setTargetThreads(const unsigned short& value)
 	{
 		#ifdef _TS_DEBUG
@@ -592,7 +592,7 @@ namespace TSlib
 		m_threads = value;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	short Tensor<T, device>::getTargetThreads() const
 	{
 		m_threads = value;
@@ -614,7 +614,7 @@ namespace TSlib
 	/// NOTE: block layout is not affected by these options
 	/// NOTE: lower dimension kernels can use higher dimension thread layouts
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<Mode layout, typename FT, typename RT, typename ...Args>
 	Tensor<RT, device> Tensor<T, device>::Kernel1DR(CUDALayout<layout> layout, FT(kernel_p), Args && ...args)
 	{
@@ -651,7 +651,7 @@ namespace TSlib
 		#endif
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<Mode layout, typename FT, typename ...Args>
 	void Tensor<T, device>::Kernel1D(CUDALayout<layout> layout, FT(kernel_p), Args && ...args)
 	{
@@ -677,7 +677,7 @@ namespace TSlib
 		CER(cudaDeviceSynchronize());
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<Mode layout, typename FT, typename RT, typename ...Args>
 	Tensor<RT, device> Tensor<T, device>::Kernel2DR(CUDALayout<layout> layout, FT(kernel_p), Args && ...args)
 	{
@@ -714,7 +714,7 @@ namespace TSlib
 		return result;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<Mode layout, typename FT, typename ...Args>
 	void Tensor<T, device>::Kernel2D(CUDALayout<layout> layout, FT(kernel_p), Args && ...args)
 	{
@@ -742,7 +742,7 @@ namespace TSlib
 		CER(cudaDeviceSynchronize());
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<Mode layout, typename FT, typename RT, typename ...Args>
 	Tensor<RT, device> Tensor<T, device>::Kernel3DR(CUDALayout<layout> layout, FT(kernel_p), Args && ...args)
 	{
@@ -780,7 +780,7 @@ namespace TSlib
 		return result;
 	}
 
-	template<typename T, Mode device>
+	template<typename T, Device device>
 	template<Mode layout, typename FT, typename ...Args>
 	void Tensor<T, device>::Kernel3D(CUDALayout<layout> layout, FT(kernel_p), Args && ...args)
 	{

@@ -307,14 +307,13 @@ namespace TSlib
 	{
 		return sum<RT>() / (RT)size();
 	}
-	
+
 	template<typename T, Tools::enable_if_tensor<T>>
 	T Tools::avg(const T& source, size_t axis, bool keepDims)
 	{
 		T result = source.Compute([](typename T::Type& new_elem, const typename T::Type& elem) {new_elem += elem; }, axis, keepDims);
 		result.Compute([axis, &source](typename T::Type& elem) {elem /= (T)source.Shape()[axis]; });
 		return result;
-
 	}
 
 	// takes the sine value of the element

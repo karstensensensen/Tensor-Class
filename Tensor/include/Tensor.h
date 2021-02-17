@@ -10,6 +10,12 @@
 #include "TensorEnums.h"
 #include "TensorSlice.h"
 
+#if (defined(_DEBUG) || defined(DEBUG)) && !defined(_TS_DEBUG)
+#ifndef _TS_NO_DEB_WARN
+#pragma message("Warning: build is running in debug mode but the marco \"_TS_DEBUG\" has not been defined for the Tensor library.\nDisable this warning by defining \"_TS_NO_DEB_WARN\"")
+#endif
+#endif
+
 namespace TSlib
 {
 	template<typename T>
@@ -129,6 +135,8 @@ namespace TSlib
 
 		template<typename Ts, std::enable_if_t<std::is_integral<Ts>::value, int> = 0>
 		Tensor<T, device>& Reshape(const std::vector<Ts>& shape);
+
+		TensorSlice<T, device> AsShape(const std::vector<long long>& shape);
 
 		Tensor<T, device>& SetDims(const size_t& dims);
 
@@ -266,7 +274,7 @@ namespace TSlib
 		T& operator[](size_t indx);
 		T operator[](size_t indx) const;
 
-		Tensor<T, Device::CPU>& operator=(const std::vector<T>& other);
+		Tensor<T, device>& operator=(const std::vector<T>& other);
 
 		#ifdef _CUDA
 		operator T* ();

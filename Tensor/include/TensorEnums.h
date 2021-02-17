@@ -2,7 +2,6 @@
 
 namespace TSlib
 {
-
 	enum class Mode
 	{
 		Multiply,

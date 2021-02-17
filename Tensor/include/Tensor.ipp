@@ -559,7 +559,7 @@ namespace TSlib
 			std::vector<size_t> coords(Dims());
 
 			size_t tmp_indx = index;
-			
+
 			for (size_t j = 0; j < Dims(); j++)
 			{
 				coords[Dims() - j - 1] = tmp_indx % Shape()[Dims() - j - 1];
@@ -1032,6 +1032,15 @@ namespace TSlib
 	}
 
 	template<typename T, Device device>
+	inline TensorSlice<T, device> TSlib::Tensor<T, device>::AsShape(const std::vector<long long>& shape)
+	{
+		TensorSlice<T, device> slice = Slice();
+		slice.Reshape(shape);
+
+		return slice;
+	}
+
+	template<typename T, Device device>
 	Tensor<T, device>& Tensor<T, device>::SetDims(const size_t& dims)
 	{
 		MEASURE();
@@ -1142,7 +1151,20 @@ namespace TSlib
 	inline TensorSlice<T, device> Tensor<T, device>::Slice(const std::vector<TSlice>& slices)
 	{
 		MEASURE();
-		return TensorSlice<T, device>(this, slices);
+
+		TensorSlice<T, device> slice(this, slices);
+
+		#ifdef _TS_DEBUG
+		for (size_t i = 0; i < Dims(); i++)
+		{
+			if (slice.TSliceShape()[i].get_from() + slice.Shape()[i] > Shape()[i])
+			{
+				throw TSlib::BadShape("Slice must be within Tensor borders", slice.Shape(), Shape());
+			}
+		}
+		#endif
+
+		return slice;
 	}
 
 	//template<typename T, Device device>
@@ -1379,7 +1401,7 @@ namespace TSlib
 	}
 
 	template<typename T, Device device>
-	Tensor<T>& Tensor<T, device>::operator=(const std::vector<T>& other)
+	Tensor<T, device>& Tensor<T, device>::operator=(const std::vector<T>& other)
 	{
 		Fill(other);
 		return *this;

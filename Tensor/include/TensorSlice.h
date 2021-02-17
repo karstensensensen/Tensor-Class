@@ -80,6 +80,7 @@ namespace TSlib
 		size_t map_index(size_t index) const;
 
 		const std::vector<size_t>& Shape() const;
+		const std::vector<TSlice>& TSliceShape() const;
 
 		TensorSlice<T, device>& Reshape(const std::vector<long long>& shape);
 
@@ -97,7 +98,7 @@ namespace TSlib
 		Tensor<TReturn, device> prod(size_t axis, bool keepDims = true) const;
 
 		T max() const;
-		
+
 		T min() const;
 
 		template<typename RT = T>
