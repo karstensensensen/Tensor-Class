@@ -29,6 +29,7 @@ typedef double double_t;
 #include "TensorArithmetic.h"
 #include "TensorSlice.h"
 #include "TensorTools.h"
+#include "TensorBool.h"
 #include <filesystem>
 #include <functional>
 #include <algorithm>
