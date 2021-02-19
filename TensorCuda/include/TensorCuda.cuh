@@ -7,7 +7,6 @@
 #include <tuple>
 
 #define __kernel__ __global__ void
-#define ROUND(x)
 
 namespace TSlib
 {
@@ -16,7 +15,7 @@ namespace TSlib
 		static cudaDeviceProp props;
 		static int devcount;
 		#ifdef _TS_DEBUG
-		bool CUDA_IS_INITIALIZED = false;
+		static bool CUDA_IS_INITIALIZED = false;
 
 		#define CER(ans) { gpuAssert((ans), __FILE__, __LINE__); }
 		inline void gpuAssert(cudaError_t code, const char* file, int line)
