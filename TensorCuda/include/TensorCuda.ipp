@@ -161,7 +161,7 @@ namespace TSlib
 
 	template<typename T>
 	template<Device device>
-	CUDATensor1D<T>::CUDATensor1D(const Tensor<T, device>& tensor) const
+	CUDATensor1D<T>::CUDATensor1D(const Tensor<T, device>& tensor)
 		: CTBase(tensor.gpu_mem, tensor.size(), nullptr, tensor.Dims())
 	{
 		CER(cudaMalloc(&dim_arr, sizeof(size_t) * dims));
