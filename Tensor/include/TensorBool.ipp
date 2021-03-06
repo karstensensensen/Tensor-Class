@@ -19,7 +19,7 @@ namespace TSlib
 	Tensor<bool, device>& Tensor<bool, device>::Resize(const std::vector<size_t>& sizes, bool pad_val)
 	{
 		// the first dimension of the real shape must be 1/8 of the real size rounded up
-		tmp_dim = sizes[0];
+		size_t tmp_dim = sizes[0];
 		m_bool_shape = sizes;
 		m_bool_shape[0] = (tmp_dim + 8) / 8;
 
