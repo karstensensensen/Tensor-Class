@@ -16,6 +16,12 @@
 #endif
 #endif
 
+#if __cplusplus == 199711L && !defined(_TS_NO_STD_WARN)
+#pragma message("Warning: __cplusplus is set to its disabled value, the minimum standard version required to compile is c++17\nTo disable this warning define \"_TS_NO_STD_WARN\"")
+#elif __cplusplus < 201703L
+#error "std version must be greater than or equal to c++17"
+#endif
+
 namespace TSlib
 {
 	template<typename T>
