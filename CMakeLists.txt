@@ -39,3 +39,4 @@ if(OPENCV_MODULE)
     
 endif()
 
+target_compile_options(${PROJECT_NAME} PUBLIC "/Zc:__cplusplus")
