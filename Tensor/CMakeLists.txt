@@ -37,6 +37,7 @@ set_target_properties(${PROJECT_NAME}
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC $<$<CONFIG:DEBUG>:_TS_DEBUG>)
 
+target_compile_options(${PROJECT_NAME} PRIVATE /Zc:__cplusplus)
 if(ENABLE_OPENMP)
     target_compile_options(${PROJECT_NAME} PRIVATE /openmp)
 endif()
