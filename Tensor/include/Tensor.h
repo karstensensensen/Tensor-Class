@@ -126,6 +126,7 @@ namespace TSlib
 		Tensor(const TensorSlice<T, device>& slicee);
 
 		Tensor(const Tensor<T, device>& other);
+		Tensor(Tensor<T, device>&& other);
 
 		void Save(std::string dir) const;
 		Tensor<T, device>& Load(std::string dir);
@@ -281,6 +282,8 @@ namespace TSlib
 		T operator[](size_t indx) const;
 
 		Tensor<T, device>& operator=(const std::vector<T>& other);
+		Tensor<T, device>& operator=(const Tensor<T, device>& other);
+		Tensor<T, device>& operator=(Tensor<T, device>&& other);
 
 		#ifdef _CUDA
 		operator T* ();

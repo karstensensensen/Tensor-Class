@@ -400,6 +400,20 @@ namespace TSlib
 	}
 
 	template<typename T, Device device>
+	Tensor<T, device>::Tensor(Tensor<T, device>&& other)
+		: m_vector(std::move(other.m_vector)), m_shape(std::move(other.m_shape))
+	{
+		#ifdef _CUDA
+		gpu_mem = other.gpu_mem;
+		allocated = other.allocated;
+		m_threads = other.m_threads;
+
+		other.gpu_mem = nullptr;
+		#endif
+	}
+
+
+	template<typename T, Device device>
 	inline void Tensor<T, device>::Save(std::string dir) const
 	{
 		// create directories
@@ -1404,6 +1418,35 @@ namespace TSlib
 	Tensor<T, device>& Tensor<T, device>::operator=(const std::vector<T>& other)
 	{
 		Fill(other);
+		return *this;
+	}
+
+	template<typename T, Device device>
+	Tensor<T, device>& Tensor<T, device>::operator=(const Tensor<T, device>& other)
+	{
+		Fill(other.m_vector);
+		return *this;
+	}
+
+	template<typename T, Device device>
+	Tensor<T, device>& Tensor<T, device>::operator=(Tensor<T, device>&& other)
+	{
+		m_vector = std::move(other.m_vector);
+		m_shape = std::move(other.m_shape);
+
+		#ifdef _CUDA
+		if (allocated)
+		{
+			deallocate();
+		}
+
+		gpu_mem = other.gpu_mem;
+		allocated = other.allocated;
+		m_threads = other.m_threads;
+
+		other.gpu_mem = nullptr;
+		#endif
+
 		return *this;
 	}
 
