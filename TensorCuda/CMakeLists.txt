@@ -28,6 +28,7 @@ source_group("Header Files" FILES ${INCLUDE_FILES})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 
+target_compile_options(${PROJECT_NAME} PRIVATE -Xcompiler="/Zc:__cplusplus")
 if(ENABLE_OPENMP)
     target_compile_options(${PROJECT_NAME} PRIVATE -Xcompiler="/openmp")
 endif()
