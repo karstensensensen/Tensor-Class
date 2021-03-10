@@ -23,15 +23,34 @@ namespace TSlib
 		m_bool_shape = sizes;
 		m_bool_shape[0] = (tmp_dim + 8) / 8;
 
-		Tensor<unsigned char, device>::Resize(m_bool_shape, pad_val ? 0 : UCHAR_MAX);
+		Tensor<unsigned char, device>::Resize(m_bool_shape, pad_val ? UCHAR_MAX : 0);
 
 		m_bool_shape[0] = tmp_dim;
+
+		return *this;
 	}
 
 	template<Device device>
 	bool Tensor<bool, device>::At(size_t indx) const
 	{
+		unsigned char bit = indx % 8;
+		indx = indx / 8;
 
+		return (this->m_vector[indx] >> bit) & 1;
+	}
+
+	template<Device device>
+	void Tensor<bool, device>::SetIdx(bool val, size_t indx)
+	{
+
+		/*#ifdef _TS_DEBUG
+		if(size_t indx > )
+		#endif*/
+
+		unsigned char bit = indx % 8;
+		indx = indx / 8;
+
+		this->m_vector[indx] = (this->m_vector[indx] & ~(1U << bit)) | (val << bit);
 	}
 
 	/*template<Device device>

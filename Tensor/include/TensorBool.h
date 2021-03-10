@@ -13,7 +13,7 @@ namespace TSlib
 
 	public:
 		Tensor();
-		Tensor(const std::vector<size_t>& sizes, bool pad_val = False);
+		Tensor(const std::vector<size_t>& sizes, bool pad_val = false);
 		Tensor(const std::vector<size_t>& sizes, std::function<bool()> generator);
 		Tensor(const std::vector<size_t>& sizes, std::function<bool(const size_t&)> generator);
 		Tensor(const std::vector<size_t>& sizes, std::function<bool(const std::vector<size_t>&)> generator);
