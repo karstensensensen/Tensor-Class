@@ -268,8 +268,21 @@ namespace TSlib
 	std::vector<size_t> Tensor<T, device>::based_sort(const std::vector<size_t>& target)
 	{
 		std::vector<size_t> new_indexes(target.size());
-		//
+		
 		std::generate(new_indexes.begin(), new_indexes.end(), [n = target.size() - 1]() mutable {return n--; });
+
+		std::sort(new_indexes.begin(), new_indexes.end(), sorter(target));
+
+		return new_indexes;
+	}
+
+	template<typename T, Device device>
+	template<size_t n>
+	std::array<size_t, n> Tensor<T, device>::based_sort(const std::array<size_t, n>& target)
+	{
+		std::array<size_t, n> new_indexes;
+		
+		std::generate(new_indexes.begin(), new_indexes.end(), [i = n - 1]() mutable {return i--; });
 
 		std::sort(new_indexes.begin(), new_indexes.end(), sorter(target));
 
@@ -932,6 +945,19 @@ namespace TSlib
 	}
 
 	template<typename T, Device device>
+	template<size_t n>
+	inline size_t Tensor<T, device>::calc_new_size(const std::array<size_t, n>& sizes)
+	{
+		MEASURE();
+		size_t new_size = 1;
+		for (const size_t& elem_size : sizes)
+		{
+			new_size *= elem_size;
+		}
+		return new_size;
+	}
+
+	template<typename T, Device device>
 	Tensor<T, device>& Tensor<T, device>::Resize(const std::vector<size_t>& sizes, const T& pad_val)
 	{
 		MEASURE();
@@ -961,6 +987,68 @@ namespace TSlib
 		for (size_t i = 0; i < sizes.size(); i++)
 		{
 			size_t target_size = sizes.size() - dimensions[i] - 1;
+			size_t new_amount = NULL;
+			size_t tmp_size = size();
+			size_t tmp_row_size = get_real_size(dimensions[i]);
+
+			m_shape[target_size] = sizes[target_size];
+
+			if (dimensions[i] != 0)
+				new_amount = get_real_size(dimensions[i] - 1) * get_dim_length(dimensions[i]);
+			else
+				new_amount = get_dim_length(dimensions[i]);
+
+			if (new_amount > tmp_size)
+			{
+				new_amount -= tmp_size;
+
+				//Resize dimension
+				upscale_dim(dimensions[i], tmp_row_size, new_amount, pad_val);
+			}
+			else
+			{
+				new_amount = tmp_size - new_amount;
+
+				downscale_dim(dimensions[i], tmp_row_size, new_amount);
+			}
+		}
+
+		m_vector.shrink_to_fit();
+
+		return *this;
+	}
+
+	template<typename T, Device device>
+	template<size_t n>
+	inline Tensor<T, device>& TSlib::Tensor<T, device>::Resize(const std::array<size_t, n>& sizes, const T& pad_val)
+	{
+		MEASURE();
+		#ifdef _CUDA
+		//deallocate gpu memory if allocated to make sure there isnt accidentally copied too much or little memory to cpu or gpu
+		if (isAllocated())
+			deallocate();
+		#endif
+
+		#ifdef _TS_DEBUG
+		if (n == 0)
+		{
+			throw BadShape("New shape must not be of length 0");
+		}
+		#endif
+
+		SetDims(n);
+
+		size_t current_size = get_real_size(m_shape.size() - 1);
+		size_t new_size = calc_new_size<n>(sizes);
+
+		if (current_size < new_size)
+			m_vector.reserve(new_size - current_size);
+
+		std::array<size_t, n> dimensions = based_sort(sizes);
+
+		for (size_t i = 0; i < n; i++)
+		{
+			size_t target_size = n - dimensions[i] - 1;
 			size_t new_amount = NULL;
 			size_t tmp_size = size();
 			size_t tmp_row_size = get_real_size(dimensions[i]);

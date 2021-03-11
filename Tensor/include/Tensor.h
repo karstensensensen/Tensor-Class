@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <array>
 #include <vector>
 #include <thread>
 #include <atomic>
@@ -88,6 +89,8 @@ namespace TSlib
 
 		size_t calc_new_size(const std::initializer_list<size_t>& sizes);
 		size_t calc_new_size(const std::vector<size_t>& sizes);
+		template<size_t n>
+		size_t calc_new_size(const std::array<size_t, n>& sizes);
 
 		size_t get_real_size(const size_t& index) const;
 		size_t get_dim_length(const size_t& index) const;
@@ -109,7 +112,8 @@ namespace TSlib
 		void to_vector(std::vector<TSlice>& vec, const std::initializer_list<First>& first, const std::initializer_list<Args>& ... args);
 
 		std::vector<size_t> based_sort(const std::vector<size_t>& target);
-
+		template<size_t n>
+		std::array<size_t, n> based_sort(const std::array<size_t, n>& target);
 		std::vector<size_t> based_sort(const std::vector<TSlice>& target);
 
 	public:
@@ -139,6 +143,8 @@ namespace TSlib
 		size_t FlattenDims() const;
 
 		Tensor<T, device>& Resize(const std::vector<size_t>& sizes, const T& pad_val = T());
+		template<size_t n>
+		Tensor<T, device>& Resize(const std::array<size_t, n>& sizes, const T& pad_val = T());
 
 		template<typename Ts, std::enable_if_t<std::is_integral<Ts>::value, int> = 0>
 		Tensor<T, device>& Reshape(const std::vector<Ts>& shape);
