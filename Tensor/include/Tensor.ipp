@@ -249,6 +249,21 @@ namespace TSlib
 			}
 		};
 
+		template<size_t n>
+		struct staticSorter
+		{
+			const std::array<size_t, n>& vec;
+
+			staticSorter(const std::array<size_t, n>& vec)
+				:vec(vec)
+			{}
+
+			bool operator()(size_t a, size_t b)
+			{
+				return vec[a] < vec[b];
+			}
+		};
+
 		struct sorterSlice
 		{
 			const std::vector<TSlice>& vec;
@@ -284,7 +299,7 @@ namespace TSlib
 		
 		std::generate(new_indexes.begin(), new_indexes.end(), [i = n - 1]() mutable {return i--; });
 
-		std::sort(new_indexes.begin(), new_indexes.end(), sorter(target));
+		std::sort(new_indexes.begin(), new_indexes.end(), stackSorter<n>(target));
 
 		return new_indexes;
 	}
