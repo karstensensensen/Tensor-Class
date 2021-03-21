@@ -1636,10 +1636,60 @@ std::ostream& operator<< (std::ostream& stream, const TSlib::TensorSlice<T, devi
 	stream << slice.printable();
 	return stream;
 }
-
-template<typename T, TSlib::Device device>
-std::ostream& operator<< (std::ostream& stream, const TSlib::Tensor<T, device>& Tensor)
+namespace TSlib
 {
-	stream << Tensor.printable();
-	return stream;
+	template<typename Tprint, TSlib::Device device_print>
+	std::ostream& operator<<(std::ostream& stream, const TSlib::Tensor<Tprint, device_print>& tensor)
+	{
+		size_t max_length = 0;
+
+		for (const Tprint& elem : tensor)
+		{
+			max_length = std::max(to_string(elem).size(), max_length);
+		}
+
+		for (size_t i = 0; i < tensor.Shape()[tensor.Dims() - 1]; i++)
+		{
+			stream << to_string(tensor[i]);
+
+			size_t str_len = to_string(tensor[i]).size();
+
+			for (size_t j = 0; j < max_length - str_len; j++)
+			{
+				stream << ' ';
+			}
+
+			stream << ',';
+
+			if (i % tensor.Shape()[tensor.Dims() - 1] == tensor.Shape()[tensor.Dims() - 1] - 1)
+			{
+				stream << '\n';
+			}
+		}
+
+		for (size_t dim = 1; dim < tensor.Dims(); dim++)
+		{
+			stream << "\n";
+			for (size_t i = tensor.get_real_size(dim - 1); i < tensor.get_real_size(dim); i++)
+			{
+				stream << to_string(tensor[i]);
+
+				size_t str_len = to_string(tensor[i]).size();
+
+				for (size_t j = 0; j < max_length - str_len; j++)
+				{
+					stream << ' ';
+				}
+
+				stream << ',';
+
+				if (i % tensor.Shape()[tensor.Dims() - 1] == tensor.Shape()[tensor.Dims() - 1] - 1)
+				{
+					stream << '\n';
+				}
+			}
+		}
+
+		return stream;
+	}
 }

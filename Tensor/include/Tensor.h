@@ -626,6 +626,9 @@ namespace TSlib
 		operator const CUDATensor3D<T>() const;
 		#endif
 
+		template<typename Tprint, Device device_print>
+		friend std::ostream& operator<<(std::ostream& stream, const Tensor<Tprint, device_print>& tensor);
+
 		template<typename CT, Device o_device>
 		operator Tensor<CT, o_device>() const
 		{
@@ -653,7 +656,7 @@ namespace TSlib
 		}
 	};
 
-	double_t round(double_t x, double_t place);
+	double round(double x, double place);
 }
 
 #include "Tensor.ipp"

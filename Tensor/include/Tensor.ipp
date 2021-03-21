@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef __clang__
-typedef double double_t;
+typedef double double;
 #endif
 
 #include <stdlib.h>
@@ -299,7 +299,7 @@ namespace TSlib
 		
 		std::generate(new_indexes.begin(), new_indexes.end(), [i = n - 1]() mutable {return i--; });
 
-		std::sort(new_indexes.begin(), new_indexes.end(), stackSorter<n>(target));
+		std::sort(new_indexes.begin(), new_indexes.end(), staticSorter<n>(target));
 
 		return new_indexes;
 	}
@@ -1131,7 +1131,7 @@ namespace TSlib
 		size_t unknown_value = size() / shape_product;
 
 		#ifdef _TS_DEBUG
-		if (double_t(unknown_value) != round(double_t(size()) / double_t(shape_product), 1000))
+		if (double(unknown_value) != round(double(size()) / double(shape_product), 1000))
 		{
 			throw BadShape("The unknown dimension is impossible to fit with the given shape", Shape(), shape);
 		}
