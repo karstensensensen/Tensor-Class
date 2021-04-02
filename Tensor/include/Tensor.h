@@ -77,44 +77,12 @@ namespace TSlib
 
 		std::vector<T> m_vector;
 		std::vector<size_t> m_shape;
-
+		
 		#ifdef _CUDA
-	public:
+		public:
 		T* gpu_mem;
-	protected:
-		bool allocated = false;
-		constexpr static unsigned char MAX_THREADS = DEVICE_MAX_THREADS / 32;
-		unsigned short m_threads = MAX_THREADS;
 		#endif
-
-		size_t calc_new_size(const std::initializer_list<size_t>& sizes);
-		size_t calc_new_size(const std::vector<size_t>& sizes);
-		template<size_t n>
-		size_t calc_new_size(const std::array<size_t, n>& sizes);
-
-		size_t get_real_size(const size_t& index) const;
-		size_t get_dim_length(const size_t& index) const;
-
-		void upscale_dim(const size_t& index, const size_t& row_size, const size_t& amount, const T& pad_val);
-
-		void downscale_dim(const size_t& index, const size_t& row_size, const size_t& amount);
-
-		template<typename First>
-		void get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord);
-
-		template<typename First, typename ... Args>
-		void get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord, Args ... remaining);
-
-		template<typename First>
-		void to_vector(std::vector<TSlice>& vec, const std::initializer_list<First>& val);
-
-		template<typename ... Args, typename First>
-		void to_vector(std::vector<TSlice>& vec, const std::initializer_list<First>& first, const std::initializer_list<Args>& ... args);
-
-		std::vector<size_t> based_sort(const std::vector<size_t>& target);
-		template<size_t n>
-		std::array<size_t, n> based_sort(const std::array<size_t, n>& target);
-		std::vector<size_t> based_sort(const std::vector<TSlice>& target);
+	
 
 	public:
 
@@ -186,36 +154,36 @@ namespace TSlib
 		//math functions
 
 		template<typename TReturn = T>
-		TReturn sum() const;
+		TReturn Sum() const;
 		template<typename TReturn = T>
-		Tensor<TReturn, device> sum(size_t axis, bool keepDims = true) const;
+		Tensor<TReturn, device> Sum(size_t axis, bool keepDims = true) const;
 
 		template<typename TReturn = T>
-		TReturn prod() const;
+		TReturn Prod() const;
 		template<typename TReturn = T>
-		Tensor<TReturn, device> prod(size_t axis, bool keepDims = true) const;
+		Tensor<TReturn, device> Prod(size_t axis, bool keepDims = true) const;
 
-		Tensor<T, device>& exp();
+		Tensor<T, device>& Exp();
 
-		Tensor<T, device>& normalize();
+		Tensor<T, device>& Normalize();
 
-		T max() const;
+		T Max() const;
 
-		T min() const;
+		T Min() const;
 
 		template<typename RT = T>
-		RT avg() const;
+		RT Avg() const;
 
-		Tensor<T, device>& sin();
-		Tensor<T, device>& cos();
-		Tensor<T, device>& tan();
+		Tensor<T, device>& Sin();
+		Tensor<T, device>& Cos();
+		Tensor<T, device>& Tan();
 
-		Tensor<T, device>& arcsin();
-		Tensor<T, device>& arccos();
-		Tensor<T, device>& arctan();
+		Tensor<T, device>& ArcSin();
+		Tensor<T, device>& ArcCos();
+		Tensor<T, device>& ArcTan();
 
-		Tensor<T, device>& convDeg();
-		Tensor<T, device>& convRad();
+		Tensor<T, device>& ConvDeg();
+		Tensor<T, device>& ConvRad();
 
 		inline T& Get(const std::vector<size_t>& coords);
 		template<typename ... Args>
@@ -237,26 +205,26 @@ namespace TSlib
 
 		#ifdef _CUDA
 
-		void allocate();
+		void Allocate();
 
-		void deallocate();
+		void Deallocate();
 
-		bool isAllocated() const;
-		bool isDeallocated() const;
+		bool IsAllocated() const;
+		bool IsDeallocated() const;
 
-		void copyGPU();
+		void CopyGPU();
 
-		void copyCPU();
+		void CopyCPU();
 
-		void push();
+		void Push();
 
-		void pull();
+		void Pull();
 
 		__device__ __host__ T* getGPU();
 		__device__ __host__ const T* getGPU() const;
 
-		void setTargetThreads(const unsigned short&);
-		short getTargetThreads() const;
+		void SetTargetThreads(const unsigned short&);
+		short GetTargetThreads() const;
 
 		#endif
 
@@ -298,94 +266,94 @@ namespace TSlib
 		#endif
 
 		template<typename RT = T, typename OT, Device o_device>
-		Tensor<RT, device> add(const Tensor<OT, o_device>& other) const;
+		Tensor<RT, device> Add(const Tensor<OT, o_device>& other) const;
 
 		template<typename RT = T, typename OT, Device o_device>
-		Tensor<RT, device> add(const TensorSlice<OT, o_device>& other) const;
+		Tensor<RT, device> Add(const TensorSlice<OT, o_device>& other) const;
 
 		template<typename RT = T, typename OT>
-		Tensor<RT, device> add(const OT& other) const;
+		Tensor<RT, device> Add(const OT& other) const;
 
 		template<typename RT = T, typename OT, Device o_device>
-		Tensor<RT, device> subtract(const Tensor<OT, o_device>& other) const;
+		Tensor<RT, device> Subtract(const Tensor<OT, o_device>& other) const;
 
 		template<typename RT = T, typename OT, Device o_device>
-		Tensor<RT, device> subtract(const TensorSlice<OT, o_device>& other) const;
+		Tensor<RT, device> Subtract(const TensorSlice<OT, o_device>& other) const;
 
 		template<typename RT = T, typename OT>
-		Tensor<RT, device> subtract(const OT& other) const;
+		Tensor<RT, device> Subtract(const OT& other) const;
 
 		template<typename RT = T, typename OT, Device o_device>
-		Tensor<RT, device> multiply(const Tensor<OT, o_device>& other) const;
+		Tensor<RT, device> Multiply(const Tensor<OT, o_device>& other) const;
 
 		template<typename RT = T, typename OT, Device o_device>
-		Tensor<RT, device> multiply(const TensorSlice<OT, o_device>& other) const;
+		Tensor<RT, device> Multiply(const TensorSlice<OT, o_device>& other) const;
 
 		template<typename RT = T, typename OT>
-		Tensor<RT, device> multiply(const OT& other) const;
+		Tensor<RT, device> Multiply(const OT& other) const;
 
 		template<typename RT = T, typename OT, Device o_device>
-		Tensor<RT, device> divide(const Tensor<OT, o_device>& other) const;
+		Tensor<RT, device> Divide(const Tensor<OT, o_device>& other) const;
 
 		template<typename RT = T, typename OT, Device o_device>
-		Tensor<RT, device> divide(const TensorSlice<OT, o_device>& other) const;
+		Tensor<RT, device> Divide(const TensorSlice<OT, o_device>& other) const;
 
 		template<typename RT = T, typename OT>
-		Tensor<RT, device> divide(const OT& other) const;
+		Tensor<RT, device> Divide(const OT& other) const;
 
 		template<typename RT = T, typename OT, Device o_device>
-		Tensor<RT, device> modulous(const Tensor<OT, o_device>& other) const;
+		Tensor<RT, device> Modulous(const Tensor<OT, o_device>& other) const;
 
 		template<typename RT = T, typename OT, Device o_device>
-		Tensor<RT, device> modulous(const TensorSlice<OT, o_device>& other) const;
+		Tensor<RT, device> Modulous(const TensorSlice<OT, o_device>& other) const;
 
 		template<typename RT = T, typename OT>
-		Tensor<RT, device> modulous(const OT& other) const;
+		Tensor<RT, device> Modulous(const OT& other) const;
 
 		template<typename OT, Device o_device>
-		void additionAsgmt(const Tensor<OT, o_device>& other);
+		void AdditionAsgmt(const Tensor<OT, o_device>& other);
 
 		template<typename OT, Device o_device>
-		void additionAsgmt(const TensorSlice<OT, o_device>& other);
+		void AdditionAsgmt(const TensorSlice<OT, o_device>& other);
 
 		template<typename OT>
-		void additionAsgmt(const OT& other);
+		void AdditionAsgmt(const OT& other);
 
 		template<typename OT, Device o_device>
-		void subtractionAsgmt(const Tensor<OT, o_device>& other);
+		void SubtractionAsgmt(const Tensor<OT, o_device>& other);
 
 		template<typename OT, Device o_device>
-		void subtractionAsgmt(const TensorSlice<OT, o_device>& other);
+		void SubtractionAsgmt(const TensorSlice<OT, o_device>& other);
 
 		template<typename OT>
-		void subtractionAsgmt(const OT& other);
+		void SubtractionAsgmt(const OT& other);
 
 		template<typename OT, Device o_device>
-		void multiplicationAsgmt(const Tensor<OT, o_device>& other);
+		void MultiplicationAsgmt(const Tensor<OT, o_device>& other);
 
 		template<typename OT, Device o_device>
-		void multiplicationAsgmt(const TensorSlice<OT, o_device>& other);
+		void MultiplicationAsgmt(const TensorSlice<OT, o_device>& other);
 
 		template<typename OT>
-		void multiplicationAsgmt(const OT& other);
+		void MultiplicationAsgmt(const OT& other);
 
 		template<typename OT, Device o_device>
-		void divisionAsgmt(const Tensor<OT, o_device>& other);
+		void DivisionAsgmt(const Tensor<OT, o_device>& other);
 
 		template<typename OT, Device o_device>
-		void divisionAsgmt(const TensorSlice<OT, o_device>& other);
+		void DivisionAsgmt(const TensorSlice<OT, o_device>& other);
 
 		template<typename OT>
-		void divisionAsgmt(const OT& other);
+		void DivisionAsgmt(const OT& other);
 
 		template<typename OT, Device o_device>
-		void modulouAsgmt(const Tensor<OT, o_device>& other);
+		void ModulouAsgmt(const Tensor<OT, o_device>& other);
 
 		template<typename OT, Device o_device>
-		void modulouAsgmt(const TensorSlice<OT, o_device>& other);
+		void ModulouAsgmt(const TensorSlice<OT, o_device>& other);
 
 		template<typename OT>
-		void modulouAsgmt(const OT& other);
+		void ModulouAsgmt(const OT& other);
 
 		#ifdef _CUDA
 		template<Mode L, typename FT, typename RT = T, typename ... Args>
@@ -529,11 +497,11 @@ namespace TSlib
 		#endif
 
 		template<typename RT = char, typename OT, Device o_device>
-		Tensor<RT, device> compare(const Tensor<OT, o_device>& other, bool(*comp_func)(const T&, const OT&) = Equal) const;
+		Tensor<RT, device> Compare(const Tensor<OT, o_device>& other, bool(*comp_func)(const T&, const OT&) = Equal) const;
 		template<typename RT = char, typename OT, Device o_device>
-		Tensor<RT, device> compare(const TensorSlice<OT, o_device>& other, bool(*comp_func)(const T&, const OT&) = Equal) const;
+		Tensor<RT, device> Compare(const TensorSlice<OT, o_device>& other, bool(*comp_func)(const T&, const OT&) = Equal) const;
 		template<typename RT = char, typename OT, std::enable_if_t<!is_tensor_type<OT>::value, int> = 0>
-		Tensor<RT, device> compare(const OT& other, bool(*comp_func)(const T&, const OT&) = Equal) const;
+		Tensor<RT, device> Compare(const OT& other, bool(*comp_func)(const T&, const OT&) = Equal) const;
 
 		template<typename OT>
 		inline Tensor<T, device> operator+(OT& other);
@@ -654,6 +622,42 @@ namespace TSlib
 
 			return new_Tensor;
 		}
+
+	#ifdef _CUDA
+	protected:
+		bool allocated = false;
+		constexpr static unsigned char MAX_THREADS = DEVICE_MAX_THREADS / 32;
+		unsigned short m_threads = MAX_THREADS;
+	#endif
+
+		size_t calc_new_size(const std::initializer_list<size_t>& sizes);
+		size_t calc_new_size(const std::vector<size_t>& sizes);
+		template<size_t n>
+		size_t calc_new_size(const std::array<size_t, n>& sizes);
+
+		size_t get_real_size(const size_t& index) const;
+		size_t get_dim_length(const size_t& index) const;
+
+		void upscale_dim(const size_t& index, const size_t& row_size, const size_t& amount, const T& pad_val);
+
+		void downscale_dim(const size_t& index, const size_t& row_size, const size_t& amount);
+
+		template<typename First>
+		void get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord);
+
+		template<typename First, typename ... Args>
+		void get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord, Args ... remaining);
+
+		template<typename First>
+		void to_vector(std::vector<TSlice>& vec, const std::initializer_list<First>& val);
+
+		template<typename ... Args, typename First>
+		void to_vector(std::vector<TSlice>& vec, const std::initializer_list<First>& first, const std::initializer_list<Args>& ... args);
+
+		std::vector<size_t> based_sort(const std::vector<size_t>& target);
+		template<size_t n>
+		std::array<size_t, n> based_sort(const std::array<size_t, n>& target);
+		std::vector<size_t> based_sort(const std::vector<TSlice>& target);
 	};
 
 	double round(double x, double place);

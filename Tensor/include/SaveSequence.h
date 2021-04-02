@@ -83,7 +83,7 @@ namespace TSlib
 			void open();
 			void close();
 
-			size_t get_length();
+			size_t GetLength();
 		};
 	}
 }

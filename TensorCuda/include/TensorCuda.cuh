@@ -39,11 +39,6 @@ namespace TSlib
 	class CUDATensor3D;
 
 	template<typename T>
-
-	/// <summary>
-	/// Declaration of CUDATensor base
-	/// </summary>
-
 	class CTBase
 	{
 	protected:
@@ -67,8 +62,8 @@ namespace TSlib
 
 	public:
 
-		__device__ T* get_gpu();
-		__device__ const T* get_gpu() const;
+		__device__ T* GetGPU();
+		__device__ const T* GetGPU() const;
 
 		__device__ size_t size() const;
 
@@ -94,7 +89,7 @@ namespace TSlib
 
 		__device__ size_t X();
 
-		__device__ size_t get_length();
+		__device__ size_t GetLength();
 
 		template<Device device>
 		CUDATensor1D(Tensor<T, device>& tensor);
@@ -111,9 +106,9 @@ namespace TSlib
 		__device__ T& Offset(size_t x);
 		__device__ T Offset(size_t x) const;
 
-		__device__ bool in_bounds() const;
+		__device__ bool InBounds() const;
 
-		__device__ bool offset_bounds(size_t x) const;
+		__device__ bool OffsetBounds(size_t x) const;
 	};
 
 	/// <summary>
@@ -131,8 +126,8 @@ namespace TSlib
 		__device__ size_t X();
 		__device__ size_t Y();
 
-		__device__ size_t get_length();
-		__device__ size_t get_width();
+		__device__ size_t GetLength();
+		__device__ size_t GetWidth();
 
 		template<Device device>
 		CUDATensor2D(Tensor<T, device>& tensor);
@@ -149,9 +144,9 @@ namespace TSlib
 		__device__ T& Offset(size_t x, size_t y = 0);
 		__device__ T Offset(size_t x, size_t y = 0) const;
 
-		__device__ bool in_bounds() const;
+		__device__ bool InBounds() const;
 
-		__device__ bool offset_bounds(size_t x, size_t y = 0) const;
+		__device__ bool OffsetBounds(size_t x, size_t y = 0) const;
 	};
 
 	/// <summary>
@@ -171,9 +166,9 @@ namespace TSlib
 		__device__ size_t Y();
 		__device__ size_t Z();
 
-		__device__ size_t get_length();
-		__device__ size_t get_width();
-		__device__ size_t get_height();
+		__device__ size_t GetLength();
+		__device__ size_t GetWidth();
+		__device__ size_t GetHeight();
 
 		template<Device device>
 		CUDATensor3D(Tensor<T, device>& tensor);
@@ -190,9 +185,9 @@ namespace TSlib
 		__device__ T& Offset(size_t x, size_t y = 0, size_t z = 0);
 		__device__ T Offset(size_t x, size_t y = 0, size_t z = 0) const;
 
-		__device__ bool in_bounds() const;
+		__device__ bool InBounds() const;
 
-		__device__ bool offset_bounds(size_t x, size_t y = 0, size_t z = 0) const;
+		__device__ bool OffsetBounds(size_t x, size_t y = 0, size_t z = 0) const;
 	};
 
 	/// <summary>
@@ -210,7 +205,7 @@ namespace TSlib
 		double Y_ratio;
 		double Z_ratio;
 
-		double get_cubed(unsigned int target_threads)
+		double GetCubed(unsigned int target_threads)
 		{
 			double NT = NULL;
 
@@ -259,9 +254,9 @@ namespace TSlib
 		}
 
 		template<typename T, Device device>
-		std::tuple<unsigned int, unsigned int, unsigned int> apply(const Tensor<T, device>* tensor, unsigned int target_threads)
+		std::tuple<unsigned int, unsigned int, unsigned int> Apply(const Tensor<T, device>* tensor, unsigned int target_threads)
 		{
-			double threads_cubed = get_cubed(target_threads);
+			double threads_cubed = GetCubed(target_threads);
 
 			double length = threads_cubed;
 			double width = threads_cubed;
@@ -304,7 +299,7 @@ namespace TSlib
 		double Y_ratio = NULL;
 		double Z_ratio = NULL;
 
-		double get_squared(size_t target_threads)
+		double GetSquared(size_t target_threads)
 		{
 			double NT = NULL;
 
@@ -351,11 +346,11 @@ namespace TSlib
 		}
 
 		template<typename T, Device device>
-		std::tuple<unsigned int, unsigned int, unsigned int> apply(const Tensor<T, device>* tensor, unsigned int target_threads)
+		std::tuple<unsigned int, unsigned int, unsigned int> Apply(const Tensor<T, device>* tensor, unsigned int target_threads)
 		{
 			#pragma warning(disable: 4244)
 
-			double threads_squared = get_squared(target_threads);
+			double threads_squared = GetSquared(target_threads);
 
 			double length = threads_squared;
 			double width = threads_squared;
@@ -417,7 +412,7 @@ namespace TSlib
 		}
 
 		template<typename T, Device device>
-		std::tuple<unsigned int, unsigned int, unsigned int> apply(const Tensor<T, device>* tensor, unsigned int target_threads)
+		std::tuple<unsigned int, unsigned int, unsigned int> Apply(const Tensor<T, device>* tensor, unsigned int target_threads)
 		{
 			#pragma warning(disable: 4244)
 

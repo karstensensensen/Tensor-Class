@@ -15,7 +15,7 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename TReturn>
-	TReturn TensorSlice<T, device>::sum() const
+	TReturn TensorSlice<T, device>::Sum() const
 	{
 		TReturn sum_val = 0;
 		for (size_t i = 0; i < size(); i++)
@@ -28,14 +28,14 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename TReturn>
-	Tensor<TReturn, device> TensorSlice<T, device>::sum(size_t axis, bool keepDims) const
+	Tensor<TReturn, device> TensorSlice<T, device>::Sum(size_t axis, bool keepDims) const
 	{
 		return Compute([&](T& sum_elem, const T& elem) {sum_elem += elem; }, axis, 0, keepDims);
 	}
 
 	template<typename T, Device device>
 	template<typename TReturn>
-	TReturn Tensor<T, device>::sum() const
+	TReturn Tensor<T, device>::Sum() const
 	{
 		TReturn sum_val = 0;
 		for (size_t i = 0; i < size(); i++)
@@ -48,21 +48,21 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename TReturn>
-	Tensor<TReturn, device> Tensor<T, device>::sum(size_t axis, bool keepDims) const
+	Tensor<TReturn, device> Tensor<T, device>::Sum(size_t axis, bool keepDims) const
 	{
 		return Compute([&](T& sum_elem, const T& elem) {sum_elem += elem; }, axis, 0, keepDims);
 	}
 
 	template<typename T, Tools::enable_if_tensor<T>>
-	typename T::Type Tools::sum(const T& source)
+	typename T::Type Tools::Sum(const T& source)
 	{
-		return source.sum();
+		return source.Sum();
 	}
 
 	template<typename T, Tools::enable_if_tensor<T>>
-	T Tools::sum(const T& source, size_t axis, bool keep_dims)
+	T Tools::Sum(const T& source, size_t axis, bool keep_dims)
 	{
-		return source.sum(axis, keep_dims);
+		return source.Sum(axis, keep_dims);
 	}
 
 	// takes the product of the elements
@@ -70,7 +70,7 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename TReturn>
-	TReturn TensorSlice<T, device>::prod() const
+	TReturn TensorSlice<T, device>::Prod() const
 	{
 		TReturn prod_val = 1;
 		for (size_t i = 0; i < size(); i++)
@@ -83,14 +83,14 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename TReturn>
-	Tensor<TReturn, device> TensorSlice<T, device>::prod(size_t axis, bool keepDims) const
+	Tensor<TReturn, device> TensorSlice<T, device>::Prod(size_t axis, bool keepDims) const
 	{
 		return Compute([&](T& prod_elem, const T& elem) {prod_elem *= elem; }, axis, 1, keepDims);
 	}
 
 	template<typename T, Device device>
 	template<typename TReturn>
-	TReturn Tensor<T, device>::prod() const
+	TReturn Tensor<T, device>::Prod() const
 	{
 		TReturn prod_val = 1;
 		for (size_t i = 0; i < size(); i++)
@@ -103,27 +103,27 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename TReturn>
-	Tensor<TReturn, device> Tensor<T, device>::prod(size_t axis, bool keepDims) const
+	Tensor<TReturn, device> Tensor<T, device>::Prod(size_t axis, bool keepDims) const
 	{
 		return Compute([&](T& prod_elem, const T& elem) {prod_elem *= elem; }, axis, 1, keepDims);
 	}
 
 	template<typename T, Tools::enable_if_tensor<T>>
-	typename T::Type Tools::prod(const T& source)
+	typename T::Type Tools::Prod(const T& source)
 	{
-		return source.prod();
+		return source.Prod();
 	}
 
 	template<typename T, Tools::enable_if_tensor<T>>
-	T Tools::prod(const T& source, size_t axis, bool keep_dims)
+	T Tools::Prod(const T& source, size_t axis, bool keep_dims)
 	{
-		return source.prod(axis, keep_dims);
+		return source.Prod(axis, keep_dims);
 	}
 
 	// takes every element of the tensor and sets Euler's number to a power of that element
 	// elem = e^elem
 	template<typename T, Device device>
-	Tensor<T, device>& Tensor<T, device>::exp()
+	Tensor<T, device>& Tensor<T, device>::Exp()
 	{
 		Compute([](T& elem) {
 			elem = T(std::pow(Consts::Euler, double(elem)));
@@ -133,7 +133,7 @@ namespace TSlib
 	}
 
 	template<typename T, Device device>
-	TensorSlice<T, device>& TensorSlice<T, device>::exp()
+	TensorSlice<T, device>& TensorSlice<T, device>::Exp()
 	{
 		Compute([](T& elem) {elem = std::pow(T(Consts::Euler), double(elem)); });
 
@@ -141,17 +141,17 @@ namespace TSlib
 	}
 
 	template<typename T, Tools::enable_if_tensor<T>>
-	T Tools::exp(const T& source)
+	T Tools::Exp(const T& source)
 	{
 		T result = source;
 
-		result.exp();
+		result.Exp();
 
 		return result;
 	}
 
 	template<typename T, Tools::enable_if_tensor<T>>
-	T Tools::exp(const T& source, size_t axis, bool keepDims)
+	T Tools::Exp(const T& source, size_t axis, bool keepDims)
 	{
 		std::vector<size_t> return_shape(source.Shape());
 
@@ -192,28 +192,28 @@ namespace TSlib
 	// elem = elem/sum(tensor)
 
 	template<typename T, Device device>
-	Tensor<T, device>& Tensor<T, device>::normalize()
+	Tensor<T, device>& Tensor<T, device>::Normalize()
 	{
-		T tensor_sum = sum();
+		T tensor_sum = Sum();
 		Compute([=](T& elem) {elem = elem / tensor_sum; });
 
 		return *this;
 	}
 
 	template<typename T, Device device>
-	TensorSlice<T, device>& TensorSlice<T, device>::normalize()
+	TensorSlice<T, device>& TensorSlice<T, device>::Normalize()
 	{
-		T tensor_sum = sum();
+		T tensor_sum = Sum();
 		Compute([=](T& elem) {elem = elem / tensor_sum; });
 
 		return *this;
 	}
 
 	template<typename T, Tools::enable_if_tensor<T>>
-	T Tools::normalize(const T& source)
+	T Tools::Normalize(const T& source)
 	{
 		T result = source;
-		result.normalize();
+		result.Normalize();
 
 		return result;
 	}
@@ -222,33 +222,33 @@ namespace TSlib
 	// largest elem = max(largest elem, current elem)
 
 	template<typename T, Device device>
-	T Tensor<T, device>::max() const
+	T Tensor<T, device>::Max() const
 	{
 		T max_elem = At(0);
 
 		for (size_t i = 1; i < size(); i++)
 		{
-			max_elem = std::max(max_elem, At(i));
+			max_elem = std::Max(max_elem, At(i));
 		}
 
 		return max_elem;
 	}
 
 	template<typename T, Device device>
-	T TensorSlice<T, device>::max() const
+	T TensorSlice<T, device>::Max() const
 	{
 		T max_elem = At(0);
 
 		for (size_t i = 1; i < size(); i++)
 		{
-			max_elem = std::max(max_elem, At(i));
+			max_elem = std::Max(max_elem, At(i));
 		}
 
 		return max_elem;
 	}
 
 	template<typename T, Tools::enable_if_tensor<T>>
-	T Tools::max(const T& source, size_t axis, bool keepDims)
+	T Tools::Max(const T& source, size_t axis, bool keepDims)
 	{
 		T result = source.Compute([](typename T::Type& new_elem, const typename T::Type& elem) {new_elem = std::max(new_elem, elem); }, axis, keepDims);
 		return result;
@@ -258,7 +258,7 @@ namespace TSlib
 	// largest elem = mix(largest elem, current elem)
 
 	template<typename T, Device device>
-	T Tensor<T, device>::min() const
+	T Tensor<T, device>::Min() const
 	{
 		T min_elem = At(0);
 
@@ -271,7 +271,7 @@ namespace TSlib
 	}
 
 	template<typename T, Device device>
-	T TensorSlice<T, device>::min() const
+	T TensorSlice<T, device>::Min() const
 	{
 		T min_elem = At(0);
 
@@ -284,7 +284,7 @@ namespace TSlib
 	}
 
 	template<typename T, Tools::enable_if_tensor<T>>
-	T Tools::min(const T& source, size_t axis, bool keepDims)
+	T Tools::Min(const T& source, size_t axis, bool keepDims)
 	{
 		T result = source.Compute([](typename T::Type& new_elem, const typename T::Type& elem) {new_elem = std::min(new_elem, elem); }, axis, keepDims);
 		return result;
@@ -296,20 +296,20 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename RT>
-	RT TensorSlice<T, device>::avg() const
+	RT TensorSlice<T, device>::Avg() const
 	{
-		return sum<RT>() / (RT)size();
+		return Sum<RT>() / (RT)size();
 	}
 
 	template<typename T, Device device>
 	template<typename RT>
-	RT Tensor<T, device>::avg() const
+	RT Tensor<T, device>::Avg() const
 	{
-		return sum<RT>() / (RT)size();
+		return Sum<RT>() / (RT)size();
 	}
 
 	template<typename T, Tools::enable_if_tensor<T>>
-	T Tools::avg(const T& source, size_t axis, bool keepDims)
+	T Tools::Avg(const T& source, size_t axis, bool keepDims)
 	{
 		T result = source.Compute([](typename T::Type& new_elem, const typename T::Type& elem) {new_elem += elem; }, axis, keepDims);
 		result.Compute([axis, &source](typename T::Type& elem) {elem /= (T)source.Shape()[axis]; });
@@ -320,7 +320,7 @@ namespace TSlib
 	// elem = sin(elem)
 
 	template<typename T, Device device>
-	inline Tensor<T, device>& Tensor<T, device>::sin()
+	inline Tensor<T, device>& Tensor<T, device>::Sin()
 	{
 		Compute([](T& elem) {elem = std::sin(elem); });
 
@@ -328,7 +328,7 @@ namespace TSlib
 	}
 
 	template<typename T, Device device>
-	inline TensorSlice<T, device>& TensorSlice<T, device>::sin()
+	inline TensorSlice<T, device>& TensorSlice<T, device>::Sin()
 	{
 		Compute([](T& elem) {elem = std::sin(elem); });
 		return *this;
@@ -346,7 +346,7 @@ namespace TSlib
 	// elem = cos(elem)
 
 	template<typename T, Device device>
-	inline Tensor<T, device>& Tensor<T, device>::cos()
+	inline Tensor<T, device>& Tensor<T, device>::Cos()
 	{
 		Compute([](T& elem) {elem = std::cos(elem); });
 
@@ -354,7 +354,7 @@ namespace TSlib
 	}
 
 	template<typename T, Device device>
-	inline TensorSlice<T, device>& TensorSlice<T, device>::cos()
+	inline TensorSlice<T, device>& TensorSlice<T, device>::Cos()
 	{
 		Compute([](T& elem) {elem = std::cos(elem); });
 		return *this;
@@ -372,7 +372,7 @@ namespace TSlib
 	// elem = tan(elem)
 
 	template<typename T, Device device>
-	inline Tensor<T, device>& Tensor<T, device>::tan()
+	inline Tensor<T, device>& Tensor<T, device>::Tan()
 	{
 		Compute([](T& elem) {elem = std::tan(elem); });
 
@@ -380,7 +380,7 @@ namespace TSlib
 	}
 
 	template<typename T, Device device>
-	inline TensorSlice<T, device>& TensorSlice<T, device>::tan()
+	inline TensorSlice<T, device>& TensorSlice<T, device>::Tan()
 	{
 		Compute([](T& elem) {elem = std::tan(elem); });
 		return *this;
@@ -398,7 +398,7 @@ namespace TSlib
 	// elem = arcsin(elem)
 
 	template<typename T, Device device>
-	inline Tensor<T, device>& Tensor<T, device>::arcsin()
+	inline Tensor<T, device>& Tensor<T, device>::ArcSin()
 	{
 		Compute([](T& elem) {elem = std::asin(elem); });
 
@@ -406,7 +406,7 @@ namespace TSlib
 	}
 
 	template<typename T, Device device>
-	inline TensorSlice<T, device>& TensorSlice<T, device>::arcsin()
+	inline TensorSlice<T, device>& TensorSlice<T, device>::ArcSin()
 	{
 		Compute([](T& elem) {elem = std::asin(elem); });
 		return *this;
@@ -424,7 +424,7 @@ namespace TSlib
 	// elem = cos(elem)
 
 	template<typename T, Device device>
-	inline Tensor<T, device>& Tensor<T, device>::arccos()
+	inline Tensor<T, device>& Tensor<T, device>::ArcCos()
 	{
 		Compute([](T& elem) {elem = std::acos(elem); });
 
@@ -432,7 +432,7 @@ namespace TSlib
 	}
 
 	template<typename T, Device device>
-	inline TensorSlice<T, device>& TensorSlice<T, device>::arccos()
+	inline TensorSlice<T, device>& TensorSlice<T, device>::ArcCos()
 	{
 		Compute([](T& elem) {elem = std::acos(elem); });
 		return *this;
@@ -450,7 +450,7 @@ namespace TSlib
 	// elem = tan(elem)
 
 	template<typename T, Device device>
-	inline Tensor<T, device>& Tensor<T, device>::arctan()
+	inline Tensor<T, device>& Tensor<T, device>::ArcTan()
 	{
 		Compute([](T& elem) {elem = std::atan(elem); });
 
@@ -458,7 +458,7 @@ namespace TSlib
 	}
 
 	template<typename T, Device device>
-	inline TensorSlice<T, device>& TensorSlice<T, device>::arctan()
+	inline TensorSlice<T, device>& TensorSlice<T, device>::ArcTan()
 	{
 		Compute([](T& elem) {elem = std::atan(elem); });
 		return *this;
@@ -476,14 +476,14 @@ namespace TSlib
 	// elem = 360/pi * elem
 
 	template<typename T, Device device>
-	inline Tensor<T, device>& Tensor<T, device>::convDeg()
+	inline Tensor<T, device>& Tensor<T, device>::ConvDeg()
 	{
 		Compute([](T& elem) {elem = T(360.0 / Consts::PI * elem); });
 		return *this;
 	}
 
 	template<typename T, Device device>
-	inline TensorSlice<T, device>& TensorSlice<T, device>::convDeg()
+	inline TensorSlice<T, device>& TensorSlice<T, device>::ConvDeg()
 	{
 		Compute([](T& elem) {elem = T(360.0 / Consts::PI * elem); });
 		return *this;
@@ -500,14 +500,14 @@ namespace TSlib
 	// elem = pi/360 * elem
 
 	template<typename T, Device device>
-	inline Tensor<T, device>& Tensor<T, device>::convRad()
+	inline Tensor<T, device>& Tensor<T, device>::ConvRad()
 	{
 		Compute([](T& elem) {elem = T(Consts::PI / 360.0 * elem); });
 		return *this;
 	}
 
 	template<typename T, Device device>
-	inline TensorSlice<T, device>& TensorSlice<T, device>::convRad()
+	inline TensorSlice<T, device>& TensorSlice<T, device>::ConvRad()
 	{
 		Compute([](T& elem) {elem = T(Consts::PI / 360.0 * elem); });
 		return *this;

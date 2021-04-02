@@ -418,9 +418,9 @@ namespace TSlib
 
 		#ifdef _CUDA
 
-		if (other.isAllocated())
+		if (other.IsAllocated())
 		{
-			allocate();
+			Allocate();
 			cudaMemcpy(gpu_mem, other.gpu_mem, sizeof(T) * size(), cudaMemcpyDeviceToDevice);
 		}
 
@@ -506,9 +506,9 @@ namespace TSlib
 	Tensor<T, device>::~Tensor()
 	{
 		#ifdef _CUDA
-		if (isAllocated())
+		if (IsAllocated())
 		{
-			deallocate();
+			Deallocate();
 		}
 		#endif
 	}
@@ -897,8 +897,8 @@ namespace TSlib
 		MEASURE();
 		#ifdef _CUDA
 		//deallocate gpu memory if allocated to make sure there isnt accidentally copied too much or little memory to cpu or gpu
-		if (isAllocated())
-			deallocate();
+		if (IsAllocated())
+			Deallocate();
 		#endif
 
 		//Reserve size
@@ -978,8 +978,8 @@ namespace TSlib
 		MEASURE();
 		#ifdef _CUDA
 		//deallocate gpu memory if allocated to make sure there isnt accidentally copied too much or little memory to cpu or gpu
-		if (isAllocated())
-			deallocate();
+		if (IsAllocated())
+			Deallocate();
 		#endif
 
 		#ifdef _TS_DEBUG
@@ -1035,13 +1035,13 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<size_t n>
-	inline Tensor<T, device>& TSlib::Tensor<T, device>::Resize(const std::array<size_t, n>& sizes, const T& pad_val)
+	inline Tensor<T, device>& Tensor<T, device>::Resize(const std::array<size_t, n>& sizes, const T& pad_val)
 	{
 		MEASURE();
 		#ifdef _CUDA
 		//deallocate gpu memory if allocated to make sure there isnt accidentally copied too much or little memory to cpu or gpu
-		if (isAllocated())
-			deallocate();
+		if (IsAllocated())
+			Deallocate();
 		#endif
 
 		#ifdef _TS_DEBUG
@@ -1149,7 +1149,7 @@ namespace TSlib
 	}
 
 	template<typename T, Device device>
-	inline TensorSlice<T, device> TSlib::Tensor<T, device>::AsShape(const std::vector<long long>& shape)
+	inline TensorSlice<T, device> Tensor<T, device>::AsShape(const std::vector<long long>& shape)
 	{
 		TensorSlice<T, device> slice = Slice();
 		slice.Reshape(shape);
@@ -1164,8 +1164,8 @@ namespace TSlib
 
 		#ifdef _CUDA
 		//deallocate gpu memory if allocated to make sure there isnt accidentally copied too much or little memory to cpu or gpu
-		if (isAllocated())
-			deallocate();
+		if (IsAllocated())
+			Deallocate();
 		#endif
 		if (dims > Dims())
 		{
@@ -1186,8 +1186,8 @@ namespace TSlib
 
 		#ifdef _CUDA
 		//deallocate gpu memory if allocated to make sure there isnt accidentally copied too much or little memory to cpu or gpu
-		if (isAllocated())
-			deallocate();
+		if (IsAllocated())
+			Deallocate();
 		#endif
 
 		m_shape.resize(m_shape.size() + dims, 1);
@@ -1202,8 +1202,8 @@ namespace TSlib
 
 		#ifdef _CUDA
 		//deallocate gpu memory if allocated to make sure there isnt accidentally copied too much or little memory to cpu or gpu
-		if (isAllocated())
-			deallocate();
+		if (IsAllocated())
+			Deallocate();
 		#endif
 
 		#ifdef _TS_DEBUG
@@ -1276,7 +1276,7 @@ namespace TSlib
 		{
 			if (slice.TSliceShape()[i].get_from() + slice.Shape()[i] > Shape()[i])
 			{
-				throw TSlib::BadShape("Slice must be within Tensor borders", slice.Shape(), Shape());
+				throw BadShape("Slice must be within Tensor borders", slice.Shape(), Shape());
 			}
 		}
 		#endif
@@ -1323,7 +1323,7 @@ namespace TSlib
 	#endif
 
 	template<typename T, Device device>
-	inline T& TSlib::Tensor<T, device>::Get(const std::vector<size_t>& coords)
+	inline T& Tensor<T, device>::Get(const std::vector<size_t>& coords)
 	{
 		#ifdef _TS_DEBUG
 		if (Dims() != coords.size())
@@ -1372,7 +1372,7 @@ namespace TSlib
 	}
 
 	template<typename T, Device device>
-	T TSlib::Tensor<T, device>::Get(const std::vector<size_t>& coords) const
+	T Tensor<T, device>::Get(const std::vector<size_t>& coords) const
 	{
 		#ifdef _TS_DEBUG
 		if (Dims() != coords.size())
@@ -1540,7 +1540,7 @@ namespace TSlib
 		#ifdef _CUDA
 		if (allocated)
 		{
-			deallocate();
+			Deallocate();
 		}
 
 		gpu_mem = other.gpu_mem;
