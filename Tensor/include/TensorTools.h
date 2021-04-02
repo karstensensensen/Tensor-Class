@@ -19,31 +19,31 @@ namespace TSlib
 		void exceptFit(const T1& tensor1, const T2& tensor2);
 
 		template<typename T, enable_if_tensor<T> = 0>
-		typename T::Type sum(const T& source);
+		typename T::Type Sum(const T& source);
 		template<typename T, enable_if_tensor<T> = 0>
-		T sum(const T& source, size_t axis, bool keepDims = false);
+		T Sum(const T& source, size_t axis, bool keepDims = false);
 
 		template<typename T, enable_if_tensor<T> = 0>
-		typename T::Type prod(const T& source);
+		typename T::Type Prod(const T& source);
 		template<typename T, enable_if_tensor<T> = 0>
-		T prod(const T& source, size_t axis, bool keepDims = false);
+		T Prod(const T& source, size_t axis, bool keepDims = false);
 
 		template<typename T, enable_if_tensor<T> = 0>
-		T exp(const T& source);
+		T Exp(const T& source);
 		template<typename T, enable_if_tensor<T> = 0>
-		T exp(const T& source, size_t axis, bool keepDims = false);
+		T Exp(const T& source, size_t axis, bool keepDims = false);
 
 		template<typename T, enable_if_tensor<T> = 0>
-		T normalize(const T& source);
+		T Normalize(const T& source);
 
 		template<typename T, enable_if_tensor<T> = 0>
-		T max(const T& source, size_t axis, bool keepDims = false);
+		T Max(const T& source, size_t axis, bool keepDims = false);
 
 		template<typename T, enable_if_tensor<T> = 0>
-		T min(const T& source, size_t axis, bool keepDims = false);
+		T Min(const T& source, size_t axis, bool keepDims = false);
 
 		template<typename T, enable_if_tensor<T> = 0>
-		T avg(const T& source, size_t axis, bool keepDims = false);
+		T Avg(const T& source, size_t axis, bool keepDims = false);
 
 		template<typename T, enable_if_tensor<T> = 0>
 		T sin(const T& source);

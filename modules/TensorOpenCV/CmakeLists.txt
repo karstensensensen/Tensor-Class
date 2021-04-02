@@ -32,6 +32,14 @@ set_target_properties(${PROJECT_NAME}
 
 source_group("Header Files" FILES ${INCLUDE_FILES})
 
+if(MSVC)
+target_compile_options(${PROJECT_NAME} PRIVATE /Zc:__cplusplus)
+endif()
+
+if(ENABLE_OPENMP)
+    target_compile_options(${PROJECT_NAME} PRIVATE /openmp)
+endif()
+
 target_include_directories( ${PROJECT_NAME} PUBLIC include ${OpenCV_INCLUDE_DIRS} )
 
 target_link_libraries(${PROJECT_NAME} Tensor ${OpenCV_LIBS})

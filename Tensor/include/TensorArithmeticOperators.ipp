@@ -30,7 +30,7 @@ namespace TSlib
 			return Cadd(other);
 		}
 
-		return add(other);
+		return Add(other);
 	}
 
 	template<typename T, Device device>
@@ -42,7 +42,7 @@ namespace TSlib
 			return Csubtract(other);
 		}
 
-		return subtract(other);
+		return Subtract(other);
 	}
 	template<typename T, Device device>
 	template<typename OT>
@@ -52,7 +52,7 @@ namespace TSlib
 		{
 			return Csubtract(other);
 		}
-		return subtract(other);
+		return Subtract(other);
 	}
 
 	template<typename T, Device device>
@@ -64,7 +64,7 @@ namespace TSlib
 			return Cmultiply(other);
 		}
 
-		return multiply(other);
+		return Multiply(other);
 	}
 	template<typename T, Device device>
 	template<typename OT>
@@ -74,7 +74,7 @@ namespace TSlib
 		{
 			return Cmultiply(other);
 		}
-		return multiply(other);
+		return Multiply(other);
 	}
 
 	template<typename T, Device device>
@@ -86,7 +86,7 @@ namespace TSlib
 			return Cdivide(other);
 		}
 
-		return divide(other);
+		return Divide(other);
 	}
 	template<typename T, Device device>
 	template<typename OT>
@@ -96,7 +96,7 @@ namespace TSlib
 		{
 			return Cdivide(other);
 		}
-		return divide(other);
+		return Divide(other);
 	}
 
 	template<typename T, Device device>
@@ -108,7 +108,7 @@ namespace TSlib
 			return Cmodulous(other);
 		}
 
-		return modulous(other);
+		return Modulous(other);
 	}
 	template<typename T, Device device>
 	template<typename OT>
@@ -118,7 +118,7 @@ namespace TSlib
 		{
 			return Cmodulous(other);
 		}
-		return modulous(other);
+		return Modulous(other);
 	}
 
 	template<typename T, Device device>
@@ -130,7 +130,7 @@ namespace TSlib
 			CadditionAsgmt(other);
 		}
 
-		additionAsgmt(other);
+		AdditionAsgmt(other);
 	}
 	template<typename T, Device device>
 	template<typename OT>
@@ -140,7 +140,7 @@ namespace TSlib
 		{
 			CadditionAsgmt(other);
 		}
-		additionAsgmt(other);
+		AdditionAsgmt(other);
 	}
 
 	template<typename T, Device device>
@@ -152,7 +152,7 @@ namespace TSlib
 			CsubtractionAsgmt(other);
 		}
 
-		subtractionAsgmt(other);
+		SubtractionAsgmt(other);
 	}
 	template<typename T, Device device>
 	template<typename OT>
@@ -162,7 +162,7 @@ namespace TSlib
 		{
 			CsubtractionAsgmt(other);
 		}
-		subtractionAsgmt(other);
+		SubtractionAsgmt(other);
 	}
 
 	template<typename T, Device device>
@@ -174,7 +174,7 @@ namespace TSlib
 			CmultiplicationAsgmt(other);
 		}
 
-		multiplicationAsgmt(other);
+		MultiplicationAsgmt(other);
 	}
 	template<typename T, Device device>
 	template<typename OT>
@@ -184,7 +184,7 @@ namespace TSlib
 		{
 			CmultiplicationAsgmt(other);
 		}
-		multiplicationAsgmt(other);
+		MultiplicationAsgmt(other);
 	}
 
 	template<typename T, Device device>
@@ -196,7 +196,7 @@ namespace TSlib
 			CdivisionAsgmt(other);
 		}
 
-		divisionAsgmt(other);
+		DivisionAsgmt(other);
 	}
 	template<typename T, Device device>
 	template<typename OT>
@@ -206,7 +206,7 @@ namespace TSlib
 		{
 			CdivisionAsgmt(other);
 		}
-		divisionAsgmt(other);
+		DivisionAsgmt(other);
 	}
 
 	template<typename T, Device device>
@@ -218,7 +218,7 @@ namespace TSlib
 			CmodulouAsgmt(other);
 		}
 
-		modulouAsgmt(other);
+		ModulouAsgmt(other);
 	}
 	template<typename T, Device device>
 	template<typename OT>
@@ -228,7 +228,7 @@ namespace TSlib
 		{
 			CmodulouAsgmt(other);
 		}
-		modulouAsgmt(other);
+		ModulouAsgmt(other);
 	}
 
 	#ifdef _CUDA
@@ -240,8 +240,8 @@ namespace TSlib
 	template<typename RT, typename OT, Device o_device>
 	Tensor<RT, device> Tensor<T, device>::Cadd(Tensor<OT, o_device>& other)
 	{
-		bool this_alloc = isDeallocated();
-		bool other_alloc = other.isDeallocated();
+		bool this_alloc = IsDeallocated();
+		bool other_alloc = other.IsDeallocated();
 
 		#ifdef _TS_DEBUG
 
@@ -253,12 +253,12 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		if (other_alloc)
 		{
-			other.push();
+			other.Push();
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
@@ -266,12 +266,12 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 
 		if (other_alloc)
 		{
-			other.pull();
+			other.Pull();
 		}
 
 		return result;
@@ -281,8 +281,8 @@ namespace TSlib
 	template<typename RT, typename OT, Device o_device>
 	Tensor<RT, device> Tensor<T, device>::Cadd(const Tensor<OT, o_device>& other)
 	{
-		bool this_alloc = isDeallocated();
-		bool other_alloc = other.isDeallocated();
+		bool this_alloc = IsDeallocated();
+		bool other_alloc = other.IsDeallocated();
 
 		#ifdef _TS_DEBUG
 
@@ -298,7 +298,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
@@ -306,7 +306,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 
 		return result;
@@ -316,11 +316,11 @@ namespace TSlib
 	template<typename RT, typename OT>
 	Tensor<RT, device> Tensor<T, device>::Cadd(const OT& other)
 	{
-		bool this_alloc = isDeallocated();
+		bool this_alloc = IsDeallocated();
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
@@ -328,7 +328,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 
 		return result;
@@ -338,8 +338,8 @@ namespace TSlib
 	template<typename RT, typename OT, Device o_device>
 	Tensor<RT, device> Tensor<T, device>::Csubtract(Tensor<OT, o_device>& other)
 	{
-		bool this_alloc = isDeallocated();
-		bool other_alloc = other.isDeallocated();
+		bool this_alloc = IsDeallocated();
+		bool other_alloc = other.IsDeallocated();
 
 		#ifdef _TS_DEBUG
 
@@ -351,12 +351,12 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		if (other_alloc)
 		{
-			other.push();
+			other.Push();
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
@@ -364,12 +364,12 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 
 		if (other_alloc)
 		{
-			other.pull();
+			other.Pull();
 		}
 
 		return result;
@@ -379,8 +379,8 @@ namespace TSlib
 	template<typename RT, typename OT, Device o_device>
 	Tensor<RT, device> Tensor<T, device>::Csubtract(const Tensor<OT, o_device>& other)
 	{
-		bool this_alloc = isDeallocated();
-		bool other_alloc = other.isDeallocated();
+		bool this_alloc = IsDeallocated();
+		bool other_alloc = other.IsDeallocated();
 
 		#ifdef _TS_DEBUG
 
@@ -396,7 +396,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
@@ -404,7 +404,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 
 		return result;
@@ -414,11 +414,11 @@ namespace TSlib
 	template<typename RT, typename OT>
 	Tensor<RT, device> Tensor<T, device>::Csubtract(const OT& other)
 	{
-		bool this_alloc = isDeallocated();
+		bool this_alloc = IsDeallocated();
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
@@ -426,7 +426,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 
 		return result;
@@ -436,8 +436,8 @@ namespace TSlib
 	template<typename RT, typename OT, Device o_device>
 	Tensor<RT, device> Tensor<T, device>::Cmultiply(Tensor<OT, o_device>& other)
 	{
-		bool this_alloc = isDeallocated();
-		bool other_alloc = other.isDeallocated();
+		bool this_alloc = IsDeallocated();
+		bool other_alloc = other.IsDeallocated();
 
 		#ifdef _TS_DEBUG
 
@@ -449,12 +449,12 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		if (other_alloc)
 		{
-			other.push();
+			other.Push();
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
@@ -462,12 +462,12 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 
 		if (other_alloc)
 		{
-			other.pull();
+			other.Pull();
 		}
 
 		return result;
@@ -476,8 +476,8 @@ namespace TSlib
 	template<typename RT, typename OT, Device o_device>
 	Tensor<RT, device> Tensor<T, device>::Cmultiply(const Tensor<OT, o_device>& other)
 	{
-		bool this_alloc = isDeallocated();
-		bool other_alloc = other.isDeallocated();
+		bool this_alloc = IsDeallocated();
+		bool other_alloc = other.IsDeallocated();
 
 		#ifdef _TS_DEBUG
 
@@ -493,7 +493,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
@@ -501,7 +501,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 
 		return result;
@@ -510,11 +510,11 @@ namespace TSlib
 	template<typename RT, typename OT>
 	Tensor<RT, device> Tensor<T, device>::Cmultiply(const OT& other)
 	{
-		bool this_alloc = isDeallocated();
+		bool this_alloc = IsDeallocated();
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
@@ -522,7 +522,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 
 		return result;
@@ -532,8 +532,8 @@ namespace TSlib
 	template<typename RT, typename OT, Device o_device>
 	Tensor<RT, device> Tensor<T, device>::Cdivide(Tensor<OT, o_device>& other)
 	{
-		bool this_alloc = isDeallocated();
-		bool other_alloc = other.isDeallocated();
+		bool this_alloc = IsDeallocated();
+		bool other_alloc = other.IsDeallocated();
 
 		#ifdef _TS_DEBUG
 
@@ -545,12 +545,12 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		if (other_alloc)
 		{
-			other.push();
+			other.Push();
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
@@ -558,12 +558,12 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 
 		if (other_alloc)
 		{
-			other.pull();
+			other.Pull();
 		}
 
 		return result;
@@ -572,8 +572,8 @@ namespace TSlib
 	template<typename RT, typename OT, Device o_device>
 	Tensor<RT, device> Tensor<T, device>::Cdivide(const Tensor<OT, o_device>& other)
 	{
-		bool this_alloc = isDeallocated();
-		bool other_alloc = other.isDeallocated();
+		bool this_alloc = IsDeallocated();
+		bool other_alloc = other.IsDeallocated();
 
 		#ifdef _TS_DEBUG
 
@@ -589,7 +589,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
@@ -597,7 +597,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 
 		return result;
@@ -606,11 +606,11 @@ namespace TSlib
 	template<typename RT, typename OT>
 	Tensor<RT, device> Tensor<T, device>::Cdivide(const OT& other)
 	{
-		bool this_alloc = isDeallocated();
+		bool this_alloc = IsDeallocated();
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
@@ -618,7 +618,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 
 		return result;
@@ -628,8 +628,8 @@ namespace TSlib
 	template<typename RT, typename OT, Device o_device>
 	Tensor<RT, device> Tensor<T, device>::Cmodulous(Tensor<OT, o_device>& other)
 	{
-		bool this_alloc = isDeallocated();
-		bool other_alloc = other.isDeallocated();
+		bool this_alloc = IsDeallocated();
+		bool other_alloc = other.IsDeallocated();
 
 		#ifdef _TS_DEBUG
 
@@ -641,12 +641,12 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		if (other_alloc)
 		{
-			other.push();
+			other.Push();
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
@@ -654,12 +654,12 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 
 		if (other_alloc)
 		{
-			other.pull();
+			other.Pull();
 		}
 
 		return result;
@@ -668,8 +668,8 @@ namespace TSlib
 	template<typename RT, typename OT, Device o_device>
 	Tensor<RT, device> Tensor<T, device>::Cmodulous(const Tensor<OT, o_device>& other)
 	{
-		bool this_alloc = isDeallocated();
-		bool other_alloc = other.isDeallocated();
+		bool this_alloc = IsDeallocated();
+		bool other_alloc = other.IsDeallocated();
 
 		#ifdef _TS_DEBUG
 
@@ -685,7 +685,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
@@ -693,7 +693,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 
 		return result;
@@ -703,11 +703,11 @@ namespace TSlib
 	template<typename RT, typename OT>
 	Tensor<RT, device> Tensor<T, device>::Cmodulous(const OT& other)
 	{
-		bool this_alloc = isDeallocated();
+		bool this_alloc = IsDeallocated();
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
@@ -715,7 +715,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 
 		return result;
@@ -725,8 +725,8 @@ namespace TSlib
 	template<typename OT, Device o_device>
 	void Tensor<T, device>::CadditionAsgmt(Tensor<OT, o_device>& other)
 	{
-		bool this_alloc = isDeallocated();
-		bool other_alloc = other.isDeallocated();
+		bool this_alloc = IsDeallocated();
+		bool other_alloc = other.IsDeallocated();
 
 		#ifdef _TS_DEBUG
 
@@ -738,12 +738,12 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		if (other_alloc)
 		{
-			other.push();
+			other.Push();
 		}
 
 		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
@@ -751,12 +751,12 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 
 		if (other_alloc)
 		{
-			other.pull();
+			other.Pull();
 		}
 	}
 
@@ -764,8 +764,8 @@ namespace TSlib
 	template<typename OT, Device o_device>
 	void Tensor<T, device>::CadditionAsgmt(const Tensor<OT, o_device>& other)
 	{
-		bool this_alloc = isDeallocated();
-		bool other_alloc = other.isDeallocated();
+		bool this_alloc = IsDeallocated();
+		bool other_alloc = other.IsDeallocated();
 
 		#ifdef _TS_DEBUG
 
@@ -781,7 +781,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
@@ -789,7 +789,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 	}
 
@@ -797,11 +797,11 @@ namespace TSlib
 	template<typename OT>
 	void Tensor<T, device>::CadditionAsgmt(const OT& other)
 	{
-		bool this_alloc = isDeallocated();
+		bool this_alloc = IsDeallocated();
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, OT)>
@@ -809,7 +809,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 	}
 
@@ -817,8 +817,8 @@ namespace TSlib
 	template<typename OT, Device o_device>
 	void Tensor<T, device>::CsubtractionAsgmt(Tensor<OT, o_device>& other)
 	{
-		bool this_alloc = isDeallocated();
-		bool other_alloc = other.isDeallocated();
+		bool this_alloc = IsDeallocated();
+		bool other_alloc = other.IsDeallocated();
 
 		#ifdef _TS_DEBUG
 
@@ -830,12 +830,12 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		if (other_alloc)
 		{
-			other.push();
+			other.Push();
 		}
 
 		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
@@ -843,12 +843,12 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 
 		if (other_alloc)
 		{
-			other.pull();
+			other.Pull();
 		}
 	}
 
@@ -856,8 +856,8 @@ namespace TSlib
 	template<typename OT, Device o_device>
 	void Tensor<T, device>::CsubtractionAsgmt(const Tensor<OT, o_device>& other)
 	{
-		bool this_alloc = isDeallocated();
-		bool other_alloc = other.isDeallocated();
+		bool this_alloc = IsDeallocated();
+		bool other_alloc = other.IsDeallocated();
 
 		#ifdef _TS_DEBUG
 
@@ -873,7 +873,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
@@ -881,18 +881,18 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 	}
 	template<typename T, Device device>
 	template<typename OT>
 	void Tensor<T, device>::CsubtractionAsgmt(const OT& other)
 	{
-		bool this_alloc = isDeallocated();
+		bool this_alloc = IsDeallocated();
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
@@ -900,7 +900,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 	}
 
@@ -908,8 +908,8 @@ namespace TSlib
 	template<typename OT, Device o_device>
 	void Tensor<T, device>::CmultiplicationAsgmt(Tensor<OT, o_device>& other)
 	{
-		bool this_alloc = isDeallocated();
-		bool other_alloc = other.isDeallocated();
+		bool this_alloc = IsDeallocated();
+		bool other_alloc = other.IsDeallocated();
 
 		#ifdef _TS_DEBUG
 
@@ -921,12 +921,12 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		if (other_alloc)
 		{
-			other.push();
+			other.Push();
 		}
 
 		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
@@ -934,12 +934,12 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 
 		if (other_alloc)
 		{
-			other.pull();
+			other.Pull();
 		}
 	}
 
@@ -947,8 +947,8 @@ namespace TSlib
 	template<typename OT, Device o_device>
 	void Tensor<T, device>::CmultiplicationAsgmt(const Tensor<OT, o_device>& other)
 	{
-		bool this_alloc = isDeallocated();
-		bool other_alloc = other.isDeallocated();
+		bool this_alloc = IsDeallocated();
+		bool other_alloc = other.IsDeallocated();
 
 		#ifdef _TS_DEBUG
 
@@ -964,7 +964,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
@@ -972,7 +972,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 	}
 
@@ -980,11 +980,11 @@ namespace TSlib
 	template<typename OT>
 	void Tensor<T, device>::CmultiplicationAsgmt(const OT& other)
 	{
-		bool this_alloc = isDeallocated();
+		bool this_alloc = IsDeallocated();
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
@@ -992,7 +992,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 	}
 
@@ -1000,8 +1000,8 @@ namespace TSlib
 	template<typename OT, Device o_device>
 	void Tensor<T, device>::CdivisionAsgmt(Tensor<OT, o_device>& other)
 	{
-		bool this_alloc = isDeallocated();
-		bool other_alloc = other.isDeallocated();
+		bool this_alloc = IsDeallocated();
+		bool other_alloc = other.IsDeallocated();
 
 		#ifdef _TS_DEBUG
 
@@ -1013,12 +1013,12 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		if (other_alloc)
 		{
-			other.push();
+			other.Push();
 		}
 
 		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
@@ -1026,12 +1026,12 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 
 		if (other_alloc)
 		{
-			other.pull();
+			other.Pull();
 		}
 	}
 
@@ -1039,8 +1039,8 @@ namespace TSlib
 	template<typename OT, Device o_device>
 	void Tensor<T, device>::CdivisionAsgmt(const Tensor<OT, o_device>& other)
 	{
-		bool this_alloc = isDeallocated();
-		bool other_alloc = other.isDeallocated();
+		bool this_alloc = IsDeallocated();
+		bool other_alloc = other.IsDeallocated();
 
 		#ifdef _TS_DEBUG
 
@@ -1056,7 +1056,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
@@ -1064,7 +1064,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 	}
 
@@ -1072,11 +1072,11 @@ namespace TSlib
 	template<typename OT>
 	void Tensor<T, device>::CdivisionAsgmt(const OT& other)
 	{
-		bool this_alloc = isDeallocated();
+		bool this_alloc = IsDeallocated();
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
@@ -1084,7 +1084,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 	}
 
@@ -1092,8 +1092,8 @@ namespace TSlib
 	template<typename OT, Device o_device>
 	void Tensor<T, device>::CmodulouAsgmt(Tensor<OT, o_device>& other)
 	{
-		bool this_alloc = isDeallocated();
-		bool other_alloc = other.isDeallocated();
+		bool this_alloc = IsDeallocated();
+		bool other_alloc = other.IsDeallocated();
 
 		#ifdef _TS_DEBUG
 
@@ -1105,12 +1105,12 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		if (other_alloc)
 		{
-			other.push();
+			other.Push();
 		}
 
 		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
@@ -1118,12 +1118,12 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 
 		if (other_alloc)
 		{
-			other.pull();
+			other.Pull();
 		}
 	}
 
@@ -1131,8 +1131,8 @@ namespace TSlib
 	template<typename OT, Device o_device>
 	void Tensor<T, device>::CmodulouAsgmt(const Tensor<OT, o_device>& other)
 	{
-		bool this_alloc = isDeallocated();
-		bool other_alloc = other.isDeallocated();
+		bool this_alloc = IsDeallocated();
+		bool other_alloc = other.IsDeallocated();
 
 		#ifdef _TS_DEBUG
 
@@ -1148,7 +1148,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
@@ -1156,7 +1156,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 	}
 
@@ -1164,11 +1164,11 @@ namespace TSlib
 	template<typename OT>
 	void Tensor<T, device>::CmodulouAsgmt(const OT& other)
 	{
-		bool this_alloc = isDeallocated();
+		bool this_alloc = IsDeallocated();
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		Kernel3D<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<OT>)>
@@ -1176,7 +1176,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 	}
 
@@ -1184,8 +1184,8 @@ namespace TSlib
 	template<typename RT, typename OT, Device o_device>
 	inline Tensor<RT, device> Tensor<T, device>::Ccompare(const Tensor<OT, o_device>& other)
 	{
-		bool this_alloc = isDeallocated();
-		bool other_alloc = other.isDeallocated();
+		bool this_alloc = IsDeallocated();
+		bool other_alloc = other.IsDeallocated();
 
 		#ifdef _TS_DEBUG
 
@@ -1201,7 +1201,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
@@ -1209,7 +1209,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 
 		return result;
@@ -1219,11 +1219,11 @@ namespace TSlib
 	template<typename RT, typename OT>
 	Tensor<RT, device> Tensor<T, device>::Ccompare(const OT& other)
 	{
-		bool this_alloc = isDeallocated();
+		bool this_alloc = IsDeallocated();
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
@@ -1231,7 +1231,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 
 		return result;
@@ -1241,8 +1241,8 @@ namespace TSlib
 	template<typename RT, typename OT, Device o_device>
 	Tensor<RT, device> Tensor<T, device>::ClessThan(const Tensor<OT, o_device>& other)
 	{
-		bool this_alloc = isDeallocated();
-		bool other_alloc = other.isDeallocated();
+		bool this_alloc = IsDeallocated();
+		bool other_alloc = other.IsDeallocated();
 
 		#ifdef _TS_DEBUG
 
@@ -1258,7 +1258,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
@@ -1266,7 +1266,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 
 		return result;
@@ -1276,11 +1276,11 @@ namespace TSlib
 	template<typename RT, typename OT>
 	Tensor<RT, device> Tensor<T, device>::ClessThan(const OT& other)
 	{
-		bool this_alloc = isDeallocated();
+		bool this_alloc = IsDeallocated();
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
@@ -1288,7 +1288,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 
 		return result;
@@ -1298,8 +1298,8 @@ namespace TSlib
 	template<typename RT, typename OT, Device o_device>
 	Tensor<RT, device> Tensor<T, device>::CgreaterThan(const Tensor<OT, o_device>& other)
 	{
-		bool this_alloc = isDeallocated();
-		bool other_alloc = other.isDeallocated();
+		bool this_alloc = IsDeallocated();
+		bool other_alloc = other.IsDeallocated();
 
 		#ifdef _TS_DEBUG
 
@@ -1315,12 +1315,12 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		if (other_alloc)
 		{
-			other.push();
+			other.Push();
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
@@ -1328,12 +1328,12 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 
 		if (other_alloc)
 		{
-			other.pull();
+			other.Pull();
 		}
 
 		return result;
@@ -1343,11 +1343,11 @@ namespace TSlib
 	template<typename RT, typename OT>
 	Tensor<RT, device> Tensor<T, device>::CgreaterThan(const OT& other)
 	{
-		bool this_alloc = isDeallocated();
+		bool this_alloc = IsDeallocated();
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
@@ -1355,7 +1355,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 
 		return result;
@@ -1365,8 +1365,8 @@ namespace TSlib
 	template<typename RT, typename OT, Device o_device>
 	Tensor<RT, device> Tensor<T, device>::ClessThanEqual(const Tensor<OT, o_device>& other)
 	{
-		bool this_alloc = isDeallocated();
-		bool other_alloc = other.isDeallocated();
+		bool this_alloc = IsDeallocated();
+		bool other_alloc = other.IsDeallocated();
 
 		#ifdef _TS_DEBUG
 
@@ -1382,12 +1382,12 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		if (other_alloc)
 		{
-			other.push();
+			other.Push();
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
@@ -1395,12 +1395,12 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 
 		if (other_alloc)
 		{
-			other.pull();
+			other.Pull();
 		}
 
 		return result;
@@ -1410,11 +1410,11 @@ namespace TSlib
 	template<typename RT, typename OT>
 	Tensor<RT, device> Tensor<T, device>::ClessThanEqual(const OT& other)
 	{
-		bool this_alloc = isDeallocated();
+		bool this_alloc = IsDeallocated();
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, OT), RT>
@@ -1422,7 +1422,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 
 		return result;
@@ -1432,8 +1432,8 @@ namespace TSlib
 	template<typename RT, typename OT, Device o_device>
 	Tensor<RT, device> Tensor<T, device>::CgreaterThanEqual(const Tensor<OT, o_device>& other)
 	{
-		bool this_alloc = isDeallocated();
-		bool other_alloc = other.isDeallocated();
+		bool this_alloc = IsDeallocated();
+		bool other_alloc = other.IsDeallocated();
 
 		#ifdef _TS_DEBUG
 
@@ -1449,12 +1449,12 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		if (other_alloc)
 		{
-			other.push();
+			other.Push();
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(CUDATensor3D<T>, CUDATensor3D<RT>, CUDATensor3D<OT>), RT>
@@ -1462,12 +1462,12 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 
 		if (other_alloc)
 		{
-			other.pull();
+			other.Pull();
 		}
 
 		return result;
@@ -1477,11 +1477,11 @@ namespace TSlib
 	template<typename RT, typename OT>
 	Tensor<RT, device> Tensor<T, device>::CgreaterThanEqual(const OT& other)
 	{
-		bool this_alloc = isDeallocated();
+		bool this_alloc = IsDeallocated();
 
 		if (this_alloc)
 		{
-			push();
+			Push();
 		}
 
 		Tensor<RT, device> result = Kernel3DR<Mode::Cube, void(*)(const CUDATensor3D<T>, CUDATensor3D<RT>, const OT), RT>
@@ -1489,7 +1489,7 @@ namespace TSlib
 
 		if (this_alloc)
 		{
-			pull();
+			Pull();
 		}
 
 		return result;
@@ -1502,10 +1502,10 @@ namespace TSlib
 	{
 		if constexpr (device == Device::GPU)
 		{
-			return (bool)Ccompare(other).template sum<size_t>();
+			return (bool)Ccompare(other).template Sum<size_t>();
 		}
 
-		return (bool)compare(other).template sum<size_t>();
+		return (bool)Compare(other).template Sum<size_t>();
 	}
 	template<typename T, Device device>
 	template<typename OT>
@@ -1513,9 +1513,9 @@ namespace TSlib
 	{
 		if constexpr (device == Device::GPU)
 		{
-			return (bool)Ccompare(other).template sum<size_t>();
+			return (bool)Ccompare(other).template Sum<size_t>();
 		}
-		return (bool)compare(other).template sum<size_t>();
+		return (bool)Compare(other).template Sum<size_t>();
 	}
 
 	template<typename T, Device device>
@@ -1524,10 +1524,10 @@ namespace TSlib
 	{
 		if constexpr (device == Device::GPU)
 		{
-			return !(bool)Ccompare(other).template sum<size_t>();
+			return !(bool)Ccompare(other).template Sum<size_t>();
 		}
 
-		return !(bool)compare(other).template sum<size_t>();
+		return !(bool)Compare(other).template Sum<size_t>();
 	}
 	template<typename T, Device device>
 	template<typename OT>
@@ -1535,9 +1535,9 @@ namespace TSlib
 	{
 		if constexpr (device == Device::GPU)
 		{
-			return !(bool)Ccompare(other).template sum<size_t>();
+			return !(bool)Ccompare(other).template Sum<size_t>();
 		}
-		return !(bool)compare(other).template sum<size_t>();
+		return !(bool)Compare(other).template Sum<size_t>();
 	}
 
 	template<typename T, Device device>
@@ -1546,10 +1546,10 @@ namespace TSlib
 	{
 		if constexpr (device == Device::GPU)
 		{
-			return (bool)ClessThan(other).template sum<size_t>();
+			return (bool)ClessThan(other).template Sum<size_t>();
 		}
 
-		return (bool)compare(other, LessThan).template sum<size_t>();
+		return (bool)Compare(other, LessThan).template Sum<size_t>();
 	}
 
 	template<typename T, Device device>
@@ -1558,9 +1558,9 @@ namespace TSlib
 	{
 		if constexpr (device == Device::GPU)
 		{
-			return (bool)ClessThan(other).template sum<size_t>();
+			return (bool)ClessThan(other).template Sum<size_t>();
 		}
-		return (bool)compare(other, LessThan).template sum<size_t>();
+		return (bool)Compare(other, LessThan).template Sum<size_t>();
 	}
 
 	template<typename T, Device device>
@@ -1569,10 +1569,10 @@ namespace TSlib
 	{
 		if constexpr (device == Device::GPU)
 		{
-			return (bool)CgreaterThan(other).template sum<size_t>();
+			return (bool)CgreaterThan(other).template Sum<size_t>();
 		}
 
-		return (bool)compare(other, GreaterThan).template sum<size_t>();
+		return (bool)Compare(other, GreaterThan).template Sum<size_t>();
 	}
 	template<typename T, Device device>
 	template<typename OT>
@@ -1580,9 +1580,9 @@ namespace TSlib
 	{
 		if constexpr (device == Device::GPU)
 		{
-			return (bool)CgreaterThan(other).template sum<size_t>();
+			return (bool)CgreaterThan(other).template Sum<size_t>();
 		}
-		return (bool)compare(other, GreaterThan).template sum<size_t>();
+		return (bool)Compare(other, GreaterThan).template Sum<size_t>();
 	}
 
 	template<typename T, Device device>
@@ -1591,10 +1591,10 @@ namespace TSlib
 	{
 		if constexpr (device == Device::GPU)
 		{
-			return (bool)ClessThanEqual(other).template sum<size_t>();
+			return (bool)ClessThanEqual(other).template Sum<size_t>();
 		}
 
-		return (bool)compare(other, LessThanEqual).template sum<size_t>();
+		return (bool)Compare(other, LessThanEqual).template Sum<size_t>();
 	}
 	template<typename T, Device device>
 	template<typename OT>
@@ -1602,9 +1602,9 @@ namespace TSlib
 	{
 		if constexpr (device == Device::GPU)
 		{
-			return (bool)ClessThanEqual(other).template sum<size_t>();
+			return (bool)ClessThanEqual(other).template Sum<size_t>();
 		}
-		return (bool)compare(other, LessThanEqual).template sum<size_t>();
+		return (bool)Compare(other, LessThanEqual).template Sum<size_t>();
 	}
 
 	template<typename T, Device device>
@@ -1613,10 +1613,10 @@ namespace TSlib
 	{
 		if constexpr (device == Device::GPU)
 		{
-			return (bool)CgreaterThanEqual(other).template sum<size_t>();
+			return (bool)CgreaterThanEqual(other).template Sum<size_t>();
 		}
 
-		return (bool)compare(other, GreaterThanEqual).template sum<size_t>();
+		return (bool)Compare(other, GreaterThanEqual).template Sum<size_t>();
 	}
 	template<typename T, Device device>
 	template<typename OT>
@@ -1624,22 +1624,120 @@ namespace TSlib
 	{
 		if constexpr (device == Device::GPU)
 		{
-			return (bool)CgreaterThanEqual(other).template sum<size_t>();
+			return (bool)CgreaterThanEqual(other).template Sum<size_t>();
 		}
-		return (bool)compare(other, GreaterThanEqual).template sum<size_t>();
+		return (bool)Compare(other, GreaterThanEqual).template Sum<size_t>();
 	}
 }
 
 template<typename T, TSlib::Device device>
 std::ostream& operator<< (std::ostream& stream, const TSlib::TensorSlice<T, device>& slice)
 {
-	stream << slice.printable();
+	size_t max_length = 0;
+
+	for (size_t i = 0; i < slice.size(); i++)
+	{
+		max_length = std::max(std::to_string(slice.At(i)).size(), max_length);
+	}
+
+	for (size_t i = 0; i < slice.Shape()[slice.Dims() - 1]; i++)
+	{
+		stream << std::to_string(slice.At(i));
+
+		size_t str_len = std::to_string(slice.At(i)).size();
+
+		for (size_t j = 0; j < max_length - str_len; j++)
+		{
+			stream << ' ';
+		}
+
+		stream << ',';
+
+		if (i % slice.Shape()[slice.Dims() - 1] == slice.Shape()[slice.Dims() - 1] - 1)
+		{
+			stream << '\n';
+		}
+	}
+
+	for (size_t dim = 1; dim < slice.Dims(); dim++)
+	{
+		stream << "\n";
+		for (size_t i = slice.get_real_size(dim - 1); i < slice.get_real_size(dim); i++)
+		{
+			stream << std::to_string(At(i));
+
+			size_t str_len = std::to_string(At(i)).size();
+
+			for (size_t j = 0; j < max_length - str_len; j++)
+			{
+				stream << ' ';
+			}
+
+			stream << ',';
+
+			if (i % slice.Shape()[slice.Dims() - 1] == slice.Shape()[slice.Dims() - 1] - 1)
+			{
+				stream << '\n';
+			}
+		}
+	}
+
 	return stream;
 }
-
-template<typename T, TSlib::Device device>
-std::ostream& operator<< (std::ostream& stream, const TSlib::Tensor<T, device>& Tensor)
+namespace TSlib
 {
-	stream << Tensor.printable();
-	return stream;
+	template<typename Tprint, Device device_print>
+	std::ostream& operator<<(std::ostream& stream, const Tensor<Tprint, device_print>& tensor)
+	{
+		size_t max_length = 0;
+
+		for (const Tprint& elem : tensor)
+		{
+			max_length = std::max(to_string(elem).size(), max_length);
+		}
+
+		for (size_t i = 0; i < tensor.Shape()[tensor.Dims() - 1]; i++)
+		{
+			stream << to_string(tensor[i]);
+
+			size_t str_len = to_string(tensor[i]).size();
+
+			for (size_t j = 0; j < max_length - str_len; j++)
+			{
+				stream << ' ';
+			}
+
+			stream << ',';
+
+			if (i % tensor.Shape()[tensor.Dims() - 1] == tensor.Shape()[tensor.Dims() - 1] - 1)
+			{
+				stream << '\n';
+			}
+		}
+
+		for (size_t dim = 1; dim < tensor.Dims(); dim++)
+		{
+			stream << "\n";
+			for (size_t i = tensor.get_real_size(dim - 1); i < tensor.get_real_size(dim); i++)
+			{
+				stream << to_string(tensor[i]);
+
+				size_t str_len = to_string(tensor[i]).size();
+
+				for (size_t j = 0; j < max_length - str_len; j++)
+				{
+					stream << ' ';
+				}
+
+				stream << ',';
+
+				if (i % tensor.Shape()[tensor.Dims() - 1] == tensor.Shape()[tensor.Dims() - 1] - 1)
+				{
+					stream << '\n';
+				}
+			}
+		}
+
+		return stream;
+	}
 }

@@ -117,7 +117,7 @@ namespace TSlib
 	}
 
 	template<typename T, Device device>
-	inline T& TSlib::TensorSlice<T, device>::Get(const std::vector<size_t>& coords)
+	inline T& TensorSlice<T, device>::Get(const std::vector<size_t>& coords)
 	{
 		#ifdef _TS_DEBUG
 		if (Dims() != coords.size())
@@ -163,7 +163,7 @@ namespace TSlib
 	}
 
 	template<typename T, Device device>
-	inline T TSlib::TensorSlice<T, device>::Get(const std::vector<size_t>& coords) const
+	inline T TensorSlice<T, device>::Get(const std::vector<size_t>& coords) const
 	{
 		#ifdef _TS_DEBUG
 		if (Dims() != coords.size())
@@ -194,14 +194,14 @@ namespace TSlib
 	T& TensorSlice<T, device>::At(size_t index)
 	{
 		MEASURE();
-		return source->At(map_index(index));
+		return source->At(MapIndex(index));
 	}
 
 	template<typename T, Device device>
 	T TensorSlice<T, device>::At(size_t index) const
 	{
 		MEASURE();
-		return source->At(map_index(index));
+		return source->At(MapIndex(index));
 	}
 
 	template<typename T, Device device>
@@ -382,7 +382,7 @@ namespace TSlib
 	}
 
 	template<typename T, Device device>
-	inline Tensor<T, device> TSlib::TensorSlice<T, device>::Compute(std::function<void(T&, const T&)> compute_func, size_t axis, T pad_val, bool keepDims) const
+	inline Tensor<T, device> TensorSlice<T, device>::Compute(std::function<void(T&, const T&)> compute_func, size_t axis, T pad_val, bool keepDims) const
 	{
 		std::vector<size_t> return_shape(Shape());
 
@@ -418,7 +418,7 @@ namespace TSlib
 	}
 
 	template<typename T, Device device>
-	inline Tensor<T, device> TSlib::TensorSlice<T, device>::Compute(std::function<void(T&, const T&, const std::vector<size_t>&)> compute_func, size_t axis, T pad_val, bool keepDims) const
+	inline Tensor<T, device> TensorSlice<T, device>::Compute(std::function<void(T&, const T&, const std::vector<size_t>&)> compute_func, size_t axis, T pad_val, bool keepDims) const
 	{
 		std::vector<size_t> return_shape(Shape());
 
@@ -454,7 +454,7 @@ namespace TSlib
 	}
 
 	template<typename T, Device device>
-	inline Tensor<T, device> TSlib::TensorSlice<T, device>::Compute(std::function<void(T&, const T&, const size_t&)> compute_func, size_t axis, T pad_val, bool keepDims) const
+	inline Tensor<T, device> TensorSlice<T, device>::Compute(std::function<void(T&, const T&, const size_t&)> compute_func, size_t axis, T pad_val, bool keepDims) const
 	{
 		std::vector<size_t> return_shape(Shape());
 
@@ -490,7 +490,7 @@ namespace TSlib
 	}
 
 	template<typename T, Device device>
-	inline Tensor<T, device> TSlib::TensorSlice<T, device>::Compute(std::function<void(T&, const T&, const std::vector<size_t>&, const size_t&)> compute_func, size_t axis, T pad_val, bool keepDims) const
+	inline Tensor<T, device> TensorSlice<T, device>::Compute(std::function<void(T&, const T&, const std::vector<size_t>&, const size_t&)> compute_func, size_t axis, T pad_val, bool keepDims) const
 	{
 		std::vector<size_t> return_shape(Shape());
 
@@ -627,7 +627,7 @@ namespace TSlib
 		size_t unknown_value = size() / shape_product;
 
 		#ifdef _TS_DEBUG
-		if (double_t(unknown_value) != round(double_t(size()) / double_t(shape_product), 1000))
+		if (double(unknown_value) != round(double(size()) / double(shape_product), 1000))
 		{
 			throw BadShape("The unknown dimension is impossible to fit with the given shape", Shape(), shape);
 		}
@@ -645,7 +645,7 @@ namespace TSlib
 	}
 
 	template<typename T, Device device>
-	size_t TensorSlice<T, device>::map_index(size_t index) const
+	size_t TensorSlice<T, device>::MapIndex(size_t index) const
 	{
 		MEASURE();
 		size_t tmp_multiply = m_slice_shape[Dims() - 1].width();
@@ -741,7 +741,7 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename OT, Device other_device>
-	Tensor<T, device> TensorSlice<T, device>::add(const Tensor<OT, other_device>& other)
+	Tensor<T, device> TensorSlice<T, device>::Add(const Tensor<OT, other_device>& other)
 	{
 		Tensor<T, device> r_val(*this);
 
@@ -755,7 +755,7 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename OT, Device other_device>
-	Tensor<T, device> TensorSlice<T, device>::add(const TensorSlice<OT, other_device>& other)
+	Tensor<T, device> TensorSlice<T, device>::Add(const TensorSlice<OT, other_device>& other)
 	{
 		Tensor<T, device> r_val(*this);
 
@@ -769,7 +769,7 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename OT>
-	Tensor<T, device> TensorSlice<T, device>::add(const OT& other)
+	Tensor<T, device> TensorSlice<T, device>::Add(const OT& other)
 	{
 		Tensor<T, device> r_val(*this);
 
@@ -783,7 +783,7 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename OT, Device other_device>
-	void TensorSlice<T, device>::addAsgmt(const Tensor<OT, other_device>& other)
+	void TensorSlice<T, device>::AddAsgmt(const Tensor<OT, other_device>& other)
 	{
 		for (size_t i = 0; i < size(); i++)
 		{
@@ -793,7 +793,7 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename OT, Device other_device>
-	void TensorSlice<T, device>::addAsgmt(const TensorSlice<OT, other_device>& other)
+	void TensorSlice<T, device>::AddAsgmt(const TensorSlice<OT, other_device>& other)
 	{
 		for (size_t i = 0; i < size(); i++)
 		{
@@ -803,7 +803,7 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename OT>
-	void TensorSlice<T, device>::addAsgmt(const OT& other)
+	void TensorSlice<T, device>::AddAsgmt(const OT& other)
 	{
 		for (size_t i = 0; i < size(); i++)
 		{
@@ -813,7 +813,7 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename OT, Device other_device>
-	Tensor<T, device> TensorSlice<T, device>::subtract(const Tensor<OT, other_device>& other)
+	Tensor<T, device> TensorSlice<T, device>::Subtract(const Tensor<OT, other_device>& other)
 	{
 		Tensor<T, device> r_val(*this);
 
@@ -827,7 +827,7 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename OT, Device other_device>
-	Tensor<T, device> TensorSlice<T, device>::subtract(const TensorSlice<OT, other_device>& other)
+	Tensor<T, device> TensorSlice<T, device>::Subtract(const TensorSlice<OT, other_device>& other)
 	{
 		Tensor<T, device> r_val(*this);
 
@@ -841,7 +841,7 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename OT>
-	Tensor<T, device> TensorSlice<T, device>::subtract(const OT& other)
+	Tensor<T, device> TensorSlice<T, device>::Subtract(const OT& other)
 	{
 		Tensor<T, device> r_val(*this);
 
@@ -855,7 +855,7 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename OT, Device other_device>
-	void TensorSlice<T, device>::subtractAsgmt(const Tensor<OT, other_device>& other)
+	void TensorSlice<T, device>::SubtractAsgmt(const Tensor<OT, other_device>& other)
 	{
 		for (size_t i = 0; i < size(); i++)
 		{
@@ -865,7 +865,7 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename OT, Device other_device>
-	void TensorSlice<T, device>::subtractAsgmt(const TensorSlice<OT, other_device>& other)
+	void TensorSlice<T, device>::SubtractAsgmt(const TensorSlice<OT, other_device>& other)
 	{
 		for (size_t i = 0; i < size(); i++)
 		{
@@ -875,7 +875,7 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename OT>
-	void TensorSlice<T, device>::subtractAsgmt(const OT& other)
+	void TensorSlice<T, device>::SubtractAsgmt(const OT& other)
 	{
 		for (size_t i = 0; i < size(); i++)
 		{
@@ -885,7 +885,7 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename OT, Device other_device>
-	Tensor<T, device> TensorSlice<T, device>::multiply(const Tensor<OT, other_device>& other)
+	Tensor<T, device> TensorSlice<T, device>::Multiply(const Tensor<OT, other_device>& other)
 	{
 		Tensor<T, device> r_val(*this);
 
@@ -899,7 +899,7 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename OT, Device other_device>
-	Tensor<T, device> TensorSlice<T, device>::multiply(const TensorSlice<OT, other_device>& other)
+	Tensor<T, device> TensorSlice<T, device>::Multiply(const TensorSlice<OT, other_device>& other)
 	{
 		Tensor<T, device> r_val(*this);
 
@@ -913,7 +913,7 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename OT>
-	Tensor<T, device> TensorSlice<T, device>::multiply(const OT& other)
+	Tensor<T, device> TensorSlice<T, device>::Multiply(const OT& other)
 	{
 		Tensor<T, device> r_val(*this);
 
@@ -927,7 +927,7 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename OT, Device other_device>
-	void TensorSlice<T, device>::multiplyAsgmt(const Tensor<OT, other_device>& other)
+	void TensorSlice<T, device>::MultiplyAsgmt(const Tensor<OT, other_device>& other)
 	{
 		for (size_t i = 0; i < size(); i++)
 		{
@@ -937,7 +937,7 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename OT, Device other_device>
-	void TensorSlice<T, device>::multiplyAsgmt(const TensorSlice<OT, other_device>& other)
+	void TensorSlice<T, device>::MultiplyAsgmt(const TensorSlice<OT, other_device>& other)
 	{
 		for (size_t i = 0; i < size(); i++)
 		{
@@ -947,7 +947,7 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename OT>
-	void TensorSlice<T, device>::multiplyAsgmt(const OT& other)
+	void TensorSlice<T, device>::MultiplyAsgmt(const OT& other)
 	{
 		for (size_t i = 0; i < size(); i++)
 		{
@@ -957,7 +957,7 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename OT, Device other_device>
-	Tensor<T, device> TensorSlice<T, device>::divide(const Tensor<OT, other_device>& other)
+	Tensor<T, device> TensorSlice<T, device>::Divide(const Tensor<OT, other_device>& other)
 	{
 		Tensor<T, device> r_val(*this);
 
@@ -971,7 +971,7 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename OT, Device other_device>
-	Tensor<T, device> TensorSlice<T, device>::divide(const TensorSlice<OT, other_device>& other)
+	Tensor<T, device> TensorSlice<T, device>::Divide(const TensorSlice<OT, other_device>& other)
 	{
 		Tensor<T, device> r_val(*this);
 
@@ -985,7 +985,7 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename OT>
-	Tensor<T, device> TensorSlice<T, device>::divide(const OT& other)
+	Tensor<T, device> TensorSlice<T, device>::Divide(const OT& other)
 	{
 		Tensor<T, device> r_val(*this);
 
@@ -1071,7 +1071,7 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename OT, Device other_device>
-	void TensorSlice<T, device>::modulouAsgmt(const Tensor<OT, other_device>& other)
+	void TensorSlice<T, device>::ModulouAsgmt(const Tensor<OT, other_device>& other)
 	{
 		for (size_t i = 0; i < size(); i++)
 		{
@@ -1081,7 +1081,7 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename OT, Device other_device>
-	void TensorSlice<T, device>::modulouAsgmt(const TensorSlice<OT, other_device>& other)
+	void TensorSlice<T, device>::ModulouAsgmt(const TensorSlice<OT, other_device>& other)
 	{
 		for (size_t i = 0; i < size(); i++)
 		{
@@ -1091,7 +1091,7 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename OT>
-	void TensorSlice<T, device>::modulouAsgmt(const OT& other)
+	void TensorSlice<T, device>::ModulouAsgmt(const OT& other)
 	{
 		for (size_t i = 0; i < size(); i++)
 		{
@@ -1101,7 +1101,7 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename RT, typename OT, Device o_device>
-	inline Tensor<RT, device> TensorSlice<T, device>::compare(const Tensor<OT, o_device>& other, bool(*comp_func)(const T&, const OT&))
+	inline Tensor<RT, device> TensorSlice<T, device>::Compare(const Tensor<OT, o_device>& other, bool(*comp_func)(const T&, const OT&))
 	{
 		MEASURE();
 		#ifdef _TS_DEBUG
@@ -1131,7 +1131,7 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename RT, typename OT, Device o_device>
-	inline Tensor<RT, device> TensorSlice<T, device>::compare(const TensorSlice<OT, o_device>& other, bool(*comp_func)(const T&, const OT&))
+	inline Tensor<RT, device> TensorSlice<T, device>::Compare(const TensorSlice<OT, o_device>& other, bool(*comp_func)(const T&, const OT&))
 	{
 		MEASURE();
 		#ifdef _TS_DEBUG
@@ -1161,7 +1161,7 @@ namespace TSlib
 
 	template<typename T, Device device>
 	template<typename RT, typename OT>
-	inline Tensor<RT, device> TensorSlice<T, device>::compare(const OT& other, bool(*comp_func)(const T&, const OT&))
+	inline Tensor<RT, device> TensorSlice<T, device>::Compare(const OT& other, bool(*comp_func)(const T&, const OT&))
 	{
 		MEASURE();
 
@@ -1179,84 +1179,84 @@ namespace TSlib
 	template<typename OT, Device other_device>
 	inline Tensor<T, device> TensorSlice<T, device>::operator+(const Tensor<OT, other_device>& other)
 	{
-		return add(other);
+		return Add(other);
 	}
 
 	template<typename T, Device device>
 	template<typename OT, Device other_device>
 	inline Tensor<T, device> TensorSlice<T, device>::operator+(const TensorSlice<OT, other_device>& other)
 	{
-		return add(other);
+		return Add(other);
 	}
 
 	template<typename T, Device device>
 	template<typename OT>
 	inline Tensor<T, device> TensorSlice<T, device>::operator+(const OT& other)
 	{
-		return add(other);
+		return Add(other);
 	}
 
 	template<typename T, Device device>
 	template<typename OT, Device other_device>
 	inline Tensor<T, device> TensorSlice<T, device>::operator-(const Tensor<OT, other_device>& other)
 	{
-		return subtract(other);
+		return Subtract(other);
 	}
 
 	template<typename T, Device device>
 	template<typename OT, Device other_device>
 	inline Tensor<T, device> TensorSlice<T, device>::operator-(const TensorSlice<OT, other_device>& other)
 	{
-		return subtract(other);
+		return Subtract(other);
 	}
 
 	template<typename T, Device device>
 	template<typename OT>
 	inline Tensor<T, device> TensorSlice<T, device>::operator-(const OT& other)
 	{
-		return subtract(other);
+		return Subtract(other);
 	}
 
 	template<typename T, Device device>
 	template<typename OT, Device other_device>
 	inline Tensor<T, device> TensorSlice<T, device>::operator*(const Tensor<OT, other_device>& other)
 	{
-		return multiply(other);
+		return Multiply(other);
 	}
 
 	template<typename T, Device device>
 	template<typename OT, Device other_device>
 	inline Tensor<T, device> TensorSlice<T, device>::operator*(const TensorSlice<OT, other_device>& other)
 	{
-		return multiply(other);
+		return Multiply(other);
 	}
 
 	template<typename T, Device device>
 	template<typename OT>
 	inline Tensor<T, device> TensorSlice<T, device>::operator*(const OT& other)
 	{
-		return multiply(other);
+		return Multiply(other);
 	}
 
 	template<typename T, Device device>
 	template<typename OT, Device other_device>
 	inline Tensor<T, device> TensorSlice<T, device>::operator/(const Tensor<OT, other_device>& other)
 	{
-		return divide(other);
+		return Divide(other);
 	}
 
 	template<typename T, Device device>
 	template<typename OT, Device other_device>
 	inline Tensor<T, device> TensorSlice<T, device>::operator/(const TensorSlice<OT, other_device>& other)
 	{
-		return divide(other);
+		return Divide(other);
 	}
 
 	template<typename T, Device device>
 	template<typename OT>
 	inline Tensor<T, device> TensorSlice<T, device>::operator/(const OT& other)
 	{
-		return divide(other);
+		return Divide(other);
 	}
 
 	template<typename T, Device device>
@@ -1277,63 +1277,63 @@ namespace TSlib
 	template<typename OT, Device other_device>
 	inline void TensorSlice<T, device>::operator+=(const Tensor<OT, other_device>& other)
 	{
-		addAsgmt(other);
+		AddAsgmt(other);
 	}
 
 	template<typename T, Device device>
 	template<typename OT, Device other_device>
 	inline void TensorSlice<T, device>::operator+=(const TensorSlice<OT, other_device>& other)
 	{
-		addAsgmt(other);
+		AddAsgmt(other);
 	}
 
 	template<typename T, Device device>
 	template<typename OT>
 	inline void TensorSlice<T, device>::operator+=(const OT& other)
 	{
-		addAsgmt(other);
+		AddAsgmt(other);
 	}
 
 	template<typename T, Device device>
 	template<typename OT, Device other_device>
 	inline void TensorSlice<T, device>::operator-=(const Tensor<OT, other_device>& other)
 	{
-		subtractAsgmt(other);
+		SubtractAsgmt(other);
 	}
 
 	template<typename T, Device device>
 	template<typename OT, Device other_device>
 	inline void TensorSlice<T, device>::operator-=(const TensorSlice<OT, other_device>& other)
 	{
-		subtractAsgmt(other);
+		SubtractAsgmt(other);
 	}
 
 	template<typename T, Device device>
 	template<typename OT>
 	inline void TensorSlice<T, device>::operator-=(const OT& other)
 	{
-		subtractAsgmt(other);
+		SubtractAsgmt(other);
 	}
 
 	template<typename T, Device device>
 	template<typename OT, Device other_device>
 	inline void TensorSlice<T, device>::operator*=(const Tensor<OT, other_device>& other)
 	{
-		multiplyAsgmt(other);
+		MultiplyAsgmt(other);
 	}
 
 	template<typename T, Device device>
 	template<typename OT, Device other_device>
 	inline void TensorSlice<T, device>::operator*=(const TensorSlice<OT, other_device>& other)
 	{
-		multiplyAsgmt(other);
+		MultiplyAsgmt(other);
 	}
 
 	template<typename T, Device device>
 	template<typename OT>
 	inline void TensorSlice<T, device>::operator*=(const OT& other)
 	{
-		multiplyAsgmt(other);
+		MultiplyAsgmt(other);
 	}
 
 	template<typename T, Device device>
@@ -1361,21 +1361,21 @@ namespace TSlib
 	template<typename OT, Device other_device>
 	inline void TensorSlice<T, device>::operator%=(const Tensor<OT, other_device>& other)
 	{
-		modulouAsgmt(other);
+		ModulouAsgmt(other);
 	}
 
 	template<typename T, Device device>
 	template<typename OT, Device other_device>
 	inline void TensorSlice<T, device>::operator%=(const TensorSlice<OT, other_device>& other)
 	{
-		modulouAsgmt(other);
+		ModulouAsgmt(other);
 	}
 
 	template<typename T, Device device>
 	template<typename OT>
 	inline void TensorSlice<T, device>::operator%=(const OT& other)
 	{
-		modulouAsgmt(other);
+		ModulouAsgmt(other);
 	}
 
 	template<typename T, Device device>
@@ -1383,9 +1383,9 @@ namespace TSlib
 	inline bool TensorSlice<T, device>::operator==(const Tensor<OT, other_device>& other)
 	{
 		#ifdef __clang__
-		return compare(other).template sum<size_t>() == other.size();
+		return Compare(other).template Sum<size_t>() == other.size();
 		#else
-		return compare(other).sum<size_t>() == other.size();
+		return Compare(other).Sum<size_t>() == other.size();
 		#endif
 	}
 
@@ -1394,9 +1394,9 @@ namespace TSlib
 	inline bool TensorSlice<T, device>::operator==(const TensorSlice<OT, other_device>& other)
 	{
 		#ifdef __clang__
-		return compare(other).template sum<size_t>() == other.size();
+		return Compare(other).template Sum<size_t>() == other.size();
 		#else
-		return compare(other).sum<size_t>() == other.size();
+		return Compare(other).Sum<size_t>() == other.size();
 		#endif
 	}
 
@@ -1405,9 +1405,9 @@ namespace TSlib
 	inline bool TensorSlice<T, device>::operator==(const OT& other)
 	{
 		#ifdef __clang__
-		return compare(other).template sum<size_t>() == size();
+		return Compare(other).template Sum<size_t>() == size();
 		#else
-		return compare(other).sum<size_t>() == size();
+		return Compare(other).Sum<size_t>() == size();
 		#endif
 	}
 
@@ -1416,9 +1416,9 @@ namespace TSlib
 	inline bool TensorSlice<T, device>::operator!=(const Tensor<OT, other_device>& other)
 	{
 		#ifdef __clang__
-		return compare(other, NotEqual).template sum<size_t>() == other.size();
+		return Compare(other, NotEqual).template Sum<size_t>() == other.size();
 		#else
-		return compare(other, NotEqual).sum<size_t>() == other.size();
+		return Compare(other, NotEqual).Sum<size_t>() == other.size();
 		#endif
 	}
 
@@ -1427,9 +1427,9 @@ namespace TSlib
 	inline bool TensorSlice<T, device>::operator!=(const TensorSlice<OT, other_device>& other)
 	{
 		#ifdef __clang__
-		return compare(other, NotEqual).template sum<size_t>() == other.size();
+		return Compare(other, NotEqual).template Sum<size_t>() == other.size();
 		#else
-		return compare(other, NotEqual).sum<size_t>() == other.size();
+		return Compare(other, NotEqual).Sum<size_t>() == other.size();
 		#endif
 	}
 
@@ -1438,9 +1438,9 @@ namespace TSlib
 	inline bool TensorSlice<T, device>::operator!=(const OT& other)
 	{
 		#ifdef __clang__
-		return compare(other, NotEqual).template sum<size_t>() == size();
+		return Compare(other, NotEqual).template Sum<size_t>() == size();
 		#else
-		return compare(other, NotEqual).sum<size_t>() == size();
+		return Compare(other, NotEqual).Sum<size_t>() == size();
 		#endif
 	}
 
@@ -1449,9 +1449,9 @@ namespace TSlib
 	inline bool TensorSlice<T, device>::operator<(const Tensor<OT, other_device>& other)
 	{
 		#ifdef __clang__
-		return compare(other, LessThan).template sum<size_t>() == other.size();
+		return Compare(other, LessThan).template Sum<size_t>() == other.size();
 		#else
-		return compare(other, LessThan).sum<size_t>() == other.size();
+		return Compare(other, LessThan).Sum<size_t>() == other.size();
 		#endif
 	}
 
@@ -1460,9 +1460,9 @@ namespace TSlib
 	inline bool TensorSlice<T, device>::operator<(const TensorSlice<OT, other_device>& other)
 	{
 		#ifdef __clang__
-		return compare(other, LessThan).template sum<size_t>() == other.size();
+		return Compare(other, LessThan).template Sum<size_t>() == other.size();
 		#else
-		return compare(other, LessThan).sum<size_t>() == other.size();
+		return Compare(other, LessThan).Sum<size_t>() == other.size();
 		#endif
 	}
 
@@ -1471,9 +1471,9 @@ namespace TSlib
 	inline bool TensorSlice<T, device>::operator<(const OT& other)
 	{
 		#ifdef __clang__
-		return compare(other, LessThan).template sum<size_t>() == size();
+		return Compare(other, LessThan).template Sum<size_t>() == size();
 		#else
-		return compare(other, LessThan).sum<size_t>() == size();
+		return Compare(other, LessThan).Sum<size_t>() == size();
 		#endif
 	}
 
@@ -1482,9 +1482,9 @@ namespace TSlib
 	inline bool TensorSlice<T, device>::operator>(const Tensor<OT, other_device>& other)
 	{
 		#ifdef __clang__
-		return compare(other, GreaterThan).template sum<size_t>() == other.size();
+		return Compare(other, GreaterThan).template Sum<size_t>() == other.size();
 		#else
-		return compare(other, GreaterThan).sum<size_t>() == other.size();
+		return Compare(other, GreaterThan).Sum<size_t>() == other.size();
 		#endif
 	}
 
@@ -1493,9 +1493,9 @@ namespace TSlib
 	inline bool TensorSlice<T, device>::operator>(const TensorSlice<OT, other_device>& other)
 	{
 		#ifdef __clang__
-		return compare(other, GreaterThan).template sum<size_t>() == other.size();
+		return Compare(other, GreaterThan).template Sum<size_t>() == other.size();
 		#else
-		return compare(other, GreaterThan).sum<size_t>() == other.size();
+		return Compare(other, GreaterThan).Sum<size_t>() == other.size();
 		#endif
 	}
 
@@ -1504,9 +1504,9 @@ namespace TSlib
 	inline bool TensorSlice<T, device>::operator>(const OT& other)
 	{
 		#ifdef __clang__
-		return compare(other, GreaterThan).template sum<size_t>() == size();
+		return Compare(other, GreaterThan).template Sum<size_t>() == size();
 		#else
-		return compare(other, GreaterThan).sum<size_t>() == size();
+		return Compare(other, GreaterThan).Sum<size_t>() == size();
 		#endif
 	}
 
@@ -1515,9 +1515,9 @@ namespace TSlib
 	inline bool TensorSlice<T, device>::operator<=(const Tensor<OT, other_device>& other)
 	{
 		#ifdef __clang__
-		return compare(other, LessThanEqual).template sum<size_t>() == other.size();
+		return Compare(other, LessThanEqual).template Sum<size_t>() == other.size();
 		#else
-		return compare(other, LessThanEqual).sum<size_t>() == other.size();
+		return Compare(other, LessThanEqual).Sum<size_t>() == other.size();
 		#endif
 	}
 
@@ -1526,9 +1526,9 @@ namespace TSlib
 	inline bool TensorSlice<T, device>::operator<=(const TensorSlice<OT, other_device>& other)
 	{
 		#ifdef __clang__
-		return compare(other, LessThanEqual).template sum<size_t>() == other.size();
+		return Compare(other, LessThanEqual).template Sum<size_t>() == other.size();
 		#else
-		return compare(other, LessThanEqual).sum<size_t>() == other.size();
+		return Compare(other, LessThanEqual).Sum<size_t>() == other.size();
 		#endif
 	}
 
@@ -1537,9 +1537,9 @@ namespace TSlib
 	inline bool TensorSlice<T, device>::operator<=(const OT& other)
 	{
 		#ifdef __clang__
-		return compare(other, LessThanEqual).template sum<size_t>() == size();
+		return Compare(other, LessThanEqual).template Sum<size_t>() == size();
 		#else
-		return compare(other, LessThanEqual).sum<size_t>() == size();
+		return Compare(other, LessThanEqual).Sum<size_t>() == size();
 		#endif
 	}
 
@@ -1548,9 +1548,9 @@ namespace TSlib
 	inline bool TensorSlice<T, device>::operator>=(const Tensor<OT, other_device>& other)
 	{
 		#ifdef __clang__
-		return compare(other, GreaterThanEqual).template sum<size_t>() == other.size();
+		return Compare(other, GreaterThanEqual).template Sum<size_t>() == other.size();
 		#else
-		return compare(other, GreaterThanEqual).sum<size_t>() == other.size();
+		return Compare(other, GreaterThanEqual).Sum<size_t>() == other.size();
 		#endif
 	}
 
@@ -1559,9 +1559,9 @@ namespace TSlib
 	inline bool TensorSlice<T, device>::operator>=(const TensorSlice<OT, other_device>& other)
 	{
 		#ifdef __clang__
-		return compare(other, GreaterThanEqual).template sum<size_t>() == other.size();
+		return Compare(other, GreaterThanEqual).template Sum<size_t>() == other.size();
 		#else
-		return compare(other, GreaterThanEqual).sum<size_t>() == other.size();
+		return Compare(other, GreaterThanEqual).Sum<size_t>() == other.size();
 		#endif
 	}
 
@@ -1570,9 +1570,9 @@ namespace TSlib
 	inline bool TensorSlice<T, device>::operator>=(const OT& other)
 	{
 		#ifdef __clang__
-		return compare(other, GreaterThanEqual).template sum<size_t>() == size();
+		return Compare(other, GreaterThanEqual).template Sum<size_t>() == size();
 		#else
-		return compare(other, GreaterThanEqual).sum<size_t>() == size();
+		return Compare(other, GreaterThanEqual).Sum<size_t>() == size();
 		#endif
 	}
 

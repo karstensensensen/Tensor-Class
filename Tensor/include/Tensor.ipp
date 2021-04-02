@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef __clang__
-typedef double double_t;
+typedef double double;
 #endif
 
 #include <stdlib.h>
@@ -249,6 +249,21 @@ namespace TSlib
 			}
 		};
 
+		template<size_t n>
+		struct staticSorter
+		{
+			const std::array<size_t, n>& vec;
+
+			staticSorter(const std::array<size_t, n>& vec)
+				:vec(vec)
+			{}
+
+			bool operator()(size_t a, size_t b)
+			{
+				return vec[a] < vec[b];
+			}
+		};
+
 		struct sorterSlice
 		{
 			const std::vector<TSlice>& vec;
@@ -268,10 +283,23 @@ namespace TSlib
 	std::vector<size_t> Tensor<T, device>::based_sort(const std::vector<size_t>& target)
 	{
 		std::vector<size_t> new_indexes(target.size());
-		//
+		
 		std::generate(new_indexes.begin(), new_indexes.end(), [n = target.size() - 1]() mutable {return n--; });
 
 		std::sort(new_indexes.begin(), new_indexes.end(), sorter(target));
+
+		return new_indexes;
+	}
+
+	template<typename T, Device device>
+	template<size_t n>
+	std::array<size_t, n> Tensor<T, device>::based_sort(const std::array<size_t, n>& target)
+	{
+		std::array<size_t, n> new_indexes;
+		
+		std::generate(new_indexes.begin(), new_indexes.end(), [i = n - 1]() mutable {return i--; });
+
+		std::sort(new_indexes.begin(), new_indexes.end(), staticSorter<n>(target));
 
 		return new_indexes;
 	}
@@ -390,14 +418,28 @@ namespace TSlib
 
 		#ifdef _CUDA
 
-		if (other.isAllocated())
+		if (other.IsAllocated())
 		{
-			allocate();
+			Allocate();
 			cudaMemcpy(gpu_mem, other.gpu_mem, sizeof(T) * size(), cudaMemcpyDeviceToDevice);
 		}
 
 		#endif
 	}
+
+	template<typename T, Device device>
+	Tensor<T, device>::Tensor(Tensor<T, device>&& other)
+		: m_vector(std::move(other.m_vector)), m_shape(std::move(other.m_shape))
+	{
+		#ifdef _CUDA
+		gpu_mem = other.gpu_mem;
+		allocated = other.allocated;
+		m_threads = other.m_threads;
+
+		other.gpu_mem = nullptr;
+		#endif
+	}
+
 
 	template<typename T, Device device>
 	inline void Tensor<T, device>::Save(std::string dir) const
@@ -464,9 +506,9 @@ namespace TSlib
 	Tensor<T, device>::~Tensor()
 	{
 		#ifdef _CUDA
-		if (isAllocated())
+		if (IsAllocated())
 		{
-			deallocate();
+			Deallocate();
 		}
 		#endif
 	}
@@ -855,8 +897,8 @@ namespace TSlib
 		MEASURE();
 		#ifdef _CUDA
 		//deallocate gpu memory if allocated to make sure there isnt accidentally copied too much or little memory to cpu or gpu
-		if (isAllocated())
-			deallocate();
+		if (IsAllocated())
+			Deallocate();
 		#endif
 
 		//Reserve size
@@ -918,13 +960,26 @@ namespace TSlib
 	}
 
 	template<typename T, Device device>
+	template<size_t n>
+	inline size_t Tensor<T, device>::calc_new_size(const std::array<size_t, n>& sizes)
+	{
+		MEASURE();
+		size_t new_size = 1;
+		for (const size_t& elem_size : sizes)
+		{
+			new_size *= elem_size;
+		}
+		return new_size;
+	}
+
+	template<typename T, Device device>
 	Tensor<T, device>& Tensor<T, device>::Resize(const std::vector<size_t>& sizes, const T& pad_val)
 	{
 		MEASURE();
 		#ifdef _CUDA
 		//deallocate gpu memory if allocated to make sure there isnt accidentally copied too much or little memory to cpu or gpu
-		if (isAllocated())
-			deallocate();
+		if (IsAllocated())
+			Deallocate();
 		#endif
 
 		#ifdef _TS_DEBUG
@@ -947,6 +1002,68 @@ namespace TSlib
 		for (size_t i = 0; i < sizes.size(); i++)
 		{
 			size_t target_size = sizes.size() - dimensions[i] - 1;
+			size_t new_amount = NULL;
+			size_t tmp_size = size();
+			size_t tmp_row_size = get_real_size(dimensions[i]);
+
+			m_shape[target_size] = sizes[target_size];
+
+			if (dimensions[i] != 0)
+				new_amount = get_real_size(dimensions[i] - 1) * get_dim_length(dimensions[i]);
+			else
+				new_amount = get_dim_length(dimensions[i]);
+
+			if (new_amount > tmp_size)
+			{
+				new_amount -= tmp_size;
+
+				//Resize dimension
+				upscale_dim(dimensions[i], tmp_row_size, new_amount, pad_val);
+			}
+			else
+			{
+				new_amount = tmp_size - new_amount;
+
+				downscale_dim(dimensions[i], tmp_row_size, new_amount);
+			}
+		}
+
+		m_vector.shrink_to_fit();
+
+		return *this;
+	}
+
+	template<typename T, Device device>
+	template<size_t n>
+	inline Tensor<T, device>& Tensor<T, device>::Resize(const std::array<size_t, n>& sizes, const T& pad_val)
+	{
+		MEASURE();
+		#ifdef _CUDA
+		//deallocate gpu memory if allocated to make sure there isnt accidentally copied too much or little memory to cpu or gpu
+		if (IsAllocated())
+			Deallocate();
+		#endif
+
+		#ifdef _TS_DEBUG
+		if (n == 0)
+		{
+			throw BadShape("New shape must not be of length 0");
+		}
+		#endif
+
+		SetDims(n);
+
+		size_t current_size = get_real_size(m_shape.size() - 1);
+		size_t new_size = calc_new_size<n>(sizes);
+
+		if (current_size < new_size)
+			m_vector.reserve(new_size - current_size);
+
+		std::array<size_t, n> dimensions = based_sort(sizes);
+
+		for (size_t i = 0; i < n; i++)
+		{
+			size_t target_size = n - dimensions[i] - 1;
 			size_t new_amount = NULL;
 			size_t tmp_size = size();
 			size_t tmp_row_size = get_real_size(dimensions[i]);
@@ -1014,7 +1131,7 @@ namespace TSlib
 		size_t unknown_value = size() / shape_product;
 
 		#ifdef _TS_DEBUG
-		if (double_t(unknown_value) != round(double_t(size()) / double_t(shape_product), 1000))
+		if (double(unknown_value) != round(double(size()) / double(shape_product), 1000))
 		{
 			throw BadShape("The unknown dimension is impossible to fit with the given shape", Shape(), shape);
 		}
@@ -1032,7 +1149,7 @@ namespace TSlib
 	}
 
 	template<typename T, Device device>
-	inline TensorSlice<T, device> TSlib::Tensor<T, device>::AsShape(const std::vector<long long>& shape)
+	inline TensorSlice<T, device> Tensor<T, device>::AsShape(const std::vector<long long>& shape)
 	{
 		TensorSlice<T, device> slice = Slice();
 		slice.Reshape(shape);
@@ -1047,8 +1164,8 @@ namespace TSlib
 
 		#ifdef _CUDA
 		//deallocate gpu memory if allocated to make sure there isnt accidentally copied too much or little memory to cpu or gpu
-		if (isAllocated())
-			deallocate();
+		if (IsAllocated())
+			Deallocate();
 		#endif
 		if (dims > Dims())
 		{
@@ -1069,8 +1186,8 @@ namespace TSlib
 
 		#ifdef _CUDA
 		//deallocate gpu memory if allocated to make sure there isnt accidentally copied too much or little memory to cpu or gpu
-		if (isAllocated())
-			deallocate();
+		if (IsAllocated())
+			Deallocate();
 		#endif
 
 		m_shape.resize(m_shape.size() + dims, 1);
@@ -1085,8 +1202,8 @@ namespace TSlib
 
 		#ifdef _CUDA
 		//deallocate gpu memory if allocated to make sure there isnt accidentally copied too much or little memory to cpu or gpu
-		if (isAllocated())
-			deallocate();
+		if (IsAllocated())
+			Deallocate();
 		#endif
 
 		#ifdef _TS_DEBUG
@@ -1159,7 +1276,7 @@ namespace TSlib
 		{
 			if (slice.TSliceShape()[i].get_from() + slice.Shape()[i] > Shape()[i])
 			{
-				throw TSlib::BadShape("Slice must be within Tensor borders", slice.Shape(), Shape());
+				throw BadShape("Slice must be within Tensor borders", slice.Shape(), Shape());
 			}
 		}
 		#endif
@@ -1206,7 +1323,7 @@ namespace TSlib
 	#endif
 
 	template<typename T, Device device>
-	inline T& TSlib::Tensor<T, device>::Get(const std::vector<size_t>& coords)
+	inline T& Tensor<T, device>::Get(const std::vector<size_t>& coords)
 	{
 		#ifdef _TS_DEBUG
 		if (Dims() != coords.size())
@@ -1255,7 +1372,7 @@ namespace TSlib
 	}
 
 	template<typename T, Device device>
-	T TSlib::Tensor<T, device>::Get(const std::vector<size_t>& coords) const
+	T Tensor<T, device>::Get(const std::vector<size_t>& coords) const
 	{
 		#ifdef _TS_DEBUG
 		if (Dims() != coords.size())
@@ -1404,6 +1521,35 @@ namespace TSlib
 	Tensor<T, device>& Tensor<T, device>::operator=(const std::vector<T>& other)
 	{
 		Fill(other);
+		return *this;
+	}
+
+	template<typename T, Device device>
+	Tensor<T, device>& Tensor<T, device>::operator=(const Tensor<T, device>& other)
+	{
+		Fill(other.m_vector);
+		return *this;
+	}
+
+	template<typename T, Device device>
+	Tensor<T, device>& Tensor<T, device>::operator=(Tensor<T, device>&& other)
+	{
+		m_vector = std::move(other.m_vector);
+		m_shape = std::move(other.m_shape);
+
+		#ifdef _CUDA
+		if (allocated)
+		{
+			Deallocate();
+		}
+
+		gpu_mem = other.gpu_mem;
+		allocated = other.allocated;
+		m_threads = other.m_threads;
+
+		other.gpu_mem = nullptr;
+		#endif
+
 		return *this;
 	}
 

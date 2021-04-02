@@ -77,43 +77,43 @@ namespace TSlib
 
 		size_t Dims() const;
 
-		size_t map_index(size_t index) const;
+		size_t MapIndex(size_t index) const;
 
 		const std::vector<size_t>& Shape() const;
 		const std::vector<TSlice>& TSliceShape() const;
 
 		TensorSlice<T, device>& Reshape(const std::vector<long long>& shape);
 
-		TensorSlice<T, device>& exp();
-		TensorSlice<T, device>& normalize();
+		TensorSlice<T, device>& Exp();
+		TensorSlice<T, device>& Normalize();
 
 		template<typename TReturn = T>
-		TReturn sum() const;
+		TReturn Sum() const;
 		template<typename TReturn = T>
-		Tensor<TReturn, device> sum(size_t axis, bool keepDims = false) const;
+		Tensor<TReturn, device> Sum(size_t axis, bool keepDims = false) const;
 
 		template<typename TReturn = T>
-		TReturn prod() const;
+		TReturn Prod() const;
 		template<typename TReturn = T>
-		Tensor<TReturn, device> prod(size_t axis, bool keepDims = true) const;
+		Tensor<TReturn, device> Prod(size_t axis, bool keepDims = true) const;
 
-		T max() const;
+		T Max() const;
 
-		T min() const;
+		T Min() const;
 
 		template<typename RT = T>
-		RT avg() const;
+		RT Avg() const;
 
-		TensorSlice<T, device>& sin();
-		TensorSlice<T, device>& cos();
-		TensorSlice<T, device>& tan();
+		TensorSlice<T, device>& Sin();
+		TensorSlice<T, device>& Cos();
+		TensorSlice<T, device>& Tan();
 
-		TensorSlice<T, device>& arcsin();
-		TensorSlice<T, device>& arccos();
-		TensorSlice<T, device>& arctan();
+		TensorSlice<T, device>& ArcSin();
+		TensorSlice<T, device>& ArcCos();
+		TensorSlice<T, device>& ArcTan();
 
-		TensorSlice<T, device>& convDeg();
-		TensorSlice<T, device>& convRad();
+		TensorSlice<T, device>& ConvDeg();
+		TensorSlice<T, device>& ConvRad();
 
 		template<typename ... Args>
 		T& Get(Args ... coords);
@@ -141,46 +141,46 @@ namespace TSlib
 		iterator end();
 
 		template<typename OT, Device other_device>
-		Tensor<T, device> add(const Tensor<OT, other_device>& other);
+		Tensor<T, device> Add(const Tensor<OT, other_device>& other);
 		template<typename OT, Device other_device>
-		Tensor<T, device> add(const TensorSlice<OT, other_device>& other);
+		Tensor<T, device> Add(const TensorSlice<OT, other_device>& other);
 		template<typename OT>
-		Tensor<T, device> add(const OT& other);
+		Tensor<T, device> Add(const OT& other);
 
 		template<typename OT, Device other_device>
-		void addAsgmt(const Tensor<OT, other_device>& other);
+		void AddAsgmt(const Tensor<OT, other_device>& other);
 		template<typename OT, Device other_device>
-		void addAsgmt(const TensorSlice<OT, other_device>& other);
+		void AddAsgmt(const TensorSlice<OT, other_device>& other);
 		template<typename OT>
-		void addAsgmt(const OT& other);
+		void AddAsgmt(const OT& other);
 
 		template<typename OT, Device other_device>
-		Tensor<T, device> subtract(const Tensor<OT, other_device>& other);
+		Tensor<T, device> Subtract(const Tensor<OT, other_device>& other);
 		template<typename OT, Device other_device>
-		Tensor<T, device> subtract(const TensorSlice<OT, other_device>& other);
+		Tensor<T, device> Subtract(const TensorSlice<OT, other_device>& other);
 		template<typename OT>
-		Tensor<T, device> subtract(const OT& other);
+		Tensor<T, device> Subtract(const OT& other);
 
 		template<typename OT, Device other_device>
-		void subtractAsgmt(const Tensor<OT, other_device>& other);
+		void SubtractAsgmt(const Tensor<OT, other_device>& other);
 		template<typename OT, Device other_device>
-		void subtractAsgmt(const TensorSlice<OT, other_device>& other);
+		void SubtractAsgmt(const TensorSlice<OT, other_device>& other);
 		template<typename OT>
-		void subtractAsgmt(const OT& other);
+		void SubtractAsgmt(const OT& other);
 
 		template<typename OT, Device other_device>
-		Tensor<T, device> multiply(const Tensor<OT, other_device>& other);
+		Tensor<T, device> Multiply(const Tensor<OT, other_device>& other);
 		template<typename OT, Device other_device>
-		Tensor<T, device> multiply(const TensorSlice<OT, other_device>& other);
+		Tensor<T, device> Multiply(const TensorSlice<OT, other_device>& other);
 		template<typename OT>
-		Tensor<T, device> multiply(const OT& other);
+		Tensor<T, device> Multiply(const OT& other);
 
 		template<typename OT, Device other_device>
-		void multiplyAsgmt(const Tensor<OT, other_device>& other);
+		void MultiplyAsgmt(const Tensor<OT, other_device>& other);
 		template<typename OT, Device other_device>
-		void multiplyAsgmt(const TensorSlice<OT, other_device>& other);
+		void MultiplyAsgmt(const TensorSlice<OT, other_device>& other);
 		template<typename OT>
-		void multiplyAsgmt(const OT& other);
+		void MultiplyAsgmt(const OT& other);
 
 		template<typename OT, Device other_device>
 		Tensor<T, device> dot(const Tensor<OT, other_device>& other);
@@ -197,11 +197,11 @@ namespace TSlib
 		void dotAsgmt(const OT& other);
 
 		template<typename OT, Device other_device>
-		Tensor<T, device> divide(const Tensor<OT, other_device>& other);
+		Tensor<T, device> Divide(const Tensor<OT, other_device>& other);
 		template<typename OT, Device other_device>
-		Tensor<T, device> divide(const TensorSlice<OT, other_device>& other);
+		Tensor<T, device> Divide(const TensorSlice<OT, other_device>& other);
 		template<typename OT>
-		Tensor<T, device> divide(const OT& other);
+		Tensor<T, device> Divide(const OT& other);
 
 		template<typename OT, Device other_device>
 		void divideAsgmt(const Tensor<OT, other_device>& other);
@@ -218,48 +218,48 @@ namespace TSlib
 		Tensor<T, device> modulou(const OT& other);
 
 		template<typename OT, Device other_device>
-		void modulouAsgmt(const Tensor<OT, other_device>& other);
+		void ModulouAsgmt(const Tensor<OT, other_device>& other);
 		template<typename OT, Device other_device>
-		void modulouAsgmt(const TensorSlice<OT, other_device>& other);
+		void ModulouAsgmt(const TensorSlice<OT, other_device>& other);
 		template<typename OT>
-		void modulouAsgmt(const OT& other);
+		void ModulouAsgmt(const OT& other);
 
 		template<typename RT = char, typename OT, Device o_device>
-		Tensor<RT, device> compare(const Tensor<OT, o_device>& other, bool(*comp_func)(const T&, const OT&) = Equal);
+		Tensor<RT, device> Compare(const Tensor<OT, o_device>& other, bool(*comp_func)(const T&, const OT&) = Equal);
 
 		template<typename RT = char, typename OT, Device o_device>
-		Tensor<RT, device> compare(const TensorSlice<OT, o_device>& other, bool(*comp_func)(const T&, const OT&) = Equal);
+		Tensor<RT, device> Compare(const TensorSlice<OT, o_device>& other, bool(*comp_func)(const T&, const OT&) = Equal);
 
 		template<typename RT = char, typename OT>
-		Tensor<RT, device> compare(const OT& other, bool(*comp_func)(const T&, const OT&) = Equal);
+		Tensor<RT, device> Compare(const OT& other, bool(*comp_func)(const T&, const OT&) = Equal);
 
 		template<typename OT, Device other_device>
-		Tensor<char, device> lessThan(const Tensor<OT, other_device>& other);
+		Tensor<char, device> LessThan(const Tensor<OT, other_device>& other);
 		template<typename OT, Device other_device>
-		Tensor<char, device> lessThan(const TensorSlice<OT, other_device>& other);
+		Tensor<char, device> LessThan(const TensorSlice<OT, other_device>& other);
 		template<typename OT>
-		Tensor<char, device> lessThan(const OT& other);
+		Tensor<char, device> LessThan(const OT& other);
 
 		template<typename OT, Device other_device>
-		Tensor<char, device> greaterThan(const Tensor<OT, other_device>& other);
+		Tensor<char, device> GreaterThan(const Tensor<OT, other_device>& other);
 		template<typename OT, Device other_device>
-		Tensor<char, device> greaterThan(const TensorSlice<OT, other_device>& other);
+		Tensor<char, device> GreaterThan(const TensorSlice<OT, other_device>& other);
 		template<typename OT>
-		Tensor<char, device> greaterThan(const OT& other);
+		Tensor<char, device> GreaterThan(const OT& other);
 
 		template<typename OT, Device other_device>
-		Tensor<char, device> lessThanEqual(const Tensor<OT, other_device>& other);
+		Tensor<char, device> LessThanEqual(const Tensor<OT, other_device>& other);
 		template<typename OT, Device other_device>
-		Tensor<char, device> lessThanEqual(const TensorSlice<OT, other_device>& other);
+		Tensor<char, device> LessThanEqual(const TensorSlice<OT, other_device>& other);
 		template<typename OT>
-		Tensor<char, device> lessThanEqual(const OT& other);
+		Tensor<char, device> LessThanEqual(const OT& other);
 
 		template<typename OT, Device other_device>
-		Tensor<char, device> greaterThanEqual(const Tensor<OT, other_device>& other);
+		Tensor<char, device> GreaterThanEqual(const Tensor<OT, other_device>& other);
 		template<typename OT, Device other_device>
-		Tensor<char, device> greaterThanEqual(const TensorSlice<OT, other_device>& other);
+		Tensor<char, device> GreaterThanEqual(const TensorSlice<OT, other_device>& other);
 		template<typename OT>
-		Tensor<char, device> greaterThanEqual(const OT& other);
+		Tensor<char, device> GreaterThanEqual(const OT& other);
 
 		template<typename OT, Device other_device>
 		Tensor<T, device> operator+ (const Tensor<OT, other_device>& other);

@@ -56,13 +56,13 @@ namespace TSlib
 	/// </summary>
 
 	template<typename T>
-	__device__ T* CTBase<T>::get_gpu()
+	__device__ T* CTBase<T>::GetGPU()
 	{
 		return gpu_mem;
 	}
 
 	template<typename T>
-	__device__ const T* CTBase<T>::get_gpu() const
+	__device__ const T* CTBase<T>::GetGPU() const
 	{
 		return gpu_mem;
 	}
@@ -84,7 +84,7 @@ namespace TSlib
 
 		get_indx(index, i, tmp_multiply, coords...);
 
-		return get_gpu()[index];
+		return GetGPU()[index];
 	}
 
 	/// <summary>
@@ -94,7 +94,7 @@ namespace TSlib
 	template<typename T>
 	__device__ T& CTBase<T>::operator[](size_t index)
 	{
-		return get_gpu()[index];
+		return GetGPU()[index];
 	}
 
 	template<typename T>
@@ -109,37 +109,37 @@ namespace TSlib
 	/// </summary>
 
 	template<typename T>
-	__device__ size_t CUDATensor1D<T>::get_length()
+	__device__ size_t CUDATensor1D<T>::GetLength()
 	{
 		return m_length;
 	}
 
 	template<typename T>
-	__device__ size_t CUDATensor2D<T>::get_length()
+	__device__ size_t CUDATensor2D<T>::GetLength()
 	{
 		return m_length;
 	}
 
 	template<typename T>
-	__device__ size_t CUDATensor2D<T>::get_width()
+	__device__ size_t CUDATensor2D<T>::GetWidth()
 	{
 		return m_width;
 	}
 
 	template<typename T>
-	__device__ size_t CUDATensor3D<T>::get_length()
+	__device__ size_t CUDATensor3D<T>::GetLength()
 	{
 		return m_length;
 	}
 
 	template<typename T>
-	__device__ size_t CUDATensor3D<T>::get_width()
+	__device__ size_t CUDATensor3D<T>::GetWidth()
 	{
 		return m_width;
 	}
 
 	template<typename T>
-	__device__ size_t CUDATensor3D<T>::get_height()
+	__device__ size_t CUDATensor3D<T>::GetHeight()
 	{
 		return m_height;
 	}
@@ -289,47 +289,47 @@ namespace TSlib
 	template<typename T>
 	__device__ T& CUDATensor1D<T>::At(size_t x)
 	{
-		return get_gpu()[x];
+		return GetGPU()[x];
 	}
 
 	template<typename T>
 	__device__ T CUDATensor1D<T>::At(size_t x) const
 	{
-		return get_gpu()[x];
+		return GetGPU()[x];
 	}
 
 	template<typename T>
 	__device__ T& CUDATensor1D<T>::At()
 	{
-		return get_gpu()[threadIdx.x + blockIdx.x * blockDim.x];
+		return GetGPU()[threadIdx.x + blockIdx.x * blockDim.x];
 	}
 
 	template<typename T>
 	__device__ T CUDATensor1D<T>::At() const
 	{
-		return get_gpu()[threadIdx.x + blockIdx.x * blockDim.x];
+		return GetGPU()[threadIdx.x + blockIdx.x * blockDim.x];
 	}
 
 	template<typename T>
 	__device__ T& CUDATensor1D<T>::Offset(size_t x)
 	{
-		return get_gpu()[threadIdx.x + blockIdx.x * blockDim.x + x];
+		return GetGPU()[threadIdx.x + blockIdx.x * blockDim.x + x];
 	}
 
 	template<typename T>
 	__device__ T CUDATensor1D<T>::Offset(size_t x) const
 	{
-		return get_gpu()[threadIdx.x + blockIdx.x * blockDim.x + x];
+		return GetGPU()[threadIdx.x + blockIdx.x * blockDim.x + x];
 	}
 
 	template<typename T>
-	__device__ bool CUDATensor1D<T>::in_bounds() const
+	__device__ bool CUDATensor1D<T>::InBounds() const
 	{
 		return ((threadIdx.x + blockIdx.x * blockDim.x) < m_length);
 	}
 
 	template<typename T>
-	__device__ bool CUDATensor1D<T>::offset_bounds(size_t x) const
+	__device__ bool CUDATensor1D<T>::OffsetBounds(size_t x) const
 	{
 		return ((threadIdx.x + blockIdx.x * blockDim.x + x) < m_length);
 	}
@@ -337,52 +337,52 @@ namespace TSlib
 	template<typename T>
 	__device__ T& CUDATensor2D<T>::At(size_t x, size_t y)
 	{
-		return get_gpu()[x + y * m_length];
+		return GetGPU()[x + y * m_length];
 	}
 
 	template<typename T>
 	__device__ T CUDATensor2D<T>::At(size_t x, size_t y) const
 	{
-		return get_gpu()[x + y * m_length];
+		return GetGPU()[x + y * m_length];
 	}
 
 	template<typename T>
 	__device__ T& CUDATensor2D<T>::At()
 	{
-		return get_gpu()[(threadIdx.x + blockIdx.x * blockDim.x) +
+		return GetGPU()[(threadIdx.x + blockIdx.x * blockDim.x) +
 			(threadIdx.y + blockIdx.y * blockDim.y) * m_length];
 	}
 
 	template<typename T>
 	__device__ T CUDATensor2D<T>::At() const
 	{
-		return get_gpu()[(threadIdx.x + blockIdx.x * blockDim.x) +
+		return GetGPU()[(threadIdx.x + blockIdx.x * blockDim.x) +
 			(threadIdx.y + blockIdx.y * blockDim.y) * m_length];
 	}
 
 	template<typename T>
 	__device__ T& CUDATensor2D<T>::Offset(size_t x, size_t y)
 	{
-		return get_gpu()[(threadIdx.x + blockIdx.x * blockDim.x + x) +
+		return GetGPU()[(threadIdx.x + blockIdx.x * blockDim.x + x) +
 			(threadIdx.y + blockIdx.y * blockDim.y + y) * m_length];
 	}
 
 	template<typename T>
 	__device__ T CUDATensor2D<T>::Offset(size_t x, size_t y) const
 	{
-		return get_gpu()[(threadIdx.x + blockIdx.x * blockDim.x + x) +
+		return GetGPU()[(threadIdx.x + blockIdx.x * blockDim.x + x) +
 			(threadIdx.y + blockIdx.y * blockDim.y + y) * m_length];
 	}
 
 	template<typename T>
-	__device__ bool CUDATensor2D<T>::in_bounds() const
+	__device__ bool CUDATensor2D<T>::InBounds() const
 	{
 		return ((threadIdx.x + blockIdx.x * blockDim.x) < m_length) &&
 			((threadIdx.y + blockIdx.y * blockDim.y) < m_width);
 	}
 
 	template<typename T>
-	__device__ bool CUDATensor2D<T>::offset_bounds(size_t x, size_t y) const
+	__device__ bool CUDATensor2D<T>::OffsetBounds(size_t x, size_t y) const
 	{
 		return ((threadIdx.x + blockIdx.x * blockDim.x + x) < m_length) &&
 			((threadIdx.y + blockIdx.y * blockDim.y + y) < m_width);
@@ -391,19 +391,19 @@ namespace TSlib
 	template<typename T>
 	__device__ T& CUDATensor3D<T>::At(size_t x, size_t y)
 	{
-		return get_gpu()[x + y * m_length + z * m_length * m_width];
+		return GetGPU()[x + y * m_length + z * m_length * m_width];
 	}
 
 	template<typename T>
 	__device__ T CUDATensor3D<T>::At(size_t x, size_t y) const
 	{
-		return get_gpu()[x + y * m_length + z * m_length * m_width];
+		return GetGPU()[x + y * m_length + z * m_length * m_width];
 	}
 
 	template<typename T>
 	__device__ T& CUDATensor3D<T>::At()
 	{
-		return get_gpu()[(threadIdx.x + blockIdx.x * blockDim.x) +
+		return GetGPU()[(threadIdx.x + blockIdx.x * blockDim.x) +
 			(threadIdx.y + blockIdx.y * blockDim.y) * m_length +
 			(threadIdx.z + blockIdx.z * blockDim.z) * m_length * m_width];
 	}
@@ -411,7 +411,7 @@ namespace TSlib
 	template<typename T>
 	__device__ T CUDATensor3D<T>::At() const
 	{
-		return get_gpu()[(threadIdx.x + blockIdx.x * blockDim.x) +
+		return GetGPU()[(threadIdx.x + blockIdx.x * blockDim.x) +
 			(threadIdx.y + blockIdx.y * blockDim.y) * m_length +
 			(threadIdx.z + blockIdx.z * blockDim.z) * m_length * m_width];
 	}
@@ -419,7 +419,7 @@ namespace TSlib
 	template<typename T>
 	__device__ T& CUDATensor3D<T>::Offset(size_t x, size_t y, size_t z)
 	{
-		return get_gpu()[(threadIdx.x + blockIdx.x * blockDim.x + x) +
+		return GetGPU()[(threadIdx.x + blockIdx.x * blockDim.x + x) +
 			(threadIdx.y + blockIdx.y * blockDim.y + y) * m_length +
 			(threadIdx.z + blockIdx.z * blockDim.z + z) * m_length * m_width];
 	}
@@ -427,13 +427,13 @@ namespace TSlib
 	template<typename T>
 	__device__ T CUDATensor3D<T>::Offset(size_t x, size_t y, size_t z) const
 	{
-		return get_gpu()[(threadIdx.x + blockIdx.x * blockDim.x + x) +
+		return GetGPU()[(threadIdx.x + blockIdx.x * blockDim.x + x) +
 			(threadIdx.y + blockIdx.y * blockDim.y + y) * m_length +
 			(threadIdx.z + blockIdx.z * blockDim.z + z) * m_length * m_width];
 	}
 
 	template<typename T>
-	__device__ bool CUDATensor3D<T>::in_bounds() const
+	__device__ bool CUDATensor3D<T>::InBounds() const
 	{
 		return ((threadIdx.x + blockIdx.x * blockDim.x) < m_length) &&
 			((threadIdx.y + blockIdx.y * blockDim.y) < m_width) &&
@@ -441,7 +441,7 @@ namespace TSlib
 	}
 
 	template<typename T>
-	__device__ bool CUDATensor3D<T>::offset_bounds(size_t x, size_t y, size_t z) const
+	__device__ bool CUDATensor3D<T>::OffsetBounds(size_t x, size_t y, size_t z) const
 	{
 		return ((threadIdx.x + blockIdx.x * blockDim.x + x) < m_length) &&
 			((threadIdx.y + blockIdx.y * blockDim.y + y) < m_width) &&
@@ -489,14 +489,14 @@ namespace TSlib
 	/// Tensor class cuda specific functions
 
 	template<typename T, Device device>
-	inline __host__ void Tensor<T, device>::allocate()
+	inline __host__ void Tensor<T, device>::Allocate()
 	{
 		//Allocate the cpu memory on the gpu
 		//this will have to be done every time the Tensor gets resized or deallocated
 
 		//assert if trying to allocate already allocated memory FIX: deallocate before allocating
 		#ifdef _TS_DEBUG
-		assert("GPU memory was not deallocated before calling allocate" && isDeallocated());
+		assert("GPU memory was not deallocated before calling Allocate" && IsDeallocated());
 		#endif
 
 		CER(cudaMalloc(&(gpu_mem), size() * sizeof(T)));
@@ -504,13 +504,13 @@ namespace TSlib
 	}
 
 	template<typename T, Device device>
-	void Tensor<T, device>::deallocate()
+	void Tensor<T, device>::Deallocate()
 	{
 		//Deallocate the gpu memmorry
 
 		//assert if memory is allready deallocated
 		#ifdef _TS_DEBUG
-		assert("GPU memory was already deallocated" && isAllocated());
+		assert("GPU memory was already deallocated" && IsAllocated());
 		#endif
 
 		CER(cudaFree(gpu_mem));
@@ -518,24 +518,24 @@ namespace TSlib
 	}
 
 	template<typename T, Device device>
-	bool Tensor<T, device>::isAllocated() const
+	bool Tensor<T, device>::IsAllocated() const
 	{
 		return allocated;
 	}
 
 	template<typename T, Device device>
-	bool Tensor<T, device>::isDeallocated() const
+	bool Tensor<T, device>::IsDeallocated() const
 	{
 		return !allocated;
 	}
 
 	template<typename T, Device device>
-	inline void Tensor<T, device>::copyGPU()
+	inline void Tensor<T, device>::CopyGPU()
 	{
 		//assert if memory is not allocated on gpu
 		//this error might be thrown if you forget to allocate after a resize
 		#ifdef _TS_DEBUG
-		assert("Memory is not allocated on the gpu unable to copy" && isAllocated());
+		assert("Memory is not allocated on the gpu unable to copy" && IsAllocated());
 		#endif
 
 		//copy source cpu memory to gpu memory
@@ -543,12 +543,12 @@ namespace TSlib
 	}
 
 	template<typename T, Device device>
-	void Tensor<T, device>::copyCPU()
+	void Tensor<T, device>::CopyCPU()
 	{
 		//assert if memory is not allocated on gpu
 		//this error might be thrown if you forget to allocate after a resize
 		#ifdef _TS_DEBUG
-		assert("Memory is not allocated on the gpu unable to copy" && isAllocated());
+		assert("Memory is not allocated on the gpu unable to copy" && IsAllocated());
 		#endif
 
 		//copy source gpu memory to cpu memory
@@ -556,33 +556,33 @@ namespace TSlib
 	}
 
 	template<typename T, Device device>
-	inline void Tensor<T, device>::push()
+	inline void Tensor<T, device>::Push()
 	{
-		allocate();
-		copyGPU();
+		Allocate();
+		CopyGPU();
 	}
 
 	template<typename T, Device device>
-	void Tensor<T, device>::pull()
+	void Tensor<T, device>::Pull()
 	{
-		copyCPU();
-		deallocate();
+		CopyCPU();
+		Deallocate();
 	}
 
 	template<typename T, Device device>
-	__host__ __device__ T* Tensor<T, device>::getGPU()
-	{
-		return gpu_mem;
-	}
-
-	template<typename T, Device device>
-	__host__ __device__ const T* Tensor<T, device>::getGPU() const
+	__host__ __device__ T* Tensor<T, device>::GetGPU()
 	{
 		return gpu_mem;
 	}
 
 	template<typename T, Device device>
-	void Tensor<T, device>::setTargetThreads(const unsigned short& value)
+	__host__ __device__ const T* Tensor<T, device>::GetGPU() const
+	{
+		return gpu_mem;
+	}
+
+	template<typename T, Device device>
+	void Tensor<T, device>::SetTargetThreads(const unsigned short& value)
 	{
 		#ifdef _TS_DEBUG
 		if (value > 1024)
@@ -593,7 +593,7 @@ namespace TSlib
 	}
 
 	template<typename T, Device device>
-	short Tensor<T, device>::getTargetThreads() const
+	short Tensor<T, device>::GetTargetThreads() const
 	{
 		m_threads = value;
 	}
@@ -621,20 +621,20 @@ namespace TSlib
 		#if 1
 		#ifdef _TS_DEBUG
 		assert("There can not be more than 1024 total threads in each block" && m_threads <= 1024);
-		if (isDeallocated())
+		if (IsDeallocated())
 			std::cout << "warning: No gpu memory is allocated, illegal memory access may occur\n";
 		#endif
 
 		//create result Tensor: This will hold all of the return values
 		Tensor<RT, device> result(Shape(), RT());
 
-		result.allocate();
+		result.Allocate();
 
 		//Get flattended version of Tensor so it can fit in the desired dimensions
 		size_t dims = FlattenDims();
 
 		//calculate block sizes from thread size
-		auto threads = layout.apply(this, m_threads);
+		auto threads = layout.Apply(this, m_threads);
 		unsigned int blocks = (unsigned int)(dims + std::get<0>(threads) - 1) / std::get<0>(threads);
 
 		kernel_p << < blocks, { std::get<0>(threads), std::get<1>(threads) , std::get<2>(threads) } >> > (*this, result, args...);
@@ -645,7 +645,7 @@ namespace TSlib
 
 		CER(cudaDeviceSynchronize());
 
-		result.pull();
+		result.Pull();
 
 		return result;
 		#endif
@@ -657,7 +657,7 @@ namespace TSlib
 	{
 		#ifdef _TS_DEBUG
 		assert("There can not be more than 1024 total threads in each block" && m_threads <= 1024);
-		if (isDeallocated())
+		if (IsDeallocated())
 			std::cout << "warning: No gpu memory is allocated, illegal memory access may occur\n";
 		#endif
 
@@ -665,7 +665,7 @@ namespace TSlib
 		size_t dims = FlattenDims();
 
 		//calculate block sizes from thread size
-		std::tuple<unsigned int, unsigned int, unsigned int> threads = layout.apply(this, m_threads);
+		std::tuple<unsigned int, unsigned int, unsigned int> threads = layout.Apply(this, m_threads);
 		unsigned int blocks = (unsigned int)(dims + std::get<0>(threads) - 1) / std::get<0>(threads);
 
 		kernel_p << < blocks, { std::get<0>(threads), std::get<1>(threads), std::get<2>(threads) } >> > (*this, args...);
@@ -683,13 +683,13 @@ namespace TSlib
 	{
 		#ifdef _TS_DEBUG
 		assert("There can not be more than 1024 total threads in each block" && m_threads <= 1024);
-		if (isDeallocated())
+		if (IsDeallocated())
 			std::cout << "warning: No gpu memory is allocated, illegal memory access may occur\n";
 		#endif
 
 		//create result Tensor: This will hold all of the return values
 		Tensor<RT, device> result(Shape(), RT());
-		result.allocate();
+		result.Allocate();
 
 		//Get flattended version of Tensor so it can fit in the desired dimensions
 
@@ -697,7 +697,7 @@ namespace TSlib
 
 		//calculate block sizes from thread size
 
-		auto threads = layout.apply(this, m_threads);
+		auto threads = layout.Apply(this, m_threads);
 		dim3 blocks((uint32_t)std::ceil((dims[0] + std::get<0>(threads) - 1) / std::get<0>(threads)),
 			(uint32_t)std::ceil((dims[1] + std::get<1>(threads) - 1) / std::get<1>(threads)));
 
@@ -709,7 +709,7 @@ namespace TSlib
 
 		CER(cudaDeviceSynchronize());
 
-		result.pull();
+		result.Pull();
 
 		return result;
 	}
@@ -720,7 +720,7 @@ namespace TSlib
 	{
 		#ifdef _TS_DEBUG
 		assert("There can not be more than 1024 total threads in each block" && m_threads <= 1024);
-		if (isDeallocated())
+		if (IsDeallocated())
 			std::cout << "warning: No gpu memory is allocated, illegal memory access may occur\n";
 		#endif
 
@@ -729,7 +729,7 @@ namespace TSlib
 
 		//calculate block sizes from thread size
 
-		auto threads = layout.apply(this, m_threads);
+		auto threads = layout.Apply(this, m_threads);
 		dim3 blocks((uint32_t)std::ceil((dims[1] + std::get<0>(threads) - 1) / std::get<0>(threads)),
 			(uint32_t)std::ceil((dims[0] + std::get<1>(threads) - 1) / std::get<1>(threads)));
 
@@ -748,21 +748,21 @@ namespace TSlib
 	{
 		#ifdef _TS_DEBUG
 		assert("There can not be more than 1024 total threads in each block" && m_threads <= 1024);
-		if (isDeallocated())
+		if (IsDeallocated())
 			std::cout << "warning: No gpu memory is allocated, illegal memory access may occur\n";
 		#endif
 
 		//create result Tensor: This will hold all of the return values
 		Tensor<RT, device> result(Shape(), RT());
 
-		result.allocate();
+		result.Allocate();
 
 		//Get flattended version of Tensor so it can fit in the desired dimensions
 		std::vector<size_t> dims = FlattenDims(3);
 
 		//calculate block sizes from thread size
 
-		auto threads = layout.apply(this, m_threads);
+		auto threads = layout.Apply(this, m_threads);
 		dim3 blocks((uint32_t)std::ceil((dims[2] + std::get<0>(threads) - 1) / std::get<0>(threads)),
 			(uint32_t)std::ceil((dims[1] + std::get<1>(threads) - 1) / std::get<1>(threads)),
 			(uint32_t)std::ceil((dims[0] + std::get<2>(threads) - 1) / std::get<2>(threads)));
@@ -775,7 +775,7 @@ namespace TSlib
 
 		CER(cudaDeviceSynchronize());
 
-		result.pull();
+		result.Pull();
 
 		return result;
 	}
@@ -786,7 +786,7 @@ namespace TSlib
 	{
 		#ifdef _TS_DEBUG
 		assert("There can not be more than 1024 total threads in each block" && m_threads <= 1024);
-		if (isDeallocated())
+		if (IsDeallocated())
 			std::cout << "warning: No gpu memory is allocated, illegal memory access may occur\n";
 		#endif
 
@@ -795,7 +795,7 @@ namespace TSlib
 
 		//calculate block sizes from thread size
 
-		auto threads = layout.apply(this, m_threads);
+		auto threads = layout.Apply(this, m_threads);
 		dim3 blocks((uint32_t)std::ceil((dims[0] + std::get<0>(threads) - 1) / std::get<0>(threads)),
 			(uint32_t)std::ceil((dims[1] + std::get<1>(threads) - 1) / std::get<1>(threads)),
 			(uint32_t)std::ceil((dims[2] + std::get<2>(threads) - 1) / std::get<2>(threads)));

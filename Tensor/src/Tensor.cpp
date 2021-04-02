@@ -2,8 +2,8 @@
 
 namespace TSlib
 {
-	double_t round(double_t x, double_t place)
+	double round(double x, double place)
 	{
-		return double_t(int(x) * place) / place;
+		return double(int(x) * place) / place;
 	}
 }

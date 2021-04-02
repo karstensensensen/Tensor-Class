@@ -181,22 +181,22 @@ namespace TSlib
 			err_msg += '\n';
 		}
 
-		BadShape(std::string message, const std::initializer_list<double_t>& shape)
+		BadShape(std::string message, const std::initializer_list<double>& shape)
 		{
 			err_msg = message;
 
-			for (const double_t& shape_elem : shape)
+			for (const double& shape_elem : shape)
 			{
 				err_msg += std::to_string(shape_elem) + ", ";
 			}
 			err_msg += '\n';
 		}
 
-		BadShape(std::string message, const std::vector<double_t>& shape)
+		BadShape(std::string message, const std::vector<double>& shape)
 		{
 			err_msg = message;
 
-			for (const double_t& shape_elem : shape)
+			for (const double& shape_elem : shape)
 			{
 				err_msg += std::to_string(shape_elem) + ", ";
 			}
