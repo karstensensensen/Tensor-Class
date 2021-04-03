@@ -1,5 +1,4 @@
-#include "Tensor.h"
-#include "TSliceWrapper.h"
+#include "TSlib.h"
 
 #ifdef TENSOR_PROFILING
 #include <Profiler.h>
@@ -12,7 +11,7 @@ namespace TSlib
 	TSlice::TSlice(const intmax_t& from, const intmax_t& to, const uint32_t& from_max, const uint32_t& to_max)
 		:from(from), to(to), from_max(from_max), to_max(to_max)
 	{
-		MEASURE();
+		
 		#ifdef _TS_DEBUG
 
 		if (from < 0 && to < 0 && to >= from)
@@ -29,14 +28,14 @@ namespace TSlib
 	TSlice::TSlice(const intmax_t& val)
 		: from(val + (val >= 0 ? 0 : -1)), to(val + (val >= 0 ? 1 : 0)), from_max(0), to_max(0)
 	{
-		MEASURE();
+		
 	}
 
 	/*template<typename T>
 	TSlice::TSlice(const std::initializer_list<T>& val)
 		: from(0), to(0), from_max(0), to_max(0)
 	{
-		MEASURE();
+		
 
 		from = *val.begin();
 		to = *(val.begin() + 1);
@@ -57,37 +56,37 @@ namespace TSlib
 	TSlice::TSlice()
 		: from(NULL), to(NULL), from_max(NULL), to_max(NULL)
 	{
-		MEASURE();
+		
 	}
 
 	bool TSlice::contains(intmax_t val) const
 	{
-		MEASURE();
+		
 		return (get_from() <= val &&
 			get_to() >= val);
 	}
 
 	uint32_t TSlice::get_from() const
 	{
-		MEASURE();
+		
 		return (uint32_t)std::abs(int((from < 0) * (to_max + 1) + from));
 	}
 
 	uint32_t TSlice::get_to() const
 	{
-		MEASURE();
+		
 		return (uint32_t)std::abs(int((to < 0) * (to_max + 1) + to));
 	}
 
 	uint32_t TSlice::width() const
 	{
-		MEASURE();
+		
 		return get_to() - get_from();
 	}
 
 	bool TSlice::operator()(intmax_t val, size_t from_max, size_t to_max) const
 	{
-		MEASURE();
+		
 		return contains(val);
 	}
 
@@ -100,7 +99,7 @@ namespace TSlib
 		iterator(uint32_t start, TSlice& slice)
 			: num(start), slice(slice)
 		{
-			MEASURE();
+			
 		}
 
 		iterator& operator++()
@@ -140,13 +139,13 @@ namespace TSlib
 
 	TSlice::iterator TSlice::begin()
 	{
-		MEASURE();
+		
 		return { get_from(), *this };
 	}
 
 	TSlice::iterator TSlice::end()
 	{
-		MEASURE();
+		
 		return { get_to() + 1, *this };
 	}
 }

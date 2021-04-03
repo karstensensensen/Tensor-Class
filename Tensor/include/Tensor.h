@@ -1,14 +1,6 @@
 #pragma once
 
-#include <iostream>
-#include <array>
-#include <vector>
-#include <thread>
-#include <atomic>
-#include <assert.h>
-#include <functional>
-#include <type_traits>
-#include "TensorEnums.h"
+
 #include "TensorSlice.h"
 
 #if (defined(_DEBUG) || defined(DEBUG)) && !defined(_TS_DEBUG)
@@ -46,7 +38,7 @@ namespace TSlib
 	template<typename T, Device device>
 	struct is_tensor_slice<TensorSlice<T, device>> : std::true_type {};
 
-	#ifdef _CUDA
+	#ifdef _TS_CUDA
 
 	#ifndef DEVICE_MAX_THREADS
 	#define DEVICE_MAX_THREADS 1024
@@ -78,7 +70,7 @@ namespace TSlib
 		std::vector<T> m_vector;
 		std::vector<size_t> m_shape;
 		
-		#ifdef _CUDA
+		#ifdef _TS_CUDA
 		public:
 		T* gpu_mem;
 		#endif
@@ -91,10 +83,10 @@ namespace TSlib
 
 		Tensor();
 		Tensor(const std::vector<size_t>& sizes, const T& pad_val = T());
-		Tensor(const std::vector<size_t>& sizes, std::function<T()> generator);
-		Tensor(const std::vector<size_t>& sizes, std::function<T(const size_t&)> generator);
-		Tensor(const std::vector<size_t>& sizes, std::function<T(const std::vector<size_t>&)> generator);
-		Tensor(const std::vector<size_t>& sizes, std::function<T(const std::vector<size_t>&, const size_t&)> generator);
+		Tensor(const std::vector<size_t>& sizes, std::function<void(T&)> generator);
+		Tensor(const std::vector<size_t>& sizes, std::function<void(T&, const size_t&)> generator);
+		Tensor(const std::vector<size_t>& sizes, std::function<void(T&, const std::vector<size_t>&)> generator);
+		Tensor(const std::vector<size_t>& sizes, std::function<void(T&, const std::vector<size_t>&, const size_t&)> generator);
 		Tensor(const TensorSlice<T, device>& slicee);
 
 		Tensor(const Tensor<T, device>& other);
@@ -203,7 +195,7 @@ namespace TSlib
 		T& At(size_t indx);
 		T At(size_t indx) const;
 
-		#ifdef _CUDA
+		#ifdef _TS_CUDA
 
 		void Allocate();
 
@@ -220,8 +212,8 @@ namespace TSlib
 
 		void Pull();
 
-		__device__ __host__ T* getGPU();
-		__device__ __host__ const T* getGPU() const;
+		__device__ __host__ T* GetGPU();
+		__device__ __host__ const T* GetGPU() const;
 
 		void SetTargetThreads(const unsigned short&);
 		short GetTargetThreads() const;
@@ -259,7 +251,7 @@ namespace TSlib
 		Tensor<T, device>& operator=(const Tensor<T, device>& other);
 		Tensor<T, device>& operator=(Tensor<T, device>&& other);
 
-		#ifdef _CUDA
+		#ifdef _TS_CUDA
 		operator T* ();
 
 		operator const T* () const;
@@ -355,7 +347,7 @@ namespace TSlib
 		template<typename OT>
 		void ModulouAsgmt(const OT& other);
 
-		#ifdef _CUDA
+		#ifdef _TS_CUDA
 		template<Mode L, typename FT, typename RT = T, typename ... Args>
 		Tensor<RT, device> Kernel1DR(CUDALayout<L> layout, FT(kernel_p), Args&& ... args);
 
@@ -583,7 +575,7 @@ namespace TSlib
 		template<typename OT>
 		inline bool operator>=(const OT& other);
 
-		#ifdef _CUDA
+		#ifdef _TS_CUDA
 		operator CUDATensor1D<T>();
 		operator const CUDATensor1D<T>() const;
 
@@ -623,7 +615,7 @@ namespace TSlib
 			return new_Tensor;
 		}
 
-	#ifdef _CUDA
+	#ifdef _TS_CUDA
 	protected:
 		bool allocated = false;
 		constexpr static unsigned char MAX_THREADS = DEVICE_MAX_THREADS / 32;
@@ -662,5 +654,3 @@ namespace TSlib
 
 	double round(double x, double place);
 }
-
-#include "Tensor.ipp"

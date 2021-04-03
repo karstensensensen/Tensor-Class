@@ -29,6 +29,7 @@ set_target_properties(${PROJECT_NAME}
     ARCHIVE_OUTPUT_DIRECTORY_MINSIZEREL ${CMAKE_BINARY_DIR}/bin/
 )
 
+target_compile_definitions(${PROJECT_NAME} PUBLIC _TS_OPENCV_MODULE)
 
 source_group("Header Files" FILES ${INCLUDE_FILES})
 

@@ -19,10 +19,14 @@ set(INCLUDE_FILES
 
 )
 
-add_library(${PROJECT_NAME} STATIC
+set(SRC_FILES
     src/Tensor.cpp
     src/TSliceWrapper.cpp
+)
 
+add_library(${PROJECT_NAME} STATIC
+    TSlib.h
+    ${SRC_FILES}
     ${INCLUDE_FILES}
 )
 
@@ -45,6 +49,8 @@ if(ENABLE_OPENMP)
     target_compile_options(${PROJECT_NAME} PRIVATE /openmp)
 endif()
 
+source_group("Include Files" FILES TSlib.h)
 source_group("Header Files" FILES ${INCLUDE_FILES})
 
 target_include_directories(${PROJECT_NAME} PUBLIC include)
+target_include_directories(${PROJECT_NAME} PUBLIC ./)

@@ -3,8 +3,6 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include <device_launch_parameters.h>
-#include <type_traits>
-#include <tuple>
 
 #define __kernel__ __global__ void
 
@@ -192,7 +190,7 @@ namespace TSlib
 
 	/// <summary>
 	/// This layout type is only avaliable for the 3D kernel. This layout type will create a cube with equal length sides.
-	/// If the sides shouldnt be the same length it can be specified.
+	/// If the sides shouldnt be the same length it can be specified by scaling each side.
 	/// </summary>
 
 	template<Mode layout>
@@ -205,91 +203,14 @@ namespace TSlib
 		double Y_ratio;
 		double Z_ratio;
 
-		double GetCubed(unsigned int target_threads)
-		{
-			double NT = NULL;
-
-			for (unsigned int i = 0; target_threads - i != 0; i += 32)
-			{
-				double cube = std::cbrt(target_threads - i);
-				if (cube == std::floor(cube))
-				{
-					NT = cube;
-					break;
-				}
-			}
-
-			if (NT == NULL)
-			{
-				for (size_t i = 0; target_threads + i <= 1024; i += 32)
-				{
-					double cube = std::cbrt(target_threads + i);
-					if (cube == std::floor(cube))
-					{
-						//this value is one iteration too high
-
-						NT = std::sqrt(cube * 2);
-						break;
-					}
-				}
-			}
-
-			#ifdef _TS_DEBUG
-			assert(NT != NULL && "Value for NT was not found");
-			#endif
-
-			return NT;
-		}
+		double GetCubed(unsigned int target_threads);
 
 	public:
-		CUDALayout(double X, double Y, double Z)
-			:X_ratio(X), Y_ratio(Y), Z_ratio(Z)
-		{
-			#ifdef _TS_DEBUG
+		CUDALayout(double X, double Y, double Z);
 
-			if (X_ratio * Y_ratio * Z_ratio != 1)
-				throw BadShape("There must be an equal number of multiplications and divisions, when initializing PlaneLayout.\nOtherwise the thread target wouldn't be hit: ", { X_ratio, Y_ratio, Z_ratio });
-
-			#endif
-		}
 
 		template<typename T, Device device>
-		std::tuple<unsigned int, unsigned int, unsigned int> Apply(const Tensor<T, device>* tensor, unsigned int target_threads)
-		{
-			double threads_cubed = GetCubed(target_threads);
-
-			double length = threads_cubed;
-			double width = threads_cubed;
-			double height = threads_cubed;
-
-			length *= double(length) * X_ratio;
-			#ifdef _TS_DEBUG
-			if (round(length * double(length) * X_ratio, 1000) != std::floor(round(length * double(length) * X_ratio, 1000)))
-			{
-				throw BadValue("Length ratio does not divide cleanly into thread length", ExceptValue<double>("ratio", X_ratio), ExceptValue<double>("cubed threads", threads_cubed));
-			}
-			#endif
-
-			#ifdef _TS_DEBUG
-			if (round(width * double(width) * Y_ratio, 1000) != std::floor(round(width * double(width) * Y_ratio, 1000)))
-			{
-				throw BadValue("Width ratio does not divide cleanly into thread width", ExceptValue<double>("ratio", Y_ratio), ExceptValue<double>("cubed threads", threads_cubed));
-			}
-			#endif
-
-			width *= double(width) * Y_ratio;
-
-			#ifdef _TS_DEBUG
-			if (round(height * double(height) * Z_ratio, 1000) != std::floor(round(height * double(height) * Z_ratio, 1000)))
-			{
-				throw BadValue("Height ratio does not divide cleanly into thread height", ExceptValue<double>("ratio", Z_ratio), ExceptValue<double>("cubed threads", threads_cubed));
-			}
-			#endif
-
-			height *= double(height) * Z_ratio;
-
-			return { unsigned int(length), unsigned int(width), unsigned int(height) };
-		}
+		std::tuple<unsigned int, unsigned int, unsigned int> Apply(const Tensor<T, device>* tensor, unsigned int target_threads);
 	};
 
 	template<>
@@ -299,97 +220,13 @@ namespace TSlib
 		double Y_ratio = NULL;
 		double Z_ratio = NULL;
 
-		double GetSquared(size_t target_threads)
-		{
-			double NT = NULL;
-
-			for (unsigned int i = 0; target_threads - i != 0; i += 32)
-			{
-				double square = std::sqrt(target_threads - i);
-				if (square == std::floor(square))
-				{
-					NT = square;
-					break;
-				}
-			}
-
-			if (NT == NULL)
-			{
-				for (unsigned int i = 0; target_threads + i <= 1024; i += 32)
-				{
-					double square = std::sqrt(target_threads + i);
-					if (square == std::floor(square))
-					{
-						NT = std::sqrt(square) * 2.0;
-						break;
-					}
-				}
-			}
-
-			#ifdef _TS_DEBUG
-			assert(NT != NULL && "Value for NT was not found");
-			#endif
-
-			return NT;
-		}
+		double GetSquared(size_t target_threads);
 
 	public:
-		CUDALayout(double X, double Y, double Z)
-			:X_ratio(X), Y_ratio(Y), Z_ratio(Z)
-		{
-			#ifdef _TS_DEBUG
-
-			if (X_ratio * Y_ratio * Z_ratio != 1)
-				throw BadShape("There must be an equal number of multiplications and divisions, when initializing PlaneLayout.\nOtherwise the thread target wouldn't be hit: ", { X_ratio, Y_ratio, Z_ratio });
-
-			#endif
-		}
+		CUDALayout(double X, double Y, double Z);
 
 		template<typename T, Device device>
-		std::tuple<unsigned int, unsigned int, unsigned int> Apply(const Tensor<T, device>* tensor, unsigned int target_threads)
-		{
-			#pragma warning(disable: 4244)
-
-			double threads_squared = GetSquared(target_threads);
-
-			double length = threads_squared;
-			double width = threads_squared;
-			double height = 1;
-
-			#ifdef _TS_DEBUG
-			if (round(length * length * X_ratio, 1000.0) != std::floor(round(length * length * X_ratio, 1000.0)))
-			{
-				double ratio = X_ratio;
-				BadValue("Length ratio does not divide cleanly into thread length", ExceptValue("ratio", ratio), ExceptValue("squared threads", threads_squared));
-			}
-			#endif
-
-			length *= double(length) * X_ratio;
-
-			#ifdef _TS_DEBUG
-			if (round(width * width * Y_ratio, 1000.0) != std::floor(round(width * width * Y_ratio, 1000.0)))
-			{
-				double ratio = Y_ratio;
-				BadValue("Length ratio does not divide cleanly into thread width", ExceptValue("ratio", ratio), ExceptValue("squared threads", threads_squared));
-			}
-			#endif
-
-			width *= double(width) * Y_ratio;
-
-			#ifdef _TS_DEBUG
-			if (round(height * height * Z_ratio, 1000.0) != std::floor(round(height * height * Z_ratio, 1000.0)))
-			{
-				double ratio = Z_ratio;
-				BadValue("Length ratio does not divide cleanly into thread height", ExceptValue("ratio", ratio), ExceptValue("squared threads", threads_squared));
-			}
-			#endif
-
-			height *= double(height) * Z_ratio;
-
-			return { unsigned int(length), unsigned int(width), unsigned int(height) };
-
-			#pragma warning(default: 4244)
-		}
+		std::tuple<unsigned int, unsigned int, unsigned int> Apply(const Tensor<T, device>* tensor, unsigned int target_threads);
 	};
 
 	template<>
@@ -400,59 +237,10 @@ namespace TSlib
 		double Z_ratio;
 
 	public:
-		CUDALayout(double X, double Y, double Z)
-			:X_ratio(X), Y_ratio(Y), Z_ratio(Z)
-		{
-			#ifdef _TS_DEBUG
-
-			if (X_ratio * Y_ratio * Z_ratio != 1)
-				throw BadShape("The total area must not be changed by the new ratios.\nOtherwise the thread target wouldn't be hit: ", { X_ratio, Y_ratio, Z_ratio });
-
-			#endif
-		}
+		CUDALayout(double X, double Y, double Z);
 
 		template<typename T, Device device>
-		std::tuple<unsigned int, unsigned int, unsigned int> Apply(const Tensor<T, device>* tensor, unsigned int target_threads)
-		{
-			#pragma warning(disable: 4244)
-
-			unsigned int length = target_threads;
-			unsigned int width = 1;
-			unsigned int height = 1;
-
-			#ifdef _TS_DEBUG
-			if (double(length) * X_ratio != std::floor(double(length) * X_ratio))
-			{
-				double ratio = X_ratio;
-				BadValue("Length ratio does not divide cleanly into thread length", ExceptValue("ratio", ratio), ExceptValue("squared threads", target_threads));
-			}
-			#endif
-
-			length *= unsigned int(double(length) * X_ratio);
-
-			#ifdef _TS_DEBUG
-			if (double(width) * Y_ratio != std::floor(double(width) * Y_ratio))
-			{
-				double ratio = Y_ratio;
-				BadValue("Length ratio does not divide cleanly into thread width", ExceptValue("ratio", ratio), ExceptValue("squared threads", target_threads));
-			}
-			#endif
-
-			width *= unsigned int(double(width) * Y_ratio);
-
-			#ifdef _TS_DEBUG
-			if (double(height) * Z_ratio != std::floor(double(height) * Z_ratio))
-			{
-				double ratio = Z_ratio;
-				BadValue("Length ratio does not divide cleanly into thread height", ExceptValue("ratio", ratio), ExceptValue("squared threads", target_threads));
-			}
-			#endif
-
-			height *= unsigned int(double(height) * Z_ratio);
-
-			return { length, width, height };
-			#pragma warning(default: 4244)
-		}
+		std::tuple<unsigned int, unsigned int, unsigned int> Apply(const Tensor<T, device>* tensor, unsigned int target_threads);
 	};
 
 	inline const CUDALayout<Mode::Cube>		Layout3D(double X = 1, double Y = 1, double Z = 1)

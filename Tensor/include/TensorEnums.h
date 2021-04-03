@@ -17,7 +17,7 @@ namespace TSlib
 		CPU
 	};
 
-	#ifdef _CUDA
+	#ifdef _TS_CUDA
 	constexpr Device default_device = Device::GPU;
 	#else
 	constexpr Device default_device = Device::CPU;

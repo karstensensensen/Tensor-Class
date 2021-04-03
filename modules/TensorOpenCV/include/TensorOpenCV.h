@@ -1,5 +1,4 @@
 #pragma once
-#include <Tensor.h>
 #include <opencv2\opencv.hpp>
 
 namespace TSlib {
@@ -29,4 +28,3 @@ namespace TSlib {
 		Tensor<T, device> MatToTensor(const cv::Mat& source);
 	}
 }
-#include "TensorOpenCV.ipp"

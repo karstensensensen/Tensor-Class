@@ -1,7 +1,6 @@
 #pragma once
 
 #include "TensorSlice.h"
-#include "TensorExceptions.h"
 
 namespace TSlib
 {
@@ -10,7 +9,7 @@ namespace TSlib
 	template<typename First, typename ...Args>
 	inline void TensorSlice<T, device>::bounds_check(size_t& i, First first, Args ...remaining)
 	{
-		MEASURE();
+		
 		bounds_check(i, first);
 		bounds_check(i, remaining...);
 	}
@@ -19,7 +18,7 @@ namespace TSlib
 	template<typename First>
 	inline void TensorSlice<T, device>::bounds_check(size_t& i, First first)
 	{
-		MEASURE();
+		
 
 		if (!m_slice_shape[i].contains(first))
 		{
@@ -33,7 +32,7 @@ namespace TSlib
 	template<typename T, Device device>
 	inline void TensorSlice<T, device>::calc_offset()
 	{
-		MEASURE();
+		
 		size_t tmp_multiply = source->size();
 		m_offset = 0;
 
@@ -49,7 +48,7 @@ namespace TSlib
 	TensorSlice<T, device>::TensorSlice(Tensor<T, device>* source, const std::vector<TSlice>& slices)
 		: source(source), m_slice_shape(slices), m_real_shape(source->Dims()), m_shape(m_real_shape)
 	{
-		MEASURE();
+		
 
 		#ifdef _TS_DEBUG
 
@@ -66,7 +65,7 @@ namespace TSlib
 	template<typename First>
 	void TensorSlice<T, device>::get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord)
 	{
-		MEASURE();
+		
 
 		#ifdef _TS_DEBUG
 		if (m_shape[iter] <= coord)
@@ -83,7 +82,7 @@ namespace TSlib
 	template<typename First, typename... Args>
 	void TensorSlice<T, device>::get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord, Args ... remaining)
 	{
-		MEASURE();
+		
 
 		get_indx(indx, iter, tmp_multiply, coord);
 		get_indx(indx, iter, tmp_multiply, remaining...);
@@ -93,7 +92,7 @@ namespace TSlib
 	template<typename ... Args>
 	T& TensorSlice<T, device>::Get(Args ... coords)
 	{
-		MEASURE();
+		
 
 		#ifdef _TS_DEBUG
 		if (Dims() != sizeof...(coords))
@@ -147,7 +146,7 @@ namespace TSlib
 	template<typename ... Args>
 	T TensorSlice<T, device>::Get(Args ... coords) const
 	{
-		MEASURE();
+		
 		#ifdef _TS_DEBUG
 		size_t i_d = 0;
 		bounds_check(i_d, coords...);
@@ -193,14 +192,14 @@ namespace TSlib
 	template<typename T, Device device>
 	T& TensorSlice<T, device>::At(size_t index)
 	{
-		MEASURE();
+		
 		return source->At(MapIndex(index));
 	}
 
 	template<typename T, Device device>
 	T TensorSlice<T, device>::At(size_t index) const
 	{
-		MEASURE();
+		
 		return source->At(MapIndex(index));
 	}
 
@@ -214,7 +213,7 @@ namespace TSlib
 	template<typename T, Device device>
 	inline void TensorSlice<T, device>::update()
 	{
-		MEASURE();
+		
 		#ifdef _TS_DEBUG
 
 		if (m_slice_shape.size() > source->Dims())
@@ -291,14 +290,14 @@ namespace TSlib
 	template<typename T, Device device>
 	inline void TensorSlice<T, device>::Fill(std::function<T(const size_t&)> generator)
 	{
-		MEASURE();
+		
 		Compute([&](T& elem, const size_t& index) {elem = generator(index); });
 	}
 
 	template<typename T, Device device>
 	inline void TensorSlice<T, device>::Fill(std::function<T(const std::vector<size_t>&)> generator)
 	{
-		MEASURE();
+		
 		Compute([&](T& elem, const std::vector<size_t>& dimensions) {elem = generator(dimensions); });
 	}
 
@@ -534,7 +533,7 @@ namespace TSlib
 	template<typename T, Device device>
 	size_t TensorSlice<T, device>::size() const
 	{
-		MEASURE();
+		
 		size_t size = m_real_shape[0];
 		for (size_t i = 1; i < m_real_shape.size(); i++)
 		{
@@ -547,7 +546,7 @@ namespace TSlib
 	template<typename T, Device device>
 	inline size_t TensorSlice<T, device>::Dims() const
 	{
-		MEASURE();
+		
 		return m_shape.size();
 	}
 
@@ -567,7 +566,7 @@ namespace TSlib
 	template<typename T, Device device>
 	size_t TensorSlice<T, device>::get_dim_length(const size_t& index) const
 	{
-		MEASURE();
+		
 
 		size_t r_size = 1;
 
@@ -582,21 +581,21 @@ namespace TSlib
 	template<typename T, Device device>
 	const std::vector<size_t>& TensorSlice<T, device>::Shape() const
 	{
-		MEASURE();
+		
 		return m_shape;
 	}
 
 	template<typename T, Device device>
 	const std::vector<TSlice>& TensorSlice<T, device>::TSliceShape() const
 	{
-		MEASURE();
+		
 		return m_slice_shape;
 	}
 
 	template<typename T, Device device>
 	TensorSlice<T, device>& TensorSlice<T, device>::Reshape(const std::vector<long long>& shape)
 	{
-		MEASURE();
+		
 		#ifdef _TS_DEBUG
 		long long new_shape_size = 1;
 		size_t unknown = 0;
@@ -647,7 +646,7 @@ namespace TSlib
 	template<typename T, Device device>
 	size_t TensorSlice<T, device>::MapIndex(size_t index) const
 	{
-		MEASURE();
+		
 		size_t tmp_multiply = m_slice_shape[Dims() - 1].width();
 		size_t new_index = 0;
 
@@ -728,14 +727,14 @@ namespace TSlib
 	template<typename T, Device device>
 	typename TensorSlice<T, device>::iterator TensorSlice<T, device>::begin()
 	{
-		MEASURE();
+		
 		return { 0 ,*this };
 	}
 
 	template<typename T, Device device>
 	typename TensorSlice<T, device>::iterator TensorSlice<T, device>::end()
 	{
-		MEASURE();
+		
 		return { size() ,*this };
 	}
 
@@ -1103,7 +1102,7 @@ namespace TSlib
 	template<typename RT, typename OT, Device o_device>
 	inline Tensor<RT, device> TensorSlice<T, device>::Compare(const Tensor<OT, o_device>& other, bool(*comp_func)(const T&, const OT&))
 	{
-		MEASURE();
+		
 		#ifdef _TS_DEBUG
 		if (Dims() != other.Dims())
 		{
@@ -1133,7 +1132,7 @@ namespace TSlib
 	template<typename RT, typename OT, Device o_device>
 	inline Tensor<RT, device> TensorSlice<T, device>::Compare(const TensorSlice<OT, o_device>& other, bool(*comp_func)(const T&, const OT&))
 	{
-		MEASURE();
+		
 		#ifdef _TS_DEBUG
 		if (Dims() != other.Dims())
 		{
@@ -1163,7 +1162,7 @@ namespace TSlib
 	template<typename RT, typename OT>
 	inline Tensor<RT, device> TensorSlice<T, device>::Compare(const OT& other, bool(*comp_func)(const T&, const OT&))
 	{
-		MEASURE();
+		
 
 		Tensor<RT, device> result(this->Shape());
 
@@ -1579,14 +1578,14 @@ namespace TSlib
 	template<typename T, Device device>
 	T TensorSlice<T, device>::operator[](size_t index) const
 	{
-		MEASURE();
+		
 		return At(index);
 	}
 
 	template<typename T, Device device>
 	T& TensorSlice<T, device>::operator[](size_t index)
 	{
-		MEASURE();
+		
 		return At(index);
 	}
 

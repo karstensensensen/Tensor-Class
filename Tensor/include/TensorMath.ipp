@@ -1,6 +1,4 @@
 #pragma once
-#include "Tensor.h"
-#include "TensorTools.h"
 
 namespace TSlib
 {
@@ -228,7 +226,7 @@ namespace TSlib
 
 		for (size_t i = 1; i < size(); i++)
 		{
-			max_elem = std::Max(max_elem, At(i));
+			max_elem = std::max(max_elem, At(i));
 		}
 
 		return max_elem;
@@ -241,7 +239,7 @@ namespace TSlib
 
 		for (size_t i = 1; i < size(); i++)
 		{
-			max_elem = std::Max(max_elem, At(i));
+			max_elem = std::max(max_elem, At(i));
 		}
 
 		return max_elem;

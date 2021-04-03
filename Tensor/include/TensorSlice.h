@@ -1,8 +1,6 @@
 #pragma once
 
 #include <stdint.h>
-#include "TSliceWrapper.h"
-#include "TensorCompareOperators.h"
 
 namespace TSlib
 {

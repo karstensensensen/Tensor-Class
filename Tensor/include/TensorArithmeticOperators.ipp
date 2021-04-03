@@ -1,13 +1,5 @@
 #pragma once
 
-#ifdef _CUDA
-#include "TensorCuda.cuh"
-#include "TensorOperatorKernels.cuh"
-#else
-#include "Tensor.h"
-#endif
-#include <tuple>
-
 namespace TSlib
 {
 	template<typename T, Device device>
@@ -231,7 +223,7 @@ namespace TSlib
 		ModulouAsgmt(other);
 	}
 
-	#ifdef _CUDA
+	#ifdef _TS_CUDA
 	/// <summary>
 	/// Tensor class cuda specific operator call functions
 	/// </summary>
@@ -1693,14 +1685,14 @@ namespace TSlib
 
 		for (const Tprint& elem : tensor)
 		{
-			max_length = std::max(to_string(elem).size(), max_length);
+			max_length = std::max(std::to_string(elem).size(), max_length);
 		}
 
 		for (size_t i = 0; i < tensor.Shape()[tensor.Dims() - 1]; i++)
 		{
-			stream << to_string(tensor[i]);
+			stream << std::to_string(tensor[i]);
 
-			size_t str_len = to_string(tensor[i]).size();
+			size_t str_len = std::to_string(tensor[i]).size();
 
 			for (size_t j = 0; j < max_length - str_len; j++)
 			{
@@ -1720,9 +1712,9 @@ namespace TSlib
 			stream << "\n";
 			for (size_t i = tensor.get_real_size(dim - 1); i < tensor.get_real_size(dim); i++)
 			{
-				stream << to_string(tensor[i]);
+				stream << std::to_string(tensor[i]);
 
-				size_t str_len = to_string(tensor[i]).size();
+				size_t str_len = std::to_string(tensor[i]).size();
 
 				for (size_t j = 0; j < max_length - str_len; j++)
 				{

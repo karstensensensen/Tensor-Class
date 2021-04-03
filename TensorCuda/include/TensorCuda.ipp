@@ -1,5 +1,5 @@
 #pragma once
-#ifdef _CUDA
+#ifdef _TS_CUDA
 
 #include "TensorCuda.cuh"
 #include "TensorOperatorKernels.cuh"
@@ -809,7 +809,135 @@ namespace TSlib
 		CER(cudaDeviceSynchronize());
 	}
 
-	#else
+
+	template<typename T, Device device>
+	std::tuple<unsigned int, unsigned int, unsigned int> CUDALayout<Mode::Cube>::Apply(const Tensor<T, device>* tensor, unsigned int target_threads)
+	{
+		double threads_cubed = GetCubed(target_threads);
+
+		double length = threads_cubed;
+		double width = threads_cubed;
+		double height = threads_cubed;
+
+		length *= double(length) * X_ratio;
+		#ifdef _TS_DEBUG
+		if (round(length * double(length) * X_ratio, 1000) != std::floor(round(length * double(length) * X_ratio, 1000)))
+		{
+			throw BadValue("Length ratio does not divide cleanly into thread length", ExceptValue<double>("ratio", X_ratio), ExceptValue<double>("cubed threads", threads_cubed));
+		}
+		#endif
+
+		#ifdef _TS_DEBUG
+		if (round(width * double(width) * Y_ratio, 1000) != std::floor(round(width * double(width) * Y_ratio, 1000)))
+		{
+			throw BadValue("Width ratio does not divide cleanly into thread width", ExceptValue<double>("ratio", Y_ratio), ExceptValue<double>("cubed threads", threads_cubed));
+		}
+		#endif
+
+		width *= double(width) * Y_ratio;
+
+		#ifdef _TS_DEBUG
+		if (round(height * double(height) * Z_ratio, 1000) != std::floor(round(height * double(height) * Z_ratio, 1000)))
+		{
+			throw BadValue("Height ratio does not divide cleanly into thread height", ExceptValue<double>("ratio", Z_ratio), ExceptValue<double>("cubed threads", threads_cubed));
+		}
+		#endif
+
+		height *= double(height) * Z_ratio;
+
+		return { unsigned int(length), unsigned int(width), unsigned int(height) };
+	}
+
+	template<typename T, Device device>
+	std::tuple<unsigned int, unsigned int, unsigned int> CUDALayout<Mode::Plane>::Apply(const Tensor<T, device>* tensor, unsigned int target_threads)
+	{
+		#pragma warning(disable: 4244)
+
+		double threads_squared = GetSquared(target_threads);
+
+		double length = threads_squared;
+		double width = threads_squared;
+		double height = 1;
+
+		#ifdef _TS_DEBUG
+		if (round(length * length * X_ratio, 1000.0) != std::floor(round(length * length * X_ratio, 1000.0)))
+		{
+			double ratio = X_ratio;
+			BadValue("Length ratio does not divide cleanly into thread length", ExceptValue("ratio", ratio), ExceptValue("squared threads", threads_squared));
+		}
+		#endif
+
+		length *= double(length) * X_ratio;
+
+		#ifdef _TS_DEBUG
+		if (round(width * width * Y_ratio, 1000.0) != std::floor(round(width * width * Y_ratio, 1000.0)))
+		{
+			double ratio = Y_ratio;
+			BadValue("Length ratio does not divide cleanly into thread width", ExceptValue("ratio", ratio), ExceptValue("squared threads", threads_squared));
+		}
+		#endif
+
+		width *= double(width) * Y_ratio;
+
+		#ifdef _TS_DEBUG
+		if (round(height * height * Z_ratio, 1000.0) != std::floor(round(height * height * Z_ratio, 1000.0)))
+		{
+			double ratio = Z_ratio;
+			BadValue("Length ratio does not divide cleanly into thread height", ExceptValue("ratio", ratio), ExceptValue("squared threads", threads_squared));
+		}
+		#endif
+
+		height *= double(height) * Z_ratio;
+
+		return { unsigned int(length), unsigned int(width), unsigned int(height) };
+
+		#pragma warning(default: 4244)
+	}
+
+	template<typename T, Device device>
+	std::tuple<unsigned int, unsigned int, unsigned int> CUDALayout<Mode::Line>::Apply(const Tensor<T, device>* tensor, unsigned int target_threads)
+	{
+		#pragma warning(disable: 4244)
+
+		unsigned int length = target_threads;
+		unsigned int width = 1;
+		unsigned int height = 1;
+
+		#ifdef _TS_DEBUG
+		if (double(length) * X_ratio != std::floor(double(length) * X_ratio))
+		{
+			double ratio = X_ratio;
+			BadValue("Length ratio does not divide cleanly into thread length", ExceptValue("ratio", ratio), ExceptValue("squared threads", target_threads));
+		}
+		#endif
+
+		length *= unsigned int(double(length) * X_ratio);
+
+		#ifdef _TS_DEBUG
+		if (double(width) * Y_ratio != std::floor(double(width) * Y_ratio))
+		{
+			double ratio = Y_ratio;
+			BadValue("Length ratio does not divide cleanly into thread width", ExceptValue("ratio", ratio), ExceptValue("squared threads", target_threads));
+		}
+		#endif
+
+		width *= unsigned int(double(width) * Y_ratio);
+
+		#ifdef _TS_DEBUG
+		if (double(height) * Z_ratio != std::floor(double(height) * Z_ratio))
+		{
+			double ratio = Z_ratio;
+			BadValue("Length ratio does not divide cleanly into thread height", ExceptValue("ratio", ratio), ExceptValue("squared threads", target_threads));
+		}
+		#endif
+
+		height *= unsigned int(double(height) * Z_ratio);
+
+		return { length, width, height };
+		#pragma warning(default: 4244)
+	}
+
+#else
 #pragma message("warning: cuda is not enabled, this header file should not be included.")
 #endif
 }

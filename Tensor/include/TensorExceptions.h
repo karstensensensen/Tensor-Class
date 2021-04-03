@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Tensor.h"
-#include "TensorEnums.h"
 #include <exception>
 #include <string>
 
@@ -287,7 +285,7 @@ namespace TSlib
 	/// All Tensor cuda function exceptions
 	/// </summary>
 
-	#ifdef _CUDA
+	#ifdef _TS_CUDA
 	class BadThreadTarget : public std::exception
 	{
 		unsigned int threads;

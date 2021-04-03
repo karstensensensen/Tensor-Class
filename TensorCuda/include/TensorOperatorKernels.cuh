@@ -1,8 +1,7 @@
 #pragma once
 
-#ifdef _CUDA
+#ifdef _TS_CUDA
 #include <cuda_runtime.h>
-#include "Tensor.h"
 
 namespace TSlib
 {

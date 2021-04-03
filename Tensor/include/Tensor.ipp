@@ -1,42 +1,7 @@
 #pragma once
 
-#ifdef __clang__
-typedef double double;
-#endif
-
 #include <stdlib.h>
-
-#ifdef TENSOR_PROFILING
-#include <Profiler.h>
-#else
-#define MEASURE()
-#endif
-
-#include "TensorExceptions.h"
-
-#ifdef _CUDA
-
-#include "TensorCuda.cuh"
-
-#else
-
-#include "Tensor.h"
-
-#endif
-
 #include <sstream>
-
-#include "TensorArithmetic.h"
-#include "TensorSlice.h"
-#include "TensorTools.h"
-#include <filesystem>
-#include <functional>
-#include <algorithm>
-#include <math.h>
-#include <cstdarg>
-#include <numeric>
-#include <fstream>
-#include <tuple>
 
 namespace TSlib
 {
@@ -45,7 +10,7 @@ namespace TSlib
 	template<typename T, Device device>
 	size_t Tensor<T, device>::get_real_size(const size_t& index) const
 	{
-		MEASURE();
+		
 
 		size_t r_size = 1;
 
@@ -60,7 +25,7 @@ namespace TSlib
 	template<typename T, Device device>
 	size_t Tensor<T, device>::get_dim_length(const size_t& index) const
 	{
-		MEASURE();
+		
 
 		size_t r_size = 1;
 
@@ -75,7 +40,7 @@ namespace TSlib
 	template<typename T, Device device>
 	std::vector<size_t> Tensor<T, device>::FlattenDims(size_t dims) const
 	{
-		MEASURE();
+		
 
 		std::vector<size_t> new_dim(dims, 1);
 
@@ -96,7 +61,7 @@ namespace TSlib
 	template<typename T, Device device>
 	size_t Tensor<T, device>::FlattenDims() const
 	{
-		MEASURE();
+		
 
 		size_t new_dim = m_shape[0];
 
@@ -111,7 +76,7 @@ namespace TSlib
 	template<typename T, Device device>
 	size_t Tensor<T, device>::get_dim_offset(const size_t& index) const
 	{
-		MEASURE();
+		
 		size_t result = 0;
 		for (size_t i = 0; i < index; i++)
 		{
@@ -125,7 +90,7 @@ namespace TSlib
 	template<typename First>
 	void Tensor<T, device>::get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord)
 	{
-		MEASURE();
+		
 
 		#ifdef _TS_DEBUG
 		if (m_shape[iter] <= coord)
@@ -142,7 +107,7 @@ namespace TSlib
 	template<typename First, typename... Args>
 	void Tensor<T, device>::get_indx(size_t& indx, size_t& iter, size_t& tmp_multiply, First coord, Args ... remaining)
 	{
-		MEASURE();
+		
 
 		get_indx(indx, iter, tmp_multiply, coord);
 		get_indx(indx, iter, tmp_multiply, remaining...);
@@ -326,14 +291,14 @@ namespace TSlib
 	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, const T& pad_val)
 		: m_shape(sizes.size())
 	{
-		MEASURE();
+		
 		Resize(sizes, pad_val);
 	}
 
 	//generator functions take an index / coordinate or nothing as parameters and returns a value with the containter type
 
 	template<typename T, Device device>
-	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T()> generator)
+	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<void(T&)> generator)
 
 		: m_shape(sizes.size())
 	{
@@ -341,12 +306,12 @@ namespace TSlib
 
 		for (size_t i = 0; i < size(); i++)
 		{
-			At(i) = generator();
+			generator(At(i));
 		}
 	}
 
 	template<typename T, Device device>
-	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(const size_t&)> generator)
+	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<void(T&, const size_t&)> generator)
 
 		: m_shape(sizes.size())
 	{
@@ -354,12 +319,12 @@ namespace TSlib
 
 		for (size_t i = 0; i < size(); i++)
 		{
-			At(i) = generator({ i });
+			generator(At(i), i);
 		}
 	}
 
 	template<typename T, Device device>
-	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(const std::vector<size_t>&)> generator)
+	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<void(T&, const std::vector<size_t>&)> generator)
 		: m_shape(sizes.size())
 	{
 		Resize(sizes);
@@ -373,12 +338,12 @@ namespace TSlib
 			{
 				indexes[j] = (i / get_real_size(j - 1)) % get_real_size(j - 1);
 			}
-			At(i) = generator(indexes);
+			generator(At(i), indexes);
 		}
 	}
 
 	template<typename T, Device device>
-	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<T(const std::vector<size_t>&, const size_t&)> generator)
+	Tensor<T, device>::Tensor(const std::vector<size_t>& sizes, std::function<void(T&, const std::vector<size_t>&, const size_t&)> generator)
 		: m_shape(sizes.size())
 	{
 		Resize(sizes);
@@ -392,7 +357,7 @@ namespace TSlib
 			{
 				indexes[j] = (i / get_real_size(j - 1)) % get_real_size(j - 1);
 			}
-			At(i) = generator(indexes, i);
+			generator(At(i), indexes, i);
 		}
 	}
 
@@ -400,7 +365,7 @@ namespace TSlib
 	Tensor<T, device>::Tensor(const TensorSlice<T, device>& slice)
 		: m_shape(slice.Shape().size())
 	{
-		MEASURE();
+		
 
 		Resize(slice.Shape());
 
@@ -414,9 +379,9 @@ namespace TSlib
 	Tensor<T, device>::Tensor(const Tensor<T, device>& other)
 		: m_vector(other.asVector()), m_shape(other.Shape())
 	{
-		MEASURE();
+		
 
-		#ifdef _CUDA
+		#ifdef _TS_CUDA
 
 		if (other.IsAllocated())
 		{
@@ -431,7 +396,7 @@ namespace TSlib
 	Tensor<T, device>::Tensor(Tensor<T, device>&& other)
 		: m_vector(std::move(other.m_vector)), m_shape(std::move(other.m_shape))
 	{
-		#ifdef _CUDA
+		#ifdef _TS_CUDA
 		gpu_mem = other.gpu_mem;
 		allocated = other.allocated;
 		m_threads = other.m_threads;
@@ -505,7 +470,7 @@ namespace TSlib
 	template<typename T, Device device>
 	Tensor<T, device>::~Tensor()
 	{
-		#ifdef _CUDA
+		#ifdef _TS_CUDA
 		if (IsAllocated())
 		{
 			Deallocate();
@@ -518,7 +483,7 @@ namespace TSlib
 	template<typename T, Device device>
 	Tensor<T, device>& Tensor<T, device>::Fill(const T& val)
 	{
-		MEASURE();
+		
 		Compute([val](T& elem) {elem = val; });
 
 		return *this;
@@ -527,7 +492,7 @@ namespace TSlib
 	template<typename T, Device device>
 	inline Tensor<T, device>& Tensor<T, device>::Fill(std::function<T(const size_t&)> generator)
 	{
-		MEASURE();
+		
 
 		Compute([generator](T& elem, const size_t& index) {elem = generator(index); });
 
@@ -537,7 +502,7 @@ namespace TSlib
 	template<typename T, Device device>
 	inline Tensor<T, device>& Tensor<T, device>::Fill(std::function<T(const std::vector<size_t>&)> generator)
 	{
-		MEASURE();
+		
 		Compute([generator](T& elem, const std::vector<size_t>& dimensions) {elem = generator(dimensions); });
 
 		return *this;
@@ -546,7 +511,7 @@ namespace TSlib
 	template<typename T, Device device>
 	inline Tensor<T, device>& Tensor<T, device>::Fill(std::function<T(const std::vector<size_t>&, const size_t&)> generator)
 	{
-		MEASURE();
+		
 
 		Compute([generator](T& elem, const std::vector<size_t>& dimensions, const size_t& index) {elem = generator(dimensions, index); });
 
@@ -861,7 +826,7 @@ namespace TSlib
 	template<typename T, Device device>
 	void Tensor<T, device>::upscale_dim(const size_t& index, const size_t& row_size, const size_t& amount, const T& pad_val)
 	{
-		MEASURE();
+		
 		if (0 < get_dim_length(index + 1))
 		{
 			size_t insert_length = amount / get_dim_length(index + 1);
@@ -877,7 +842,7 @@ namespace TSlib
 	template<typename T, Device device>
 	void Tensor<T, device>::downscale_dim(const size_t& index, const size_t& row_size, const size_t& amount)
 	{
-		MEASURE();
+		
 		if (0 < get_dim_length(index + 1))
 		{
 			size_t erase_length = amount / get_dim_length(index + 1);
@@ -894,8 +859,8 @@ namespace TSlib
 	template<typename T, Device device>
 	Tensor<T, device>& Tensor<T, device>::ResizeDim(const size_t& dim, const size_t& amount, const T& pad_val)
 	{
-		MEASURE();
-		#ifdef _CUDA
+		
+		#ifdef _TS_CUDA
 		//deallocate gpu memory if allocated to make sure there isnt accidentally copied too much or little memory to cpu or gpu
 		if (IsAllocated())
 			Deallocate();
@@ -935,7 +900,7 @@ namespace TSlib
 	template<typename T, Device device>
 	inline size_t Tensor<T, device>::calc_new_size(const std::initializer_list<size_t>& sizes)
 	{
-		MEASURE();
+		
 		size_t new_size = 1;
 		size_t index = 0;
 		for (const size_t& size : sizes)
@@ -950,7 +915,7 @@ namespace TSlib
 	template<typename T, Device device>
 	inline size_t Tensor<T, device>::calc_new_size(const std::vector<size_t>& sizes)
 	{
-		MEASURE();
+		
 		size_t new_size = 1;
 		for (const size_t& elem_size : sizes)
 		{
@@ -963,7 +928,7 @@ namespace TSlib
 	template<size_t n>
 	inline size_t Tensor<T, device>::calc_new_size(const std::array<size_t, n>& sizes)
 	{
-		MEASURE();
+		
 		size_t new_size = 1;
 		for (const size_t& elem_size : sizes)
 		{
@@ -975,8 +940,8 @@ namespace TSlib
 	template<typename T, Device device>
 	Tensor<T, device>& Tensor<T, device>::Resize(const std::vector<size_t>& sizes, const T& pad_val)
 	{
-		MEASURE();
-		#ifdef _CUDA
+		
+		#ifdef _TS_CUDA
 		//deallocate gpu memory if allocated to make sure there isnt accidentally copied too much or little memory to cpu or gpu
 		if (IsAllocated())
 			Deallocate();
@@ -1037,8 +1002,8 @@ namespace TSlib
 	template<size_t n>
 	inline Tensor<T, device>& Tensor<T, device>::Resize(const std::array<size_t, n>& sizes, const T& pad_val)
 	{
-		MEASURE();
-		#ifdef _CUDA
+		
+		#ifdef _TS_CUDA
 		//deallocate gpu memory if allocated to make sure there isnt accidentally copied too much or little memory to cpu or gpu
 		if (IsAllocated())
 			Deallocate();
@@ -1099,7 +1064,7 @@ namespace TSlib
 	template<typename Ts, std::enable_if_t<std::is_integral<Ts>::value, int>>
 	Tensor<T, device>& Tensor<T, device>::Reshape(const std::vector<Ts>& shape)
 	{
-		MEASURE();
+		
 		#ifdef _TS_DEBUG
 		long long new_shape_size = 1;
 		size_t unknown = 0;
@@ -1160,9 +1125,9 @@ namespace TSlib
 	template<typename T, Device device>
 	Tensor<T, device>& Tensor<T, device>::SetDims(const size_t& dims)
 	{
-		MEASURE();
+		
 
-		#ifdef _CUDA
+		#ifdef _TS_CUDA
 		//deallocate gpu memory if allocated to make sure there isnt accidentally copied too much or little memory to cpu or gpu
 		if (IsAllocated())
 			Deallocate();
@@ -1182,9 +1147,9 @@ namespace TSlib
 	template<typename T, Device device>
 	Tensor<T, device>& Tensor<T, device>::AddDims(const size_t& dims)
 	{
-		MEASURE();
+		
 
-		#ifdef _CUDA
+		#ifdef _TS_CUDA
 		//deallocate gpu memory if allocated to make sure there isnt accidentally copied too much or little memory to cpu or gpu
 		if (IsAllocated())
 			Deallocate();
@@ -1198,9 +1163,9 @@ namespace TSlib
 	template<typename T, Device device>
 	Tensor<T, device>& Tensor<T, device>::RemoveDims(const size_t& dims)
 	{
-		MEASURE();
+		
 
-		#ifdef _CUDA
+		#ifdef _TS_CUDA
 		//deallocate gpu memory if allocated to make sure there isnt accidentally copied too much or little memory to cpu or gpu
 		if (IsAllocated())
 			Deallocate();
@@ -1267,7 +1232,7 @@ namespace TSlib
 	template<typename T, Device device>
 	inline TensorSlice<T, device> Tensor<T, device>::Slice(const std::vector<TSlice>& slices)
 	{
-		MEASURE();
+		
 
 		TensorSlice<T, device> slice(this, slices);
 
@@ -1306,18 +1271,18 @@ namespace TSlib
 
 	/// Element access functions
 
-	#ifdef _CUDA
+	#ifdef _TS_CUDA
 	template<typename T, Device device>
 	Tensor<T, device>::operator T* ()
 	{
-		MEASURE();
+		
 		return gpu_mem;
 	}
 
 	template<typename T, Device device>
 	Tensor<T, device>::operator const T* () const
 	{
-		MEASURE();
+		
 		return gpu_mem;
 	}
 	#endif
@@ -1353,7 +1318,7 @@ namespace TSlib
 	template<typename ... Args>
 	T& Tensor<T, device>::Get(const Args& ... coords)
 	{
-		MEASURE();
+		
 
 		#ifdef _TS_DEBUG
 		if (Dims() != sizeof...(coords))
@@ -1402,7 +1367,7 @@ namespace TSlib
 	template<typename ... Args>
 	T Tensor<T, device>::Get(const Args& ... coords) const
 	{
-		MEASURE();
+		
 		size_t index = 0;
 		size_t tmp_multiply = get_real_size(Dims() - 1);
 		size_t i = 0;
@@ -1494,7 +1459,7 @@ namespace TSlib
 	template<typename ... Args>
 	T& Tensor<T, device>::operator()(Args ... coords)
 	{
-		MEASURE();
+		
 		return Get(coords...);
 	}
 
@@ -1537,7 +1502,7 @@ namespace TSlib
 		m_vector = std::move(other.m_vector);
 		m_shape = std::move(other.m_shape);
 
-		#ifdef _CUDA
+		#ifdef _TS_CUDA
 		if (allocated)
 		{
 			Deallocate();
@@ -1553,12 +1518,12 @@ namespace TSlib
 		return *this;
 	}
 
-	#if defined(_CUDA) && defined(_AMP)
+	#if defined(_TS_CUDA) && defined(_AMP)
 	#pragma message("warning: Cannot use both cuda and amp at the same time defaulting to cuda")
 	#endif
 }
 
-#ifdef _CUDA
+#ifdef _TS_CUDA
 #include "TensorCuda.ipp"
 #endif
 #include "TensorArithmeticOperators.ipp"
